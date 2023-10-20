@@ -35,6 +35,11 @@
 [![Build Status][ci-shield]][ci-url]
 [![LuaRocks][luarocks-shield]][luarocks-url]
 
+> **Note**
+>
+> - Just works. No need to call `setup`!
+> - No dependency on `lspconfig`.
+
 ## Quick Links
 
 - [Installation](#installation)
