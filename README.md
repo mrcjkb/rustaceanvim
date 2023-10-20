@@ -42,6 +42,7 @@ A heavily modified fork of [`rust-tools.nvim`](https://github.com/Saecki/crates.
 - [Installation](#installation)
 - [Quick setup](#quick-setup)
 - [Usage](#usage)
+- [Advanced configuration](#advanced-configuration)
 
 ## Prerequisites
 
