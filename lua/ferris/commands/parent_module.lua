@@ -22,9 +22,11 @@ local function handler(_, result, ctx)
   end
 end
 
+local rl = require('ferris.rust_analyzer')
+
 --- Sends the request to rust-analyzer to get the parent modules location and open it
 function M.parent_module()
-  vim.lsp.buf_request(0, 'experimental/parentModule', get_params(), handler)
+  rl.buf_request(0, 'experimental/parentModule', get_params(), handler)
 end
 
 return M.parent_module

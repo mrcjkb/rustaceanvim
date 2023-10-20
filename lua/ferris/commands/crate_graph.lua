@@ -55,8 +55,10 @@ local function handler_factory(backend, output, pipe)
   end
 end
 
+local rl = require('ferris.rust_analyzer')
+
 function M.view_crate_graph(backend, output, pipe)
-  vim.lsp.buf_request(0, 'rust-analyzer/viewCrateGraph', get_opts(), handler_factory(backend, output, pipe))
+  rl.buf_request(0, 'rust-analyzer/viewCrateGraph', get_opts(), handler_factory(backend, output, pipe))
 end
 
 return M.view_crate_graph

@@ -1,10 +1,9 @@
 local M = {}
 
+local rl = require('ferris.rust_analyzer')
 function M.fly_check()
   local params = vim.lsp.util.make_text_document_params()
-  for _, client in ipairs(vim.lsp.get_clients { name = 'rust-analyzer' }) do
-    client.notify('rust-analyzer/runFlyCheck', params)
-  end
+  rl.notify('rust-analyzer/runFlyCheck', params)
 end
 
 return M.fly_check

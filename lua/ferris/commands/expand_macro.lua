@@ -62,9 +62,11 @@ local function handler(_, result)
   ui.resize(true, '-25')
 end
 
+local rl = require('ferris.rust_analyzer')
+
 --- Sends the request to rust-analyzer to get cargo.toml's location and open it
 function M.expand_macro()
-  vim.lsp.buf_request(0, 'rust-analyzer/expandMacro', get_params(), handler)
+  rl.buf_request(0, 'rust-analyzer/expandMacro', get_params(), handler)
 end
 
 return M.expand_macro

@@ -86,12 +86,14 @@ local function handler(_, result)
   end)
 end
 
+local rl = require('ferris.rust_analyzer')
+
 -- Sends the request to rust-analyzer to get the runnables and handles them
 -- The opts provided here are forwarded to telescope, other than use_telescope
 -- which is used to check whether we want to use telescope or the vanilla vim
 -- way for input
 function M.debuggables()
-  vim.lsp.buf_request(0, 'experimental/runnables', get_params(), handler)
+  rl.buf_request(0, 'experimental/runnables', get_params(), handler)
 end
 
 return M.debuggables

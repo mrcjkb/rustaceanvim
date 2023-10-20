@@ -10,12 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release of `ferris.nvim`.
 - `:RustSyntaxTree` and `:RustFlyCheck` commands.
+- `:RustAnalyzerStart` and `:RustAnalyzerStop` commands.
+- Config validation.
+- Health checks (`:checkhealth ferris`).
+- Vimdocs (auto-generated from Lua docs - `:help ferris`).
+- Nix flake.
+- Allow `tools.executor` to be a string.
 
 ### Internal
 - Added type annotations.
+- Nix CI and linting infrastructure.
+- Lazy load command modules.
 
 ### Fixed
-- Numerous bugs encountered during rewrite.
+- Numerous potential bugs encountered during rewrite.
+- Erroneous semantic token highlights.
+- Make sure we only send LSP requests to the correct client.
 
 ### Breaking changes compared to `rust-tools.nvim`
 - Removed the `setup` function and revamped the architecture

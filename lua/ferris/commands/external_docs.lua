@@ -16,8 +16,10 @@ local function urlencode(url)
   return url
 end
 
+local rl = require('ferris.rust_analyzer')
+
 function M.open_external_docs()
-  vim.lsp.buf_request(0, 'experimental/externalDocs', vim.lsp.util.make_position_params(), function(_, url)
+  rl.buf_request(0, 'experimental/externalDocs', vim.lsp.util.make_position_params(), function(_, url)
     if url then
       vim.fn['netrw#BrowseX'](urlencode(url), 0)
     end

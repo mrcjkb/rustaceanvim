@@ -22,9 +22,11 @@ local function handler(_, result, ctx)
   vim.lsp.util.apply_text_edits(result, ctx.bufnr, vim.lsp.get_client_by_id(ctx.client_id).offset_encoding)
 end
 
+local rl = require('ferris.rust_analyzer')
+
 -- Sends the request to rust-analyzer to move the item and handle the response
 function M.move_item(up)
-  vim.lsp.buf_request(0, 'experimental/moveItem', get_params(up or false), handler)
+  rl.buf_request(0, 'experimental/moveItem', get_params(up or false), handler)
 end
 
 return M.move_item

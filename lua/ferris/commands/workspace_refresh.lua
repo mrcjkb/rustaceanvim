@@ -8,11 +8,11 @@ local function handler(err)
   vim.notify('Cargo workspace reloaded')
 end
 
+local rl = require('ferris.rust_analyzer')
+
 function M.reload_workspace()
-  for _, client in ipairs(vim.lsp.get_clients { name = 'rust-analyzer' }) do
-    vim.notify('Reloading Cargo Workspace')
-    client.request('rust-analyzer/reloadWorkspace', nil, handler, 0)
-  end
+  vim.notify('Reloading Cargo Workspace')
+  rl.buf_request(0, 'rust-analyzer/reloadWorkspace', nil, handler)
 end
 
 return M.reload_workspace

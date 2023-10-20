@@ -50,8 +50,10 @@ local function get_opts()
   return params
 end
 
+local rl = require('ferris.rust_analyzer')
+
 function M.hover_range()
-  vim.lsp.buf_request(0, 'textDocument/hover', get_opts())
+  rl.buf_request(0, 'textDocument/hover', get_opts())
 end
 
 return M.hover_range

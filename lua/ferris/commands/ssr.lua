@@ -20,6 +20,8 @@ local function handler(err, result, ctx)
   end
 end
 
+local rl = require('ferris.rust_analyzer')
+
 function M.ssr(query)
   if not query then
     vim.ui.input({ prompt = 'Enter query: ' }, function(input)
@@ -28,7 +30,7 @@ function M.ssr(query)
   end
 
   if query then
-    vim.lsp.buf_request(0, 'experimental/ssr', get_opts(query), handler)
+    rl.buf_request(0, 'experimental/ssr', get_opts(query), handler)
   end
 end
 
