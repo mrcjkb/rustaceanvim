@@ -1,0 +1,33 @@
+name: "Release"
+on:
+  push:
+    tags:
+      - "*"
+  pull_request:
+
+jobs:
+  luarocks-release:
+    runs-on: ubuntu-latest
+    name: LuaRocks upload
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Fail if changelog entry does not exist
+        if: startsWith(github.ref, 'refs/tags/')
+        run: grep -q "${{ github.ref_name }}" CHANGELOG.md
+      - name: LuaRocks Upload
+        uses: nvim-neorocks/luarocks-tag-release@v5
+        env:
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
+        with:
+          detailed_description: |
+            This plugin automatically configures the rust-analyzer builtin LSP client
+            and integrates with other Rust tools. See the README's #features section
+            for more info.
+      - name: GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: ncipollo/release-action@v1
+        with:
+          bodyFile: "CHANGELOG.md"
+          allowUpdates: true
+
