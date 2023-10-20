@@ -23,6 +23,7 @@ end
 
 -- run the command under the cursor, if the thing under the cursor is not the
 -- command then do nothing
+---@param ctx table
 local function run_command(ctx)
   local winnr = vim.api.nvim_get_current_win()
   local line = vim.api.nvim_win_get_cursor(winnr)[1]
@@ -122,9 +123,11 @@ function M.handler(_, result, ctx)
   end, { buffer = bufnr, noremap = true, silent = true })
 end
 
+local rl = require('ferris.commands.rust_analyzer')
+
 --- Sends the request to rust-analyzer to get hover actions and handle it
 function M.hover_actions()
-  vim.lsp.buf_request(0, 'textDocument/hover', get_params(), M.handler)
+  rl.buf_request(0, 'textDocument/hover', get_params(), M.handler)
 end
 
 return M
