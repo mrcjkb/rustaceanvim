@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Nix flake.
 - Allow `tools.executor` to be a string.
 - LuaRocks releases.
+- Minimal config for troubleshooting.
 
 ### Internal
 - Added type annotations.

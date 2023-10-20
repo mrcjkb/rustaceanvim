@@ -47,6 +47,7 @@
 - [Quick setup](#quick-setup)
 - [Usage](#usage)
 - [Advanced configuration](#advanced-configuration)
+- [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
@@ -318,6 +319,27 @@ vim.g.ferris = {
 >
 > `vim.g.ferris` can also be a function that returns
 > a table.
+
+## Troubleshooting
+
+### Health checks
+
+For a health check, run `:checkhealth ferris`
+
+### Minimal config
+
+To troubleshoot this plugin with a minimal config in a temporary directory,
+you can try [minimal.lua](./troubleshooting/minimal.lua).
+
+```console
+mkdir -p /tmp/minimal/
+NVIM_DATA_MINIMAL="/tmp/minimal" NVIM_APP_NAME="nvim-minimal" nvim -u minimal.lua
+```
+
+If you cannot reproduce your issue with a minimal config,
+it may be caused by another plugin.
+In this case, add additional plugins and their configurations to `minimal.lua`,
+until you can reproduce it.
 
 ## Related Projects
 
