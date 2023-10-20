@@ -1,4 +1,13 @@
+---@type FerrisConfig
+local config = require('ferris.config.internal')
+local types = require('ferris.types.internal')
+local ra_cmd = types.evaluate(config.server.cmd)
 local lsp = require('ferris.lsp')
+
+---@cast ra_cmd string[]
+if #ra_cmd == 0 or vim.fn.executable(ra_cmd[1]) ~= 1 then
+  return
+end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
   local runnables = require('ferris.runnables')

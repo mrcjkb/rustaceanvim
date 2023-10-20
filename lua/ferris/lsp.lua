@@ -69,7 +69,12 @@ M.start = function()
   local client_config = config.server
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
   local types = require('ferris.types.internal')
-  lsp_start_opts.cmd = types.evaluate(client_config.cmd)
+  local rust_analyzer_cmd = types.evaluate(client_config.cmd)
+  if #rust_analyzer_cmd == 0 or vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
+    vim.notify('rust-analyzer binary not found.', vim.log.levels.ERROR)
+    return
+  end
+  lsp_start_opts.cmd = rust_analyzer_cmd
   lsp_start_opts.name = 'rust-analyzer'
   lsp_start_opts.filetypes = { 'rust' }
   local capabilities = vim.lsp.protocol.make_client_capabilities()
