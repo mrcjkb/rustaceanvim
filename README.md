@@ -39,6 +39,7 @@
 >
 > - Just works. No need to call `setup`!
 > - No dependency on `lspconfig`.
+> - Lazy initialization by design.
 
 ## Quick Links
 
