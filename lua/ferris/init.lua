@@ -9,7 +9,13 @@
 ---@mod ferris
 ---
 ---@brief [[
+---
 ---Commands:
+---
+--- `:RustAnalyzerStart` - Start the LSP client.
+--- `:RustAnalyzerStop` - Stop the LSP client.
+---
+---The following commands are available after the LSP client has initialized:
 ---
 --- `:RustRunnables` - Run tests, etc.
 --- `:RustExpandMacro` - Expand macros recursively.

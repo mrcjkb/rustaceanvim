@@ -23,4 +23,4 @@ vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
   rt_dap.start(command.arguments[1].args)
 end
 
-lsp.start_or_attach()
+lsp.start()

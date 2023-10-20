@@ -62,8 +62,9 @@ local function get_root_dir(fname)
     })[1])
 end
 
--- start or attach the LSP client
-M.start_or_attach = function()
+-- Start or attach the LSP client
+---@return integer|nil client_id The LSP client ID
+M.start = function()
   local config = require('ferris.config.internal')
   local client_config = config.server
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
@@ -277,7 +278,37 @@ M.start_or_attach = function()
     end
   end
 
-  vim.lsp.start(lsp_start_opts)
+  return vim.lsp.start(lsp_start_opts)
+end
+
+---@param bufnr number
+---@return lsp.Client[]
+local function get_active_ferris_clients(bufnr)
+  return vim.lsp.get_clients { bufnr = bufnr, name = 'rust-analyzer' }
+end
+
+---Stop the LSP client.
+---@return table[] clients A list of clients that will be stopped
+M.stop = function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local clients = get_active_ferris_clients(bufnr)
+  vim.lsp.stop_client(clients)
+  return clients
+end
+
+local commands = {
+  RustAnalyzerStart = {
+    M.start,
+    {},
+  },
+  RustAnalyzerStop = {
+    M.stop,
+    {},
+  },
+}
+
+for name, command in pairs(commands) do
+  vim.api.nvim_create_user_command(name, unpack(command))
 end
 
 return M
