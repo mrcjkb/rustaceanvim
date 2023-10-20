@@ -37,6 +37,8 @@
 ---
 ---@brief ]]
 
+local M = {}
+
 ---@type FerrisOpts | fun():FerrisOpts | nil
 vim.g.ferris = vim.g.ferris
 
@@ -79,3 +81,5 @@ vim.g.ferris = vim.g.ferris
 ---@field type? string The type of debug adapter (default: `"executable"`)
 ---@field command? string Default: `"lldb-vscode"`
 ---@field name? string Default: `"ferris_lldb"`
+
+return M
