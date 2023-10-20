@@ -2,6 +2,7 @@ local M = {}
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
+  ---@diagnostic disable-next-line
   vim.lsp.util.apply_text_edits = function(edits, bufnr, offset_encoding)
     local overrides = require('ferris.overrides')
     overrides.snippet_text_edits_to_text_edits(edits)

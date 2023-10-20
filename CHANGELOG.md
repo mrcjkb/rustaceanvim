@@ -16,10 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vimdocs (auto-generated from Lua docs - `:help ferris`).
 - Nix flake.
 - Allow `tools.executor` to be a string.
+- LuaRocks released.
 
 ### Internal
 - Added type annotations.
-- Nix CI and linting infrastructure.
+- Nix CI and linting infrastructure and static type checking.
 - Lazy load command modules.
 
 ### Fixed

@@ -65,15 +65,10 @@
           ];
         };
 
-        pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        type-check = pre-commit-hooks.lib.${system}.run {
           src = self;
           hooks = {
-            alejandra.enable = true;
-            stylua.enable = true;
-            luacheck.enable = true;
-            # lua-ls.enable = true;
-            editorconfig-checker.enable = true;
-            markdownlint.enable = true;
+            lua-ls.enable = true;
           };
           settings = {
             lua-ls = {
@@ -101,6 +96,17 @@
                 };
               };
             };
+          };
+        };
+
+        pre-commit-check = pre-commit-hooks.lib.${system}.run {
+          src = self;
+          hooks = {
+            alejandra.enable = true;
+            stylua.enable = true;
+            luacheck.enable = true;
+            editorconfig-checker.enable = true;
+            markdownlint.enable = true;
           };
         };
 
@@ -136,6 +142,7 @@
 
         checks = {
           formatting = pre-commit-check;
+          inherit type-check;
           inherit
             (pkgs)
             nvim-stable-tests
