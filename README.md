@@ -18,7 +18,7 @@
   <p>
     <strong>
       Supercharge your Rust experience in <a href="https://neovim.io/">Neovim</a>!<br />
-      A heavily modified fork of <a href="https://github.com/simrat/rust-tools.nvim">rust-tools.nvim</a><br />
+      A heavily modified fork of <a href="https://github.com/simrat39/rust-tools.nvim">rust-tools.nvim</a><br />
     </strong>
   </p>
   <p>🦀</p>
@@ -315,7 +315,7 @@ vim.g.ferris = {
 
 ## Related Projects
 
-- [`simrat/rust-tools.nvim`](https://github.com/simrat/rust-tools.nvim)
+- [`simrat39/rust-tools.nvim`](https://github.com/simrat39/rust-tools.nvim)
   This plugin is a heavily modified fork of `rust-tools.nvim`.
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
 
