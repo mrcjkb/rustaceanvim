@@ -1,60 +1,130 @@
-# rust-tools.nvim
-A plugin to improve your rust experience in neovim.
+<!-- markdownlint-disable -->
+<br />
+<div align="center">
+  <a href="https://github.com/mrcjkb/ferris.nvim">
+    <img src="./nvim-ferris.svg" alt="ferris.nvim">
+  </a>
+  <p align="center">
+    <br />
+    <a href="./doc/ferris.txt"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/mrcjkb/ferris.nvim/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml">Report Bug</a>
+    ·
+    <a href="https://github.com/mrcjkb/ferris.nvim/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml">Request Feature</a>
+    ·
+    <a href="https://github.com/mrcjkb/ferris.nvim/discussions/new?category=q-a">Ask Question</a>
+  </p>
+  <p>
+    <strong>
+      Supercharge your Rust experience in <a href="https://neovim.io/">Neovim</a>!<br />
+      A heavily modified fork of <a href="https://github.com/simrat39/rust-tools.nvim">rust-tools.nvim</a><br />
+    </strong>
+  </p>
+  <p>🦀</p>
+</div>
+<!-- markdownlint-restore -->
+
+[![Neovim][neovim-shield]][neovim-url]
+[![Lua][lua-shield]][lua-url]
+[![Rust][rust-shield]][rust-url]
+[![Nix][nix-shield]][nix-url]
+
+[![GPL2 License][license-shield]][license-url]
+[![Issues][issues-shield]][issues-url]
+[![Build Status][ci-shield]][ci-url]
+[![LuaRocks][luarocks-shield]][luarocks-url]
+
+A heavily modified fork of [`rust-tools.nvim`](https://github.com/Saecki/crates.nvim).
 
 ## Quick Links
-- [Wiki](https://github.com/simrat39/rust-tools.nvim/wiki)
-  - [CodeLLDB Debugging](https://github.com/simrat39/rust-tools.nvim/wiki/Debugging)
-  - [Standalone File](https://github.com/simrat39/rust-tools.nvim/wiki/Standalone-File-Support)
+
 - [Installation](#installation)
-- [Setup](#setup)
+- [Quick setup](#quick-setup)
 - [Usage](#usage)
+- [Advanced configuration](#advanced-configuration)
 
 ## Prerequisites
 
-- `neovim 0.7`
-- `nvim-lspconfig`
+- `neovim 0.9`
 - `rust-analyzer`
-- `dot` from `graphviz` (only for crate graph)
+- `dot` from `graphviz` (optional), for crate graphs
 
 ## Installation
 
-using `packer.nvim`
+This plugin is [available on LuaRocks][luarocks-url].
+
+If you use a plugin manager that does not support LuaRocks,
+you have to declare the dependencies yourself.
+
+Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 
 ```lua
-use 'neovim/nvim-lspconfig'
-use 'simrat39/rust-tools.nvim'
-
--- Debugging
-use 'nvim-lua/plenary.nvim'
-use 'mfussenegger/nvim-dap'
+{
+  'mrcjkb/ferris.nvim',
+  version = '^1', -- Recommended
+  ft = { 'rust' },
+}
 ```
-<b>Look at the configuration information below to get started.</b>
 
-## Setup
-This plugin automatically sets up nvim-lspconfig for rust_analyzer for you, so don't do that manually, as it causes conflicts.
+>**Note**
+>
+>It is suggested to use the stable branch if you would like to avoid breaking changes.
 
-Put this in your init.lua or any lua file that is sourced.<br>
+To manually generate documentation, use `:helptags ALL`.
 
-For most people, the defaults are fine, but for advanced configuration, see [Configuration](#configuration).
+>**Note**
+>
+> For NixOS users with flakes enabled, this project provides outputs in the
+> form of a package and an overlay; use it as you wish in your NixOS or
+> home-manager configuration.
+> It is also available in `nixpkgs`.
 
-Example config:
+Look at the configuration information below to get started.
+
+## Quick Setup
+
+This plugin automatically configures the `rust-analyzer` builtin LSP
+client and integrates with other Rust tools.
+See the [Usage](#usage) section for more info.
+
+>**Warning**
+>
+> Do not call the [`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
+> setup or set up the lsp client for `rust-analyzer` manually,
+> as doing so may cause conflicts.
+
+This is a filetype plugin that works out of the box,
+so there is no need to call a `setup` function or configure anything
+to get this plugin working.
+
+You will most likely want to add some keymaps.
+Most keymaps are only useful in rust files,
+so I suggest you define them in `~/.config/nvim/after/ftplugin/rust.lua`[^1]
+
+[^1]: See [`:help base-directories`](https://neovim.io/doc/user/starting.html#base-directories)
+
+Example:
+
 ```lua
-local rt = require("rust-tools")
-
-rt.setup({
-  server = {
-    on_attach = function(_, bufnr)
-      -- Hover actions
-      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
-      -- Code action groups
-      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
-    end,
-  },
-})
+local bufnr = vim.api.nvim_get_current_buf()
+vim.keymap.set(
+  "n", 
+  "<leader>a", 
+  vim.cmd.RustCodeAction, 
+  { silent = true, buffer = bufnr }
+)
 ```
+
+>**Note**
+>
+> - For more LSP related keymaps, [see the `nvim-lspconfig` suggestions](https://github.com/neovim/nvim-lspconfig#suggested-configuration).
+> - See the [Advanced configuration](#advanced-configuration) section
+for more configuration options.
 
 ## Usage
 
+<!-- markdownlint-disable -->
 <details>
   <summary>
 	<b>Debugging</b>
@@ -65,40 +135,13 @@ rt.setup({
 
 <details>
   <summary>
-	<b>Inlay Hints</b>
-  </summary>
-  
-  ![inlay hints](https://github.com/simrat39/rust-tools-demos/raw/master/inlay_hints.png)
-  ```lua
-  -- Commands:
-  -- RustEnableInlayHints
-  -- RustDisableInlayHints
-  -- RustSetInlayHints
-  -- RustUnsetInlayHints
-
-  -- Set inlay hints for the current buffer
-  require('rust-tools').inlay_hints.set()
-  -- Unset inlay hints for the current buffer
-  require('rust-tools').inlay_hints.unset()
-
-  -- Enable inlay hints auto update and set them for all the buffers
-  require('rust-tools').inlay_hints.enable()
-  -- Disable inlay hints auto update and unset them for all buffers
-  require('rust-tools').inlay_hints.disable()
-  ```
-</details>
-
-<details>
-  <summary>
 	<b>Runnables</b>
   </summary>
   
   ![runnables](https://github.com/simrat39/rust-tools-demos/raw/master/runnables.gif)
-  ```lua
-  -- Command:
-  -- RustRunnables
-  require('rust-tools').runnables.runnables()
-```
+  ```vimscript
+  :RustRunnables
+  ```
 </details>
 
 <details>
@@ -107,10 +150,8 @@ rt.setup({
   </summary>
   
   ![expand macros](https://github.com/simrat39/rust-tools-demos/raw/master/expand_macros_recursively.gif)
-  ```lua
-  -- Command:
-  -- RustExpandMacro  
-  require'rust-tools'.expand_macro.expand_macro()
+  ```vimscript
+  :RustExpandMacro  
   ```
 </details>
 
@@ -120,12 +161,9 @@ rt.setup({
   </summary>
   
   ![move items](https://github.com/simrat39/rust-tools-demos/raw/master/move_item.gif)
-  ```lua
-  -- Command:
-  -- RustMoveItemUp    
-  -- RustMoveItemDown    
-  local up = true -- true = move up, false = move down
-  require'rust-tools'.move_item.move_item(up)
+  ```vimscript
+  :RustMoveItemUp    
+  :RustMoveItemDown    
 ```
 </details>
 
@@ -135,11 +173,9 @@ rt.setup({
   </summary>
   
  ![hover actions](https://github.com/simrat39/rust-tools-demos/raw/master/hover_actions.gif)
- Note: To activate hover actions, run the command twice (or your hover keymap if you have ```hover_with_actions``` set to true AND are using ```vim.lsp.buf.hover()```). This will move you into the window, then press enter on the selection you want. Alternatively, you can set ```auto_focus``` to true in your config and you will automatically enter the hover actions window.
- ```lua
- -- Command:
- -- RustHoverActions 
- require'rust-tools'.hover_actions.hover_actions()
+ Note: To activate hover actions, run the command twice. This will move you into the window, then press enter on the selection you want. Alternatively, you can set ```auto_focus``` to true in your config and you will automatically enter the hover actions window.
+ ```vimscript
+ :RustHoverActions 
  ```
 </details>
 
@@ -147,12 +183,9 @@ rt.setup({
   <summary>
 	<b>Hover Range</b>
   </summary>
-  
-  Note: Requires rust-analyzer version after 2021-08-02. Shows the type in visual mode when hovering.
-  ```lua
-  -- Command:
-  -- RustHoverRange 
-  require'rust-tools'.hover_range.hover_range()
+
+  ```vimscript
+  :RustHoverRange 
   ```
 </details>
 
@@ -162,10 +195,8 @@ rt.setup({
   </summary>
   
   ![open cargo](https://github.com/simrat39/rust-tools-demos/raw/master/open_cargo_toml.gif)
-  ```lua
-  -- Command:
-  -- RustOpenCargo
-  require'rust-tools'.open_cargo_toml.open_cargo_toml()
+  ```vimscript
+  :RustOpenCargo
   ```
 </details>
 
@@ -175,10 +206,8 @@ rt.setup({
   </summary>
   
   ![parent module](https://github.com/simrat39/rust-tools-demos/raw/master/parent_module.gif)
-  ```lua
-  -- Command:
-  -- RustParentModule 
-  require'rust-tools'.parent_module.parent_module()
+  ```vimscript
+  :RustParentModule 
   ```
 </details>
 
@@ -188,10 +217,8 @@ rt.setup({
   </summary>
   
   ![join lines](https://github.com/simrat39/rust-tools-demos/raw/master/join_lines.gif)
-  ```lua
-  -- Command:
-  -- RustJoinLines  
-  require'rust-tools'.join_lines.join_lines()
+  ```vimscript
+  :RustJoinLines  
   ```
 </details>
 
@@ -200,10 +227,8 @@ rt.setup({
 	<b>Structural Search Replace</b>
   </summary>
   
-  ```lua
-  -- Command:
-  -- RustSSR [query]
-  require'rust-tools'.ssr.ssr(query)
+  ```vimscript
+  :RustSSR [query]
   ```
 </details>
 
@@ -212,197 +237,110 @@ rt.setup({
 	<b>View Crate Graph</b>
   </summary>
   
-  ```lua
-  -- Command:
-  -- RustViewCrateGraph [backend [output]]
-  require'rust-tools'.crate_graph.view_crate_graph(backend, output)
+  ```vimscript
+  :RustViewCrateGraph [backend [output]]
   ```
 </details>
 
-## Configuration
-The options shown below are the defaults. You only need to pass the keys to the setup function that you want to be changed, because the defaults are applied for keys that are not provided. 
+<details>
+  <summary>
+	<b>View Syntax Tree</b>
+  </summary>
+  
+  ```vimscript
+  :RustSyntaxTree
+  ```
+</details>
+
+<details>
+  <summary>
+	<b>Fly check</b>
+  </summary>
+
+  Run `cargo check` or another compatible command (f.x. `clippy`) 
+  in a background thread and provide LSP diagnostics based on 
+  the output of the command.
+
+  Useful in large projects where running `cargo check` on each save
+  can be costly.
+  
+  ```vimscript
+  :RustFlyCheck
+  ```
+</details>
+
+<!-- markdownlint-restore -->
+
+## Advanced configuration
+
+To modify the default configuration, set `vim.g.ferris`.
+
+- See [`:help ferris.config`](./doc/ferris.txt) for a detailed
+  documentation of all available configuration options.
+  You may need to run `:helptags ALL` if the documentation has not been installed.
+- The default configuration [can be found here (see `FerrisDefaultConfig`)](./lua/ferris/config/internal.lua).
+- For detailed descriptions of the language server configs,
+  see the [`rust-analyzer` documentation](https://rust-analyzer.github.io/manual.html#configuration).
+
+The options shown below are the defaults.
+You only need to pass the keys to the setup function
+that you want to be changed, because the defaults
+are applied for keys that are not provided.
+
+Example config:
 
 ```lua
-local opts = {
-  tools = { -- rust-tools options
-
-    -- how to execute terminal commands
-    -- options right now: termopen / quickfix / toggleterm / vimux
-    executor = require("rust-tools.executors").termopen,
-
-    -- callback to execute once rust-analyzer is done initializing the workspace
-    -- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
-    on_initialized = nil,
-
-    -- automatically call RustReloadWorkspace when writing to a Cargo.toml file.
-    reload_workspace_from_cargo_toml = true,
-
-    -- These apply to the default RustSetInlayHints command
-    inlay_hints = {
-      -- automatically set inlay hints (type hints)
-      -- default: true
-      auto = true,
-
-      -- Only show inlay hints for the current line
-      only_current_line = false,
-
-      -- whether to show parameter hints with the inlay hints or not
-      -- default: true
-      show_parameter_hints = true,
-
-      -- prefix for parameter hints
-      -- default: "<-"
-      parameter_hints_prefix = "<- ",
-
-      -- prefix for all the other hints (type, chaining)
-      -- default: "=>"
-      other_hints_prefix = "=> ",
-
-      -- whether to align to the length of the longest line in the file
-      max_len_align = false,
-
-      -- padding from the left if max_len_align is true
-      max_len_align_padding = 1,
-
-      -- whether to align to the extreme right or not
-      right_align = false,
-
-      -- padding from the right if right_align is true
-      right_align_padding = 7,
-
-      -- The color of the hints
-      highlight = "Comment",
-    },
-
-    -- options same as lsp hover / vim.lsp.util.open_floating_preview()
-    hover_actions = {
-
-      -- the border that is used for the hover window
-      -- see vim.api.nvim_open_win()
-      border = {
-        { "╭", "FloatBorder" },
-        { "─", "FloatBorder" },
-        { "╮", "FloatBorder" },
-        { "│", "FloatBorder" },
-        { "╯", "FloatBorder" },
-        { "─", "FloatBorder" },
-        { "╰", "FloatBorder" },
-        { "│", "FloatBorder" },
-      },
-
-      -- Maximal width of the hover window. Nil means no max.
-      max_width = nil,
-
-      -- Maximal height of the hover window. Nil means no max.
-      max_height = nil,
-
-      -- whether the hover action window gets automatically focused
-      -- default: false
-      auto_focus = false,
-    },
-
-    -- settings for showing the crate graph based on graphviz and the dot
-    -- command
-    crate_graph = {
-      -- Backend used for displaying the graph
-      -- see: https://graphviz.org/docs/outputs/
-      -- default: x11
-      backend = "x11",
-      -- where to store the output, nil for no output stored (relative
-      -- path from pwd)
-      -- default: nil
-      output = nil,
-      -- true for all crates.io and external crates, false only the local
-      -- crates
-      -- default: true
-      full = true,
-
-      -- List of backends found on: https://graphviz.org/docs/outputs/
-      -- Is used for input validation and autocompletion
-      -- Last updated: 2021-08-26
-      enabled_graphviz_backends = {
-        "bmp",
-        "cgimage",
-        "canon",
-        "dot",
-        "gv",
-        "xdot",
-        "xdot1.2",
-        "xdot1.4",
-        "eps",
-        "exr",
-        "fig",
-        "gd",
-        "gd2",
-        "gif",
-        "gtk",
-        "ico",
-        "cmap",
-        "ismap",
-        "imap",
-        "cmapx",
-        "imap_np",
-        "cmapx_np",
-        "jpg",
-        "jpeg",
-        "jpe",
-        "jp2",
-        "json",
-        "json0",
-        "dot_json",
-        "xdot_json",
-        "pdf",
-        "pic",
-        "pct",
-        "pict",
-        "plain",
-        "plain-ext",
-        "png",
-        "pov",
-        "ps",
-        "ps2",
-        "psd",
-        "sgi",
-        "svg",
-        "svgz",
-        "tga",
-        "tiff",
-        "tif",
-        "tk",
-        "vml",
-        "vmlz",
-        "wbmp",
-        "webp",
-        "xlib",
-        "x11",
-      },
+vim.g.ferris = {
+  -- Plugin configuration
+  tools = {
+  },
+  -- LSP configuration
+  server = {
+    on_attach = function(client, bufnr)
+      -- you can also put keymaps in here
+    end,
+    -- rust-analyzer language server configuration
+    ['rust-analyzer'] = {
     },
   },
-
-  -- all the opts to send to nvim-lspconfig
-  -- these override the defaults set by rust-tools.nvim
-  -- see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rust_analyzer
-  server = {
-    -- standalone file support
-    -- setting it to false may improve startup time
-    standalone = true,
-  }, -- rust-analyzer options
-
-  -- debugging stuff
+  -- DAP configuration
   dap = {
-    adapter = {
-      type = "executable",
-      command = "lldb-vscode",
-      name = "rt_lldb",
-    },
   },
 }
-
-require('rust-tools').setup(opts)
 ```
 
+> **Note**
+>
+> `vim.g.ferris` can also be a function that returns
+> a table.
+
 ## Related Projects
+
+- [`simrat39/rust-tools.nvim`](https://github.com/simrat39/rust-tools.nvim)
+  This plugin is a heavily modified fork of `rust-tools.nvim`.
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
 
 ## Inspiration
+
 This plugin draws inspiration from [`akinsho/flutter-tools.nvim`](https://github.com/akinsho/flutter-tools.nvim)
+
+<!-- markdownlint-disable -->
+<!-- prettier-ignore-end -->
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[neovim-shield]: https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white
+[neovim-url]: https://neovim.io/
+[lua-shield]: https://img.shields.io/badge/lua-%232C2D72.svg?style=for-the-badge&logo=lua&logoColor=white
+[lua-url]: https://www.lua.org/
+[nix-shield]: https://img.shields.io/badge/nix-0175C2?style=for-the-badge&logo=NixOS&logoColor=white
+[nix-url]: https://nixos.org/
+[rust-shield]: https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white
+[rust-url]: https://www.rust-lang.org/
+[issues-shield]: https://img.shields.io/github/issues/mrcjkb/ferris.nvim.svg?style=for-the-badge
+[issues-url]: https://github.com/mrcjkb/ferris.nvim/issues
+[license-shield]: https://img.shields.io/github/license/mrcjkb/ferris.nvim.svg?style=for-the-badge
+[license-url]: https://github.com/mrcjkb/ferris.nvim/blob/master/LICENSE
+[ci-shield]: https://img.shields.io/github/actions/workflow/status/mrcjkb/ferris.nvim/nix-build.yml?style=for-the-badge
+[ci-url]: https://github.com/mrcjkb/ferris.nvim/actions/workflows/nix-build.yml
+[luarocks-shield]: https://img.shields.io/luarocks/v/MrcJkb/ferris.nvim?logo=lua&color=purple&style=for-the-badge
+[luarocks-url]: https://luarocks.org/modules/MrcJkb/ferris.nvim

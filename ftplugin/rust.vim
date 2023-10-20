@@ -1,5 +1,3 @@
-command RustStartStandaloneServerForBuffer :lua require('rust-tools.standalone').start_standalone_client()
-
 " Copied from built-in compiler/{rustc,cargo}.vim
 setlocal errorformat=
 			\%f:%l:%c:\ %t%*[^:]:\ %m,

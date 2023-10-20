@@ -1,0 +1,14 @@
+name: PR
+on: pull_request
+
+jobs:
+  conventional:
+    if: ${{ false }} # disable for now
+    name: Conventional PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+      - uses: beemojs/conventional-pr-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

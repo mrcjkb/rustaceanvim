@@ -1,3 +1,5 @@
+<!-- markdownlint-disable -->
+
 **Possible rust-analyzer settings (rust-analyzer 0.0.0 (634cfe3d7 2022-08-07))**  
 ```lua
 -- example opts  
