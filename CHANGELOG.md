@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure we only send LSP requests to the correct client.
 
 ### Breaking changes compared to `rust-tools.nvim`
-- Removed the `setup` function and revamped the architecture
+- [Removed the `setup` function](https://mrcjkb.dev/posts/2023-08-22-setup.html) and revamped the architecture
   to be less prone to type errors.
   This plugin is a filetype plugin and works out of the box.
   The default configuration should work for most people,
