@@ -16,7 +16,7 @@ local FerrisDefaultConfig = {
     --- how to execute terminal commands
     --- options right now: termopen / quickfix / toggleterm / vimux
     ---@type FerrisExecutor
-    executor = require("ferris.executors").termopen,
+    executor = require('ferris.executors').termopen,
 
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
@@ -40,14 +40,14 @@ local FerrisDefaultConfig = {
       ---@see vim.api.nvim_open_win()
       ---@type string[][]
       border = {
-        { "╭", "FloatBorder" },
-        { "─", "FloatBorder" },
-        { "╮", "FloatBorder" },
-        { "│", "FloatBorder" },
-        { "╯", "FloatBorder" },
-        { "─", "FloatBorder" },
-        { "╰", "FloatBorder" },
-        { "│", "FloatBorder" },
+        { '╭', 'FloatBorder' },
+        { '─', 'FloatBorder' },
+        { '╮', 'FloatBorder' },
+        { '│', 'FloatBorder' },
+        { '╯', 'FloatBorder' },
+        { '─', 'FloatBorder' },
+        { '╰', 'FloatBorder' },
+        { '│', 'FloatBorder' },
       },
 
       --- maximal width of the hover window. Nil means no max.
@@ -72,7 +72,7 @@ local FerrisDefaultConfig = {
       -- see: https://graphviz.org/docs/outputs/
       -- default: x11
       ---@type string
-      backend = "x11",
+      backend = 'x11',
       -- where to store the output, nil for no output stored (relative
       -- path from pwd)
       -- default: nil
@@ -89,60 +89,60 @@ local FerrisDefaultConfig = {
       -- Last updated: 2021-08-26
       ---@type string[]
       enabled_graphviz_backends = {
-        "bmp",
-        "cgimage",
-        "canon",
-        "dot",
-        "gv",
-        "xdot",
-        "xdot1.2",
-        "xdot1.4",
-        "eps",
-        "exr",
-        "fig",
-        "gd",
-        "gd2",
-        "gif",
-        "gtk",
-        "ico",
-        "cmap",
-        "ismap",
-        "imap",
-        "cmapx",
-        "imap_np",
-        "cmapx_np",
-        "jpg",
-        "jpeg",
-        "jpe",
-        "jp2",
-        "json",
-        "json0",
-        "dot_json",
-        "xdot_json",
-        "pdf",
-        "pic",
-        "pct",
-        "pict",
-        "plain",
-        "plain-ext",
-        "png",
-        "pov",
-        "ps",
-        "ps2",
-        "psd",
-        "sgi",
-        "svg",
-        "svgz",
-        "tga",
-        "tiff",
-        "tif",
-        "tk",
-        "vml",
-        "vmlz",
-        "wbmp",
-        "webp",
-        "xlib",
-        "x11",
+        'bmp',
+        'cgimage',
+        'canon',
+        'dot',
+        'gv',
+        'xdot',
+        'xdot1.2',
+        'xdot1.4',
+        'eps',
+        'exr',
+        'fig',
+        'gd',
+        'gd2',
+        'gif',
+        'gtk',
+        'ico',
+        'cmap',
+        'ismap',
+        'imap',
+        'cmapx',
+        'imap_np',
+        'cmapx_np',
+        'jpg',
+        'jpeg',
+        'jpe',
+        'jp2',
+        'json',
+        'json0',
+        'dot_json',
+        'xdot_json',
+        'pdf',
+        'pic',
+        'pct',
+        'pict',
+        'plain',
+        'plain-ext',
+        'png',
+        'pov',
+        'ps',
+        'ps2',
+        'psd',
+        'sgi',
+        'svg',
+        'svgz',
+        'tga',
+        'tiff',
+        'tif',
+        'tk',
+        'vml',
+        'vmlz',
+        'wbmp',
+        'webp',
+        'xlib',
+        'x11',
       },
       ---@type string | nil
       pipe = nil,
@@ -155,7 +155,7 @@ local FerrisDefaultConfig = {
   server = {
     ---@type string[] | fun():string[]
     cmd = function()
-      return { "rust-analyzer" }
+      return { 'rust-analyzer' }
     end,
     --- standalone file support
     --- setting it to false may improve startup time
@@ -165,7 +165,7 @@ local FerrisDefaultConfig = {
     --- options to send to rust-analyzer
     --- See: https://rust-analyzer.github.io/manual.html#configuration
     --- @type table
-    ["rust-analyzer"] = {},
+    ['rust-analyzer'] = {},
   },
 
   --- debugging stuff
@@ -174,27 +174,20 @@ local FerrisDefaultConfig = {
     --- @class FerrisDapAdapterConfig
     adapter = {
       ---@type string
-      type = "executable",
+      type = 'executable',
       ---@type string
-      command = "lldb-vscode",
+      command = 'lldb-vscode',
       ---@type string
-      name = "ferris_lldb",
+      name = 'ferris_lldb',
     },
   },
 }
 
 local ferris = vim.g.ferris or {}
-local opts = type(ferris) == "function" and ferris() or ferris
-if
-  opts.tools
-  and opts.tools.executor
-  and type(opts.tools.executor) == "string"
-then
-  opts.tools.executor = assert(
-    require("ferris.executors")[opts.tools.executor],
-    "Unknown FerrisExecutor"
-  )
+local opts = type(ferris) == 'function' and ferris() or ferris
+if opts.tools and opts.tools.executor and type(opts.tools.executor) == 'string' then
+  opts.tools.executor = assert(require('ferris.executors')[opts.tools.executor], 'Unknown FerrisExecutor')
 end
-FerrisConfig = vim.tbl_deep_extend("force", {}, FerrisDefaultConfig, opts)
+FerrisConfig = vim.tbl_deep_extend('force', {}, FerrisDefaultConfig, opts)
 
 return FerrisConfig

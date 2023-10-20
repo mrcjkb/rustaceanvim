@@ -2,10 +2,10 @@
 
 ---@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux'
 
-local termopen = require("ferris.executors.termopen")
-local quickfix = require("ferris.executors.quickfix")
-local toggleterm = require("ferris.executors.toggleterm")
-local vimux = require("ferris.executors.vimux")
+local termopen = require('ferris.executors.termopen')
+local quickfix = require('ferris.executors.quickfix')
+local toggleterm = require('ferris.executors.toggleterm')
+local vimux = require('ferris.executors.vimux')
 
 ---@type { [executor_alias]: FerrisExecutor }
 local M = {}

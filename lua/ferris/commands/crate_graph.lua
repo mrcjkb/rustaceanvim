@@ -1,4 +1,4 @@
-local config = require("ferris.config.internal")
+local config = require('ferris.config.internal')
 
 local M = {}
 
@@ -18,46 +18,32 @@ local function handler_factory(backend, output, pipe)
   -- visualize with the given backend
   return function(err, graph)
     if err ~= nil then
-      vim.notify(
-        "Could not execute request to server " .. (err or ""),
-        vim.log.levels.ERROR
-      )
+      vim.notify('Could not execute request to server ' .. (err or ''), vim.log.levels.ERROR)
       return
     end
 
     -- Validating backend
-    if
-      not vim.list_contains(
-        config.tools.crate_graph.enabled_graphviz_backends,
-        backend
-      )
-    then
-      vim.notify(
-        "crate graph backend not recognized as valid: " .. vim.inspect(backend),
-        vim.log.levels.ERROR
-      )
+    if not vim.list_contains(config.tools.crate_graph.enabled_graphviz_backends, backend) then
+      vim.notify('crate graph backend not recognized as valid: ' .. vim.inspect(backend), vim.log.levels.ERROR)
       return
     end
 
-    graph = string.gsub(graph, "\n", "")
-    print("rust-tools: Processing crate graph. This may take a while...")
+    graph = string.gsub(graph, '\n', '')
+    print('rust-tools: Processing crate graph. This may take a while...')
 
-    local cmd = "dot -T" .. backend
+    local cmd = 'dot -T' .. backend
     if pipe ~= nil then -- optionally pipe to `pipe`
-      cmd = cmd .. " | " .. pipe
+      cmd = cmd .. ' | ' .. pipe
     end
     if output ~= nil then -- optionally redirect to `output`
-      cmd = cmd .. " > " .. output
+      cmd = cmd .. ' > ' .. output
     end
 
     -- Execute dot command to generate the output graph
     -- Needs to be handled with care to prevent security problems
-    local handle, err_ = io.popen(cmd, "w")
+    local handle, err_ = io.popen(cmd, 'w')
     if not handle then
-      vim.notify(
-        "Could not create crate graph " .. (err_ or ""),
-        vim.log.levels.ERROR
-      )
+      vim.notify('Could not create crate graph ' .. (err_ or ''), vim.log.levels.ERROR)
       return
     end
     handle:write(graph)
@@ -70,12 +56,7 @@ local function handler_factory(backend, output, pipe)
 end
 
 function M.view_crate_graph(backend, output, pipe)
-  vim.lsp.buf_request(
-    0,
-    "rust-analyzer/viewCrateGraph",
-    get_opts(),
-    handler_factory(backend, output, pipe)
-  )
+  vim.lsp.buf_request(0, 'rust-analyzer/viewCrateGraph', get_opts(), handler_factory(backend, output, pipe))
 end
 
 return M.view_crate_graph

@@ -1,4 +1,4 @@
-local config = require("ferris.config.internal")
+local config = require('ferris.config.internal')
 
 local M = {}
 
@@ -33,10 +33,10 @@ local function getCommand(c, results)
 
   local ret = vim.list_extend({}, args.cargoArgs or {})
   ret = vim.list_extend(ret, args.cargoExtraArgs or {})
-  table.insert(ret, "--")
+  table.insert(ret, '--')
   ret = vim.list_extend(ret, args.executableArgs or {})
 
-  return "cargo", ret, dir
+  return 'cargo', ret, dir
 end
 
 function M.run_command(choice, result)
@@ -58,16 +58,12 @@ local function handler(_, result)
   end
   -- get the choice from the user
   local options = get_options(result)
-  vim.ui.select(
-    options,
-    { prompt = "Runnables", kind = "rust-tools/runnables" },
-    function(_, choice)
-      M.run_command(choice, result)
+  vim.ui.select(options, { prompt = 'Runnables', kind = 'rust-tools/runnables' }, function(_, choice)
+    M.run_command(choice, result)
 
-      local cached_commands = require("ferris.cached_commands")
-      cached_commands.set_last_runnable(choice, result)
-    end
-  )
+    local cached_commands = require('ferris.cached_commands')
+    cached_commands.set_last_runnable(choice, result)
+  end)
 end
 
 -- Sends the request to rust-analyzer to get the runnables and handles them
@@ -75,7 +71,7 @@ end
 -- which is used to check whether we want to use telescope or the vanilla vim
 -- way for input
 function M.runnables()
-  vim.lsp.buf_request(0, "experimental/runnables", get_params(), handler)
+  vim.lsp.buf_request(0, 'experimental/runnables', get_params(), handler)
 end
 
 return M

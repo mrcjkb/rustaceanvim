@@ -18,17 +18,17 @@ end
 M.execute_last_debuggable = function()
   local args = cache.last_debuggable
   if args then
-    local rt_dap = require("ferris.dap")
+    local rt_dap = require('ferris.dap')
     rt_dap.start(args)
   else
-    local debuggables = require("ferris.debuggables")
+    local debuggables = require('ferris.debuggables')
     debuggables()
   end
 end
 
 M.execute_last_runnable = function()
   local action = cache.last_runnable
-  local runnables = require("ferris.runnables")
+  local runnables = require('ferris.runnables')
   if action then
     runnables.run_command(action[1], action[2])
   else

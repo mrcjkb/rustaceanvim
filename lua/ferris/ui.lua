@@ -17,7 +17,7 @@ end
 ---@param vertical boolean
 ---@param bufnr integer
 function M.split(vertical, bufnr)
-  local cmd = vertical and "vsplit" or "split"
+  local cmd = vertical and 'vsplit' or 'split'
 
   vim.cmd(cmd)
   local win = vim.api.nvim_get_current_win()
@@ -27,7 +27,7 @@ end
 ---@param vertical boolean
 ---@param amount string
 function M.resize(vertical, amount)
-  local cmd = vertical and "vertical resize " or "resize"
+  local cmd = vertical and 'vertical resize ' or 'resize'
   cmd = cmd .. amount
 
   vim.cmd(cmd)

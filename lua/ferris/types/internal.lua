@@ -11,7 +11,7 @@ local M = {}
 ---@param value (fun():T)|T
 ---@return T
 M.evaluate = function(value)
-  if type(value) == "function" then
+  if type(value) == 'function' then
     return value()
   end
   return value

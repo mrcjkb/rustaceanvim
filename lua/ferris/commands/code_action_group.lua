@@ -1,4 +1,4 @@
-local ui = require("ferris.ui")
+local ui = require('ferris.ui')
 local M = {}
 
 ---@param action table
@@ -9,7 +9,7 @@ function M.apply_action(action, client, ctx)
     vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
   end
   if action.command then
-    local command = type(action.command) == "table" and action.command or action
+    local command = type(action.command) == 'table' and action.command or action
     local fn = vim.lsp.commands[command.command]
     if fn then
       local enriched_ctx = vim.deepcopy(ctx)
@@ -43,19 +43,14 @@ function M.on_user_choice(action_tuple, ctx)
   --
   local client = vim.lsp.get_client_by_id(action_tuple[1])
   local action = action_tuple[2]
-  local code_action_provider = client
-    and client.server_capabilities.codeActionProvider
+  local code_action_provider = client and client.server_capabilities.codeActionProvider
   if not client then
     return
   end
-  if
-    not action.edit
-    and type(code_action_provider) == "table"
-    and code_action_provider.resolveProvider
-  then
-    client.request("codeAction/resolve", action, function(err, resolved_action)
+  if not action.edit and type(code_action_provider) == 'table' and code_action_provider.resolveProvider then
+    client.request('codeAction/resolve', action, function(err, resolved_action)
       if err then
-        vim.notify(err.code .. ": " .. err.message, vim.log.levels.ERROR)
+        vim.notify(err.code .. ': ' .. err.message, vim.log.levels.ERROR)
         return
       end
       M.apply_action(resolved_action, client, ctx)
@@ -76,7 +71,7 @@ local function compute_width(action_tuples, is_group)
     local text = action.title
 
     if is_group and action.group then
-      text = action.group .. " ▶"
+      text = action.group .. ' ▶'
     end
     local len = string.len(text)
     if len > width then
@@ -124,7 +119,7 @@ local function on_code_action_results(results, ctx)
     end
   end
   if #action_tuples == 0 then
-    vim.notify("No code actions available", vim.log.levels.INFO)
+    vim.notify('No code actions available', vim.log.levels.INFO)
     return
   end
 
@@ -138,7 +133,7 @@ local function on_code_action_results(results, ctx)
     local action = value[2]
 
     -- Some clippy lints may have newlines in them
-    action.title = string.gsub(action.title, "[\n\r]+", " ")
+    action.title = string.gsub(action.title, '[\n\r]+', ' ')
 
     if action.group then
       if not M.state.actions.grouped[action.group] then
@@ -153,12 +148,11 @@ local function on_code_action_results(results, ctx)
 
   M.state.primary.bufnr = vim.api.nvim_create_buf(false, true)
   M.state.primary.winnr = vim.api.nvim_open_win(M.state.primary.bufnr, true, {
-    relative = "cursor",
+    relative = 'cursor',
     width = M.state.primary.geometry.width,
-    height = vim.tbl_count(M.state.actions.grouped)
-      + vim.tbl_count(M.state.actions.ungrouped),
+    height = vim.tbl_count(M.state.actions.grouped) + vim.tbl_count(M.state.actions.ungrouped),
     focusable = true,
-    border = "rounded",
+    border = 'rounded',
     row = 1,
     col = 0,
   })
@@ -166,39 +160,22 @@ local function on_code_action_results(results, ctx)
   local idx = 1
   for key, value in pairs(M.state.actions.grouped) do
     value.idx = idx
-    vim.api.nvim_buf_set_lines(
-      M.state.primary.bufnr,
-      -1,
-      -1,
-      false,
-      { key .. " ▶" }
-    )
+    vim.api.nvim_buf_set_lines(M.state.primary.bufnr, -1, -1, false, { key .. ' ▶' })
     idx = idx + 1
   end
 
   for _, value in pairs(M.state.actions.ungrouped) do
     local action = value[2]
     value[2].idx = idx
-    vim.api.nvim_buf_set_lines(
-      M.state.primary.bufnr,
-      -1,
-      -1,
-      false,
-      { action.title }
-    )
+    vim.api.nvim_buf_set_lines(M.state.primary.bufnr, -1, -1, false, { action.title })
     idx = idx + 1
   end
 
   vim.api.nvim_buf_set_lines(M.state.primary.bufnr, 0, 1, false, {})
 
-  vim.keymap.set(
-    "n",
-    "<CR>",
-    on_primary_enter_press,
-    { buffer = M.state.primary.bufnr }
-  )
+  vim.keymap.set('n', '<CR>', on_primary_enter_press, { buffer = M.state.primary.bufnr })
 
-  vim.keymap.set("n", "q", on_primary_quit, { buffer = M.state.primary.bufnr })
+  vim.keymap.set('n', 'q', on_primary_quit, { buffer = M.state.primary.bufnr })
 
   M.codeactionify_window_buffer(M.state.primary.winnr, M.state.primary.bufnr)
 
@@ -209,7 +186,7 @@ local function on_code_action_results(results, ctx)
     end,
   })
 
-  vim.api.nvim_create_autocmd("CursorMoved", {
+  vim.api.nvim_create_autocmd('CursorMoved', {
     buffer = M.state.primary.bufnr,
     callback = M.on_cursor_move,
   })
@@ -219,9 +196,9 @@ end
 
 function M.codeactionify_window_buffer(winnr, bufnr)
   vim.bo[bufnr].modifiable = false
-  vim.bo[bufnr].bufhidden = "delete"
-  vim.bo[bufnr].buftype = "nofile"
-  vim.bo[bufnr].ft = "markdown"
+  vim.bo[bufnr].bufhidden = 'delete'
+  vim.bo[bufnr].buftype = 'nofile'
+  vim.bo[bufnr].ft = 'markdown'
 
   vim.wo[winnr].nu = true
   vim.wo[winnr].rnu = false
@@ -292,52 +269,32 @@ function M.on_cursor_move()
       M.state.secondary.geometry = compute_width(value.actions, false)
 
       M.state.secondary.bufnr = vim.api.nvim_create_buf(false, true)
-      M.state.secondary.winnr =
-        vim.api.nvim_open_win(M.state.secondary.bufnr, false, {
-          relative = "win",
-          win = M.state.primary.winnr,
-          width = M.state.secondary.geometry.width,
-          height = #value.actions,
-          focusable = true,
-          border = "rounded",
-          row = line - 2,
-          col = M.state.primary.geometry.width + 1,
-        })
+      M.state.secondary.winnr = vim.api.nvim_open_win(M.state.secondary.bufnr, false, {
+        relative = 'win',
+        win = M.state.primary.winnr,
+        width = M.state.secondary.geometry.width,
+        height = #value.actions,
+        focusable = true,
+        border = 'rounded',
+        row = line - 2,
+        col = M.state.primary.geometry.width + 1,
+      })
 
       local idx = 1
       for _, inner_value in pairs(value.actions) do
         local action = inner_value[2]
         action.idx = idx
-        vim.api.nvim_buf_set_lines(
-          M.state.secondary.bufnr,
-          -1,
-          -1,
-          false,
-          { action.title }
-        )
+        vim.api.nvim_buf_set_lines(M.state.secondary.bufnr, -1, -1, false, { action.title })
         idx = idx + 1
       end
 
       vim.api.nvim_buf_set_lines(M.state.secondary.bufnr, 0, 1, false, {})
 
-      M.codeactionify_window_buffer(
-        M.state.secondary.winnr,
-        M.state.secondary.bufnr
-      )
+      M.codeactionify_window_buffer(M.state.secondary.winnr, M.state.secondary.bufnr)
 
-      vim.keymap.set(
-        "n",
-        "<CR>",
-        on_secondary_enter_press,
-        { buffer = M.state.secondary.bufnr }
-      )
+      vim.keymap.set('n', '<CR>', on_secondary_enter_press, { buffer = M.state.secondary.bufnr })
 
-      vim.keymap.set(
-        "n",
-        "q",
-        on_secondary_quit,
-        { buffer = M.state.secondary.bufnr }
-      )
+      vim.keymap.set('n', 'q', on_secondary_quit, { buffer = M.state.secondary.bufnr })
 
       return
     end
@@ -381,17 +338,9 @@ M.code_action_group = function()
   local params = vim.lsp.util.make_range_params()
   params.context = context
 
-  vim.lsp.buf_request_all(
-    0,
-    "textDocument/codeAction",
-    params,
-    function(results)
-      on_code_action_results(
-        results,
-        { bufnr = 0, method = "textDocument/codeAction", params = params }
-      )
-    end
-  )
+  vim.lsp.buf_request_all(0, 'textDocument/codeAction', params, function(results)
+    on_code_action_results(results, { bufnr = 0, method = 'textDocument/codeAction', params = params })
+  end)
 end
 
 return M.code_action_group

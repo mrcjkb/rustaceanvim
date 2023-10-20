@@ -10,7 +10,7 @@ end
 
 local function handler(err, result, ctx)
   if err then
-    error("Could not execute request to server: " .. err.message)
+    error('Could not execute request to server: ' .. err.message)
     return
   end
 
@@ -22,13 +22,13 @@ end
 
 function M.ssr(query)
   if not query then
-    vim.ui.input({ prompt = "Enter query: " }, function(input)
+    vim.ui.input({ prompt = 'Enter query: ' }, function(input)
       query = input
     end)
   end
 
   if query then
-    vim.lsp.buf_request(0, "experimental/ssr", get_opts(query), handler)
+    vim.lsp.buf_request(0, 'experimental/ssr', get_opts(query), handler)
   end
 end
 

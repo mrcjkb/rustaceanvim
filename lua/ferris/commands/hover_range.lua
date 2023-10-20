@@ -9,11 +9,11 @@ local M = {}
 local function make_lsp_position(row1, col1, row2, col2)
   -- Note: vim's lines are 1-indexed, but LSP's are 0-indexed
   return {
-    ["start"] = {
+    ['start'] = {
       line = row1 - 1,
       character = col1,
     },
-    ["end"] = {
+    ['end'] = {
       line = row2 - 1,
       character = col2,
     },
@@ -23,7 +23,7 @@ end
 ---@return lsp_range | nil
 local function get_visual_selected_range()
   -- Taken from https://github.com/neovim/neovim/pull/13896#issuecomment-774680224
-  local p1 = vim.fn.getpos("v")
+  local p1 = vim.fn.getpos('v')
   if not p1 then
     return nil
   end
@@ -39,12 +39,7 @@ local function get_visual_selected_range()
     return make_lsp_position(row2, col2, row1, col1)
   end
 
-  return make_lsp_position(
-    row1,
-    math.min(col1, col2),
-    row1,
-    math.max(col1, col2)
-  )
+  return make_lsp_position(row1, math.min(col1, col2), row1, math.max(col1, col2))
 end
 
 ---@return lsp_range_params
@@ -56,7 +51,7 @@ local function get_opts()
 end
 
 function M.hover_range()
-  vim.lsp.buf_request(0, "textDocument/hover", get_opts())
+  vim.lsp.buf_request(0, 'textDocument/hover', get_opts())
 end
 
 return M.hover_range

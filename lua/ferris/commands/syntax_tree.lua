@@ -1,4 +1,4 @@
-local ui = require("ferris.ui")
+local ui = require('ferris.ui')
 
 local M = {}
 
@@ -13,7 +13,7 @@ local latest_buf_id = nil
 local function parse_lines(result)
   local ret = {}
 
-  for line in string.gmatch(result, "([^\n]+)") do
+  for line in string.gmatch(result, '([^\n]+)') do
     table.insert(ret, line)
   end
 
@@ -24,13 +24,13 @@ local function handler(_, result)
   ui.delete_buf(latest_buf_id)
   latest_buf_id = vim.api.nvim_create_buf(false, true)
   ui.split(true, latest_buf_id)
-  vim.api.nvim_buf_set_name(latest_buf_id, "syntax.rust")
+  vim.api.nvim_buf_set_name(latest_buf_id, 'syntax.rust')
   vim.api.nvim_buf_set_text(latest_buf_id, 0, 0, 0, 0, parse_lines(result))
-  ui.resize(true, "-25")
+  ui.resize(true, '-25')
 end
 
 function M.syntax_tree()
-  vim.lsp.buf_request(0, "rust-analyzer/syntaxTree", get_params(), handler)
+  vim.lsp.buf_request(0, 'rust-analyzer/syntaxTree', get_params(), handler)
 end
 
 return M.syntax_tree

@@ -19,7 +19,7 @@ end
 
 --- Sends the request to rust-analyzer to get cargo.toml's location and open it
 function M.open_cargo_toml()
-  vim.lsp.buf_request(0, "experimental/openCargoToml", get_params(), handler)
+  vim.lsp.buf_request(0, 'experimental/openCargoToml', get_params(), handler)
 end
 
 return M.open_cargo_toml

@@ -1,4 +1,4 @@
-local ui = require("ferris.ui")
+local ui = require('ferris.ui')
 
 local M = {}
 
@@ -21,14 +21,14 @@ local function parse_lines(t)
   local ret = {}
 
   local name = t.name
-  local text = "// Recursive expansion of the " .. name .. " macro"
-  table.insert(ret, "// " .. string.rep("=", string.len(text) - 3))
+  local text = '// Recursive expansion of the ' .. name .. ' macro'
+  table.insert(ret, '// ' .. string.rep('=', string.len(text) - 3))
   table.insert(ret, text)
-  table.insert(ret, "// " .. string.rep("=", string.len(text) - 3))
-  table.insert(ret, "")
+  table.insert(ret, '// ' .. string.rep('=', string.len(text) - 3))
+  table.insert(ret, '')
 
   local expansion = t.expansion
-  for string in string.gmatch(expansion, "([^\n]+)") do
+  for string in string.gmatch(expansion, '([^\n]+)') do
     table.insert(ret, string)
   end
 
@@ -39,7 +39,7 @@ local function handler(_, result)
   -- echo a message when result is nil (meaning no macro under cursor) and
   -- exit
   if result == nil then
-    vim.api.nvim_out_write("No macro under cursor!\n")
+    vim.api.nvim_out_write('No macro under cursor!\n')
     return
   end
 
@@ -54,17 +54,17 @@ local function handler(_, result)
   ui.split(true, latest_buf_id)
 
   -- set filetype to rust for syntax highlighting
-  vim.bo[latest_buf_id].filetype = "rust"
+  vim.bo[latest_buf_id].filetype = 'rust'
   -- write the expansion content to the buffer
   vim.api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, parse_lines(result))
 
   -- make the new buffer smaller
-  ui.resize(true, "-25")
+  ui.resize(true, '-25')
 end
 
 --- Sends the request to rust-analyzer to get cargo.toml's location and open it
 function M.expand_macro()
-  vim.lsp.buf_request(0, "rust-analyzer/expandMacro", get_params(), handler)
+  vim.lsp.buf_request(0, 'rust-analyzer/expandMacro', get_params(), handler)
 end
 
 return M.expand_macro

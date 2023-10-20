@@ -1,4 +1,4 @@
-local config = require("ferris.config.internal")
+local config = require('ferris.config.internal')
 
 local M = {}
 

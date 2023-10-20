@@ -5,12 +5,12 @@ local M = {}
 local latest_buf_id = nil
 
 function M.execute_command(command, args, cwd)
-  local shell = require("ferris.shell")
-  local ui = require("ferris.ui")
-  local full_command = shell.chain_commands({
-    shell.make_command_from_args("cd", { cwd }),
+  local shell = require('ferris.shell')
+  local ui = require('ferris.ui')
+  local full_command = shell.chain_commands {
+    shell.make_command_from_args('cd', { cwd }),
     shell.make_command_from_args(command, args),
-  })
+  }
 
   -- check if a buffer with the latest id is already open, if it is then
   -- delete it and continue
@@ -23,16 +23,10 @@ function M.execute_command(command, args, cwd)
   ui.split(false, latest_buf_id)
 
   -- make the new buffer smaller
-  ui.resize(false, "-5")
+  ui.resize(false, '-5')
 
   -- close the buffer when escape is pressed :)
-  vim.api.nvim_buf_set_keymap(
-    latest_buf_id,
-    "n",
-    "<Esc>",
-    ":q<CR>",
-    { noremap = true }
-  )
+  vim.api.nvim_buf_set_keymap(latest_buf_id, 'n', '<Esc>', ':q<CR>', { noremap = true })
 
   -- run the command
   vim.fn.termopen(full_command)

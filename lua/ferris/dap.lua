@@ -1,4 +1,4 @@
-local config = require("ferris.config.internal")
+local config = require('ferris.config.internal')
 
 local function scheduled_error(err)
   vim.schedule(function()
@@ -6,15 +6,15 @@ local function scheduled_error(err)
   end)
 end
 
-local ok, _ = pcall(require, "dap")
+local ok, _ = pcall(require, 'dap')
 if not ok then
   return {
     start = function(_)
-      scheduled_error("nvim-dap not found.")
+      scheduled_error('nvim-dap not found.')
     end,
   }
 end
-local dap = require("dap")
+local dap = require('dap')
 if config.dap.adapter ~= false then
   dap.adapters.rt_lldb = config.dap.adapter
 end
@@ -26,12 +26,12 @@ local M = {}
 ---@param liblldb_path string
 function M.get_codelldb_adapter(codelldb_path, liblldb_path)
   return {
-    type = "server",
-    port = "${port}",
-    host = "127.0.0.1",
+    type = 'server',
+    port = '${port}',
+    host = '127.0.0.1',
     executable = {
       command = codelldb_path,
-      args = { "--liblldb", liblldb_path, "--port", "${port}" },
+      args = { '--liblldb', liblldb_path, '--port', '${port}' },
     },
   }
 end
@@ -39,7 +39,7 @@ end
 local function get_cargo_args_from_runnables_args(runnable_args)
   local cargo_args = runnable_args.cargoArgs
 
-  local message_json = "--message-format=json"
+  local message_json = '--message-format=json'
   if not vim.list_contains(cargo_args, message_json) then
     table.insert(cargo_args, message_json)
   end
@@ -54,29 +54,25 @@ local function get_cargo_args_from_runnables_args(runnable_args)
 end
 
 function M.start(args)
-  if not pcall(require, "plenary.job") then
-    scheduled_error("plenary.nvim not found.")
+  if not pcall(require, 'plenary.job') then
+    scheduled_error('plenary.nvim not found.')
     return
   end
 
-  local Job = require("plenary.job")
+  local Job = require('plenary.job')
 
   local cargo_args = get_cargo_args_from_runnables_args(args)
 
-  vim.notify(
-    "Compiling a debug build for debugging. This might take some time..."
-  )
+  vim.notify('Compiling a debug build for debugging. This might take some time...')
 
   Job
     :new({
-      command = "cargo",
+      command = 'cargo',
       args = cargo_args,
       cwd = args.workspaceRoot,
       on_exit = function(j, code)
         if code and code > 0 then
-          scheduled_error(
-            "An error occurred while compiling. Please fix all compilation issues and try again."
-          )
+          scheduled_error('An error occurred while compiling. Please fix all compilation issues and try again.')
           return
         end
 
@@ -87,25 +83,19 @@ function M.start(args)
             local artifact = vim.fn.json_decode(value)
 
             -- only process artifact if it's valid json object and it is a compiler artifact
-            if
-              type(artifact) ~= "table"
-              or artifact.reason ~= "compiler-artifact"
-            then
+            if type(artifact) ~= 'table' or artifact.reason ~= 'compiler-artifact' then
               goto loop_end
             end
 
-            local is_binary =
-              vim.list_contains(artifact.target.crate_types, "bin")
-            local is_build_script =
-              vim.list_contains(artifact.target.kind, "custom-build")
-            local is_test = (
-              (artifact.profile.test == true) and (artifact.executable ~= nil)
-            ) or vim.list_contains(artifact.target.kind, "test")
+            local is_binary = vim.list_contains(artifact.target.crate_types, 'bin')
+            local is_build_script = vim.list_contains(artifact.target.kind, 'custom-build')
+            local is_test = ((artifact.profile.test == true) and (artifact.executable ~= nil))
+              or vim.list_contains(artifact.target.kind, 'test')
             -- only add executable to the list if we want a binary debug and it is a binary
             -- or if we want a test debug and it is a test
             if
-              (cargo_args[1] == "build" and is_binary and not is_build_script)
-              or (cargo_args[1] == "test" and is_test)
+              (cargo_args[1] == 'build' and is_binary and not is_build_script)
+              or (cargo_args[1] == 'test' and is_test)
             then
               table.insert(executables, artifact.executable)
             end
@@ -115,19 +105,19 @@ function M.start(args)
 
           -- only 1 executable is allowed for debugging - error out if zero or many were found
           if #executables <= 0 then
-            scheduled_error("No compilation artifacts found.")
+            scheduled_error('No compilation artifacts found.')
             return
           end
           if #executables > 1 then
-            scheduled_error("Multiple compilation artifacts are not supported.")
+            scheduled_error('Multiple compilation artifacts are not supported.')
             return
           end
 
           -- create debug configuration
           local dap_config = {
-            name = "Rust tools debug",
-            type = "rt_lldb",
-            request = "launch",
+            name = 'Rust tools debug',
+            type = 'rt_lldb',
+            request = 'launch',
             program = executables[1],
             args = args.executableArgs or {},
             cwd = args.workspaceRoot,

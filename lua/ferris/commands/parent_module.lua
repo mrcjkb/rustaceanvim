@@ -24,7 +24,7 @@ end
 
 --- Sends the request to rust-analyzer to get the parent modules location and open it
 function M.parent_module()
-  vim.lsp.buf_request(0, "experimental/parentModule", get_params(), handler)
+  vim.lsp.buf_request(0, 'experimental/parentModule', get_params(), handler)
 end
 
 return M.parent_module

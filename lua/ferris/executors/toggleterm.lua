@@ -2,15 +2,15 @@
 local M = {}
 
 function M.execute_command(command, args, cwd)
-  local ok, term = pcall(require, "toggleterm.terminal")
+  local ok, term = pcall(require, 'toggleterm.terminal')
   if not ok then
     vim.schedule(function()
-      vim.notify("toggleterm not found.", vim.log.levels.ERROR)
+      vim.notify('toggleterm not found.', vim.log.levels.ERROR)
     end)
     return
   end
 
-  local shell = require("ferris.shell")
+  local shell = require('ferris.shell')
   term.Terminal
     :new({
       dir = cwd,
@@ -18,20 +18,10 @@ function M.execute_command(command, args, cwd)
       close_on_exit = false,
       on_open = function(t)
         -- enter normal mode
-        vim.api.nvim_feedkeys(
-          vim.api.nvim_replace_termcodes([[<C-\><C-n>]], true, true, true),
-          "",
-          true
-        )
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes([[<C-\><C-n>]], true, true, true), '', true)
 
         -- set close keymap
-        vim.api.nvim_buf_set_keymap(
-          t.bufnr,
-          "n",
-          "q",
-          "<cmd>close<CR>",
-          { noremap = true, silent = true }
-        )
+        vim.api.nvim_buf_set_keymap(t.bufnr, 'n', 'q', '<cmd>close<CR>', { noremap = true, silent = true })
       end,
     })
     :toggle()

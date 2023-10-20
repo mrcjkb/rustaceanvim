@@ -3,14 +3,14 @@ local M = {}
 ---@return boolean
 local function is_windows()
   local sysname = vim.loop.os_uname().sysname
-  return sysname == "Windows" or sysname == "Windows_NT"
+  return sysname == 'Windows' or sysname == 'Windows_NT'
 end
 
 ---@return boolean
 local function is_nushell()
   ---@diagnostic disable-next-line: missing-parameter
-  local shell = vim.loop.os_getenv("SHELL")
-  local nu = "nu"
+  local shell = vim.loop.os_getenv('SHELL')
+  local nu = 'nu'
   -- Check if $SHELL ends in "nu"
   return shell ~= nil and shell:sub(-string.len(nu)) == nu
 end
@@ -20,8 +20,8 @@ end
 ---@param commands string[]
 ---@return string
 function M.chain_commands(commands)
-  local separator = is_windows() and " | " or is_nushell() and ";" or " && "
-  local ret = ""
+  local separator = is_windows() and ' | ' or is_nushell() and ';' or ' && '
+  local ret = ''
 
   for i, value in ipairs(commands) do
     local is_last = i == #commands
@@ -39,10 +39,10 @@ end
 ---@param args string[]
 ---@return string command
 function M.make_command_from_args(command, args)
-  local ret = command .. " "
+  local ret = command .. ' '
 
   for _, value in ipairs(args) do
-    ret = ret .. value .. " "
+    ret = ret .. value .. ' '
   end
 
   return ret
