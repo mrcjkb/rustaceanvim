@@ -70,10 +70,10 @@
           hooks = {
             alejandra.enable = true;
             stylua.enable = true;
-            # luacheck.enable = true;
+            luacheck.enable = true;
             # lua-ls.enable = true;
-            # editorconfig-checker.enable = true;
-            # markdownlint.enable = true;
+            editorconfig-checker.enable = true;
+            markdownlint.enable = true;
           };
           settings = {
             lua-ls = {
@@ -116,15 +116,22 @@
             markdownlint-cli
           ];
         };
+
+        docgen = pkgs.callPackage ./nix/docgen.nix {};
       in {
         devShells = {
           default = devShell;
           inherit devShell;
         };
 
-        packages = rec {
-          default = nvim-plugin;
-          inherit (pkgs) nvim-plugin;
+        packages = let
+          ferris-nvim = pkgs.ferris-nvim;
+        in {
+          default = ferris-nvim;
+          inherit
+            ferris-nvim
+            docgen
+            ;
         };
 
         checks = {

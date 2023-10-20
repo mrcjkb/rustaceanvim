@@ -2,7 +2,7 @@
   name,
   self,
 }: final: prev: {
-  nvim-plugin = final.pkgs.vimUtils.buildVimPlugin {
+  ferris-nvim = final.pkgs.vimUtils.buildVimPlugin {
     inherit name;
     src = self;
   };

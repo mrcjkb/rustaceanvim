@@ -3,8 +3,7 @@
   self,
   neodev-nvim,
   plugin-name,
-}: final: prev:
-let
+}: final: prev: let
   nvim-nightly = final.neovim-nightly;
 
   neodev-plugin = final.pkgs.vimUtils.buildVimPlugin {
