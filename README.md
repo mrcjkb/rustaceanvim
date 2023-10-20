@@ -35,8 +35,6 @@
 [![Build Status][ci-shield]][ci-url]
 [![LuaRocks][luarocks-shield]][luarocks-url]
 
-A heavily modified fork of [`rust-tools.nvim`](https://github.com/Saecki/crates.nvim).
-
 ## Quick Links
 
 - [Installation](#installation)
@@ -47,8 +45,9 @@ A heavily modified fork of [`rust-tools.nvim`](https://github.com/Saecki/crates.
 ## Prerequisites
 
 - `neovim 0.9`
-- `rust-analyzer`
-- `dot` from `graphviz` (optional), for crate graphs
+- [`rust-analyzer`](https://rust-analyzer.github.io/)
+- [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html)
+  (optional), for crate graphs.
 
 ## Installation
 
