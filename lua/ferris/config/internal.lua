@@ -190,4 +190,10 @@ if opts.tools and opts.tools.executor and type(opts.tools.executor) == 'string' 
 end
 FerrisConfig = vim.tbl_deep_extend('force', {}, FerrisDefaultConfig, opts)
 
+local check = require('ferris.config.check')
+local ok, err = check.validate(FerrisConfig)
+if not ok then
+  vim.notify('ferris: ' .. err, vim.log.levels.ERROR)
+end
+
 return FerrisConfig
