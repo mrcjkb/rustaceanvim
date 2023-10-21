@@ -1,6 +1,9 @@
 local M = {}
 
 function M.snippet_text_edits_to_text_edits(spe)
+  if type(spe) ~= 'table' then
+    return
+  end
   for _, value in ipairs(spe) do
     if value.newText and value.insertTextFormat then
       -- $0 -> Nothing
