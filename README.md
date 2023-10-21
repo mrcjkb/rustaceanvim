@@ -117,7 +117,9 @@ local bufnr = vim.api.nvim_get_current_buf()
 vim.keymap.set(
   "n", 
   "<leader>a", 
-  vim.cmd.RustCodeAction, 
+  function()
+    vim.cmd.RustLsp('codeAction'), 
+  end,
   { silent = true, buffer = bufnr }
 )
 ```
@@ -146,7 +148,7 @@ for more configuration options.
   
   ![runnables](https://github.com/simrat39/rust-tools-demos/raw/master/runnables.gif)
   ```vimscript
-  :RustRunnables
+  :RustLsp runnables [last?]
   ```
 </details>
 
@@ -157,7 +159,7 @@ for more configuration options.
   
   ![expand macros](https://github.com/simrat39/rust-tools-demos/raw/master/expand_macros_recursively.gif)
   ```vimscript
-  :RustExpandMacro  
+  :RustLsp expandMacro
   ```
 </details>
 
@@ -168,8 +170,8 @@ for more configuration options.
   
   ![move items](https://github.com/simrat39/rust-tools-demos/raw/master/move_item.gif)
   ```vimscript
-  :RustMoveItemUp    
-  :RustMoveItemDown    
+  :RustLsp moveItem up
+  :RustLsp moveItem down
 ```
 </details>
 
@@ -181,7 +183,7 @@ for more configuration options.
  ![hover actions](https://github.com/simrat39/rust-tools-demos/raw/master/hover_actions.gif)
  Note: To activate hover actions, run the command twice. This will move you into the window, then press enter on the selection you want. Alternatively, you can set ```auto_focus``` to true in your config and you will automatically enter the hover actions window.
  ```vimscript
- :RustHoverActions 
+ :RustLsp hover actions
  ```
 </details>
 
@@ -191,7 +193,7 @@ for more configuration options.
   </summary>
 
   ```vimscript
-  :RustHoverRange 
+  :RustLsp hover range
   ```
 </details>
 
@@ -202,7 +204,7 @@ for more configuration options.
   
   ![open cargo](https://github.com/simrat39/rust-tools-demos/raw/master/open_cargo_toml.gif)
   ```vimscript
-  :RustOpenCargo
+  :RustLsp openCargo
   ```
 </details>
 
@@ -213,7 +215,7 @@ for more configuration options.
   
   ![parent module](https://github.com/simrat39/rust-tools-demos/raw/master/parent_module.gif)
   ```vimscript
-  :RustParentModule 
+  :RustLsp parentModule
   ```
 </details>
 
@@ -224,7 +226,7 @@ for more configuration options.
   
   ![join lines](https://github.com/simrat39/rust-tools-demos/raw/master/join_lines.gif)
   ```vimscript
-  :RustJoinLines  
+  :RustLsp joinLines
   ```
 </details>
 
@@ -234,7 +236,7 @@ for more configuration options.
   </summary>
   
   ```vimscript
-  :RustSSR [query]
+  :RustLsp ssr [query]
   ```
 </details>
 
@@ -244,7 +246,7 @@ for more configuration options.
   </summary>
   
   ```vimscript
-  :RustViewCrateGraph [backend [output]]
+  :RustLsp crateGraph [backend [output]]
   ```
 </details>
 
@@ -254,7 +256,7 @@ for more configuration options.
   </summary>
   
   ```vimscript
-  :RustSyntaxTree
+  :RustLsp sytaxTree
   ```
 </details>
 
@@ -271,7 +273,7 @@ for more configuration options.
   can be costly.
   
   ```vimscript
-  :RustFlyCheck
+  :RustLsp flyCheck
   ```
 </details>
 
