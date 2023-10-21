@@ -344,8 +344,8 @@ until you can reproduce it.
 - [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim)
   This project was created just before I renamed my fork
   (but after I had checked the web for name clashes (╯°□°)╯︵ ┻━┻).
-  It is more minimal than this plugin, geared towards users
-  who prefer manual LSP client configuration.
+  It is geared towards people who prefer manual LSP
+  client configuration.
 
 ## Inspiration
 
