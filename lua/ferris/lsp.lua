@@ -1,4 +1,6 @@
 local M = {}
+---@type FerrisConfig
+local config = require('ferris.config.internal')
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -63,10 +65,135 @@ local function get_root_dir(fname)
     })[1])
 end
 
+local function rust_lsp(opts)
+  local fargs = opts.fargs
+  local cmd = fargs[1]
+  local args = #fargs > 1 and vim.list_slice(fargs, 2, #fargs) or {}
+  if cmd == 'codeAction' then
+    require('ferris.commands.code_action_group')()
+  elseif cmd == 'crateGraph' then
+    require('ferris.commands.crate_graph')(args)
+  elseif cmd == 'debuggables' then
+    if #args == 0 then
+      require('ferris.commands.debuggables')()
+    elseif #args == 1 and args[1] == 'last' then
+      require('ferris.cached_commands').execute_last_debuggable()
+    else
+      vim.notify('debuggables: unexpected arguments: ' .. vim.inspect(cmd), vim.log.levels.ERROR)
+    end
+  elseif cmd == 'expandMacro' then
+    require('ferris.commands.expand_macro')()
+  elseif cmd == 'externalDocs' then
+    require('ferris.commands.external_docs')()
+  elseif cmd == 'hover' then
+    if #cmd < 2 then
+      vim.notify("hover: called without 'actions' or 'range'", vim.log.levels.ERROR)
+      return
+    end
+    local subcmd = args[1]
+    if subcmd == 'actions' then
+      require('ferris.hover_actions').hover_actions()
+    elseif subcmd == 'range' then
+      require('ferris.commands.hover_range')()
+    else
+      vim.notify('hover: unknown subcommand: ' .. subcmd .. " expected 'actions' or 'range'", vim.log.levels.ERROR)
+    end
+  elseif cmd == 'runnables' then
+    if #args == 0 then
+      require('ferris.runnables').runnables()
+    elseif #args == 1 and args[1] == 'last' then
+      require('ferris.cached_commands').execute_last_runnable()
+    else
+      vim.notify('runnables: unexpected arguments: ' .. vim.inspect(cmd), vim.log.levels.ERROR)
+    end
+  elseif cmd == 'joinLines' then
+    require('ferris.commands.join_lines')()
+  elseif cmd == 'moveItem' then
+    if #args < 1 then
+      vim.notify("moveItem: called without 'up' or 'down'", vim.log.levels.ERROR)
+      return
+    end
+    if args[1] == 'down' then
+      require('ferris.commands.move_item')()
+    elseif args[1] == 'up' then
+      require('ferris.commands.move_item')(true)
+    else
+      vim.notify(
+        'moveItem: unexpected argument: ' .. vim.inspect(args) .. " expected 'up' or 'down'",
+        vim.log.levels.ERROR
+      )
+    end
+  elseif cmd == 'openCargo' then
+    require('ferris.commands.open_cargo_toml')()
+  elseif cmd == 'parentModule' then
+    require('ferris.commands.parent_module')()
+  elseif cmd == 'ssr' then
+    if #args < 1 then
+      vim.notify('ssr: called without a query', vim.log.levels.ERROR)
+      return
+    end
+    local query = args[1]
+    require('ferris.commands.ssr')(query)
+  elseif cmd == 'reloadWorkspace' then
+    require('ferris.commands.workspace_refresh')()
+  elseif cmd == 'syntaxTree' then
+    require('ferris.commands.syntax_tree')()
+  elseif cmd == 'flyCheck' then
+    require('ferris.commands.fly_check')()
+  end
+end
+
+local rust_lsp_cmd_name = 'RustLsp'
+
+local function create_rust_lsp_command()
+  vim.api.nvim_create_user_command(rust_lsp_cmd_name, rust_lsp, {
+    nargs = '+',
+    desc = 'Interacts with the rust-analyzer LSP client',
+    complete = function(arg_lead, cmdline, _)
+      local commands = {
+        'codeAction',
+        'crateGraph',
+        'debuggables',
+        'debuggables last',
+        'expandMacro',
+        'externalDocs',
+        'hover',
+        'hover actions',
+        'hover range',
+        'runnables',
+        'runnables last',
+        'joinLines',
+        'moveItem',
+        'moveItem up',
+        'moveItem down',
+        'openCargo',
+        'ssr',
+        'parentModule',
+        'reloadWorkspace',
+        'syntaxTree',
+        'flyCheck',
+      }
+      if cmdline:match('^' .. rust_lsp_cmd_name .. ' cr%s+%w*$') then
+        local backends = config.tools.crate_graph.enabled_graphviz_backends or {}
+        return vim.tbl_map(function(backend)
+          return 'crateGraph ' .. backend
+        end, backends)
+      end
+      if cmdline:match('^' .. rust_lsp_cmd_name .. '%s+%w*$') then
+        return vim
+          .iter(commands)
+          :filter(function(command)
+            return command:find(arg_lead) ~= nil
+          end)
+          :totable()
+      end
+    end,
+  })
+end
+
 -- Start or attach the LSP client
 ---@return integer|nil client_id The LSP client ID
 M.start = function()
-  local config = require('ferris.config.internal')
   local client_config = config.server
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
   local types = require('ferris.types.internal')
@@ -125,137 +252,12 @@ M.start = function()
 
   lsp_start_opts.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_opts.handlers or {})
 
-  local lsp_commands = {
-    RustCodeAction = {
-      function()
-        require('ferris.commands.code_action_group')()
-      end,
-
-      {},
-    },
-    RustViewCrateGraph = {
-      function()
-        require('ferris.commands.crate_graph')()
-      end,
-      {
-        nargs = '*',
-        complete = 'customlist,v:lua.rust_tools_get_graphviz_backends',
-      },
-    },
-    RustDebuggables = {
-      function()
-        require('ferris.commands.debuggables')()
-      end,
-      {},
-    },
-    RustExpandMacro = {
-      function()
-        require('ferris.commands.expand_macro')()
-      end,
-      {},
-    },
-    RustOpenExternalDocs = {
-      function()
-        require('ferris.commands.external_docs')()
-      end,
-      {},
-    },
-    RustHoverActions = {
-      function()
-        require('ferris.hover_actions').hover_actions()
-      end,
-      {},
-    },
-    RustHoverRange = {
-      function()
-        require('ferris.commands.hover_range')()
-      end,
-      {},
-    },
-    RustLastDebug = {
-      function()
-        require('ferris.cached_commands').execute_last_debuggable()
-      end,
-      {},
-    },
-    RustLastRun = {
-      function()
-        require('ferris.cached_commands').execute_last_runnable()
-      end,
-      {},
-    },
-    RustJoinLines = {
-      function()
-        require('ferris.commands.join_lines')()
-      end,
-      {},
-    },
-    RustMoveItemDown = {
-      function()
-        require('ferris.commands.move_item')()
-      end,
-      {},
-    },
-    RustMoveItemUp = {
-      function()
-        require('ferris.commands.move_item')(true)
-      end,
-      {},
-    },
-    RustOpenCargo = {
-      function()
-        require('ferris.commands.open_cargo_toml')()
-      end,
-      {},
-    },
-    RustParentModule = {
-      function()
-        require('ferris.commands.parent_module')()
-      end,
-      {},
-    },
-    RustRunnables = {
-      function()
-        require('ferris.runnables').runnables()
-      end,
-      {},
-    },
-    RustSSR = {
-      function(query)
-        require('ferris.commands.ssr')(query)
-      end,
-      {
-        nargs = '?',
-      },
-    },
-    RustReloadWorkspace = {
-      function()
-        require('ferris.commands.workspace_refresh')()
-      end,
-      {},
-    },
-    RustSyntaxTree = {
-      function()
-        require('ferris.commands.syntax_tree')()
-      end,
-      {},
-    },
-    RustFlyCheck = {
-      function()
-        require('ferris.commands.fly_check')()
-      end,
-      {},
-    },
-  }
-
   local augroup = vim.api.nvim_create_augroup('FerrisAutoCmds', { clear = true })
 
   local old_on_init = lsp_start_opts.on_init
   lsp_start_opts.on_init = function(...)
     override_apply_text_edits()
-    for name, command in pairs(lsp_commands) do
-      vim.api.nvim_create_user_command(name, unpack(command))
-    end
+    create_rust_lsp_command()
     if config.tools.reload_workspace_from_cargo_toml then
       vim.api.nvim_create_autocmd('BufWritePost', {
         pattern = '*/Cargo.toml',
@@ -273,11 +275,7 @@ M.start = function()
   local old_on_exit = lsp_start_opts.on_exit
   lsp_start_opts.on_exit = function(...)
     override_apply_text_edits()
-    for name, _ in pairs(lsp_commands) do
-      if vim.cmd[name] then
-        vim.api.nvim_del_user_command(name)
-      end
-    end
+    vim.api.nvim_del_user_command(rust_lsp_cmd_name)
     vim.api.nvim_del_augroup_by_id(augroup)
     if type(old_on_exit) == 'function' then
       old_on_exit(...)
@@ -302,19 +300,33 @@ M.stop = function()
   return clients
 end
 
-local commands = {
-  RustAnalyzerStart = {
-    M.start,
-    {},
-  },
-  RustAnalyzerStop = {
-    M.stop,
-    {},
-  },
-}
-
-for name, command in pairs(commands) do
-  vim.api.nvim_create_user_command(name, unpack(command))
+local function rust_analyzer_cmd(opts)
+  local fargs = opts.fargs
+  local cmd = fargs[1]
+  if cmd == 'start' then
+    M.start()
+  elseif cmd == 'stop' then
+    M.stop()
+  end
 end
+
+vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
+  nargs = '+',
+  desc = 'Starts or stops the rust-analyzer LSP client',
+  complete = function(arg_lead, cmdline, _)
+    local commands = {
+      'start',
+      'stop',
+    }
+    if cmdline:match('^RustAnalyzer%s+%w*$') then
+      return vim
+        .iter(commands)
+        :filter(function(command)
+          return command:find(arg_lead) ~= nil
+        end)
+        :totable()
+    end
+  end,
+})
 
 return M

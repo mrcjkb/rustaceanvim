@@ -24,7 +24,7 @@ end
 
 ---comment
 ---@return CargoCmd command build command
----@return string|table args
+---@return table args
 ---@return string|nil dir
 local function getCommand(c, results)
   local args = results[c].args
@@ -48,6 +48,9 @@ function M.run_command(choice, result)
   local opts = config.tools
 
   local command, args, cwd = getCommand(choice, result)
+  if not cwd then
+    return
+  end
 
   opts.executor.execute_command(command, args, cwd)
 end

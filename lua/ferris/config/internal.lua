@@ -1,13 +1,5 @@
 local vim = vim
 
----@type FerrisConfig
-local FerrisConfig = {}
-
--- Needed for autocompletion to work
-_G.rust_tools_get_graphviz_backends = function()
-  return FerrisConfig.tools.crate_graph.enabled_graphviz_backends
-end
-
 ---@class FerrisConfig
 local FerrisDefaultConfig = {
   ---@class FerrisToolsConfig
@@ -188,7 +180,9 @@ local opts = type(ferris) == 'function' and ferris() or ferris
 if opts.tools and opts.tools.executor and type(opts.tools.executor) == 'string' then
   opts.tools.executor = assert(require('ferris.executors')[opts.tools.executor], 'Unknown FerrisExecutor')
 end
-FerrisConfig = vim.tbl_deep_extend('force', {}, FerrisDefaultConfig, opts)
+
+---@type FerrisConfig
+local FerrisConfig = vim.tbl_deep_extend('force', {}, FerrisDefaultConfig, opts)
 
 local check = require('ferris.config.check')
 local ok, err = check.validate(FerrisConfig)
