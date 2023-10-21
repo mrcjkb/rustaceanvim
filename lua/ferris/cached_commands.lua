@@ -21,7 +21,7 @@ M.execute_last_debuggable = function()
     local rt_dap = require('ferris.dap')
     rt_dap.start(args)
   else
-    local debuggables = require('ferris.debuggables')
+    local debuggables = require('ferris.commands.debuggables')
     debuggables()
   end
 end

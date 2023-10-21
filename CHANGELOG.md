@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Hover actions: typo in module require.
+- Hover actions + command cache: module requires.
 
 ## [1.0.0] - 2023-11-21
 
