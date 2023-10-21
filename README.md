@@ -146,7 +146,6 @@ for more configuration options.
 	<b>Runnables</b>
   </summary>
   
-  ![runnables](https://github.com/simrat39/rust-tools-demos/raw/master/runnables.gif)
   ```vimscript
   :RustLsp runnables [last?]
   ```
@@ -157,7 +156,6 @@ for more configuration options.
 	<b>Expand Macros Recursively</b>
   </summary>
   
-  ![expand macros](https://github.com/simrat39/rust-tools-demos/raw/master/expand_macros_recursively.gif)
   ```vimscript
   :RustLsp expandMacro
   ```
@@ -168,7 +166,6 @@ for more configuration options.
 	<b>Move Item Up/Down</b>
   </summary>
   
-  ![move items](https://github.com/simrat39/rust-tools-demos/raw/master/move_item.gif)
   ```vimscript
   :RustLsp moveItem up
   :RustLsp moveItem down
@@ -180,7 +177,6 @@ for more configuration options.
 	<b>Hover Actions</b>
   </summary>
   
- ![hover actions](https://github.com/simrat39/rust-tools-demos/raw/master/hover_actions.gif)
  Note: To activate hover actions, run the command twice. This will move you into the window, then press enter on the selection you want. Alternatively, you can set ```auto_focus``` to true in your config and you will automatically enter the hover actions window.
  ```vimscript
  :RustLsp hover actions
@@ -202,7 +198,6 @@ for more configuration options.
 	<b>Open Cargo.toml</b>
   </summary>
   
-  ![open cargo](https://github.com/simrat39/rust-tools-demos/raw/master/open_cargo_toml.gif)
   ```vimscript
   :RustLsp openCargo
   ```
@@ -213,7 +208,6 @@ for more configuration options.
 	<b>Parent Module</b>
   </summary>
   
-  ![parent module](https://github.com/simrat39/rust-tools-demos/raw/master/parent_module.gif)
   ```vimscript
   :RustLsp parentModule
   ```
@@ -224,7 +218,6 @@ for more configuration options.
 	<b>Join Lines</b>
   </summary>
   
-  ![join lines](https://github.com/simrat39/rust-tools-demos/raw/master/join_lines.gif)
   ```vimscript
   :RustLsp joinLines
   ```
