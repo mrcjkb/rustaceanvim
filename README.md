@@ -341,6 +341,11 @@ until you can reproduce it.
 - [`simrat39/rust-tools.nvim`](https://github.com/simrat39/rust-tools.nvim)
   This plugin is a heavily modified fork of `rust-tools.nvim`.
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
+- [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim)
+  This project was created just before I renamed my fork
+  (but after I had checked the web for name clashes (╯°□°)╯︵ ┻━┻).
+  It is more minimal than this plugin, geared towards users
+  who prefer manual LSP client configuration.
 
 ## Inspiration
 
