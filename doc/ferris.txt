@@ -17,8 +17,8 @@ and integrates with other rust tools.
 
 Commands:
 
- `:RustAnalyzerStart` - Start the LSP client.
- `:RustAnalyzerStop` - Stop the LSP client.
+ `:RustAnalyzer start` - Start the LSP client.
+ `:RustAnalyzer stop` - Stop the LSP client.
 
 The `:RustLsp` command is available after the LSP client has initialized.
 It accepts the following subcommands:
