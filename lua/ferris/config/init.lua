@@ -70,6 +70,7 @@ vim.g.ferris = vim.g.ferris
 ---@field pipe? string Overide the pipe symbol in the shell command. Useful if using a shell that is not supported by this plugin.
 
 ---@class FerrisLspClientOpts
+---@field auto_attach? boolean | fun():boolean Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
 ---@field cmd? string[] | fun():string[] Command and arguments for starting rust-analyzer
 ---@field standalone? boolean Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
 ---@field rust-analyzer? table Options to send to rust-analyzer. See: https://rust-analyzer.github.io/manual.html#configuration

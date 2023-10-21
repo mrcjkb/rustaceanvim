@@ -1,5 +1,7 @@
 local vim = vim
 
+local FerrisConfig
+
 ---@class FerrisConfig
 local FerrisDefaultConfig = {
   ---@class FerrisToolsConfig
@@ -145,6 +147,15 @@ local FerrisDefaultConfig = {
   --- these override the defaults set by rust-tools.nvim
   ---class FerrisLspClientConfig
   server = {
+    ---@type boolean | fun():boolean Whether to automatically attach the LSP client.
+    ---Defaults to `true` if the `rust-analyzer` executable is found.
+    auto_attach = function()
+      local types = require('ferris.types.internal')
+      local cmd = types.evaluate(FerrisConfig.server.cmd)
+      ---@cast cmd string[]
+      local rs_bin = cmd[1]
+      return vim.fn.executable(rs_bin) == 1
+    end,
     ---@type string[] | fun():string[]
     cmd = function()
       return { 'rust-analyzer' }
@@ -182,7 +193,7 @@ if opts.tools and opts.tools.executor and type(opts.tools.executor) == 'string' 
 end
 
 ---@type FerrisConfig
-local FerrisConfig = vim.tbl_deep_extend('force', {}, FerrisDefaultConfig, opts)
+FerrisConfig = vim.tbl_deep_extend('force', {}, FerrisDefaultConfig, opts)
 
 local check = require('ferris.config.check')
 local ok, err = check.validate(FerrisConfig)
