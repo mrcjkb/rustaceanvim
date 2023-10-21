@@ -123,7 +123,7 @@ function M.handler(_, result, ctx)
   end, { buffer = bufnr, noremap = true, silent = true })
 end
 
-local rl = require('ferris.commands.rust_analyzer')
+local rl = require('ferris.rust_analyzer')
 
 --- Sends the request to rust-analyzer to get hover actions and handle it
 function M.hover_actions()
