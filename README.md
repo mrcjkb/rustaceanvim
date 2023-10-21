@@ -249,7 +249,7 @@ for more configuration options.
   </summary>
   
   ```vimscript
-  :RustLsp sytaxTree
+  :RustLsp syntaxTree
   ```
 </details>
 
