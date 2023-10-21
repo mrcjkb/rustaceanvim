@@ -68,7 +68,7 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 ```lua
 {
   'mrcjkb/ferris.nvim',
-  version = '^1', -- Recommended
+  version = '^2', -- Recommended
   ft = { 'rust' },
 }
 ```
