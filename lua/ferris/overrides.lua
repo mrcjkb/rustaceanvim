@@ -20,7 +20,7 @@ end
 -- @param command should be a table like: { "run", "--package", "<program>", "--bin", "<program>" }
 -- For some reason the endpoint textDocument/hover from rust-analyzer returns
 -- cargoArgs = { "run", "--package", "<program>", "--bin", "<program>" } for Debug entry.
--- It doesn't make any sense to run a program before debugging.  Even more the debuggin won't run if
+-- It doesn't make any sense to run a program before debugging.  Even more the debugging won't run if
 -- the program waits some input.  Take a look at rust-analyzer/editors/code/src/toolchain.ts.
 function M.sanitize_command_for_debugging(command)
   if command[1] == 'run' then
