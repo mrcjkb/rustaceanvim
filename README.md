@@ -55,6 +55,8 @@
 - [`rust-analyzer`](https://rust-analyzer.github.io/)
 - [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html)
   (optional), for crate graphs.
+- [`cargo`](https://doc.rust-lang.org/cargo/)
+  (optional), required for Cargo projects.
 
 ## Installation
 

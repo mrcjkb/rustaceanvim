@@ -65,6 +65,21 @@ local external_dependencies = {
     url = '[rust-analyzer](https://rust-analyzer.github.io/)',
     info = 'Required by the LSP client.',
   },
+  {
+    name = 'Cargo',
+    get_binaries = function()
+      return { 'cargo' }
+    end,
+    optional = function()
+      return true
+    end,
+    url = '[Cargo](https://doc.rust-lang.org/cargo/)',
+    info = [[
+      The Rust package manager.
+      Required by rust-analyzer for non-standalone files, and for debugging features.
+      Not required in standalone files.
+    ]],
+  },
 }
 
 ---@param dep LuaDependency

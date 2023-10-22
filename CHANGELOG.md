@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   whether or not to auto-attach the LSP client when opening
   a Rust file.
 
+### Fixed
+
+- [Internal] Type safety in `RustLsp` command construction.
+  This fixes a type error in the `hover` command validation.
+- Failure to start on standalone files if `cargo` is not installed.
+
 ## [2.0.0] - 2023-11-21
 
 ### Breaking changes

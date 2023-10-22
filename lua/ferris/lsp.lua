@@ -36,26 +36,28 @@ local function get_root_dir(fname)
     upward = true,
     path = vim.fs.dirname(fname),
   })[1])
-  local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
-  if cargo_crate_dir ~= nil then
-    cmd[#cmd + 1] = '--manifest-path'
-    cmd[#cmd + 1] = vim.fs.joinpath(cargo_crate_dir, 'Cargo.toml')
-  end
-  local cargo_metadata = ''
-  local cm = vim.fn.jobstart(cmd, {
-    on_stdout = function(_, d, _)
-      cargo_metadata = table.concat(d, '\n')
-    end,
-    stdout_buffered = true,
-  })
-  if cm > 0 then
-    cm = vim.fn.jobwait({ cm })[1]
-  else
-    cm = -1
-  end
   local cargo_workspace_dir = nil
-  if cm == 0 then
-    cargo_workspace_dir = vim.fn.json_decode(cargo_metadata)['workspace_root']
+  if vim.fn.executable('cargo') == 1 then
+    local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
+    if cargo_crate_dir ~= nil then
+      cmd[#cmd + 1] = '--manifest-path'
+      cmd[#cmd + 1] = vim.fs.joinpath(cargo_crate_dir, 'Cargo.toml')
+    end
+    local cargo_metadata = ''
+    local cm = vim.fn.jobstart(cmd, {
+      on_stdout = function(_, d, _)
+        cargo_metadata = table.concat(d, '\n')
+      end,
+      stdout_buffered = true,
+    })
+    if cm > 0 then
+      cm = vim.fn.jobwait({ cm })[1]
+    else
+      cm = -1
+    end
+    if cm == 0 then
+      cargo_workspace_dir = vim.fn.json_decode(cargo_metadata)['workspace_root']
+    end
   end
   return cargo_workspace_dir
     or cargo_crate_dir

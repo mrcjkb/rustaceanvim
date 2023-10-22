@@ -7,30 +7,31 @@ local M = {}
 
 local rust_lsp_cmd_name = 'RustLsp'
 
----@param opts table
----@see vim.api.nvim_create_user_command
-local function rust_lsp(opts)
-  local fargs = opts.fargs
-  local cmd = fargs[1]
-  local args = #fargs > 1 and vim.list_slice(fargs, 2, #fargs) or {}
-  if cmd == 'codeAction' then
+---@type { string: fun(args: string[]) }
+local command_tbl = {
+  codeAction = function(_)
     require('ferris.commands.code_action_group')()
-  elseif cmd == 'crateGraph' then
+  end,
+  crateGraph = function(args)
     require('ferris.commands.crate_graph')(args)
-  elseif cmd == 'debuggables' then
+  end,
+  debuggables = function(args)
     if #args == 0 then
       require('ferris.commands.debuggables')()
     elseif #args == 1 and args[1] == 'last' then
       require('ferris.cached_commands').execute_last_debuggable()
     else
-      vim.notify('debuggables: unexpected arguments: ' .. vim.inspect(cmd), vim.log.levels.ERROR)
+      vim.notify('debuggables: unexpected arguments: ' .. vim.inspect(args), vim.log.levels.ERROR)
     end
-  elseif cmd == 'expandMacro' then
+  end,
+  expandMacro = function(_)
     require('ferris.commands.expand_macro')()
-  elseif cmd == 'externalDocs' then
+  end,
+  externalDocs = function(_)
     require('ferris.commands.external_docs')()
-  elseif cmd == 'hover' then
-    if #cmd < 2 then
+  end,
+  hover = function(args)
+    if #args < 2 then
       vim.notify("hover: called without 'actions' or 'range'", vim.log.levels.ERROR)
       return
     end
@@ -42,17 +43,20 @@ local function rust_lsp(opts)
     else
       vim.notify('hover: unknown subcommand: ' .. subcmd .. " expected 'actions' or 'range'", vim.log.levels.ERROR)
     end
-  elseif cmd == 'runnables' then
+  end,
+  runnables = function(args)
     if #args == 0 then
       require('ferris.runnables').runnables()
     elseif #args == 1 and args[1] == 'last' then
       require('ferris.cached_commands').execute_last_runnable()
     else
-      vim.notify('runnables: unexpected arguments: ' .. vim.inspect(cmd), vim.log.levels.ERROR)
+      vim.notify('runnables: unexpected arguments: ' .. vim.inspect(args), vim.log.levels.ERROR)
     end
-  elseif cmd == 'joinLines' then
+  end,
+  joinLines = function(_)
     require('ferris.commands.join_lines')()
-  elseif cmd == 'moveItem' then
+  end,
+  moveItem = function(args)
     if #args < 1 then
       vim.notify("moveItem: called without 'up' or 'down'", vim.log.levels.ERROR)
       return
@@ -67,24 +71,44 @@ local function rust_lsp(opts)
         vim.log.levels.ERROR
       )
     end
-  elseif cmd == 'openCargo' then
+  end,
+  openCargo = function(_)
     require('ferris.commands.open_cargo_toml')()
-  elseif cmd == 'parentModule' then
+  end,
+  parentModule = function(_)
     require('ferris.commands.parent_module')()
-  elseif cmd == 'ssr' then
+  end,
+  ssr = function(args)
     if #args < 1 then
       vim.notify('ssr: called without a query', vim.log.levels.ERROR)
       return
     end
     local query = args[1]
     require('ferris.commands.ssr')(query)
-  elseif cmd == 'reloadWorkspace' then
+  end,
+  reloadWorkspace = function()
     require('ferris.commands.workspace_refresh')()
-  elseif cmd == 'syntaxTree' then
+  end,
+  syntaxTree = function()
     require('ferris.commands.syntax_tree')()
-  elseif cmd == 'flyCheck' then
+  end,
+  flyCheck = function()
     require('ferris.commands.fly_check')()
+  end,
+}
+
+---@param opts table
+---@see vim.api.nvim_create_user_command
+local function rust_lsp(opts)
+  local fargs = opts.fargs
+  local cmd = fargs[1]
+  local args = #fargs > 1 and vim.list_slice(fargs, 2, #fargs) or {}
+  local command = command_tbl[cmd]
+  if not command then
+    vim.notify(rust_lsp_cmd_name .. ': Unknown subcommand: ' .. cmd, vim.log.levels.ERROR)
+    return
   end
+  command(args)
 end
 
 ---Create the `:RustLsp` command
@@ -93,29 +117,8 @@ function M.create_rust_lsp_command()
     nargs = '+',
     desc = 'Interacts with the rust-analyzer LSP client',
     complete = function(arg_lead, cmdline, _)
-      local commands = {
-        'codeAction',
-        'crateGraph',
-        'debuggables',
-        'debuggables last',
-        'expandMacro',
-        'externalDocs',
-        'hover',
-        'hover actions',
-        'hover range',
-        'runnables',
-        'runnables last',
-        'joinLines',
-        'moveItem',
-        'moveItem up',
-        'moveItem down',
-        'openCargo',
-        'ssr',
-        'parentModule',
-        'reloadWorkspace',
-        'syntaxTree',
-        'flyCheck',
-      }
+      local commands = vim.tbl_keys(command_tbl)
+      -- special case: crateGraph comes with graphviz backend completions
       if cmdline:match('^' .. rust_lsp_cmd_name .. ' cr%s+%w*$') then
         local backends = config.tools.crate_graph.enabled_graphviz_backends or {}
         return vim.tbl_map(function(backend)
