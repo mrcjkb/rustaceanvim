@@ -24,6 +24,6 @@ jobs:
       - uses: "DeterminateSystems/flakehub-push@main"
         with:
           visibility: "public"
-          name: "mrcjkb/ferris.nvim"
+          name: "mrcjkb/rustaceanvim"
           tag: "${{ inputs.tag }}"
           

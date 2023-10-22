@@ -24,7 +24,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_MSG: |
-            docs(generated): update doc/ferris.txt
+            docs(generated): update doc/rustacean.txt
             skip-checks: true
         run: |
           git config user.email "actions@github"
