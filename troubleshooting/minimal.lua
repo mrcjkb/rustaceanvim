@@ -39,11 +39,11 @@ local lazy = require('lazy')
 
 lazy.setup({
   {
-    'mrcjkb/ferris.nvim',
+    'mrcjkb/rustaceanvim',
     version = '^2',
     init = function()
-      -- Configure ferris.nvim here
-      vim.g.ferris = {}
+      -- Configure rustaceanvim here
+      vim.g.rustaceanvim = {}
     end,
     ft = { 'rust' },
   },

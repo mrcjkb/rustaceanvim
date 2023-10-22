@@ -6,6 +6,6 @@ pkgs.writeShellApplication {
   ];
   text = ''
     mkdir -p doc
-    lemmy-help lua/ferris/{init,config/init}.lua > doc/ferris.txt
+    lemmy-help lua/rustaceanvim/{init,config/init}.lua > doc/rustaceanvim.txt
   '';
 }

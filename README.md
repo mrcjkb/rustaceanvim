@@ -1,19 +1,19 @@
 <!-- markdownlint-disable -->
 <br />
 <div align="center">
-  <a href="https://github.com/mrcjkb/ferris.nvim">
-    <img src="./nvim-ferris.svg" alt="ferris.nvim">
+  <a href="https://github.com/mrcjkb/rustaceanvim">
+    <img src="./rustaceanvim.svg" alt="rustaceanvim">
   </a>
   <p align="center">
     <br />
-    <a href="./doc/ferris.txt"><strong>Explore the docs »</strong></a>
+    <a href="./doc/rustaceanvim.txt"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/mrcjkb/ferris.nvim/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml">Report Bug</a>
+    <a href="https://github.com/mrcjkb/rustaceanvim/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml">Report Bug</a>
     ·
-    <a href="https://github.com/mrcjkb/ferris.nvim/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml">Request Feature</a>
+    <a href="https://github.com/mrcjkb/rustaceanvim/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml">Request Feature</a>
     ·
-    <a href="https://github.com/mrcjkb/ferris.nvim/discussions/new?category=q-a">Ask Question</a>
+    <a href="https://github.com/mrcjkb/rustaceanvim/discussions/new?category=q-a">Ask Question</a>
   </p>
   <p>
     <strong>
@@ -69,8 +69,8 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 
 ```lua
 {
-  'mrcjkb/ferris.nvim',
-  version = '^2', -- Recommended
+  'mrcjkb/rustaceanvim',
+  version = '^3', -- Recommended
   ft = { 'rust' },
 }
 ```
@@ -276,12 +276,12 @@ for more configuration options.
 
 ## Advanced configuration
 
-To modify the default configuration, set `vim.g.ferris`.
+To modify the default configuration, set `vim.g.rustaceanvim`.
 
-- See [`:help ferris.config`](./doc/ferris.txt) for a detailed
+- See [`:help rustaceanvim.config`](./doc/rustaceanvim.txt) for a detailed
   documentation of all available configuration options.
   You may need to run `:helptags ALL` if the documentation has not been installed.
-- The default configuration [can be found here (see `FerrisDefaultConfig`)](./lua/ferris/config/internal.lua).
+- The default configuration [can be found here (see `RustaceanDefaultConfig`)](./lua/rustaceanvim/config/internal.lua).
 - For detailed descriptions of the language server configs,
   see the [`rust-analyzer` documentation](https://rust-analyzer.github.io/manual.html#configuration).
 
@@ -293,7 +293,7 @@ are applied for keys that are not provided.
 Example config:
 
 ```lua
-vim.g.ferris = {
+vim.g.rustaceanvim = {
   -- Plugin configuration
   tools = {
   },
@@ -314,14 +314,14 @@ vim.g.ferris = {
 
 > **Note**
 >
-> `vim.g.ferris` can also be a function that returns
+> `vim.g.rustaceanvim` can also be a function that returns
 > a table.
 
 ## Troubleshooting
 
 ### Health checks
 
-For a health check, run `:checkhealth ferris`
+For a health check, run `:checkhealth rustaceanvim`
 
 ### Minimal config
 
@@ -344,14 +344,11 @@ until you can reproduce it.
   This plugin is a heavily modified fork of `rust-tools.nvim`.
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
 - [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim)
-  This project was created just before I renamed my fork
-  (but after I had checked the web for name clashes (╯°□°)╯︵ ┻━┻).
-  It is geared towards people who prefer manual LSP
-  client configuration.
+  Geared towards people who prefer manual LSP client configuration.
 
 ## Inspiration
 
-This plugin draws inspiration from [`akinsho/flutter-tools.nvim`](https://github.com/akinsho/flutter-tools.nvim)
+`rust-tools.nvim` draws inspiration from [`akinsho/flutter-tools.nvim`](https://github.com/akinsho/flutter-tools.nvim)
 
 <!-- markdownlint-disable -->
 <!-- prettier-ignore-end -->
@@ -365,11 +362,11 @@ This plugin draws inspiration from [`akinsho/flutter-tools.nvim`](https://github
 [nix-url]: https://nixos.org/
 [rust-shield]: https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white
 [rust-url]: https://www.rust-lang.org/
-[issues-shield]: https://img.shields.io/github/issues/mrcjkb/ferris.nvim.svg?style=for-the-badge
-[issues-url]: https://github.com/mrcjkb/ferris.nvim/issues
-[license-shield]: https://img.shields.io/github/license/mrcjkb/ferris.nvim.svg?style=for-the-badge
-[license-url]: https://github.com/mrcjkb/ferris.nvim/blob/master/LICENSE
-[ci-shield]: https://img.shields.io/github/actions/workflow/status/mrcjkb/ferris.nvim/nix-build.yml?style=for-the-badge
-[ci-url]: https://github.com/mrcjkb/ferris.nvim/actions/workflows/nix-build.yml
-[luarocks-shield]: https://img.shields.io/luarocks/v/MrcJkb/ferris.nvim?logo=lua&color=purple&style=for-the-badge
-[luarocks-url]: https://luarocks.org/modules/MrcJkb/ferris.nvim
+[issues-shield]: https://img.shields.io/github/issues/mrcjkb/rustaceanvim.svg?style=for-the-badge
+[issues-url]: https://github.com/mrcjkb/rustaceanvim/issues
+[license-shield]: https://img.shields.io/github/license/mrcjkb/rustaceanvim.svg?style=for-the-badge
+[license-url]: https://github.com/mrcjkb/rustaceanvim/blob/master/LICENSE
+[ci-shield]: https://img.shields.io/github/actions/workflow/status/mrcjkb/rustaceanvim/nix-build.yml?style=for-the-badge
+[ci-url]: https://github.com/mrcjkb/rustaceanvim/actions/workflows/nix-build.yml
+[luarocks-shield]: https://img.shields.io/luarocks/v/MrcJkb/rustaceanvim?logo=lua&color=purple&style=for-the-badge
+[luarocks-url]: https://luarocks.org/modules/MrcJkb/rustaceanvim

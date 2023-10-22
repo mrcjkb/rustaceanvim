@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2023-10-22
+
+### Changed
+
+- Renamed this plugin to `rustaceanvim`,
+  to avoid potential clashes with [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim),
+  `vxpm/ferris.nvim` was created just before I renamed my fork
+  (but after I had checked the web for name clashes (╯°□°)╯︵ ┻━┻).
+
 ## [2.1.1] - 2023-10-22
 
 ### Fixed
@@ -17,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add a `vim.g.ferris.server.auto_attach` option, which
+- Add a `vim.g.rustaceanvim.server.auto_attach` option, which
   can be a `boolean` or a `fun():boolean` that determines
   whether or not to auto-attach the LSP client when opening
   a Rust file.
@@ -49,12 +58,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2023-10-21
 
 ### Added
-- Initial release of `ferris.nvim`.
+- Initial release of `rustaceanvim`.
 - `:RustSyntaxTree` and `:RustFlyCheck` commands.
 - `:RustAnalyzerStart` and `:RustAnalyzerStop` commands.
 - Config validation.
-- Health checks (`:checkhealth ferris`).
-- Vimdocs (auto-generated from Lua docs - `:help ferris`).
+- Health checks (`:checkhealth rustaceanvim`).
+- Vimdocs (auto-generated from Lua docs - `:help rustaceanvim`).
 - Nix flake.
 - Allow `tools.executor` to be a string.
 - LuaRocks releases.
@@ -75,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to be less prone to type errors.
   This plugin is a filetype plugin and works out of the box.
   The default configuration should work for most people,
-  but it can be configured with a `vim.g.ferris` table.
+  but it can be configured with a `vim.g.rustaceanvim` table.
 - Removed the `lspconfig` dependency.
   This plugin now uses the built-in LSP client API.
   You can use `:RustAnalyzerStart` and `:RustAnalyzerStop`
