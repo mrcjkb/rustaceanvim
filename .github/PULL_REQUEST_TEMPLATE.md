@@ -3,7 +3,7 @@
 
 ###### Things done
 
-- [ ] Targets mrcjkb/rustaceanvim
+- [ ] Targets mrcjkb/rustaceanvim, not simrat39/rust-tools.nvim
 - [ ] Tested, as applicable:
   - [ ] Manually
   - [ ] Added plenary specs
