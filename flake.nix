@@ -131,11 +131,11 @@
         };
 
         packages = let
-          rustaceanvim-nvim = pkgs.rustaceanvim-nvim;
+          rustaceanvim = pkgs.rustaceanvim;
         in {
-          default = rustaceanvim-nvim;
+          default = rustaceanvim;
           inherit
-            rustaceanvim-nvim
+            rustaceanvim
             docgen
             ;
         };
