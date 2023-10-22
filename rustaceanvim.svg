@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="444.48178"
+   width="446.42386"
    height="71.815071"
-   viewBox="0 0 444.48181 71.815071"
+   viewBox="0 0 446.42389 71.815071"
    version="1.1"
    id="svg95"
-   sodipodi:docname="nvim-rustaceanvim.svg"
+   sodipodi:docname="rustaceanvim.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,15 +26,15 @@
      inkscape:pagecheckerboard="1"
      inkscape:deskcolor="#505050"
      showgrid="false"
-     inkscape:zoom="1.456705"
-     inkscape:cx="269.44372"
-     inkscape:cy="-15.789059"
+     inkscape:zoom="1.030046"
+     inkscape:cx="388.81759"
+     inkscape:cy="-15.533287"
      inkscape:window-width="1920"
      inkscape:window-height="1080"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g5925" />
+     inkscape:current-layer="text368" />
   <title
      id="title70">neovim-mark@2x</title>
   <description>Created with Sketch (http://www.bohemiancoding.com/sketch)</description>
@@ -394,11 +394,11 @@
            id="tspan653"
            style="stroke-width:0.841411"
            x="244.59421"
-           y="-97.363129"></tspan></text>
+           y="-97.363129" /></text>
       <g
          id="g803"
          transform="translate(0,43.001913)"
-         style="fill:#444444;fill-opacity:1">
+         style="fill:#000000;fill-opacity:1">
         <g
            aria-label="rustacea"
            id="text368"
@@ -439,7 +439,8 @@
         <g
            aria-label="nvim"
            id="text659"
-           style="font-size:38.6084px;font-family:Gotham;-inkscape-font-specification:'Gotham Bold';fill:#444444;fill-opacity:1;stroke-width:0.841411">
+           style="font-size:38.6084px;font-family:Gotham;-inkscape-font-specification:'Gotham Bold';fill:#444444;fill-opacity:1;stroke-width:0.841411"
+           transform="translate(1.1715707)">
           <path
              d="m 282.29174,-78.773418 q 0.59843,-0.598431 1.25477,-1.10034 0.67565,-0.521213 1.40921,-0.868689 0.75286,-0.36678 1.60225,-0.559822 0.84938,-0.212346 1.8532,-0.212346 1.62155,0 2.87633,0.559822 1.25477,0.540518 2.08485,1.544336 0.84938,0.984514 1.27408,2.374417 0.44399,1.370598 0.44399,3.030759 v 12.605642 h -4.76813 v -12.605642 q 0,-1.814595 -0.83009,-2.799109 -0.83008,-1.003818 -2.52885,-1.003818 -1.23546,0 -2.3165,0.559821 -1.08103,0.559822 -2.04624,1.525032 v 14.323716 h -4.76814 v -19.806109 h 2.91493 q 0.9266,0 1.21617,0.868689 z"
              style="font-family:lato;-inkscape-font-specification:'lato Bold';fill:#444444;fill-opacity:1"
