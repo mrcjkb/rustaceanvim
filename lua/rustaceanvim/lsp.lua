@@ -3,6 +3,10 @@ local M = {}
 local config = require('rustaceanvim.config.internal')
 local methods = require('vim.lsp.protocol').Methods
 
+local joinpath = vim.fs.joinpath or function(...)
+  return (table.concat({ ... }, '/'):gsub('//+', '/'))
+end
+
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
   ---@diagnostic disable-next-line
@@ -14,11 +18,11 @@ local function override_apply_text_edits()
 end
 
 local function is_library(fname)
-  local cargo_home = os.getenv('CARGO_HOME') or vim.fs.joinpath(vim.env.HOME, '.cargo')
-  local registry = vim.fs.joinpath(cargo_home, 'registry', 'src')
+  local cargo_home = os.getenv('CARGO_HOME') or joinpath(vim.env.HOME, '.cargo')
+  local registry = joinpath(cargo_home, 'registry', 'src')
 
-  local rustup_home = os.getenv('RUSTUP_HOME') or vim.fs.joinpath(vim.env.HOME, '.rustup')
-  local toolchains = vim.fs.joinpath(rustup_home, 'toolchains')
+  local rustup_home = os.getenv('RUSTUP_HOME') or joinpath(vim.env.HOME, '.rustup')
+  local toolchains = joinpath(rustup_home, 'toolchains')
 
   for _, item in ipairs { toolchains, registry } do
     if fname:sub(1, #item) == item then
@@ -44,7 +48,7 @@ local function get_root_dir(fname)
     local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
     if cargo_crate_dir ~= nil then
       cmd[#cmd + 1] = '--manifest-path'
-      cmd[#cmd + 1] = vim.fs.joinpath(cargo_crate_dir, 'Cargo.toml')
+      cmd[#cmd + 1] = joinpath(cargo_crate_dir, 'Cargo.toml')
     end
     local cargo_metadata = ''
     local cm = vim.fn.jobstart(cmd, {
