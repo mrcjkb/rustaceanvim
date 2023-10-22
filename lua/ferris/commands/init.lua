@@ -31,7 +31,7 @@ local command_tbl = {
     require('ferris.commands.external_docs')()
   end,
   hover = function(args)
-    if #args < 2 then
+    if #args == 0 then
       vim.notify("hover: called without 'actions' or 'range'", vim.log.levels.ERROR)
       return
     end
@@ -57,7 +57,7 @@ local command_tbl = {
     require('ferris.commands.join_lines')()
   end,
   moveItem = function(args)
-    if #args < 1 then
+    if #args == 0 then
       vim.notify("moveItem: called without 'up' or 'down'", vim.log.levels.ERROR)
       return
     end
@@ -79,7 +79,7 @@ local command_tbl = {
     require('ferris.commands.parent_module')()
   end,
   ssr = function(args)
-    if #args < 1 then
+    if #args == 0 then
       vim.notify('ssr: called without a query', vim.log.levels.ERROR)
       return
     end
