@@ -2,10 +2,9 @@ local M = {}
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
 local methods = require('vim.lsp.protocol').Methods
-
-local joinpath = vim.fs.joinpath or function(...)
-  return (table.concat({ ... }, '/'):gsub('//+', '/'))
-end
+local compat = require('rustaceanvim.compat')
+local rust_analyzer = require('rustaceanvim.rust_analyzer')
+local joinpath = compat.joinpath
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -26,7 +25,7 @@ local function is_library(fname)
 
   for _, item in ipairs { toolchains, registry } do
     if fname:sub(1, #item) == item then
-      local clients = vim.lsp.get_clients { name = 'rust-analyzer' }
+      local clients = rust_analyzer.get_active_rustaceanvim_clients()
       return clients[#clients].config.root_dir
     end
   end
@@ -75,16 +74,6 @@ local function get_root_dir(fname)
     })[1])
 end
 
----@param bufnr? number
----@return lsp.Client[]
-local function get_active_rustaceanvim_clients(bufnr)
-  local filter = { name = 'rust-analyzer' }
-  if bufnr then
-    filter.bufnr = bufnr
-  end
-  return vim.lsp.get_clients(filter)
-end
-
 local function is_in_workspace(client, root_dir)
   if not client.workspace_folders then
     return false
@@ -109,7 +98,7 @@ M.start = function()
   lsp_start_opts.root_dir = root_dir
 
   -- Check if a client is already running and add the workspace folder if necessary.
-  for _, client in pairs(get_active_rustaceanvim_clients()) do
+  for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
     if not is_in_workspace(client, root_dir) then
       local workspace_folder = { uri = vim.uri_from_fname(root_dir), name = root_dir }
       local params = {
@@ -220,7 +209,7 @@ end
 ---@return table[] clients A list of clients that will be stopped
 M.stop = function()
   local bufnr = vim.api.nvim_get_current_buf()
-  local clients = get_active_rustaceanvim_clients(bufnr)
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   vim.lsp.stop_client(clients)
   return clients
 end

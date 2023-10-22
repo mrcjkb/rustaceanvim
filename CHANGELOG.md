@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Add support for `workspace/didChangeWorkspaceFolders` to prevent more than one
   rust-analyzer server from spawning per Neovim instance [#7](https://github.com/mrcjkb/rustaceanvim/issues/7).
-- Implement `vim.fs.joinpath` for Neovim 0.9 compatibility.
+- Neovim 0.9 compatibility [#9](https://github.com/mrcjkb/rustaceanvim/issues/9).
 
 ## [3.0.0] - 2023-10-22
 
