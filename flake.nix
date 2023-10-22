@@ -1,5 +1,5 @@
 {
-  description = "A fork of rust-tools.nvim";
+  description = "A fork setup-less and lspconfig-free of rust-tools.nvim";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
