@@ -33,7 +33,10 @@
       neovim = nvim-wrapped;
 
       # luaPackages = ps: with ps; [];
-      # extraPackages = [];
+      extraPackages = with final; [
+        rust-analyzer
+        cargo
+      ];
 
       preCheck = ''
         export HOME=$(realpath .)
