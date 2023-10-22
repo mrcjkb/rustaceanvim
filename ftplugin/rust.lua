@@ -1,7 +1,7 @@
----@type FerrisConfig
-local config = require('ferris.config.internal')
-local types = require('ferris.types.internal')
-local lsp = require('ferris.lsp')
+---@type RustaceanConfig
+local config = require('rustaceanvim.config.internal')
+local types = require('rustaceanvim.types.internal')
+local lsp = require('rustaceanvim.lsp')
 
 local auto_attach = types.evaluate(config.server.auto_attach)
 if not auto_attach then
@@ -9,7 +9,7 @@ if not auto_attach then
 end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
-  local runnables = require('ferris.runnables')
+  local runnables = require('rustaceanvim.runnables')
   runnables.run_command(1, command.arguments)
 end
 
@@ -25,9 +25,9 @@ vim.lsp.commands['rust-analyzer.showReferences'] = function(_)
 end
 
 vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
-  local overrides = require('ferris.overrides')
+  local overrides = require('rustaceanvim.overrides')
   overrides.sanitize_command_for_debugging(command.arguments[1].args.cargoArgs)
-  local rt_dap = require('ferris.dap')
+  local rt_dap = require('rustaceanvim.dap')
   rt_dap.start(command.arguments[1].args)
 end
 

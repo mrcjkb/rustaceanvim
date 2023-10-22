@@ -29,7 +29,7 @@
     neodev-nvim,
     ...
   }: let
-    name = "ferris.nvim";
+    name = "rustaceanvim";
 
     plugin-overlay = import ./nix/plugin-overlay.nix {
       inherit name self;
@@ -111,7 +111,7 @@
         };
 
         devShell = pkgs.mkShell {
-          name = "ferris.nvim devShell";
+          name = "rustaceanvim devShell";
           inherit (pre-commit-check) shellHook;
           buildInputs = with pre-commit-hooks.packages.${system}; [
             alejandra
@@ -131,11 +131,11 @@
         };
 
         packages = let
-          ferris-nvim = pkgs.ferris-nvim;
+          rustaceanvim-nvim = pkgs.rustaceanvim-nvim;
         in {
-          default = ferris-nvim;
+          default = rustaceanvim-nvim;
           inherit
-            ferris-nvim
+            rustaceanvim-nvim
             docgen
             ;
         };

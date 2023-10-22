@@ -1,0 +1,147 @@
+==============================================================================
+Table of Contents                                        *rustaceanvim.contents*
+
+Introduction ··························································· |intro|
+ ································································ |rustaceanvim|
+plugin configuration ····································· |rustaceanvim.config|
+
+==============================================================================
+Introduction                                                             *intro*
+
+This plugin automatically configures the `rust-analyzer` builtin LSP client
+and integrates with other rust tools.
+
+==============================================================================
+                                                                  *rustaceanvim*
+
+
+Commands:
+
+ `:RustAnalyzer start` - Start the LSP client.
+ `:RustAnalyzer stop` - Stop the LSP client.
+
+The `:RustLsp` command is available after the LSP client has initialized.
+It accepts the following subcommands:
+
+ `runnables [last]?` - Run tests, etc.
+                       `last` means run the last test that was run.
+ `expandMacro` - Expand macros recursively.
+ `moveItem [up|down]` - Move items up or down.
+ `hover [action|range]` - Hover actions, or hover over visually selected range.
+ `openCargo` - Open the Cargo.toml file for the current package.
+ `parentModule` - Open the current module's parent module.
+ `joinLines` - Join adjacent lines.
+ `ssr [query]` - Structural search and replace.
+ `crateGraph [backend]` - Create and view a crate graph with graphviz.
+ `syntaxTree` - View the syntax tree.
+ `flyCheck` - Run `cargo check` or another compatible command (f.x. `clippy`)
+              in a background thread and provide LSP diagnostics based on
+              the output of the command.
+              Useful in large projects where running `cargo check` on each save
+              can be costly.
+
+==============================================================================
+plugin configuration                                       *rustaceanvim.config*
+
+
+rustaceanvim is a filetype plugin, and does not need
+a `setup` function to work.
+
+To configure rustaceanvim, set the variable `vim.g.rustaceanvim`,
+which is a `RustaceanOpts` table, in your neovim configuration.
+
+Example:
+>
+---@type RustaceanOpts
+vim.g.rustaceanvim = {
+   ---@type RustaceanToolsOpts
+   tools = {
+     -- ...
+   },
+   ---@type RustaceanLspClientOpts
+   server = {
+     on_attach = function(client, bufnr)
+       -- Set keybindings, etc. here.
+     end,
+     ['rust-analyzer'] = {
+       -- ...
+     },
+     -- ...
+   },
+   ---@type RustaceanDapOpts
+   dap = {
+     -- ...
+   },
+ }
+<
+
+Note: `vim.g.rustaceanvim` can also be a function that returns a 'RustaceanOpts' table.
+
+
+RustaceanOpts                                                    *RustaceanOpts*
+
+    Fields: ~
+        {tools?}   (RustaceanToolsOpts)      Plugin options
+        {server?}  (RustaceanLspClientOpts)  Language server client options
+        {dap?}     (RustaceanDapOpts)        Debug adapter options
+
+
+RustaceanToolsOpts                                          *RustaceanToolsOpts*
+
+    Fields: ~
+        {executor?}                          (RustaceanExecutor|executor_alias)
+        {on_initialized?}                    (fun(health:lsp_server_health_status))  Function that is invoked when the LSP server has finished initializing
+        {reload_workspace_from_cargo_toml?}  (boolean)                               Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
+        {hover_actions?}                     (RustaceanHoverActionsOpts)             Options for hover actions
+        {create_graph?}                      (RustaceanCrateGraphConfig)             Options for showing the crate graph based on graphviz and the dot
+
+
+RustaceanHoverActionsOpts                            *RustaceanHoverActionsOpts*
+
+    Fields: ~
+        {replace_builtin_hover?}  (boolean)      Whether to replace Neovim's built-in `vim.lsp.buf.hover`
+        {border?}                 (string[][])   See `vim.api.nvim_open_win`
+        {max_width?}              (integer|nil)  Maximum width of the hover window (`nil` means no max.)
+        {max_height?}             (integer|nil)  Maximum height of the hover window (`nil` means no max.)
+        {auto_focus?}             (boolean)      Whether to automatically focus the hover action window
+
+
+lsp_server_health_status                              *lsp_server_health_status*
+
+    Type: ~
+        "ok"|"warning"|"error"
+
+
+RustaceanCrateGraphConfig                            *RustaceanCrateGraphConfig*
+
+    Fields: ~
+        {backend?}                    (string)    Backend used for displaying the graph. See: https://graphviz.org/docs/outputs/ Defaults to `"x11"` if unset.
+        {output?}                     (string)    Where to store the output. No output if unset. Relative path from `cwd`.
+        {enabled_graphviz_backends?}  (string[])  Override the enabled graphviz backends list, used for input validation and autocompletion.
+        {pipe?}                       (string)    Overide the pipe symbol in the shell command. Useful if using a shell that is not supported by this plugin.
+
+
+RustaceanLspClientOpts                                  *RustaceanLspClientOpts*
+
+    Fields: ~
+        {auto_attach?}  (boolean|fun():boolean)    Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
+        {cmd?}          (string[]|fun():string[])  Command and arguments for starting rust-analyzer
+        {standalone?}   (boolean)                  Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
+
+
+RustaceanDapOpts                                              *RustaceanDapOpts*
+    @field rust-analyzer? table Options to send to rust-analyzer. See: https://rust-analyzer.github.io/manual.html#configuration
+
+    Fields: ~
+        {adapter?}  (RustaceanDapAdapterOpts)  Options for the debug adapter
+
+
+RustaceanDapAdapterOpts                                *RustaceanDapAdapterOpts*
+
+    Fields: ~
+        {type?}     (string)  The type of debug adapter (default: `"executable"`)
+        {command?}  (string)  Default: `"lldb-vscode"`
+        {name?}     (string)  Default: `"rustaceanvim_lldb"`
+
+
+vim:tw=78:ts=8:noet:ft=help:norl:
