@@ -1,27 +1,40 @@
 local M = {}
 
----@param c string A single character
----@return string The hex representation
-local char_to_hex = function(c)
-  return string.format('%%%02X', c:byte())
-end
-
----Encode a URL so it can be opened in a browser
----@param url string
----@return string encoded_url
-local function urlencode(url)
-  url = url:gsub('\n', '\r\n')
-  url = url:gsub('([^%w ])', char_to_hex)
-  url = url:gsub(' ', '+')
-  return url
-end
-
 local rl = require('ferris.rust_analyzer')
+
+---@param url string
+local function open_url(url)
+  ---@param obj table
+  local function on_exit(obj)
+    if obj.code ~= 0 then
+      vim.schedule(function()
+        vim.notify('Could not open URL: ' .. url, vim.log.levels.ERROR)
+      end)
+    end
+  end
+
+  if vim.fn.has('mac') == 1 then
+    vim.system({ 'open', url }, nil, on_exit)
+    return
+  end
+  if vim.fn.executable('sensible-browser') == 1 then
+    vim.system({ 'sensible-browser', url }, nil, on_exit)
+    return
+  end
+  if vim.fn.executable('xdg-open') == 1 then
+    vim.system({ 'xdg-open', url }, nil, on_exit)
+    return
+  end
+  local ok, err = pcall(vim.fn['netrw#BrowseX'], url, 0)
+  if not ok then
+    vim.notify('Could not open external docs. Neither xdg-open, nor netrw found: ' .. err, vim.log.levels.ERROR)
+  end
+end
 
 function M.open_external_docs()
   rl.buf_request(0, 'experimental/externalDocs', vim.lsp.util.make_position_params(), function(_, url)
     if url then
-      vim.fn['netrw#BrowseX'](urlencode(url), 0)
+      open_url(url)
     end
   end)
 end
