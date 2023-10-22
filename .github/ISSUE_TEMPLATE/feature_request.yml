@@ -1,12 +1,12 @@
 name: Feature request
-description: Request an enhancement for ferris.nvim
+description: Request an enhancement for rustaceanvim
 labels: [enhancement]
 body:
 
   - type: markdown
     attributes:
       value: |
-        Before requesting: search [existing issues](https://github.com/mrcjkb/ferris.nvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement).
+        Before requesting: search [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement).
 
   - type: textarea
     attributes:

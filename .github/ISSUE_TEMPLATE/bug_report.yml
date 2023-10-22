@@ -1,13 +1,13 @@
 name: Bug Report
-description: Report a problem with ferris.nvim
+description: Report a problem with rustaceanvim
 labels: [bug]
 body:
 
   - type: markdown
     attributes:
       value: |
-        _Before reporting:_ search [existing issues](https://github.com/mrcjkb/ferris.nvim/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
-        See also: [Troubleshooting section of README.md](https://github.com/mrcjkb/ferris.nvim/blob/master/README.md#minimal-config).
+        _Before reporting:_ search [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
+        See also: [Troubleshooting section of README.md](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#minimal-config).
 
   - type: input
     attributes:
@@ -30,7 +30,7 @@ body:
     attributes:
       label: "How to reproduce the issue"
       description: |
-        Steps to reproduce using a [minimal config](https://github.com/mrcjkb/ferris.nvim/blob/master/troubleshooting/minimal.lua).
+        Steps to reproduce using a [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
       placeholder: |
         mkdir -p /tmp/minimal
         NVIM_DATA_MINIMAL=/tmp/minimal NVIM_APP_NAME="nvim-minimal" -u minimal.lua
@@ -54,7 +54,7 @@ body:
     attributes:
       label: "The minimal config used to reproduce this issue."
       description: |
-        See [this example](https://github.com/mrcjkb/ferris.nvim/blob/master/tests/minimal.lua).
+        See [this example](https://github.com/mrcjkb/rustaceanvim/blob/master/tests/minimal.lua).
       placeholder: |
         ```lua
           -- paste your minimal config here
