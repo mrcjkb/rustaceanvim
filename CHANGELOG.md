@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2023-10-23
+
+### Fixed
+- Add support for `workspace/didChangeWorkspaceFolders` to prevent more than one
+  rust-analyzer server from spawning per Neovim instance [#7](https://github.com/mrcjkb/rustaceanvim/issues/7).
+
 ## [3.0.0] - 2023-10-22
 
 ### Changed
-
 - Renamed this plugin to `rustaceanvim`,
   to avoid potential clashes with [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim),
   `vxpm/ferris.nvim` was created just before I renamed my fork
@@ -17,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.1] - 2023-10-22
 
 ### Fixed
-
 - Open external docs: Use `xdg-open` or `open` (MacOS) by default
   and fall back to `netrw`.
   Remove redundant URL encoding.
@@ -40,7 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.0] - 2023-10-21
 
 ### Breaking changes
-
 - Don't pollute the command space:
   Use a single command with subcommands and completions.
   - `RustAnalyzer [start|stop]` 
@@ -52,7 +55,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.1] - 2023-10-21
 
 ### Fixed
-
 - Hover actions + command cache: module requires.
 
 ## [1.0.0] - 2023-10-21

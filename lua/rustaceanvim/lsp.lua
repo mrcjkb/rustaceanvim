@@ -1,6 +1,7 @@
 local M = {}
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
+local methods = require('vim.lsp.protocol').Methods
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -27,6 +28,8 @@ local function is_library(fname)
   end
 end
 
+---@param fname string
+---@return string
 local function get_root_dir(fname)
   local reuse_active = is_library(fname)
   if reuse_active then
@@ -57,6 +60,7 @@ local function get_root_dir(fname)
     end
     if cm == 0 then
       cargo_workspace_dir = vim.fn.json_decode(cargo_metadata)['workspace_root']
+      ---@cast cargo_workspace_dir string
     end
   end
   return cargo_workspace_dir
@@ -67,11 +71,59 @@ local function get_root_dir(fname)
     })[1])
 end
 
+---@param bufnr? number
+---@return lsp.Client[]
+local function get_active_rustaceanvim_clients(bufnr)
+  local filter = { name = 'rust-analyzer' }
+  if bufnr then
+    filter.bufnr = bufnr
+  end
+  return vim.lsp.get_clients(filter)
+end
+
+local function is_in_workspace(client, root_dir)
+  if not client.workspace_folders then
+    return false
+  end
+
+  for _, dir in ipairs(client.workspace_folders) do
+    if (root_dir .. '/'):sub(1, #dir.name + 1) == dir.name .. '/' then
+      return true
+    end
+  end
+
+  return false
+end
+
 -- Start or attach the LSP client
 ---@return integer|nil client_id The LSP client ID
 M.start = function()
   local client_config = config.server
+  ---@type RustaceanLspClientConfig
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
+  local root_dir = get_root_dir(vim.api.nvim_buf_get_name(0))
+  lsp_start_opts.root_dir = root_dir
+
+  -- Check if a client is already running and add the workspace folder if necessary.
+  for _, client in pairs(get_active_rustaceanvim_clients()) do
+    if not is_in_workspace(client, root_dir) then
+      local workspace_folder = { uri = vim.uri_from_fname(root_dir), name = root_dir }
+      local params = {
+        event = {
+          added = { workspace_folder },
+          removed = {},
+        },
+      }
+      client.rpc.notify(methods.workspace_didChangeWorkspaceFolders, params)
+      if not client.workspace_folders then
+        client.workspace_folders = {}
+      end
+      table.insert(client.workspace_folders, workspace_folder)
+      vim.lsp.buf_attach_client(0, client.id)
+      return
+    end
+  end
+
   local types = require('rustaceanvim.types.internal')
   local rust_analyzer_cmd = types.evaluate(client_config.cmd)
   if #rust_analyzer_cmd == 0 or vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
@@ -117,8 +169,6 @@ M.start = function()
 
   lsp_start_opts.capabilities = vim.tbl_deep_extend('force', capabilities, lsp_start_opts.capabilities or {})
 
-  lsp_start_opts.root_dir = get_root_dir(vim.api.nvim_buf_get_name(0))
-
   local custom_handlers = {}
   custom_handlers['experimental/serverStatus'] = require('rustaceanvim.server_status').handler
 
@@ -160,12 +210,6 @@ M.start = function()
   end
 
   return vim.lsp.start(lsp_start_opts)
-end
-
----@param bufnr number
----@return lsp.Client[]
-local function get_active_rustaceanvim_clients(bufnr)
-  return vim.lsp.get_clients { bufnr = bufnr, name = 'rust-analyzer' }
 end
 
 ---Stop the LSP client.
