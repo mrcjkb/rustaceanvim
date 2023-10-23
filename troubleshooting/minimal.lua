@@ -40,7 +40,7 @@ local lazy = require('lazy')
 lazy.setup({
   {
     'mrcjkb/rustaceanvim',
-    version = '^2',
+    version = '^3',
     init = function()
       -- Configure rustaceanvim here
       vim.g.rustaceanvim = {}
