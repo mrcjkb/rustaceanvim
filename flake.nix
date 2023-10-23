@@ -130,13 +130,14 @@
           inherit devShell;
         };
 
-        packages = let
-          rustaceanvim = pkgs.rustaceanvim;
-        in {
+        packages = rec {
           default = rustaceanvim;
+          inherit docgen;
           inherit
+            (pkgs)
             rustaceanvim
-            docgen
+            nvim-minimal-stable
+            nvim-minimal-nightly
             ;
         };
 

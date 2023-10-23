@@ -11,6 +11,20 @@
     src = neodev-nvim;
   };
 
+  # For manual debugging purposes
+  mkNvimMinimal = with final;
+    nvim:
+      final.pkgs.wrapNeovim nvim {
+        configure = {
+          packages.myVimPackage = {
+            start = [
+              rustaceanvim
+              vimPlugins.nvim-treesitter.withAllGrammars
+            ];
+          };
+        };
+      };
+
   mkNeorocksTest = {
     name,
     nvim ? final.neovim-unwrapped,
@@ -53,6 +67,8 @@ in {
     name = "neovim-nightly-tests";
     nvim = nvim-nightly;
   };
+  nvim-minimal-stable = mkNvimMinimal final.neovim-unwrapped;
+  nvim-minimal-nightly = mkNvimMinimal nvim-nightly;
   inherit
     neodev-plugin
     ;
