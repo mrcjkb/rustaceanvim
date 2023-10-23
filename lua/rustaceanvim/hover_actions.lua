@@ -88,8 +88,6 @@ function M.handler(_, result, ctx)
     })
   )
 
-  vim.bo[bufnr].ft = 'markdown'
-
   if config.tools.hover_actions.auto_focus then
     vim.api.nvim_set_current_win(winnr)
   end
