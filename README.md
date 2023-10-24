@@ -74,7 +74,7 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 
 >**Note**
 >
->It is suggested to use the stable branch if you would like to avoid breaking changes.
+>It is suggested to pin to tagged releases if you would like to avoid breaking changes.
 
 To manually generate documentation, use `:helptags ALL`.
 
