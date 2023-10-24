@@ -154,7 +154,7 @@ local function check_external_dependency(dep)
   else
     error(([[
       %s: not found.
-      haskell-tools.nvim requires %s.
+      rustaceanvim requires %s.
       %s
       ]]):format(dep.name, dep.url, dep.info))
   end
