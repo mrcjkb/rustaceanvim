@@ -62,9 +62,6 @@
 
 This plugin is [available on LuaRocks][luarocks-url].
 
-If you use a plugin manager that does not support LuaRocks,
-you have to declare the dependencies yourself.
-
 Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 
 ```lua
