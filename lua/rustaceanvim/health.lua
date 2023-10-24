@@ -3,6 +3,7 @@
 local health = {}
 
 local Types = require('rustaceanvim.types.internal')
+---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
 local h = vim.health or require('health')
 local start = h.start or h.report_start
@@ -78,6 +79,20 @@ local external_dependencies = {
       The Rust package manager.
       Required by rust-analyzer for non-standalone files, and for debugging features.
       Not required in standalone files.
+    ]],
+  },
+  {
+    name = config.dap.adapter.command,
+    get_binaries = function()
+      return { config.dap.adapter.command }
+    end,
+    optional = function()
+      return true
+    end,
+    url = '[lldb](https://lldb.llvm.org/)',
+    info = [[
+      A debug adapter (defaultst to: LLDB).
+      Required for debugging features.
     ]],
   },
 }

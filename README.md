@@ -57,6 +57,8 @@
   (optional), for crate graphs.
 - [`cargo`](https://doc.rust-lang.org/cargo/)
   (optional), required for Cargo projects.
+- A debug adapter, e.g. [`lldb`](https://lldb.llvm.org/)
+  (optional), required for debugging.
 
 ## Installation
 

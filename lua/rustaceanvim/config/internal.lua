@@ -181,7 +181,7 @@ local RustaceanDefaultConfig = {
       ---@type string
       command = 'lldb-vscode',
       ---@type string
-      name = 'rustaceanvim_lldb',
+      name = 'lldb',
     },
   },
 }
