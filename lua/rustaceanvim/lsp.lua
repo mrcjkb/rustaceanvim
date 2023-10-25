@@ -1,7 +1,6 @@
 local M = {}
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
-local methods = require('vim.lsp.protocol').Methods
 local compat = require('rustaceanvim.compat')
 local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local joinpath = compat.joinpath
@@ -107,7 +106,7 @@ M.start = function()
           removed = {},
         },
       }
-      client.rpc.notify(methods.workspace_didChangeWorkspaceFolders, params)
+      client.rpc.notify('workspace/didChangeWorkspaceFolders', params)
       if not client.workspace_folders then
         client.workspace_folders = {}
       end

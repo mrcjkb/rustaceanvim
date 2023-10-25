@@ -5,18 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.3] - 2023-10-25
+### Fixed
+- Potential attempt to index `nil` upvalue when sending `workspace/didChangeWorkspaceFolders`
+  to LSP server [[#22](https://github.com/mrcjkb/rustaceanvim/issues/22)].
+
 ## [3.0.2] - 2023-10-23
 
 ### Fixed
 - Hover actions: Tree-sitter syntax highlighting 
-  in Neovim 0.9 [#20](https://github.com/mrcjkb/rustaceanvim/issues/20).
+  in Neovim 0.9 [[#20](https://github.com/mrcjkb/rustaceanvim/issues/20)].
 
 ## [3.0.1] - 2023-10-23
 
 ### Fixed
 - Add support for `workspace/didChangeWorkspaceFolders` to prevent more than one
-  rust-analyzer server from spawning per Neovim instance [#7](https://github.com/mrcjkb/rustaceanvim/issues/7).
-- Neovim 0.9 compatibility [#9](https://github.com/mrcjkb/rustaceanvim/issues/9).
+  rust-analyzer server from spawning per Neovim instance [[#7](https://github.com/mrcjkb/rustaceanvim/issues/7)].
+- Neovim 0.9 compatibility [[#9](https://github.com/mrcjkb/rustaceanvim/issues/9)].
 
 ## [3.0.0] - 2023-10-22
 
