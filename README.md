@@ -139,7 +139,15 @@ for more configuration options.
 	<b>Debugging</b>
   </summary>
   
-  ![debugging](https://github.com/simrat39/rust-tools-demos/raw/master/rust-tools-debug.gif)
+  ```vimscript
+  :RustLsp debuggables [last?]
+  ```
+  ```lua
+  vim.cmd.RustLsp {'debuggables', 'last' --[[ optional ]] }
+  ```
+
+  ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/ce17d228-ae0a-416a-8159-fe095a85dcb7)
+
 </details>
 
 <details>
@@ -150,6 +158,13 @@ for more configuration options.
   ```vimscript
   :RustLsp runnables [last?]
   ```
+  ```lua
+  vim.cmd.RustLsp {'runnables', 'last' --[[ optional ]] }
+  ```
+
+  ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/95183192-5669-4a07-804b-83f67831be57)
+
+
 </details>
 
 <details>
@@ -160,6 +175,10 @@ for more configuration options.
   ```vimscript
   :RustLsp expandMacro
   ```
+  ```lua
+  vim.cmd.RustLsp('expandMacro')
+  ```
+  ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/477d9e58-74b0-42ff-87ca-2fef34d06db3)
 </details>
 
 <details>
@@ -170,7 +189,11 @@ for more configuration options.
   ```vimscript
   :RustLsp moveItem up
   :RustLsp moveItem down
-```
+  ```
+  ```lua
+  vim.cmd.RustLsp { 'moveItem',  'up' }
+  vim.cmd.RustLsp { 'moveItem',  'down' }
+  ```
 </details>
 
 <details>
@@ -178,10 +201,20 @@ for more configuration options.
 	<b>Hover Actions</b>
   </summary>
   
- Note: To activate hover actions, run the command twice. This will move you into the window, then press enter on the selection you want. Alternatively, you can set ```auto_focus``` to true in your config and you will automatically enter the hover actions window.
+ Note: To activate hover actions, run the command twice.
+ This will move you into the window, then press enter on the selection you want.
+ Alternatively, you can set `auto_focus` to `true` in your config and you will 
+ automatically enter the hover actions window.
+
  ```vimscript
  :RustLsp hover actions
  ```
+ ```lua
+ vim.cmd.RustLsp { 'hover', 'actions' }
+ ```
+
+![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/c7b6c730-4439-47b0-9a75-7ea4e6831f7a)
+
 </details>
 
 <details>
@@ -191,6 +224,9 @@ for more configuration options.
 
   ```vimscript
   :RustLsp hover range
+  ```
+  ```lua
+  vim.cmd.RustLsp { 'hover', 'range' }
   ```
 </details>
 
@@ -202,6 +238,9 @@ for more configuration options.
   ```vimscript
   :RustLsp openCargo
   ```
+  ```lua
+  vim.cmd.RustLsp('openCargo')
+  ```
 </details>
 
 <details>
@@ -211,6 +250,9 @@ for more configuration options.
   
   ```vimscript
   :RustLsp parentModule
+  ```
+  ```lua
+  vim.cmd.RustLsp('parentModule')
   ```
 </details>
 
@@ -222,6 +264,9 @@ for more configuration options.
   ```vimscript
   :RustLsp joinLines
   ```
+  ```lua
+  vim.cmd.RustLsp('joinLines')
+  ```
 </details>
 
 <details>
@@ -231,6 +276,9 @@ for more configuration options.
   
   ```vimscript
   :RustLsp ssr [query]
+  ```
+  ```lua
+  vim.cmd.RustLsp { 'ssr', 'query' --[[ optional ]] }
   ```
 </details>
 
@@ -242,6 +290,9 @@ for more configuration options.
   ```vimscript
   :RustLsp crateGraph [backend [output]]
   ```
+  ```lua
+  vim.cmd.RustLsp { 'crateGraph', '[backend]', '[output]' }
+  ```
 </details>
 
 <details>
@@ -252,6 +303,12 @@ for more configuration options.
   ```vimscript
   :RustLsp syntaxTree
   ```
+  ```lua
+  vim.cmd.RustLsp('syntaxTree')
+  ```
+
+  ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/c865a263-1568-41c7-a32b-bc4a34b198dc)
+
 </details>
 
 <details>
@@ -268,6 +325,9 @@ for more configuration options.
   
   ```vimscript
   :RustLsp flyCheck
+  ```
+  ```lua
+  vim.cmd.RustLsp('flyCheck')
   ```
 </details>
 
