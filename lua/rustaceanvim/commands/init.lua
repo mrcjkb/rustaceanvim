@@ -13,7 +13,7 @@ local command_tbl = {
     require('rustaceanvim.commands.code_action_group')()
   end,
   crateGraph = function(args)
-    require('rustaceanvim.commands.crate_graph')(args)
+    require('rustaceanvim.commands.crate_graph')(unpack(args))
   end,
   debuggables = function(args)
     if #args == 0 then
@@ -115,6 +115,7 @@ end
 function M.create_rust_lsp_command()
   vim.api.nvim_create_user_command(rust_lsp_cmd_name, rust_lsp, {
     nargs = '+',
+    range = true,
     desc = 'Interacts with the rust-analyzer LSP client',
     complete = function(arg_lead, cmdline, _)
       local commands = vim.tbl_keys(command_tbl)
