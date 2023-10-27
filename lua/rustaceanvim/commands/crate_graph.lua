@@ -2,12 +2,17 @@ local config = require('rustaceanvim.config.internal')
 
 local M = {}
 
+---@return { full: boolean}
 local function get_opts()
   return { full = config.tools.crate_graph.full }
 end
 
 --- Creation of the correct handler depending on the initial call of the command
 --- and give the option to override global settings
+---@param backend string | nil
+---@param output string | nil
+---@param pipe string | nil
+---@return fun(err: string, graph: string)
 local function handler_factory(backend, output, pipe)
   backend = backend or config.tools.crate_graph.backend
   output = output or config.tools.crate_graph.output
@@ -23,6 +28,10 @@ local function handler_factory(backend, output, pipe)
     end
 
     -- Validating backend
+    if not backend then
+      vim.notify('no crate graph backend specified.', vim.log.levels.ERROR)
+      return
+    end
     if not vim.list_contains(config.tools.crate_graph.enabled_graphviz_backends, backend) then
       vim.notify('crate graph backend not recognized as valid: ' .. vim.inspect(backend), vim.log.levels.ERROR)
       return
@@ -57,6 +66,9 @@ end
 
 local rl = require('rustaceanvim.rust_analyzer')
 
+---@param backend string | nil
+---@param output string | nil
+---@param pipe string | nil
 function M.view_crate_graph(backend, output, pipe)
   rl.buf_request(0, 'rust-analyzer/viewCrateGraph', get_opts(), handler_factory(backend, output, pipe))
 end
