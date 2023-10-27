@@ -1,7 +1,19 @@
 local ui = require('rustaceanvim.ui')
 local M = {}
 
----@param action table
+---@class RACodeAction
+---@field kind string
+---@field group? string
+---@field edit? table
+---@field command? { command: string } | string
+
+---@class RACommand
+---@field title string
+---@field group? string
+---@field command string
+---@field arguments? any[]
+
+---@param action RACodeAction | RACommand
 ---@param client lsp.Client
 ---@param ctx table
 function M.apply_action(action, client, ctx)
@@ -12,8 +24,6 @@ function M.apply_action(action, client, ctx)
     local command = type(action.command) == 'table' and action.command or action
     local fn = vim.lsp.commands[command.command]
     if fn then
-      local enriched_ctx = vim.deepcopy(ctx)
-      enriched_ctx.client_id = client.id
       fn(command, ctx)
     else
       M.execute_command(command)
@@ -21,26 +31,14 @@ function M.apply_action(action, client, ctx)
   end
 end
 
----@alias action_tuple { [1]: number, [2]: table }
+---@alias action_tuple { [1]: number, [2]: RACodeAction|RACommand }
 
----@param action_tuple action_tuple
+---@param action_tuple action_tuple | nil
 ---@param ctx table
 function M.on_user_choice(action_tuple, ctx)
   if not action_tuple then
     return
   end
-  -- textDocument/codeAction can return either Command[] or CodeAction[]
-  --
-  -- CodeAction
-  --  ...
-  --  edit?: WorkspaceEdit    -- <- must be applied before command
-  --  command?: Command
-  --
-  -- Command:
-  --  title: string
-  --  command: string
-  --  arguments?: any[]
-  --
   local client = vim.lsp.get_client_by_id(action_tuple[1])
   local action = action_tuple[2]
   local code_action_provider = client and client.server_capabilities.codeActionProvider
@@ -49,6 +47,7 @@ function M.on_user_choice(action_tuple, ctx)
   end
   if not action.edit and type(code_action_provider) == 'table' and code_action_provider.resolveProvider then
     client.request('codeAction/resolve', action, function(err, resolved_action)
+      ---@cast resolved_action RACodeAction|RACommand
       if err then
         vim.notify(err.code .. ': ' .. err.message, vim.log.levels.ERROR)
         return
@@ -60,9 +59,12 @@ function M.on_user_choice(action_tuple, ctx)
   end
 end
 
+---@class CodeActionWindowGeometry
+---@field width integer
+
 ---@param action_tuples action_tuple[]
 ---@param is_group boolean
----@return { width: integer }
+---@return CodeActionWindowGeometry
 local function compute_width(action_tuples, is_group)
   local width = 0
 
@@ -103,10 +105,10 @@ local function on_primary_quit()
   M.cleanup()
 end
 
----@class LspCodeActionResult
----@field result? table
+---@class RACodeActionResult
+---@field result? RACodeAction[] | RACommand[]
 
----@param results { [number]: LspCodeActionResult }
+---@param results { [number]: RACodeActionResult }
 ---@param ctx table
 local function on_code_action_results(results, ctx)
   M.state.ctx = ctx
@@ -124,28 +126,26 @@ local function on_code_action_results(results, ctx)
   end
 
   M.state.primary.geometry = compute_width(action_tuples, true)
-
-  M.state.actions.grouped = {}
-
-  M.state.actions.ungrouped = {}
+  ---@alias grouped_actions_tbl { actions: action_tuple[], idx: integer | nil }
+  ---@class PartitionedActions
+  M.state.actions = {
+    grouped = {},
+    ungrouped = {},
+  }
 
   for _, value in ipairs(action_tuples) do
     local action = value[2]
-
     -- Some clippy lints may have newlines in them
     action.title = string.gsub(action.title, '[\n\r]+', ' ')
-
     if action.group then
       if not M.state.actions.grouped[action.group] then
         M.state.actions.grouped[action.group] = { actions = {}, idx = nil }
       end
-
       table.insert(M.state.actions.grouped[action.group].actions, value)
     else
       table.insert(M.state.actions.ungrouped, value)
     end
   end
-
   M.state.primary.bufnr = vim.api.nvim_create_buf(false, true)
   M.state.primary.winnr = vim.api.nvim_open_win(M.state.primary.bufnr, true, {
     relative = 'cursor',
@@ -306,13 +306,25 @@ function M.on_cursor_move()
   end
 end
 
+---@class CodeActionInternalState
 M.state = {
   ctx = {},
-  actions = {},
+  ---@type PartitionedActions
+  actions = {
+    ---@type grouped_actions_tbl[]
+    grouped = {},
+    ---@type action_tuple[]
+    ungrouped = {},
+  },
+  ---@type number | nil
   active_group_index = nil,
+  ---@class CodeActionWindowState
   primary = {
+    ---@type integer | nil
     bufnr = nil,
+    ---@type integer | nil
     winnr = nil,
+    ---@type CodeActionWindowGeometry | nil
     geometry = nil,
     clear = function()
       M.state.primary.geometry = nil
@@ -320,6 +332,7 @@ M.state = {
       M.state.primary.winnr = nil
     end,
   },
+  ---@type CodeActionWindowState
   secondary = {
     bufnr = nil,
     winnr = nil,
