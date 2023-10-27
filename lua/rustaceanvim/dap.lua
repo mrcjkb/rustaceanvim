@@ -16,6 +16,8 @@ if not ok then
 end
 local dap = require('dap')
 if config.dap.adapter ~= false then
+  ---@TODO: Add nvim-dap to lua-ls lint
+  ---@diagnostic disable-next-line: assign-type-mismatch
   dap.adapters.rt_lldb = config.dap.adapter
 end
 
