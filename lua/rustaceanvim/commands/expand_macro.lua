@@ -2,12 +2,17 @@ local ui = require('rustaceanvim.ui')
 
 local M = {}
 
+---@return lsp_position_params
 local function get_params()
   return vim.lsp.util.make_position_params()
 end
 
 ---@type integer | nil
 local latest_buf_id = nil
+
+---@class RAMacroExpansionResult
+---@field name string
+---@field expansion string
 
 -- parse the lines from result to get a list of the desirable output
 -- Example:
@@ -17,17 +22,19 @@ local latest_buf_id = nil
 -- {
 --   $crate::io::_eprint(std::fmt::Arguments::new_v1(&[], &[std::fmt::ArgumentV1::new(&(err),std::fmt::Display::fmt),]));
 -- }
-local function parse_lines(t)
+---@param result RAMacroExpansionResult
+---@return string[]
+local function parse_lines(result)
   local ret = {}
 
-  local name = t.name
+  local name = result.name
   local text = '// Recursive expansion of the ' .. name .. ' macro'
   table.insert(ret, '// ' .. string.rep('=', string.len(text) - 3))
   table.insert(ret, text)
   table.insert(ret, '// ' .. string.rep('=', string.len(text) - 3))
   table.insert(ret, '')
 
-  local expansion = t.expansion
+  local expansion = result.expansion
   for string in string.gmatch(expansion, '([^\n]+)') do
     table.insert(ret, string)
   end
@@ -35,11 +42,12 @@ local function parse_lines(t)
   return ret
 end
 
+---@param result? RAMacroExpansionResult
 local function handler(_, result)
   -- echo a message when result is nil (meaning no macro under cursor) and
   -- exit
   if result == nil then
-    vim.api.nvim_out_write('No macro under cursor!\n')
+    vim.notify('No macro under cursor!', vim.log.levels.INFO)
     return
   end
 
