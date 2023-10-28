@@ -125,14 +125,21 @@ function M.create_rust_lsp_command()
     desc = 'Interacts with the rust-analyzer LSP client',
     complete = function(arg_lead, cmdline, _)
       local commands = vim.tbl_keys(command_tbl)
+      local match_start = '^' .. rust_lsp_cmd_name
       -- special case: crateGraph comes with graphviz backend completions
-      if cmdline:match('^' .. rust_lsp_cmd_name .. ' cr%s+%w*$') then
-        local backends = config.tools.crate_graph.enabled_graphviz_backends or {}
-        return vim.tbl_map(function(backend)
-          return 'crateGraph ' .. backend
-        end, backends)
+      if cmdline:match(match_start .. ' debuggables%s+%w*$') or cmdline:match(match_start .. ' runnables%s+%w*$') then
+        return { 'last' }
       end
-      if cmdline:match('^' .. rust_lsp_cmd_name .. '%s+%w*$') then
+      if cmdline:match(match_start .. ' hover%s+%w*$') then
+        return { 'action', 'range' }
+      end
+      if cmdline:match(match_start .. ' moveItem%s+%w*$') then
+        return { 'up', 'down' }
+      end
+      if cmdline:match(match_start .. ' crateGraph%s+%w*$') then
+        return config.tools.crate_graph.enabled_graphviz_backends or {}
+      end
+      if cmdline:match(match_start .. '%s+%w*$') then
         return vim
           .iter(commands)
           :filter(function(command)
