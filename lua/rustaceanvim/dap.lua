@@ -9,6 +9,7 @@ end
 local ok, _ = pcall(require, 'dap')
 if not ok then
   return {
+    ---@param _ RADebuggableArgs
     start = function(_)
       scheduled_error('nvim-dap not found.')
     end,
@@ -55,6 +56,7 @@ local function get_cargo_args_from_runnables_args(runnable_args)
   return cargo_args
 end
 
+---@param args RADebuggableArgs
 function M.start(args)
   if not pcall(require, 'plenary.job') then
     scheduled_error('plenary.nvim not found.')
