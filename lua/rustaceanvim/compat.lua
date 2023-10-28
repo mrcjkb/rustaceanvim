@@ -33,4 +33,15 @@ M.system = vim.system
     return systemObj
   end
 
+M.list_contains = vim.list_contains
+  or function(t, value)
+    vim.validate { t = { t, 't' } }
+    for _, v in ipairs(t) do
+      if v == value then
+        return true
+      end
+    end
+    return false
+  end
+
 return M
