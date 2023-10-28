@@ -65,38 +65,62 @@
           ];
         };
 
-        type-check = pre-commit-hooks.lib.${system}.run {
-          src = self;
-          hooks = {
-            lua-ls.enable = true;
-          };
-          settings = {
-            lua-ls = {
-              config = {
-                runtime.version = "LuaJIT";
-                Lua = {
-                  workspace = {
-                    library = [
-                      "${pkgs.neovim-nightly}/share/nvim/runtime/lua"
-                      "${pkgs.neodev-plugin}/types/nightly"
-                      # "${pkgs.luajitPackages.busted}"
-                    ];
-                    checkThirdParty = false;
-                    ignoreDir = [
-                      ".git"
-                      ".github"
-                      ".direnv"
-                      "result"
-                      "nix"
-                      "doc"
-                      "spec" # FIXME: Add busted library
-                    ];
+        mkTypeCheck = {
+          rtp ? [],
+          disabled-diagnostics ? [],
+        }:
+          pre-commit-hooks.lib.${system}.run {
+            src = self;
+            hooks = {
+              lua-ls.enable = true;
+            };
+            settings = {
+              lua-ls = {
+                config = {
+                  runtime.version = "LuaJIT";
+                  Lua = {
+                    workspace = {
+                      library = rtp;
+                      checkThirdParty = false;
+                      ignoreDir = [
+                        ".git"
+                        ".github"
+                        ".direnv"
+                        "result"
+                        "nix"
+                        "doc"
+                        "spec" # FIXME: Add busted library
+                      ];
+                    };
+                    diagnostics = {
+                      libraryFiles = "Disable";
+                      disable = disabled-diagnostics;
+                    };
                   };
-                  diagnostics. libraryFiles = "Disable";
                 };
               };
             };
           };
+
+        type-check-stable = mkTypeCheck {
+          rtp = [
+            "${pkgs.neovim}/share/nvim/runtime/lua"
+            "${pkgs.neodev-plugin}/types/stable"
+            # "${pkgs.luajitPackages.busted}"
+          ];
+          disabled-diagnostics = [
+            "undefined-doc-name"
+            "redundant-parameter"
+            "invisible"
+          ];
+        };
+
+        type-check-nightly = mkTypeCheck {
+          rtp = [
+            "${pkgs.neovim-nightly}/share/nvim/runtime/lua"
+            "${pkgs.neodev-plugin}/types/nightly"
+            # "${pkgs.luajitPackages.busted}"
+          ];
         };
 
         pre-commit-check = pre-commit-hooks.lib.${system}.run {
@@ -143,7 +167,10 @@
 
         checks = {
           formatting = pre-commit-check;
-          inherit type-check;
+          inherit
+            type-check-stable
+            type-check-nightly
+            ;
           inherit
             (pkgs)
             nvim-stable-tests

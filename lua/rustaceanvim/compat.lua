@@ -1,4 +1,4 @@
----@diagnostic disable: deprecated
+---@diagnostic disable: deprecated, duplicate-doc-field
 ---@mod rustaceanvim.compat Functions for backward compatibility with older Neovim versions
 
 local M = {}
@@ -10,6 +10,12 @@ end
 M.get_clients = vim.lsp.get_clients or vim.lsp.get_active_clients
 
 M.uv = vim.uv or vim.loop
+
+--- @class vim.SystemCompleted
+--- @field code integer
+--- @field signal integer
+--- @field stdout? string
+--- @field stderr? string
 
 M.system = vim.system
   -- wrapper around vim.fn.system to give it a similar API as vim.system
