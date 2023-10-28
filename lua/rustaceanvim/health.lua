@@ -96,16 +96,16 @@ local external_dependencies = {
     ]],
   },
   {
-    name = config.dap.adapter.command,
+    name = 'lldb',
     get_binaries = function()
-      return { config.dap.adapter.command }
+      return { 'lldb' }
     end,
     optional = function()
       return true
     end,
     url = '[lldb](https://lldb.llvm.org/)',
     info = [[
-      A debug adapter (defaultst to: LLDB).
+      A debug adapter (defaults to: LLDB).
       Required for debugging features.
     ]],
   },

@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   an error code.
 - `:RustLsp rebuildProcMacros` command.
 
+### Fixed
+- Health check got stuck if `lldb-vscode` was installed.
+
 ## [3.0.4] - 2023-10-25
 ### Fixed
 - Allow `:RustLsp hover range` to accept a range.
