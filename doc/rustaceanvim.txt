@@ -139,7 +139,8 @@ RustaceanDapOpts                                              *RustaceanDapOpts*
     @field rust-analyzer? table Options to send to rust-analyzer. See: https://rust-analyzer.github.io/manual.html#configuration
 
     Fields: ~
-        {adapter?}  (RustaceanDapAdapterOpts)  Options for the debug adapter
+        {adapter?}                  (RustaceanDapAdapterOpts)  Options for the debug adapter
+        {auto_generate_source_map}  (fun():boolean|boolean)    Whether to auto-generate a source map for the standard library.
 
 
 RustaceanDapAdapterOpts                                *RustaceanDapAdapterOpts*
