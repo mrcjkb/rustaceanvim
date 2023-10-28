@@ -49,7 +49,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 
 ---@class RustaceanToolsOpts
 ---@field executor? RustaceanExecutor | executor_alias
----@field on_initialized? fun(health:lsp_server_health_status) Function that is invoked when the LSP server has finished initializing
+---@field on_initialized? fun(health:RustAnalyzerInitializedStatus) Function that is invoked when the LSP server has finished initializing
 ---@field reload_workspace_from_cargo_toml? boolean Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
 ---@field hover_actions? RustaceanHoverActionsOpts Options for hover actions
 ---@field create_graph? RustaceanCrateGraphConfig Options for showing the crate graph based on graphviz and the dot
@@ -62,6 +62,9 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field auto_focus? boolean Whether to automatically focus the hover action window
 
 ---@alias lsp_server_health_status 'ok' | 'warning' | 'error'
+
+---@class RustAnalyzerInitializedStatus
+---@field health lsp_server_health_status
 
 ---@class RustaceanCrateGraphConfig
 ---@field backend? string Backend used for displaying the graph. See: https://graphviz.org/docs/outputs/ Defaults to `"x11"` if unset.

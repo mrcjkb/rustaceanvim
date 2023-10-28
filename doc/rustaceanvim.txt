@@ -90,10 +90,10 @@ RustaceanToolsOpts                                          *RustaceanToolsOpts*
 
     Fields: ~
         {executor?}                          (RustaceanExecutor|executor_alias)
-        {on_initialized?}                    (fun(health:lsp_server_health_status))  Function that is invoked when the LSP server has finished initializing
-        {reload_workspace_from_cargo_toml?}  (boolean)                               Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
-        {hover_actions?}                     (RustaceanHoverActionsOpts)             Options for hover actions
-        {create_graph?}                      (RustaceanCrateGraphConfig)             Options for showing the crate graph based on graphviz and the dot
+        {on_initialized?}                    (fun(health:RustAnalyzerInitializedStatus))  Function that is invoked when the LSP server has finished initializing
+        {reload_workspace_from_cargo_toml?}  (boolean)                                    Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
+        {hover_actions?}                     (RustaceanHoverActionsOpts)                  Options for hover actions
+        {create_graph?}                      (RustaceanCrateGraphConfig)                  Options for showing the crate graph based on graphviz and the dot
 
 
 RustaceanHoverActionsOpts                            *RustaceanHoverActionsOpts*
@@ -110,6 +110,12 @@ lsp_server_health_status                              *lsp_server_health_status*
 
     Type: ~
         "ok"|"warning"|"error"
+
+
+RustAnalyzerInitializedStatus                    *RustAnalyzerInitializedStatus*
+
+    Fields: ~
+        {health}  (lsp_server_health_status)
 
 
 RustaceanCrateGraphConfig                            *RustaceanCrateGraphConfig*

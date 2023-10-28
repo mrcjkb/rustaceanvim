@@ -2,6 +2,10 @@ local vim = vim
 
 local RustaceanConfig
 
+---@class RustAnalyzerInitializedStatusInternal : RustAnalyzerInitializedStatus
+---@field health lsp_server_health_status
+---@field quiescent boolean inactive?
+
 ---@class RustaceanConfig
 local RustaceanDefaultConfig = {
   ---@class RustaceanToolsConfig
@@ -14,7 +18,7 @@ local RustaceanDefaultConfig = {
 
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
-    ---@type fun(health:lsp_server_health_status) | nil
+    ---@type fun(health:RustAnalyzerInitializedStatus) | nil
     on_initialized = nil,
 
     --- automatically call RustReloadWorkspace when writing to a Cargo.toml file.
