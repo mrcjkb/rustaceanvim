@@ -183,6 +183,20 @@ for more configuration options.
 
 <details>
   <summary>
+	<b>Rebuild proc macros</b>
+  </summary>
+  
+  ```vimscript
+  :RustLsp rebuildProcMacros
+  ```
+  ```lua
+  vim.cmd.RustLsp('rebuildProcMacros')
+  ```
+
+</details>
+
+<details>
+  <summary>
 	<b>Move Item Up/Down</b>
   </summary>
   

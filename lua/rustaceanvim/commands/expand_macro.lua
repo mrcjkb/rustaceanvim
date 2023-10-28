@@ -72,7 +72,7 @@ end
 
 local rl = require('rustaceanvim.rust_analyzer')
 
---- Sends the request to rust-analyzer to get cargo.toml's location and open it
+--- Sends the request to rust-analyzer to expand the macro under the cursor
 function M.expand_macro()
   rl.buf_request(0, 'rust-analyzer/expandMacro', get_params(), handler)
 end
