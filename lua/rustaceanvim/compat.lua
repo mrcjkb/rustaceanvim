@@ -18,7 +18,7 @@ M.uv = vim.uv or vim.loop
 --- @field stderr? string
 
 M.system = vim.system
-  -- wrapper around vim.fn.system to give it a similar API as vim.system
+  -- wrapper around vim.fn.system to give it a similar API to vim.system
   or function(cmd, _, on_exit)
     local output = vim.fn.system(cmd)
     local ok = vim.v.shell_error
