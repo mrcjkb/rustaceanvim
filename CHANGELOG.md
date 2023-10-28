@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.1.0] - 2023-10-28
 ### Added
-- `:RustLsp explainErrors` command, uses `rustc --explain` on error diagnostics with
+- `:RustLsp explainError` command, uses `rustc --explain` on error diagnostics with
   an error code.
 - `:RustLsp rebuildProcMacros` command.
 
