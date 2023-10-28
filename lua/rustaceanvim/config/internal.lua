@@ -187,6 +187,11 @@ local RustaceanDefaultConfig = {
       ---@type string
       name = 'lldb',
     },
+    --- Whether to auto-generate a source map for the standard library.
+    ---@type boolean | fun():boolean
+    auto_generate_source_map = function()
+      return vim.fn.executable('rustc') == 1
+    end,
   },
 }
 

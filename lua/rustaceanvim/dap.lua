@@ -1,5 +1,6 @@
 local config = require('rustaceanvim.config.internal')
 local compat = require('rustaceanvim.compat')
+local Types = require('rustaceanvim.types.internal')
 
 local function scheduled_error(err)
   vim.schedule(function()
@@ -57,12 +58,60 @@ local function get_cargo_args_from_runnables_args(runnable_args)
   return cargo_args
 end
 
+---@param callback fun(commit_hash:string)
+local function get_rustc_commit_hash(callback)
+  compat.system({ 'rustc', '--version', '--verbose' }, nil, function(sc)
+    ---@cast sc vim.SystemCompleted
+    local result = sc.stdout
+    if sc.code ~= 0 or result == nil then
+      return
+    end
+    local commit_hash = result:match('commit%-hash:%s+([^\n]+)$')
+    if not commit_hash then
+      return
+    end
+    callback(commit_hash)
+  end)
+end
+
+local function get_rustc_sysroot(callback)
+  compat.system({ 'rustc', '--print', 'sysroot' }, nil, function(sc)
+    ---@cast sc vim.SystemCompleted
+    local result = sc.stdout
+    if sc.code ~= 0 or result == nil then
+      return
+    end
+    callback(result)
+  end)
+end
+
+---@alias DapSourceMap {[string]: string}
+
+---@type DapSourceMap
+local source_map = {}
+
+---See https://github.com/vadimcn/codelldb/issues/204
+local function generate_source_map()
+  get_rustc_commit_hash(function(commit_hash)
+    get_rustc_sysroot(function(rustc_sysroot)
+      ---@type DapSourceMap
+      local new_map = {
+        [compat.joinpath('/rustc/', commit_hash)] = compat.joinpath(rustc_sysroot, '/lib/rustlib/src/rust'),
+      }
+      vim.tbl_extend('force', source_map, { new_map })
+    end)
+  end)
+end
+
 ---@param args RADebuggableArgs
 function M.start(args)
-  local cargo_args = get_cargo_args_from_runnables_args(args)
-
   vim.notify('Compiling a debug build for debugging. This might take some time...')
 
+  if Types.evaluate(config.dap.auto_generate_source_map) then
+    generate_source_map()
+  end
+
+  local cargo_args = get_cargo_args_from_runnables_args(args)
   local cmd = vim.list_extend({ 'cargo' }, cargo_args)
   compat.system(cmd, { cwd = args.workspaceRoot }, function(sc)
     ---@cast sc vim.SystemCompleted
@@ -135,7 +184,7 @@ function M.start(args)
         runInTerminal = false,
       }
       -- start debugging
-      dap.run(dap_config)
+      dap.run(vim.tbl_deep_extend('force', dap_config, { sourceMap = source_map }))
     end)
   end)
 end
