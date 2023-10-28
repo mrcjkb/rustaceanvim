@@ -82,6 +82,20 @@ local external_dependencies = {
     ]],
   },
   {
+    name = 'rustc',
+    get_binaries = function()
+      return { 'rustc' }
+    end,
+    optional = function()
+      return true
+    end,
+    url = '[rustc](https://doc.rust-lang.org/rustc/what-is-rustc.html)',
+    info = [[
+      The Rust compiler.
+      Called by `:RustLsp explainError`.
+    ]],
+  },
+  {
     name = config.dap.adapter.command,
     get_binaries = function()
       return { config.dap.adapter.command }

@@ -246,6 +246,25 @@ for more configuration options.
 
 <details>
   <summary>
+	<b>Explain errors</b>
+  </summary>
+
+  Display a hover window with explanations from the [rust error codes index](https://doc.rust-lang.org/error_codes/error-index.html)
+  over error diagnostics (if they have an error code).
+  
+  ```vimscript
+  :RustLsp explainError
+  ```
+  ```lua
+  vim.cmd.RustLsp('explainError')
+  ```
+
+![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/bac9b31c-22ca-40c4-bfd3-b8c5ba4cc49a)
+
+</details>
+
+<details>
+  <summary>
 	<b>Open Cargo.toml</b>
   </summary>
   
