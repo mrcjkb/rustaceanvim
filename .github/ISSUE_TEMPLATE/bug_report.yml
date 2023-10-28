@@ -23,7 +23,7 @@ body:
       required: true
   - type: input
     attributes:
-      label: "Output of `:checkhealth ferris`"
+      label: "Output of `:checkhealth rustaceanvim`"
     validations:
       required: true
   - type: textarea
