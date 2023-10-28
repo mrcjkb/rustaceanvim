@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="446.42386"
-   height="71.815071"
-   viewBox="0 0 446.42389 71.815071"
+   width="361.33032"
+   height="146.77704"
+   viewBox="0 0 361.33035 146.77704"
    version="1.1"
    id="svg95"
    sodipodi:docname="rustaceanvim.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -26,15 +27,16 @@
      inkscape:pagecheckerboard="1"
      inkscape:deskcolor="#505050"
      showgrid="false"
-     inkscape:zoom="1.030046"
-     inkscape:cx="388.81759"
-     inkscape:cy="-15.533287"
+     inkscape:zoom="1.456705"
+     inkscape:cx="169.90399"
+     inkscape:cy="44.621251"
      inkscape:window-width="1920"
      inkscape:window-height="1080"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="text368" />
+     inkscape:current-layer="g1499"
+     showguides="true" />
   <title
      id="title70">neovim-mark@2x</title>
   <description>Created with Sketch (http://www.bohemiancoding.com/sketch)</description>
@@ -221,6 +223,36 @@
          style="stop-color:rgb(247,76,0);stop-opacity:1"
          id="stop527" />
     </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient-1"
+       id="linearGradient750"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="scale(0.46142398,2.1672042)"
+       x1="167.95833"
+       y1="-0.46142399"
+       x2="167.95833"
+       y2="335.45523" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient-2"
+       id="linearGradient752"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="scale(0.46586797,2.1465309)"
+       x1="1118.3427"
+       y1="-0.46586797"
+       x2="1118.3427"
+       y2="338.68604" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient-3"
+       id="linearGradient754"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="scale(0.84189739,1.1877932)"
+       x1="356.33795"
+       y1="0"
+       x2="356.33795"
+       y2="612.90131" />
   </defs>
   <metadata
      id="metadata14713">
@@ -235,13 +267,13 @@
      aria-label="rustaceanvim"
      id="text4483"
      style="font-weight:bold;font-size:33.4748px;font-family:Lato;-inkscape-font-specification:'Lato Bold';fill:#1a1a1a;stroke-width:1.39478"
-     transform="translate(69.77617,90.051194)">
+     transform="translate(-15.317373,177.11108)">
     <g
        id="g5925"
        transform="matrix(1.6576683,0,0,1.6576683,-217.36825,0)">
       <g
          id="g1499"
-         transform="matrix(0.48590649,0,0,0.48590649,96.951923,16.362684)">
+         transform="matrix(0.59423772,0,0,0.59423772,227.99656,-25.11164)">
         <g
            id="Page-1"
            stroke="none"
@@ -249,7 +281,7 @@
            fill="none"
            fill-rule="evenodd"
            sketch:type="MSPage"
-           transform="matrix(0.09185292,0,0,0.09293883,11.429095,-124.25314)">
+           transform="matrix(0.09185292,0,0,0.09293883,8.2059528,-116.31995)">
           <g
              id="mark-copy"
              sketch:type="MSLayerGroup"
@@ -259,20 +291,20 @@
                id="Left---green"
                fill="url(#linearGradient-1)"
                sketch:type="MSShapeGroup"
-               style="fill:url(#linearGradient-1)" />
+               style="fill:url(#linearGradient750)" />
             <path
                d="M 443.0604,156.9824 600,-1 596.81879,727 442,572.21994 Z"
                id="Right---blue"
                fill="url(#linearGradient-2)"
                sketch:type="MSShapeGroup"
                transform="matrix(-1,0,0,1,1042,0)"
-               style="fill:url(#linearGradient-2)" />
+               style="fill:url(#linearGradient752)" />
             <path
                d="M 154.98629,0 558,615.1897 445.2246,728 42,114.17202 Z"
                id="Cross---blue"
                fill="url(#linearGradient-3)"
                sketch:type="MSShapeGroup"
-               style="fill:url(#linearGradient-3)" />
+               style="fill:url(#linearGradient754)" />
             <path
                d="M 155,283.83232 154.78675,308 31,124.71061 42.461949,113 Z"
                id="Shadow"
@@ -285,7 +317,7 @@
            id="Layer-1"
            serif:id="Layer 1"
            style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421"
-           transform="matrix(0.03892676,-0.03670031,0.0362715,0.03938696,-32.156897,-117.82123)">
+           transform="matrix(0.03892676,-0.03670031,0.0362715,0.03938696,-32.156897,-109.88804)">
           <g
              transform="translate(597.344,637.02)"
              id="g458">
