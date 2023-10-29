@@ -1,3 +1,5 @@
+local compat = require('rustaceanvim.compat')
+
 ---@type RustaceanExecutor
 local M = {}
 
@@ -29,23 +31,16 @@ function M.execute_command(command, args, cwd)
   clear_qf()
 
   -- start compiling
-  require('plenary.job')
-    :new({
-      command = command,
-      args = args,
-      cwd = cwd,
-      on_stdout = function(_, data)
-        vim.schedule(function()
-          append_qf(data)
-        end)
-      end,
-      on_stderr = function(_, data)
-        vim.schedule(function()
-          append_qf(data)
-        end)
-      end,
-    })
-    :start()
+  local cmd = vim.list_extend({ command }, args)
+  compat.system(
+    cmd,
+    { cwd = cwd },
+    vim.schedule_wrap(function(sc)
+      ---@cast sc vim.SystemCompleted
+      local data = sc.stdout or sc.stderr
+      append_qf(data)
+    end)
+  )
 end
 
 return M
