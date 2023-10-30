@@ -80,6 +80,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 
 ---@class RustaceanDapOpts
 ---@field adapter? RustaceanDapAdapterOpts Options for the debug adapter
+---@field auto_generate_source_map fun():boolean | boolean Whether to auto-generate a source map for the standard library.
 
 ---@class RustaceanDapAdapterOpts
 ---@field type? string The type of debug adapter (default: `"executable"`)
