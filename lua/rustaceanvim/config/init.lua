@@ -9,7 +9,8 @@
 ---which is a `RustaceanOpts` table, in your neovim configuration.
 ---
 ---Example:
---->
+---
+--->lua
 ------@type RustaceanOpts
 ---vim.g.rustaceanvim = {
 ---   ---@type RustaceanToolsOpts
@@ -21,8 +22,10 @@
 ---     on_attach = function(client, bufnr)
 ---       -- Set keybindings, etc. here.
 ---     end,
----     ['rust-analyzer'] = {
----       -- ...
+---     settings = {
+---       -- rust-analyzer language server configuration
+---       ['rust-analyzer'] = {
+---       },
 ---     },
 ---     -- ...
 ---   },
@@ -33,7 +36,7 @@
 --- }
 ---<
 ---
----Note: `vim.g.rustaceanvim` can also be a function that returns a 'RustaceanOpts' table.
+---Note: `vim.g.rustaceanvim` can also be a function that returns a `RustaceanOpts` table.
 ---
 ---@brief ]]
 
