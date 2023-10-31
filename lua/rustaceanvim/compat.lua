@@ -20,7 +20,10 @@ M.uv = vim.uv or vim.loop
 M.system = vim.system
   -- wrapper around vim.fn.system to give it a similar API to vim.system
   or function(cmd, opts, on_exit)
-    if opts.cwd then
+    ---@cast cmd string[]
+    ---@cast opts SystemOpts | nil
+    ---@cast on_exit fun(sc: vim.SystemCompleted) | nil
+    if opts and opts.cwd then
       local shell = require('rustaceanvim.shell')
       cmd = shell.chain_commands { 'cd ' .. opts.cwd, table.concat(cmd, ' ') }
       ---@cast cmd string
@@ -35,7 +38,9 @@ M.system = vim.system
       stderr = not ok and (output or '') or nil,
       code = vim.v.shell_error,
     }
-    on_exit(systemObj)
+    if on_exit then
+      on_exit(systemObj)
+    end
     return systemObj
   end
 
