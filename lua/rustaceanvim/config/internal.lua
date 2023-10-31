@@ -169,10 +169,13 @@ local RustaceanDefaultConfig = {
     ---@type boolean
     standalone = true,
 
-    --- options to send to rust-analyzer
-    --- See: https://rust-analyzer.github.io/manual.html#configuration
     --- @type table
-    ['rust-analyzer'] = {},
+    settings = {
+      --- options to send to rust-analyzer
+      --- See: https://rust-analyzer.github.io/manual.html#configuration
+      --- @type table
+      ['rust-analyzer'] = {},
+    },
   },
 
   --- debugging stuff
