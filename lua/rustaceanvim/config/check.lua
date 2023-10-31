@@ -61,10 +61,18 @@ function M.validate(cfg)
   ok, err = validate('server', {
     cmd = { server.cmd, { 'function', 'table' } },
     standalone = { server.standalone, 'boolean' },
-    ['rust-analyzer'] = { server['rust-analyzer'], 'table', true },
+    settings = { server.settings, 'table', true },
   })
   if not ok then
     return false, err
+  end
+  if server.settings then
+    ok, err = validate('server.settings', {
+      ['rust-analyzer'] = { server.settings['rust-analyzer'], 'table', true },
+    })
+    if not ok then
+      return false, err
+    end
   end
   local dap = cfg.dap
   local adapter = dap.adapter
