@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.3.2] - 2023-10-31
 ## Fixed
-- Cargo workspace reload using removed command [[#36]](https://gitlab.internal.tiko.ch/backend/backend/-/merge_requests/1531).
+- Cargo workspace reload using removed command [[#36]](https://github.com/mrcjkb/rustaceanvim/pull/36).
   Thanks [@eero-lehtinen](https://github.com/eero-lehtinen)!
 
 ## [3.3.1] - 2023-10-31
