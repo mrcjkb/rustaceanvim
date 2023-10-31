@@ -180,7 +180,9 @@ M.start = function()
     if config.tools.reload_workspace_from_cargo_toml then
       vim.api.nvim_create_autocmd('BufWritePost', {
         pattern = '*/Cargo.toml',
-        command = 'silent! RustLsp reloadWorkspace',
+        callback = function()
+          vim.cmd.RustLsp { 'reloadWorkspace', mods = { silent = true } }
+        end,
         group = augroup,
       })
     end
