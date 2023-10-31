@@ -394,8 +394,10 @@ vim.g.rustaceanvim = {
     on_attach = function(client, bufnr)
       -- you can also put keymaps in here
     end,
-    -- rust-analyzer language server configuration
-    ['rust-analyzer'] = {
+    settings = {
+      -- rust-analyzer language server configuration
+      ['rust-analyzer'] = {
+      },
     },
   },
   -- DAP configuration
