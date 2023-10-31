@@ -26,6 +26,7 @@ M.system = vim.system
     ---@diagnostic disable-next-line: undefined-field
     if opts and opts.cwd then
       local shell = require('rustaceanvim.shell')
+      ---@diagnostic disable-next-line: undefined-field
       cmd = shell.chain_commands { 'cd ' .. opts.cwd, table.concat(cmd, ' ') }
       ---@cast cmd string
     end
