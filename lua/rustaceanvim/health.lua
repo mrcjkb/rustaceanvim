@@ -88,9 +88,9 @@ local external_dependencies = {
     ]],
   },
   {
-    name = 'lldb',
+    name = config.dap.adapter.name,
     get_binaries = function()
-      return { 'lldb' }
+      return { config.dap.adapter.command }
     end,
     optional = function()
       return true
