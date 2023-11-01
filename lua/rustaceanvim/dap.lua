@@ -107,7 +107,9 @@ end
 function M.start(args)
   vim.notify('Compiling a debug build for debugging. This might take some time...')
 
-  if Types.evaluate(config.dap.auto_generate_source_map) then
+  local is_generate_source_map_enabled = Types.evaluate(config.dap.auto_generate_source_map)
+  ---@cast is_generate_source_map_enabled boolean
+  if is_generate_source_map_enabled then
     generate_source_map()
   end
 
@@ -183,8 +185,11 @@ function M.start(args)
         -- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
         runInTerminal = false,
       }
+      local final_config = is_generate_source_map_enabled
+          and vim.tbl_deep_extend('force', dap_config, { sourceMap = source_map })
+        or dap_config
       -- start debugging
-      dap.run(vim.tbl_deep_extend('force', dap_config, { sourceMap = source_map }))
+      dap.run(final_config)
     end)
   end)
 end
