@@ -1,4 +1,4 @@
-local vim = vim
+local types = require('rustaceanvim.types.internal')
 
 local RustaceanConfig
 
@@ -154,7 +154,6 @@ local RustaceanDefaultConfig = {
     ---@type boolean | fun():boolean Whether to automatically attach the LSP client.
     ---Defaults to `true` if the `rust-analyzer` executable is found.
     auto_attach = function()
-      local types = require('rustaceanvim.types.internal')
       local cmd = types.evaluate(RustaceanConfig.server.cmd)
       ---@cast cmd string[]
       local rs_bin = cmd[1]
@@ -181,18 +180,38 @@ local RustaceanDefaultConfig = {
   --- debugging stuff
   --- @class RustaceanDapConfig
   dap = {
-    --- @class RustaceanDapAdapterConfig
-    adapter = {
-      ---@type string
-      type = 'executable',
-      ---@type string
-      command = 'lldb-vscode',
-      ---@type string
-      name = 'lldb',
-    },
+    --- @type DapExecutableConfig | DapServerConfig | disable | fun():(DapExecutableConfig | DapServerConfig | disable)
+    adapter = function()
+      --- @type DapExecutableConfig | DapServerConfig | disable
+      local result = false
+      if vim.fn.executable('codelldb') == 1 then
+        ---@cast result DapServerConfig
+        result = {
+          type = 'server',
+          host = '127.0.0.1',
+          port = '${port}',
+          executable = {
+            command = 'codelldb',
+            args = { '--port', '${port}' },
+          },
+        }
+      elseif vim.fn.executable('lldb') or vim.fn.executable('lldb-vscode') then
+        ---@cast result DapExecutableConfig
+        result = {
+          type = 'executable',
+          command = 'lldb-vscode',
+          name = 'lldb',
+        }
+      end
+      return result
+    end,
     --- Whether to auto-generate a source map for the standard library.
     ---@type boolean | fun():boolean
     auto_generate_source_map = function()
+      local adapter = types.evaluate(RustaceanConfig.dap.adapter)
+      if adapter == false then
+        return false
+      end
       return vim.fn.executable('rustc') == 1
     end,
   },
@@ -206,6 +225,21 @@ end
 
 ---@type RustaceanConfig
 RustaceanConfig = vim.tbl_deep_extend('force', {}, RustaceanDefaultConfig, opts)
+
+-- Override user dap.adapter config in a backward compatible way
+if opts.dap and opts.dap.adapter then
+  local user_adapter = opts.dap.adapter
+  local default_adapter = types.evaluate(RustaceanConfig.dap.adapter)
+  if
+    type(user_adapter) == 'table'
+    and type(default_adapter) == 'table'
+    and user_adapter.type == default_adapter.type
+  then
+    RustaceanConfig.dap.adapter = vim.tbl_deep_extend('force', default_adapter, user_adapter)
+  elseif user_adapter ~= nil then
+    RustaceanConfig.dap.adapter = user_adapter
+  end
+end
 
 local check = require('rustaceanvim.config.check')
 local ok, err = check.validate(RustaceanConfig)

@@ -82,12 +82,31 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field rust-analyzer? table Options to send to rust-analyzer. See: https://rust-analyzer.github.io/manual.html#configuration
 
 ---@class RustaceanDapOpts
----@field adapter? RustaceanDapAdapterOpts Options for the debug adapter
+---@field adapter? DapExecutableConfig | DapServerConfig | disable | fun():(DapExecutableConfig | DapServerConfig | disable) Defaults to a `DapServerConfig` if `codelldb` is detected, and to a `DapExecutableConfig` if `lldb` is detected. Set to `false` to disable.
 ---@field auto_generate_source_map fun():boolean | boolean Whether to auto-generate a source map for the standard library.
 
----@class RustaceanDapAdapterOpts
----@field type? string The type of debug adapter (default: `"executable"`)
----@field command? string Default: `"lldb-vscode"`
----@field name? string Default: `"rustaceanvim_lldb"`
+---@alias disable false
+
+---@alias DapCommand string
+
+---@class DapExecutableConfig
+---@field type dap_adapter_type_executable The type of debug adapter.
+---@field command string Default: `"lldb-vscode"`.
+---@field args? string Default: unset.
+---@field name? string Default: `"lldb"`.
+
+---@class DapServerConfig
+---@field type dap_adapter_type_server The type of debug adapter.
+---@field host? string The host to connect to.
+---@field port string The port to connect to.
+---@field executable DapExecutable The executable to run
+---@field name? string
+
+---@class DapExecutable
+---@field command string The executable.
+---@field args string[] Its arguments.
+
+---@alias dap_adapter_type_executable "executable"
+---@alias dap_adapter_type_server "server"
 
 return M

@@ -1,6 +1,6 @@
 local config = require('rustaceanvim.config.internal')
 local compat = require('rustaceanvim.compat')
-local Types = require('rustaceanvim.types.internal')
+local types = require('rustaceanvim.types.internal')
 
 local function scheduled_error(err)
   vim.schedule(function()
@@ -18,10 +18,13 @@ if not ok then
   }
 end
 local dap = require('dap')
-if config.dap.adapter ~= false then
+local adapter = types.evaluate(config.dap.adapter)
+--- @cast adapter DapExecutableConfig | DapServerConfig | boolean
+
+if adapter ~= false then
   ---@TODO: Add nvim-dap to lua-ls lint
   ---@diagnostic disable-next-line: assign-type-mismatch
-  dap.adapters.rt_lldb = config.dap.adapter
+  dap.adapters.rt_lldb = adapter
 end
 
 local M = {}
@@ -29,6 +32,7 @@ local M = {}
 ---For the heroes who want to use it
 ---@param codelldb_path string
 ---@param liblldb_path string
+---@return DapServerConfig
 function M.get_codelldb_adapter(codelldb_path, liblldb_path)
   return {
     type = 'server',
@@ -107,7 +111,7 @@ end
 function M.start(args)
   vim.notify('Compiling a debug build for debugging. This might take some time...')
 
-  local is_generate_source_map_enabled = Types.evaluate(config.dap.auto_generate_source_map)
+  local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
   ---@cast is_generate_source_map_enabled boolean
   if is_generate_source_map_enabled then
     generate_source_map()
@@ -186,6 +190,7 @@ function M.start(args)
         runInTerminal = false,
       }
       local final_config = is_generate_source_map_enabled
+          and next(source_map) ~= nil
           and vim.tbl_deep_extend('force', dap_config, { sourceMap = source_map })
         or dap_config
       -- start debugging

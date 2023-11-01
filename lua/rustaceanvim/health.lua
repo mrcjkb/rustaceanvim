@@ -1,10 +1,11 @@
 ---@mod rustaceanvim.health Health checks
 
-local health = {}
-
-local Types = require('rustaceanvim.types.internal')
+local types = require('rustaceanvim.types.internal')
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
+
+local health = {}
+
 local h = vim.health or require('health')
 local start = h.start or h.report_start
 local ok = h.ok or h.report_ok
@@ -16,6 +17,9 @@ local warn = h.warn or h.report_warn
 ---@field optional fun():boolean Function that returns whether the dependency is optional
 ---@field url string URL (markdown)
 ---@field info string Additional information
+
+local adapter = types.evaluate(config.dap.adapter)
+---@cast adapter DapExecutableConfig | DapServerConfig | boolean
 
 ---@type LuaDependency[]
 local lua_dependencies = {
@@ -46,7 +50,7 @@ local external_dependencies = {
       if not config then
         return default
       end
-      local cmd = Types.evaluate(config.server.cmd)
+      local cmd = types.evaluate(config.server.cmd)
       if not cmd or #cmd == 0 then
         return default
       end
@@ -87,10 +91,18 @@ local external_dependencies = {
       Called by `:RustLsp explainError`.
     ]],
   },
-  {
-    name = config.dap.adapter.name,
+}
+if adapter ~= false then
+  table.insert(external_dependencies, {
+    name = adapter.name or 'debug adapter',
     get_binaries = function()
-      return { config.dap.adapter.command }
+      if adapter.type == 'executable' then
+        ---@cast adapter DapExecutableConfig
+        return { 'lldb', adapter.command }
+      else
+        ---@cast adapter DapServerConfig
+        return { 'codelldb', adapter.executable.command }
+      end
     end,
     optional = function()
       return true
@@ -100,8 +112,8 @@ local external_dependencies = {
       A debug adapter (defaults to: LLDB).
       Required for debugging features.
     ]],
-  },
-}
+  })
+end
 
 ---@param dep LuaDependency
 local function check_lua_dependency(dep)
