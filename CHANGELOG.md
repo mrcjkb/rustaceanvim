@@ -5,11 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+## Added
+- Auto-create `codelldb` configurations.
+
+## Fixed
+- DAP: Support `codelldb` configurations [[#40](https://github.com/mrcjkb/rustaceanvim/issues/40)].
+- DAP: Don't pass in an empty source map table if the 
+  `auto_generate_source_map` setting evaluates to `false`.
+
 ## [3.3.3] - 2023-10-31
 - Default rust-analyzer configuration [[#37](https://github.com/mrcjkb/rustaceanvim/issues/37)].
   Thanks again, [@eero-lehtinen](https://github.com/eero-lehtinen)!
 
-## Fixed
 ## [3.3.2] - 2023-10-31
 ## Fixed
 - Cargo workspace reload using removed command [[#36](https://github.com/mrcjkb/rustaceanvim/pull/36)].
