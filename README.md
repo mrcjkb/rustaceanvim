@@ -411,6 +411,52 @@ vim.g.rustaceanvim = {
 > `vim.g.rustaceanvim` can also be a function that returns
 > a table.
 
+### Using `codelldb` for debugging
+
+For Rust, `codelldb` from the [CodeLLDB VSCode extension](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb)
+provides a better experience than `lldb`.
+If you are using a distribution that lets you install the `codelldb`
+executable, this plugin will automatically detect it and configure
+itself to use it as a debug adapter.
+
+Some examples:
+
+- NixOS: [`vscode-extensions.vadimcn.vscode-lldb.adapter`](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/extensions/vadimcn.vscode-lldb/default.nix#L134)
+- Arch Linux: [`codelldb-bin` (AUR)](https://aur.archlinux.org/packages/codelldb-bin)
+
+If your distribution does not have a `codelldb` package,
+you can configure it as follows:
+
+1. Install the [CodeLLDB VSCode extension](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb).
+1. Find out where it is installed.
+   On Linux, this is typically in `$HOME/.vscode/extensions/`
+1. Update your configuration:
+
+```lua
+vim.g.rustaceanvim = function()
+  -- Update this path
+  local extension_path = vim.env.HOME .. '/.vscode/extensions/vadimcn.vscode-lldb-1.10.0/'
+  local codelldb_path = extension_path .. 'adapter/codelldb'
+  local liblldb_path = extension_path .. 'lldb/lib/liblldb'
+  local this_os = vim.uv.os_uname().sysname;
+
+  -- The path is different on Windows
+  if this_os:find "Windows" then
+    codelldb_path = extension_path .. "adapter\\codelldb.exe"
+    liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
+  else
+    -- The liblldb extension is .so for Linux and .dylib for MacOS
+    liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
+  end
+
+  return {
+    dap = {
+      adapter = require('rustaceanvim.dap').get_codelldb_adapter(codelldb_path, liblldb_path),
+    },
+  }
+end
+```
+
 ## Troubleshooting
 
 ### Health checks
