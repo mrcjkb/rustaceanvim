@@ -51,15 +51,21 @@
 
 ## Prerequisites
 
-- `neovim 0.9`
+### Required
+
+- `neovim >= 0.9`
 - [`rust-analyzer`](https://rust-analyzer.github.io/)
-- [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html)
-  (optional), for crate graphs.
-- [`cargo`](https://doc.rust-lang.org/cargo/)
-  (optional), required for Cargo projects.
-- A debug adapter, e.g. [`lldb`](https://lldb.llvm.org/)
-  or [`codelldb`](https://github.com/vadimcn/codelldb)
-  (optional), required for debugging.
+
+### Optional
+
+- [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html),
+  for crate graphs.
+- [`cargo`](https://doc.rust-lang.org/cargo/),
+  required for Cargo projects.
+- A debug adapter (e.g. [`lldb`](https://lldb.llvm.org/)
+  or [`codelldb`](https://github.com/vadimcn/codelldb))
+  and [`nvim-dap`](https://github.com/mfussenegger/nvim-dap),
+  required for debugging.
 
 ## Installation
 
