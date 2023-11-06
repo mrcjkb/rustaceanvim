@@ -58,6 +58,7 @@
 - [`cargo`](https://doc.rust-lang.org/cargo/)
   (optional), required for Cargo projects.
 - A debug adapter, e.g. [`lldb`](https://lldb.llvm.org/)
+  or [`codelldb`](https://github.com/vadimcn/codelldb)
   (optional), required for debugging.
 
 ## Installation
