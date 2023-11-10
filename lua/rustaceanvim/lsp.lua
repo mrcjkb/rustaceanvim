@@ -232,12 +232,9 @@ vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
       'stop',
     }
     if cmdline:match('^RustAnalyzer%s+%w*$') then
-      return vim
-        .iter(commands)
-        :filter(function(command)
-          return command:find(arg_lead) ~= nil
-        end)
-        :totable()
+      return vim.tbl_filter(function(command)
+        return command:find(arg_lead) ~= nil
+      end, commands)
     end
   end,
 })

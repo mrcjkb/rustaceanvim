@@ -140,12 +140,9 @@ function M.create_rust_lsp_command()
         return config.tools.crate_graph.enabled_graphviz_backends or {}
       end
       if cmdline:match(match_start .. '%s+%w*$') then
-        return vim
-          .iter(commands)
-          :filter(function(command)
-            return command:find(arg_lead) ~= nil
-          end)
-          :totable()
+        return vim.tbl_filter(function(command)
+          return command:find(arg_lead) ~= nil
+        end, commands)
       end
     end,
   })
