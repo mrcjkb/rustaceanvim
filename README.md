@@ -464,6 +464,30 @@ vim.g.rustaceanvim = function()
 end
 ```
 
+### How to dynamically load different `rust-analyzer` settings per project
+
+By default, this plugin will look for a `rust-analyzer.json`
+file in the project root directory, and attempt to load it.
+If the file does not exist, or it can't be decoded,
+the default settings will be used.
+
+You can change this behaviour with the `server.settings` config:
+
+```lua
+vim.g.rustaceanvim = {
+  -- ...
+  server = {
+    ---@param project_root string Path to the project root
+    settings = function(project_root)
+      local ra = require('rustaceanvim.config.server')
+      return ra.load_rust_analyzer_settings(project_root, {
+        settings_file_pattern = 'rust-analyzer.json'
+      })
+    end,
+  },
+}
+```
+
 ## Troubleshooting
 
 ### Health checks
