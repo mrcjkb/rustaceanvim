@@ -36,7 +36,11 @@
 --- }
 ---<
 ---
----Note: `vim.g.rustaceanvim` can also be a function that returns a `RustaceanOpts` table.
+---Notes:
+---
+--- - `vim.g.rustaceanvim` can also be a function that returns a `RustaceanOpts` table.
+--- - `server.settings`, by default, is a function that looks for a `rust-analyzer.json` file
+---    in the project root, to load settings from it. It falls back to an empty table.
 ---
 ---@brief ]]
 
@@ -78,8 +82,8 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@class RustaceanLspClientOpts
 ---@field auto_attach? boolean | fun():boolean Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
 ---@field cmd? string[] | fun():string[] Command and arguments for starting rust-analyzer
+---@field settings? fun(project_root:string|nil):table | table Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
 ---@field standalone? boolean Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
----@field rust-analyzer? table Options to send to rust-analyzer. See: https://rust-analyzer.github.io/manual.html#configuration
 
 ---@class RustaceanDapOpts
 ---@field adapter? DapExecutableConfig | DapServerConfig | disable | fun():(DapExecutableConfig | DapServerConfig | disable) Defaults to a `DapServerConfig` if `codelldb` is detected, and to a `DapExecutableConfig` if `lldb` is detected. Set to `false` to disable.

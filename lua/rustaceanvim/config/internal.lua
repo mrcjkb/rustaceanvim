@@ -168,8 +168,13 @@ local RustaceanDefaultConfig = {
     ---@type boolean
     standalone = true,
 
+    ---@type table | (fun(project_root:string|nil):table) -- The rust-analyzer settings or a function that creates them.
+    settings = function(project_root)
+      return require('rustaceanvim.config.server').load_rust_analyzer_settings(project_root)
+    end,
+
     --- @type table
-    settings = {
+    default_settings = {
       --- options to send to rust-analyzer
       --- See: https://rust-analyzer.github.io/manual.html#configuration
       --- @type table

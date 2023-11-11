@@ -2,6 +2,7 @@ local M = {}
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
 local compat = require('rustaceanvim.compat')
+local types = require('rustaceanvim.types.internal')
 local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local joinpath = compat.joinpath
 
@@ -96,6 +97,9 @@ M.start = function()
   local root_dir = get_root_dir(vim.api.nvim_buf_get_name(0))
   lsp_start_opts.root_dir = root_dir
 
+  local settings = client_config.settings
+  lsp_start_opts.settings = type(settings) == 'function' and settings(root_dir) or settings
+
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
     if not is_in_workspace(client, root_dir) then
@@ -116,7 +120,6 @@ M.start = function()
     end
   end
 
-  local types = require('rustaceanvim.types.internal')
   local rust_analyzer_cmd = types.evaluate(client_config.cmd)
   if #rust_analyzer_cmd == 0 or vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
     vim.notify('rust-analyzer binary not found.', vim.log.levels.ERROR)

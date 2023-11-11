@@ -4,6 +4,7 @@ Table of Contents                                        *rustaceanvim.contents*
 Introduction ··························································· |intro|
  ································································ |rustaceanvim|
 plugin configuration ····································· |rustaceanvim.config|
+LSP configuration utility ························· |rustaceanvim.config.server|
 
 ==============================================================================
 Introduction                                                             *intro*
@@ -78,7 +79,11 @@ vim.g.rustaceanvim = {
  }
 <
 
-Note: `vim.g.rustaceanvim` can also be a function that returns a `RustaceanOpts` table.
+Notes:
+
+ - `vim.g.rustaceanvim` can also be a function that returns a `RustaceanOpts` table.
+ - `server.settings`, by default, is a function that looks for a `rust-analyzer.json` file
+    in the project root, to load settings from it. It falls back to an empty table.
 
 
 RustaceanOpts                                                    *RustaceanOpts*
@@ -133,13 +138,13 @@ RustaceanCrateGraphConfig                            *RustaceanCrateGraphConfig*
 RustaceanLspClientOpts                                  *RustaceanLspClientOpts*
 
     Fields: ~
-        {auto_attach?}  (boolean|fun():boolean)    Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
-        {cmd?}          (string[]|fun():string[])  Command and arguments for starting rust-analyzer
-        {standalone?}   (boolean)                  Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
+        {auto_attach?}  (boolean|fun():boolean)                     Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
+        {cmd?}          (string[]|fun():string[])                   Command and arguments for starting rust-analyzer
+        {settings?}     (fun(project_root:string|nil):table|table)  Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
+        {standalone?}   (boolean)                                   Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
 
 
 RustaceanDapOpts                                              *RustaceanDapOpts*
-    @field rust-analyzer? table Options to send to rust-analyzer. See: https://rust-analyzer.github.io/manual.html#configuration
 
     Fields: ~
         {adapter?}  (DapExecutableConfig|DapServerConfig|disable|fun():DapExecutableConfig|DapServerConfig|disable)
@@ -193,6 +198,31 @@ dap_adapter_type_server                                *dap_adapter_type_server*
 
     Type: ~
         
+
+
+==============================================================================
+LSP configuration utility                           *rustaceanvim.config.server*
+
+LoadRASettingsOpts                                          *LoadRASettingsOpts*
+
+    Fields: ~
+        {settings_file_pattern}  (string|nil)  File name or pattern to search for. Defaults to 'rust-analyzer.json'
+
+
+                                            *server.load_rust_analyzer_settings*
+server.load_rust_analyzer_settings({project_root}, {opts})
+     Load rust-analyzer settings from a JSON file,
+     falling back to the default settings if none is found or if it cannot be decoded.
+
+    Parameters: ~
+        {project_root}  (string|nil)              The project root
+        {opts}          (LoadRASettingsOpts|nil)
+
+    Returns: ~
+        (table)  server_settings
+
+    See: ~
+        |https://rust-analyzer.github.io/manual.html#configuration|
 
 
 vim:tw=78:ts=8:noet:ft=help:norl:

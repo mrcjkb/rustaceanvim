@@ -6,6 +6,6 @@ pkgs.writeShellApplication {
   ];
   text = ''
     mkdir -p doc
-    lemmy-help lua/rustaceanvim/{init,config/init}.lua > doc/rustaceanvim.txt
+    lemmy-help lua/rustaceanvim/{init,config/init,config/server}.lua > doc/rustaceanvim.txt
   '';
 }
