@@ -63,7 +63,7 @@ function M.validate(cfg)
   ok, err = validate('server', {
     cmd = { server.cmd, { 'function', 'table' } },
     standalone = { server.standalone, 'boolean' },
-    settings = { server.settings, 'function', 'table', true },
+    settings = { server.settings, { 'function', 'table' }, true },
   })
   if not ok then
     return false, err
