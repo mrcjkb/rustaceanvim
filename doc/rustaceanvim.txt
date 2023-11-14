@@ -102,6 +102,7 @@ RustaceanToolsOpts                                          *RustaceanToolsOpts*
         {reload_workspace_from_cargo_toml?}  (boolean)                                    Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
         {hover_actions?}                     (RustaceanHoverActionsOpts)                  Options for hover actions
         {create_graph?}                      (RustaceanCrateGraphConfig)                  Options for showing the crate graph based on graphviz and the dot
+        {open_url?}                          (fun(url:string):nil)                        If set, overrides how to open URLs
 
 
 RustaceanHoverActionsOpts                            *RustaceanHoverActionsOpts*

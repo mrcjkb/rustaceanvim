@@ -55,6 +55,7 @@ function M.validate(cfg)
     executor = { tools.executor, { 'table', 'string' } },
     on_initialized = { tools.on_initialized, 'function', true },
     reload_workspace_from_cargo_toml = { tools.reload_workspace_from_cargo_toml, 'boolean' },
+    open_url = { tools.open_url, 'function' },
   })
   if not ok then
     return false, err
