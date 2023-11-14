@@ -145,6 +145,11 @@ local RustaceanDefaultConfig = {
       ---@type string | nil
       pipe = nil,
     },
+
+    ---@type fun(url:string):nil
+    open_url = function(url)
+      require('rustaceanvim.os').open_url(url)
+    end,
   },
 
   --- all the opts to send to the LSP client
