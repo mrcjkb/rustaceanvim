@@ -35,7 +35,7 @@
 [![Build Status][ci-shield]][ci-url]
 [![LuaRocks][luarocks-shield]][luarocks-url]
 
-> **Note**
+> [!NOTE]
 >
 > - Just works. [No need to call `setup`!](https://mrcjkb.dev/posts/2023-08-22-setup.html)
 > - No dependency on `lspconfig`.
@@ -81,13 +81,13 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 }
 ```
 
->**Note**
+>[!NOTE]
 >
 >It is suggested to pin to tagged releases if you would like to avoid breaking changes.
 
 To manually generate documentation, use `:helptags ALL`.
 
->**Note**
+>[!NOTE]
 >
 > For NixOS users with flakes enabled, this project provides outputs in the
 > form of a package and an overlay; use it as you wish in your NixOS or
@@ -102,7 +102,7 @@ This plugin automatically configures the `rust-analyzer` builtin LSP
 client and integrates with other Rust tools.
 See the [Usage](#usage) section for more info.
 
->**Warning**
+>[!WARNING]
 >
 > Do not call the [`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
 > setup or set up the lsp client for `rust-analyzer` manually,
@@ -132,7 +132,7 @@ vim.keymap.set(
 )
 ```
 
->**Note**
+>[!NOTE]
 >
 > - For more LSP related keymaps, [see the `nvim-lspconfig` suggestions](https://github.com/neovim/nvim-lspconfig#suggested-configuration).
 > - See the [Advanced configuration](#advanced-configuration) section
@@ -413,7 +413,7 @@ vim.g.rustaceanvim = {
 }
 ```
 
-> **Note**
+> [!NOTE]
 >
 > `vim.g.rustaceanvim` can also be a function that returns
 > a table.
@@ -504,7 +504,7 @@ mkdir -p /tmp/minimal/
 NVIM_DATA_MINIMAL="/tmp/minimal" NVIM_APP_NAME="nvim-minimal" nvim -u minimal.lua
 ```
 
-> **Note**
+> [!NOTE]
 >
 > If you use Nix, you can run
 > `nix run "github:mrcjkb/rustaceanvim#nvim-minimal-stable"`.
