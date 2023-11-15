@@ -106,7 +106,8 @@
           rtp = [
             "${pkgs.neovim}/share/nvim/runtime/lua"
             "${pkgs.neodev-plugin}/types/stable"
-            # "${pkgs.luajitPackages.busted}"
+            "\${3rd}/busted/library"
+            "\${3rd}/luassert/library"
           ];
           disabled-diagnostics = [
             "undefined-doc-name"
@@ -119,7 +120,8 @@
           rtp = [
             "${pkgs.neovim-nightly}/share/nvim/runtime/lua"
             "${pkgs.neodev-plugin}/types/nightly"
-            # "${pkgs.luajitPackages.busted}"
+            "\${3rd}/busted/library"
+            "\${3rd}/luassert/library"
           ];
         };
 
