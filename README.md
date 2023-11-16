@@ -464,6 +464,30 @@ vim.g.rustaceanvim = function()
 end
 ```
 
+### Using `lldb-dap` for debugging
+
+> [!NOTE]
+>
+> `lldb-dap` has been renamed from `lldb-vscode`. Your distribution may still have the latter
+> installed, in which case substitute it in all paths in the example below.
+
+`lldb` comes with a DAP CLI tool called `lldb-dap`. It is likely to be installed alongside `lldb`
+itself (for example, under Arch Linux you'll find it in `/usr/bin/lldb-dap`). Sample configuration:
+
+```lua
+vim.g.rustaceanvim = {
+    -- ...
+    dap = {
+        adapter = {
+            -- Substitute with the correct path and lldb-vscode as required (see above note)
+            command = '/usr/bin/lldb-dap',
+            name = 'lldb-dap',
+            type = 'executable',
+        },
+    },
+}
+```
+
 ### How to dynamically load different `rust-analyzer` settings per project
 
 By default, this plugin will look for a `rust-analyzer.json`
