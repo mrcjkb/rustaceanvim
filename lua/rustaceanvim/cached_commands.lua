@@ -11,7 +11,10 @@ local cache = {
 ---@param choice integer
 ---@param runnable RARunnable
 M.set_last_runnable = function(choice, runnable)
-  cache.last_runnable = { choice, runnable }
+  cache.last_runnable = {
+    choice = choice,
+    runnable = runnable,
+  }
 end
 
 ---@param args RADebuggableArgs
