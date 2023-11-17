@@ -194,6 +194,12 @@ local RustaceanDefaultConfig = {
     adapter = function()
       --- @type DapExecutableConfig | DapServerConfig | disable
       local result = false
+      ---@type DapExecutableConfig
+      local lldb_vscode = {
+        type = 'executable',
+        command = 'lldb-vscode',
+        name = 'lldb',
+      }
       if vim.fn.executable('codelldb') == 1 then
         ---@cast result DapServerConfig
         result = {
@@ -205,13 +211,12 @@ local RustaceanDefaultConfig = {
             args = { '--port', '${port}' },
           },
         }
-      elseif vim.fn.executable('lldb') or vim.fn.executable('lldb-vscode') then
-        ---@cast result DapExecutableConfig
-        result = {
-          type = 'executable',
-          command = 'lldb-vscode',
-          name = 'lldb',
-        }
+      elseif vim.fn.executable('lldb-vscode') then
+        result = lldb_vscode
+      elseif vim.fn.executable('lldb-dap') then
+        -- On some distributions, it may still have the old name
+        result = lldb_vscode
+        result.command = 'lldb-dap'
       end
       return result
     end,
