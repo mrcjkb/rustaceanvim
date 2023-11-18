@@ -211,9 +211,9 @@ local RustaceanDefaultConfig = {
             args = { '--port', '${port}' },
           },
         }
-      elseif vim.fn.executable('lldb-vscode') then
+      elseif vim.fn.executable('lldb-vscode') == 1 then
         result = lldb_vscode
-      elseif vim.fn.executable('lldb-dap') then
+      elseif vim.fn.executable('lldb-dap') == 1 then
         -- On some distributions, it may still have the old name
         result = lldb_vscode
         result.command = 'lldb-dap'
