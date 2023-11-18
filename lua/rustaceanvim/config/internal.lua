@@ -5,6 +5,16 @@ local RustaceanConfig
 ---@class RustAnalyzerInitializedStatusInternal : RustAnalyzerInitializedStatus
 ---@field health lsp_server_health_status
 ---@field quiescent boolean inactive?
+---
+---@param dap_adapter DapExecutableConfig | DapServerConfig | disable
+---@return boolean
+local function should_enable_dap_config_value(dap_adapter)
+  local adapter = types.evaluate(dap_adapter)
+  if adapter == false then
+    return false
+  end
+  return vim.fn.executable('rustc') == 1
+end
 
 ---@class RustaceanConfig
 local RustaceanDefaultConfig = {
@@ -194,12 +204,6 @@ local RustaceanDefaultConfig = {
     adapter = function()
       --- @type DapExecutableConfig | DapServerConfig | disable
       local result = false
-      ---@type DapExecutableConfig
-      local lldb_vscode = {
-        type = 'executable',
-        command = 'lldb-vscode',
-        name = 'lldb',
-      }
       if vim.fn.executable('codelldb') == 1 then
         ---@cast result DapServerConfig
         result = {
@@ -211,23 +215,36 @@ local RustaceanDefaultConfig = {
             args = { '--port', '${port}' },
           },
         }
-      elseif vim.fn.executable('lldb-vscode') == 1 then
-        result = lldb_vscode
-      elseif vim.fn.executable('lldb-dap') == 1 then
-        -- On some distributions, it may still have the old name
-        result = lldb_vscode
-        result.command = 'lldb-dap'
+      else
+        local has_lldb_dap = vim.fn.executable('lldb-dap') == 1
+        local has_lldb_vscode = vim.fn.executable('lldb-vscode') == 1
+        if not has_lldb_dap and not has_lldb_vscode then
+          return result
+        end
+        local command = has_lldb_dap and 'lldb-dap' or 'lldb-vscode'
+        ---@cast result DapExecutableConfig
+        result = {
+          type = 'executable',
+          command = command,
+          name = 'lldb',
+        }
       end
       return result
     end,
-    --- Whether to auto-generate a source map for the standard library.
+    --- Accommodate dynamically-linked targets by passing library paths to lldb.
+    ---@type boolean | fun():boolean
+    add_dynamic_library_paths = function()
+      return should_enable_dap_config_value(RustaceanConfig.dap.adapter)
+    end,
+    --- Auto-generate a source map for the standard library.
     ---@type boolean | fun():boolean
     auto_generate_source_map = function()
-      local adapter = types.evaluate(RustaceanConfig.dap.adapter)
-      if adapter == false then
-        return false
-      end
-      return vim.fn.executable('rustc') == 1
+      return should_enable_dap_config_value(RustaceanConfig.dap.adapter)
+    end,
+    --- Get Rust types via initCommands (rustlib/etc/lldb_commands).
+    ---@type boolean | fun():boolean
+    load_rust_types = function()
+      return should_enable_dap_config_value(RustaceanConfig.dap.adapter)
     end,
   },
 }

@@ -88,7 +88,9 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 
 ---@class RustaceanDapOpts
 ---@field adapter? DapExecutableConfig | DapServerConfig | disable | fun():(DapExecutableConfig | DapServerConfig | disable) Defaults to a `DapServerConfig` if `codelldb` is detected, and to a `DapExecutableConfig` if `lldb` is detected. Set to `false` to disable.
----@field auto_generate_source_map fun():boolean | boolean Whether to auto-generate a source map for the standard library.
+---@field add_dynamic_library_paths? boolean | fun():boolean Accommodate dynamically-linked targets by passing library paths to lldb. Default: `true`.
+---@field auto_generate_source_map? fun():boolean | boolean Whether to auto-generate a source map for the standard library.
+---@field load_rust_types? fun():boolean | boolean Whether to get Rust types via initCommands (rustlib/etc/lldb_commands). Default: `true`.
 
 ---@alias disable false
 
