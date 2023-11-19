@@ -70,7 +70,7 @@ local function get_rustc_commit_hash(callback)
     if sc.code ~= 0 or result == nil then
       return
     end
-    local commit_hash = result:match('commit%-hash:%s+([^\n]+)$')
+    local commit_hash = result:match('commit%-hash:%s+([^\n]+)')
     if not commit_hash then
       return
     end
@@ -91,6 +91,19 @@ end
 
 ---@alias DapSourceMap {[string]: string}
 
+---@param tbl { [string]: string }
+---@return string[][]
+local function tbl_to_tuple_list(tbl)
+  ---@type string[][]
+  local result = {}
+  for k, v in pairs(tbl) do
+    ---@type string[]
+    local tuple = { k, v }
+    table.insert(result, tuple)
+  end
+  return result
+end
+
 ---@type DapSourceMap
 local source_map = {}
 
@@ -100,9 +113,9 @@ local function generate_source_map()
     get_rustc_sysroot(function(rustc_sysroot)
       ---@type DapSourceMap
       local new_map = {
-        [compat.joinpath('/rustc/', commit_hash)] = compat.joinpath(rustc_sysroot, '/lib/rustlib/src/rust'),
+        [compat.joinpath('/rustc', commit_hash)] = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'src', 'rust'),
       }
-      vim.tbl_extend('force', source_map, { new_map })
+      source_map = vim.tbl_extend('force', source_map, new_map)
     end)
   end)
 end
@@ -191,7 +204,7 @@ function M.start(args)
       }
       local final_config = is_generate_source_map_enabled
           and next(source_map) ~= nil
-          and vim.tbl_deep_extend('force', dap_config, { sourceMap = source_map })
+          and vim.tbl_deep_extend('force', dap_config, { sourceMap = tbl_to_tuple_list(source_map) })
         or dap_config
       -- start debugging
       dap.run(final_config)
