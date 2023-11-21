@@ -131,7 +131,7 @@ function M.create_rust_lsp_command()
         return { 'last' }
       end
       if cmdline:match(match_start .. ' hover%s+%w*$') then
-        return { 'action', 'range' }
+        return { 'actions', 'range' }
       end
       if cmdline:match(match_start .. ' moveItem%s+%w*$') then
         return { 'up', 'down' }
