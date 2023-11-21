@@ -21,6 +21,7 @@
         viAlias = true;
         vimAlias = true;
         plugins = with vimPlugins; [
+          # Add plugins here
           rustaceanvim
           prev.vimPlugins.nvim-treesitter.withAllGrammars
         ];
@@ -40,7 +41,13 @@
             + ''--set NVIM_APPNAME "nvim-rustaceanvim"''
             + " "
             + ''--prefix PATH : "${lib.makeBinPath runtimeDeps}"'';
-          wrapRc = false;
+          wrapRc = true;
+          neovimRcContent = ''
+            lua << EOF
+            -- set config here
+            -- vim.g.rustaceanvim = {}
+            EOF
+          '';
         });
 
   mkNeorocksTest = {

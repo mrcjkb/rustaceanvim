@@ -28,11 +28,15 @@ in {
     lua51Packages
     ;
 
-  vimPlugins.rustaceanvim = final.neovimUtils.buildNeovimPlugin {
-    pname = name;
-    version = "scm-1";
-    src = self;
-  };
+  vimPlugins =
+    prev.vimPlugins
+    // {
+      rustaceanvim = final.neovimUtils.buildNeovimPlugin {
+        pname = name;
+        version = "scm-1";
+        src = self;
+      };
+    };
 
   rustaceanvim = final.vimPlugins.rustaceanvim;
 }
