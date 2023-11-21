@@ -48,6 +48,7 @@
 - [Usage](#usage)
 - [Advanced configuration](#advanced-configuration)
 - [Troubleshooting](#troubleshooting)
+- [FAQ](#faq)
 
 ## Prerequisites
 
@@ -515,6 +516,15 @@ If you cannot reproduce your issue with a minimal config,
 it may be caused by another plugin.
 In this case, add additional plugins and their configurations to `minimal.lua`,
 until you can reproduce it.
+
+## FAQ
+
+### Where are inlay hints?
+
+As Neovim >= 0.10 supports inlay hints natively, I have removed the
+code from this plugin.
+
+To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com/mrcjkb/rustaceanvim/discussions/46#discussioncomment-7620822).
 
 ## Related Projects
 
