@@ -160,16 +160,19 @@ local function add_dynamic_library_paths(workspace_root)
     local sep = ':'
     local win_sep = ';'
     if shell.is_windows() then
-      table.insert(environment, 'PATH=' .. rustc_target_path .. win_sep .. target_path .. win_sep .. '%PATH%')
+      local path = os.getenv('PATH') or ''
+      table.insert(environment, 'PATH=' .. rustc_target_path .. win_sep .. target_path .. win_sep .. path)
     elseif shell.is_macos() then
+      local dkld_library_path = os.getenv('DKLD_LIBRARY_PATH') or ''
       table.insert(
         environment,
-        'DKLD_LIBRARY_PATH=' .. rustc_target_path .. sep .. target_path .. sep .. '$DYLD_LIBRARY_PATH'
+        'DKLD_LIBRARY_PATH=' .. rustc_target_path .. sep .. target_path .. sep .. dkld_library_path
       )
     else
+      local ld_library_path = os.getenv('LD_LIBRARY_PATH') or ''
       table.insert(
         environment,
-        'LD_LIBRARY_PATH=' .. rustc_target_path .. sep .. target_path .. sep .. '$LD_LIBRARY_PATH'
+        'LD_LIBRARY_PATH=' .. rustc_target_path .. sep .. target_path .. sep .. ld_library_path
       )
     end
   end)
