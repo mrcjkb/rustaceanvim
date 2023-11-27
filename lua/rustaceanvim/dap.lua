@@ -116,23 +116,24 @@ local function format_source_map(tbl)
   return tbl_to_tuple_list(tbl)
 end
 
----@type DapSourceMap
-local source_map = {}
+---@type {[string]: DapSourceMap}
+local source_maps = {}
 
 ---See https://github.com/vadimcn/codelldb/issues/204
-local function generate_source_map()
+---@param workspace_root string
+local function generate_source_map(workspace_root)
   get_rustc_commit_hash(function(commit_hash)
     get_rustc_sysroot(function(rustc_sysroot)
       ---@type DapSourceMap
       local new_map = {
         [compat.joinpath('/rustc', commit_hash)] = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'src', 'rust'),
       }
-      source_map = vim.tbl_extend('force', source_map, new_map)
+      source_maps[workspace_root] = vim.tbl_extend('force', source_maps[workspace_root] or {}, new_map)
     end)
   end)
 end
 
----@type {[string]: string}
+---@type {[string]: string[]}
 local init_commands = {}
 
 local function get_lldb_commands(workspace_root)
@@ -150,12 +151,14 @@ local function get_lldb_commands(workspace_root)
       file:close()
     end
     table.insert(workspace_root_cmds, 1, script_import)
-    init_commands = vim.tbl_extend('force', init_commands, { [workspace_root] = workspace_root_cmds })
+    init_commands[workspace_root] = workspace_root_cmds
   end)
 end
 
----@type string[]
-local environment = {}
+---@alias EnvironmentMap {[string]: string[]}
+
+---@type {[string]: EnvironmentMap}
+local environments = {}
 
 -- Most succinct description: https://github.com/bevyengine/bevy/issues/2589#issuecomment-1753413600
 ---@param workspace_root string
@@ -172,28 +175,32 @@ local function add_dynamic_library_paths(workspace_root)
     local win_sep = ';'
     if shell.is_windows() then
       local path = os.getenv('PATH') or ''
-      table.insert(environment, 'PATH=' .. rustc_target_path .. win_sep .. target_path .. win_sep .. path)
+      environments[workspace_root] = environments[workspace_root]
+        or {
+          PATH = rustc_target_path .. win_sep .. target_path .. win_sep .. path,
+        }
     elseif shell.is_macos() then
       local dkld_library_path = os.getenv('DKLD_LIBRARY_PATH') or ''
-      table.insert(
-        environment,
-        'DKLD_LIBRARY_PATH=' .. rustc_target_path .. sep .. target_path .. sep .. dkld_library_path
-      )
+      environments[workspace_root] = environments[workspace_root]
+        or {
+          DKLD_LIBRARY_PATH = rustc_target_path .. sep .. target_path .. sep .. dkld_library_path,
+        }
     else
       local ld_library_path = os.getenv('LD_LIBRARY_PATH') or ''
-      table.insert(
-        environment,
-        'LD_LIBRARY_PATH=' .. rustc_target_path .. sep .. target_path .. sep .. ld_library_path
-      )
+      environments[workspace_root] = environments[workspace_root]
+        or {
+          LD_LIBRARY_PATH = rustc_target_path .. sep .. target_path .. sep .. ld_library_path,
+        }
     end
   end)
 end
 
+---@param args RADebuggableArgs
 local function handle_configured_options(args)
   local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
   ---@cast is_generate_source_map_enabled boolean
   if is_generate_source_map_enabled then
-    generate_source_map()
+    generate_source_map(args.workspaceRoot)
   end
 
   local is_load_rust_types_enabled = types.evaluate(config.dap.load_rust_types)
@@ -290,10 +297,12 @@ function M.start(args)
           and vim.tbl_deep_extend('force', dap_config, { initCommands = init_commands[args.workspaceRoot] })
         or dap_config
 
+      local source_map = source_maps[args.workspaceRoot]
       final_config = next(source_map) ~= nil
-          and vim.tbl_deep_extend('force', final_config, { sourceMap = tbl_to_tuple_list(source_map) })
+          and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(source_map) })
         or final_config
 
+      local environment = environments[args.workspaceRoot]
       final_config = next(environment) ~= nil and vim.tbl_deep_extend('force', final_config, { env = environment })
         or final_config
 
