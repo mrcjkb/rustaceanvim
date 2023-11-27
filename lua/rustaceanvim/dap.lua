@@ -1,5 +1,6 @@
 local config = require('rustaceanvim.config.internal')
 local compat = require('rustaceanvim.compat')
+local shell = require('rustaceanvim.shell')
 local types = require('rustaceanvim.types.internal')
 
 local function scheduled_error(err)
@@ -85,7 +86,7 @@ local function get_rustc_sysroot(callback)
     if sc.code ~= 0 or result == nil then
       return
     end
-    callback(result)
+    callback((result:gsub('\n$', '')))
   end)
 end
 
@@ -115,31 +116,110 @@ local function format_source_map(tbl)
   return tbl_to_tuple_list(tbl)
 end
 
----@type DapSourceMap
-local source_map = {}
+---@type {[string]: DapSourceMap}
+local source_maps = {}
 
 ---See https://github.com/vadimcn/codelldb/issues/204
-local function generate_source_map()
+---@param workspace_root string
+local function generate_source_map(workspace_root)
   get_rustc_commit_hash(function(commit_hash)
     get_rustc_sysroot(function(rustc_sysroot)
       ---@type DapSourceMap
       local new_map = {
         [compat.joinpath('/rustc', commit_hash)] = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'src', 'rust'),
       }
-      source_map = vim.tbl_extend('force', source_map, new_map)
+      source_maps[workspace_root] = vim.tbl_extend('force', source_maps[workspace_root] or {}, new_map)
     end)
   end)
+end
+
+---@type {[string]: string[]}
+local init_commands = {}
+
+local function get_lldb_commands(workspace_root)
+  get_rustc_sysroot(function(rustc_sysroot)
+    local script_import = 'command script import "'
+      .. compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_lookup.py')
+      .. '"'
+    local commands_file = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_commands')
+    local file = io.open(commands_file, 'r')
+    local workspace_root_cmds = {}
+    if file then
+      for line in file:lines() do
+        table.insert(workspace_root_cmds, line)
+      end
+      file:close()
+    end
+    table.insert(workspace_root_cmds, 1, script_import)
+    init_commands[workspace_root] = workspace_root_cmds
+  end)
+end
+
+---@alias EnvironmentMap {[string]: string[]}
+
+---@type {[string]: EnvironmentMap}
+local environments = {}
+
+-- Most succinct description: https://github.com/bevyengine/bevy/issues/2589#issuecomment-1753413600
+---@param workspace_root string
+local function add_dynamic_library_paths(workspace_root)
+  compat.system({ 'rustc', '--print', 'target-libdir' }, nil, function(sc)
+    ---@cast sc vim.SystemCompleted
+    local result = sc.stdout
+    if sc.code ~= 0 or result == nil then
+      return
+    end
+    local rustc_target_path = (result:gsub('\n$', ''))
+    local target_path = compat.joinpath(workspace_root, 'target', 'debug', 'deps')
+    local sep = ':'
+    local win_sep = ';'
+    if shell.is_windows() then
+      local path = os.getenv('PATH') or ''
+      environments[workspace_root] = environments[workspace_root]
+        or {
+          PATH = rustc_target_path .. win_sep .. target_path .. win_sep .. path,
+        }
+    elseif shell.is_macos() then
+      local dkld_library_path = os.getenv('DKLD_LIBRARY_PATH') or ''
+      environments[workspace_root] = environments[workspace_root]
+        or {
+          DKLD_LIBRARY_PATH = rustc_target_path .. sep .. target_path .. sep .. dkld_library_path,
+        }
+    else
+      local ld_library_path = os.getenv('LD_LIBRARY_PATH') or ''
+      environments[workspace_root] = environments[workspace_root]
+        or {
+          LD_LIBRARY_PATH = rustc_target_path .. sep .. target_path .. sep .. ld_library_path,
+        }
+    end
+  end)
+end
+
+---@param args RADebuggableArgs
+local function handle_configured_options(args)
+  local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
+  ---@cast is_generate_source_map_enabled boolean
+  if is_generate_source_map_enabled then
+    generate_source_map(args.workspaceRoot)
+  end
+
+  local is_load_rust_types_enabled = types.evaluate(config.dap.load_rust_types)
+  ---@cast is_load_rust_types_enabled boolean
+  if is_load_rust_types_enabled then
+    get_lldb_commands(args.workspaceRoot)
+  end
+
+  local is_add_dynamic_library_paths_enabled = types.evaluate(config.dap.add_dynamic_library_paths)
+  ---@cast is_add_dynamic_library_paths_enabled boolean
+  if is_add_dynamic_library_paths_enabled then
+    add_dynamic_library_paths(args.workspaceRoot)
+  end
 end
 
 ---@param args RADebuggableArgs
 function M.start(args)
   vim.notify('Compiling a debug build for debugging. This might take some time...')
-
-  local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
-  ---@cast is_generate_source_map_enabled boolean
-  if is_generate_source_map_enabled then
-    generate_source_map()
-  end
+  handle_configured_options(args)
 
   local cargo_args = get_cargo_args_from_runnables_args(args)
   local cmd = vim.list_extend({ 'cargo' }, cargo_args)
@@ -213,10 +293,19 @@ function M.start(args)
         -- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
         runInTerminal = false,
       }
-      local final_config = is_generate_source_map_enabled
-          and next(source_map) ~= nil
-          and vim.tbl_deep_extend('force', dap_config, { sourceMap = format_source_map(source_map) })
+      local final_config = next(init_commands) ~= nil
+          and vim.tbl_deep_extend('force', dap_config, { initCommands = init_commands[args.workspaceRoot] })
         or dap_config
+
+      local source_map = source_maps[args.workspaceRoot]
+      final_config = next(source_map) ~= nil
+          and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(source_map) })
+        or final_config
+
+      local environment = environments[args.workspaceRoot]
+      final_config = next(environment) ~= nil and vim.tbl_deep_extend('force', final_config, { env = environment })
+        or final_config
+
       -- start debugging
       dap.run(final_config)
     end)

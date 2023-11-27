@@ -1,9 +1,14 @@
 local M = {}
 
 ---@return boolean
-local function is_windows()
+function M.is_windows()
   local sysname = vim.loop.os_uname().sysname
   return sysname == 'Windows' or sysname == 'Windows_NT'
+end
+
+---@return boolean
+function M.is_macos()
+  return vim.loop.os_uname().sysname == 'Darwin'
 end
 
 ---@return boolean
@@ -20,7 +25,7 @@ end
 ---@param commands string[]
 ---@return string
 function M.chain_commands(commands)
-  local separator = is_windows() and ' | ' or is_nushell() and ';' or ' && '
+  local separator = M.is_windows() and ' | ' or is_nushell() and ';' or ' && '
   local ret = ''
 
   for i, value in ipairs(commands) do

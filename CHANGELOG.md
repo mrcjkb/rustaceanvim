@@ -6,7 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.7.0] - 2023-11-27
+
+### Added
+
+- DAP: Support dynamically compiled executables [[#64]https://github.com/mrcjkb/rustaceanvim/pull/64).
+  Thanks [@richchurcher](https://github.com/richchurcher)!
+  - Configures dynamic library paths by default (with the ability to disable)
+  - Loads Rust type information by default (with the ability to disable).
 
 ### Fixed
 
