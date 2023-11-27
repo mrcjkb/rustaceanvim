@@ -105,6 +105,17 @@ local function tbl_to_tuple_list(tbl)
   return result
 end
 
+---codelldb expects a map,
+-- while lldb expects a list of tuples.
+---@param tbl { [string]: string }
+---@return string[][] | { [string]: string }
+local function format_source_map(tbl)
+  if adapter.type == 'server' then
+    return tbl
+  end
+  return tbl_to_tuple_list(tbl)
+end
+
 ---@type DapSourceMap
 local source_map = {}
 
@@ -275,7 +286,6 @@ function M.start(args)
         -- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
         runInTerminal = false,
       }
-
       local final_config = next(init_commands) ~= nil
           and vim.tbl_deep_extend('force', dap_config, { initCommands = init_commands[args.workspaceRoot] })
         or dap_config
