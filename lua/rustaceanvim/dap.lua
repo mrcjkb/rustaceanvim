@@ -174,19 +174,22 @@ local function add_dynamic_library_paths(workspace_root)
     local sep = ':'
     local win_sep = ';'
     if shell.is_windows() then
-      local path = os.getenv('PATH') or ''
+      ---@diagnostic disable-next-line: missing-parameter
+      local path = compat.uv.os_getenv('PATH') or ''
       environments[workspace_root] = environments[workspace_root]
         or {
           PATH = rustc_target_path .. win_sep .. target_path .. win_sep .. path,
         }
     elseif shell.is_macos() then
-      local dkld_library_path = os.getenv('DKLD_LIBRARY_PATH') or ''
+      ---@diagnostic disable-next-line: missing-parameter
+      local dkld_library_path = compat.uv.os_getenv('DKLD_LIBRARY_PATH') or ''
       environments[workspace_root] = environments[workspace_root]
         or {
           DKLD_LIBRARY_PATH = rustc_target_path .. sep .. target_path .. sep .. dkld_library_path,
         }
     else
-      local ld_library_path = os.getenv('LD_LIBRARY_PATH') or ''
+      ---@diagnostic disable-next-line: missing-parameter
+      local ld_library_path = compat.uv.os_getenv('LD_LIBRARY_PATH') or ''
       environments[workspace_root] = environments[workspace_root]
         or {
           LD_LIBRARY_PATH = rustc_target_path .. sep .. target_path .. sep .. ld_library_path,

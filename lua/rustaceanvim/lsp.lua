@@ -17,10 +17,12 @@ local function override_apply_text_edits()
 end
 
 local function is_library(fname)
-  local cargo_home = os.getenv('CARGO_HOME') or joinpath(vim.env.HOME, '.cargo')
+  ---@diagnostic disable-next-line: missing-parameter
+  local cargo_home = compat.uv.os_getenv('CARGO_HOME') or joinpath(vim.env.HOME, '.cargo')
   local registry = joinpath(cargo_home, 'registry', 'src')
 
-  local rustup_home = os.getenv('RUSTUP_HOME') or joinpath(vim.env.HOME, '.rustup')
+  ---@diagnostic disable-next-line: missing-parameter
+  local rustup_home = compat.uv.os_getenv('RUSTUP_HOME') or joinpath(vim.env.HOME, '.rustup')
   local toolchains = joinpath(rustup_home, 'toolchains')
 
   for _, item in ipairs { toolchains, registry } do
