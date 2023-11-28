@@ -155,6 +155,19 @@ local function get_lldb_commands(workspace_root)
   end)
 end
 
+---map for codelldb, list of strings for lldb-dap
+---@param key string
+---@param segments string[]
+---@param sep string
+---@return {[string]: string} | string[]
+local function format_environment_variable(key, segments, sep)
+  ---@diagnostic disable-next-line: missing-parameter
+  local existing = compat.uv.os_getenv(key)
+  existing = existing and sep .. existing or ''
+  local value = table.concat(segments, sep) .. existing
+  return adapter.type == 'server' and { [key] = value } or { key .. '=' .. value }
+end
+
 ---@alias EnvironmentMap {[string]: string[]}
 
 ---@type {[string]: EnvironmentMap}
@@ -171,29 +184,17 @@ local function add_dynamic_library_paths(workspace_root)
     end
     local rustc_target_path = (result:gsub('\n$', ''))
     local target_path = compat.joinpath(workspace_root, 'target', 'debug', 'deps')
-    local sep = ':'
-    local win_sep = ';'
     if shell.is_windows() then
-      ---@diagnostic disable-next-line: missing-parameter
-      local path = compat.uv.os_getenv('PATH') or ''
       environments[workspace_root] = environments[workspace_root]
-        or {
-          PATH = rustc_target_path .. win_sep .. target_path .. win_sep .. path,
-        }
+        or format_environment_variable('PATH', { rustc_target_path, target_path }, ';')
     elseif shell.is_macos() then
       ---@diagnostic disable-next-line: missing-parameter
-      local dkld_library_path = compat.uv.os_getenv('DKLD_LIBRARY_PATH') or ''
       environments[workspace_root] = environments[workspace_root]
-        or {
-          DKLD_LIBRARY_PATH = rustc_target_path .. sep .. target_path .. sep .. dkld_library_path,
-        }
+        or format_environment_variable('DKLD_LIBRARY_PATH', { rustc_target_path, target_path }, ':')
     else
       ---@diagnostic disable-next-line: missing-parameter
-      local ld_library_path = compat.uv.os_getenv('LD_LIBRARY_PATH') or ''
       environments[workspace_root] = environments[workspace_root]
-        or {
-          LD_LIBRARY_PATH = rustc_target_path .. sep .. target_path .. sep .. ld_library_path,
-        }
+        or format_environment_variable('LD_LIBRARY_PATH', { rustc_target_path, target_path }, ':')
     end
   end)
 end
