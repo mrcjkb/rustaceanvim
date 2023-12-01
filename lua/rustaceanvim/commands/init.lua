@@ -98,8 +98,9 @@ local command_tbl = {
   syntaxTree = function()
     require('rustaceanvim.commands.syntax_tree')()
   end,
-  flyCheck = function()
-    require('rustaceanvim.commands.fly_check')()
+  flyCheck = function(args)
+    local cmd = args[1] or 'run'
+    require('rustaceanvim.commands.fly_check')(cmd)
   end,
   logFile = function()
     vim.cmd.e(config.server.logfile)
@@ -129,18 +130,25 @@ function M.create_rust_lsp_command()
     complete = function(arg_lead, cmdline, _)
       local commands = vim.tbl_keys(command_tbl)
       local match_start = '^' .. rust_lsp_cmd_name
+      local subcmd_match = '%s+%w*$'
       -- special case: crateGraph comes with graphviz backend completions
-      if cmdline:match(match_start .. ' debuggables%s+%w*$') or cmdline:match(match_start .. ' runnables%s+%w*$') then
+      if
+        cmdline:match(match_start .. ' debuggables' .. subcmd_match)
+        or cmdline:match(match_start .. ' runnables%s+%w*$')
+      then
         return { 'last' }
       end
-      if cmdline:match(match_start .. ' hover%s+%w*$') then
+      if cmdline:match(match_start .. ' hover' .. subcmd_match) then
         return { 'actions', 'range' }
       end
-      if cmdline:match(match_start .. ' moveItem%s+%w*$') then
+      if cmdline:match(match_start .. ' moveItem' .. subcmd_match) then
         return { 'up', 'down' }
       end
-      if cmdline:match(match_start .. ' crateGraph%s+%w*$') then
+      if cmdline:match(match_start .. ' crateGraph' .. subcmd_match) then
         return config.tools.crate_graph.enabled_graphviz_backends or {}
+      end
+      if cmdline:match(match_start .. ' flyCheck' .. subcmd_match) then
+        return { 'run', 'clear', 'cancel' }
       end
       if cmdline:match(match_start .. '%s+%w*$') then
         return vim.tbl_filter(function(command)
