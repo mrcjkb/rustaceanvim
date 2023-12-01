@@ -1,6 +1,6 @@
 local types = require('rustaceanvim.types.internal')
 local compat = require('rustaceanvim.compat')
-local config = require('rustaceanvim.compat')
+local config = require('rustaceanvim.config')
 
 local RustaceanConfig
 
