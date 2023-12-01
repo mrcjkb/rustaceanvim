@@ -30,20 +30,15 @@ end
 
 local M = {}
 
----For the heroes who want to use it
----@param codelldb_path string
----@param liblldb_path string
----@return DapServerConfig
-function M.get_codelldb_adapter(codelldb_path, liblldb_path)
-  return {
-    type = 'server',
-    port = '${port}',
-    host = '127.0.0.1',
-    executable = {
-      command = codelldb_path,
-      args = { '--liblldb', liblldb_path, '--port', '${port}' },
-    },
-  }
+---@deprecated Use require('rustaceanvim.config').get_codelldb_adapter
+function M.get_codelldb_adapter(...)
+  vim.deprecate(
+    "require('rustaceanvim.dap').get_codelldb_adapter",
+    "require('rustaceanvim.config').get_codelldb_adapter",
+    '4.0.0',
+    'rustaceanvim'
+  )
+  return require('rustaceanvim.config').get_codelldb_adapter(...)
 end
 
 local function get_cargo_args_from_runnables_args(runnable_args)

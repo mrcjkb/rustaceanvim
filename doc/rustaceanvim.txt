@@ -205,6 +205,18 @@ dap_adapter_type_server                                *dap_adapter_type_server*
         
 
 
+                                                        *M.get_codelldb_adapter*
+M.get_codelldb_adapter({codelldb_path}, {liblldb_path})
+    For the heroes who want to use it.
+
+    Parameters: ~
+        {codelldb_path}  (string)  Path to the codelldb executable
+        {liblldb_path}   (string)  Path to the liblldb dynamic library
+
+    Returns: ~
+        (DapServerConfig)
+
+
 ==============================================================================
 LSP configuration utility                           *rustaceanvim.config.server*
 
