@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `:RustLsp logFile` command, which opens the rust-analyzer log file.
+- `:RustLsp flyCheck`: Support `run`, `clear` and `cancel` subcommands.
 - Executors: Support commands without `cwd`.
 
 ### Fixed

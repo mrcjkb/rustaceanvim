@@ -365,10 +365,13 @@ for more configuration options.
   can be costly.
   
   ```vimscript
-  :RustLsp flyCheck
+  :RustLsp flyCheck [run?|clear?|cancel?]
   ```
   ```lua
-  vim.cmd.RustLsp('flyCheck')
+  vim.cmd.RustLsp('flyCheck') -- defaults to 'run'
+  vim.cmd.RustLsp { 'flyCheck', 'run' }
+  vim.cmd.RustLsp { 'flyCheck', 'clear' }
+  vim.cmd.RustLsp { 'flyCheck', 'cancel' }
   ```
 </details>
 
