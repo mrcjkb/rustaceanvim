@@ -101,6 +101,9 @@ local command_tbl = {
   flyCheck = function()
     require('rustaceanvim.commands.fly_check')()
   end,
+  logFile = function()
+    vim.cmd.e(config.server.logfile)
+  end,
 }
 
 ---@param opts table

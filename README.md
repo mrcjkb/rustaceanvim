@@ -495,6 +495,10 @@ vim.g.rustaceanvim = {
 
 For a health check, run `:checkhealth rustaceanvim`
 
+### `rust-analyzer` log file
+
+To open the `rust-analyzer` log file, run `:RustLsp logFile`.
+
 ### Minimal config
 
 To troubleshoot this plugin with a minimal config in a temporary directory,

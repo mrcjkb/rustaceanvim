@@ -34,6 +34,7 @@
 ---              the output of the command.
 ---              Useful in large projects where running `cargo check` on each save
 ---              can be costly.
+--- `logFile` - Open the rust-analyzer log file.
 ---@brief ]]
 
 local M = {}

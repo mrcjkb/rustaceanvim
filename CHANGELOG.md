@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `:RustLsp logFile` command, which opens the rust-analyzer log file.
+
 ### Fixed
 
 - Health: Check if `vim.g.rustaceanvim` is set,

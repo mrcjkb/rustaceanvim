@@ -176,12 +176,15 @@ local RustaceanDefaultConfig = {
     end,
     ---@type string[] | fun():string[]
     cmd = function()
-      return { 'rust-analyzer' }
+      return { 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
     end,
     --- standalone file support
     --- setting it to false may improve startup time
     ---@type boolean
     standalone = true,
+
+    ---@type string The path to the rust-analyzer log file.
+    logfile = vim.fn.tempname() .. '-rust-analyzer.log',
 
     ---@type table | (fun(project_root:string|nil):table) -- The rust-analyzer settings or a function that creates them.
     settings = function(project_root)
