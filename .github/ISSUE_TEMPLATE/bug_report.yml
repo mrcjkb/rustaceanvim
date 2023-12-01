@@ -23,7 +23,7 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: "Output of `:checkhealth rustaceanvim`"
+      label: "Output of :checkhealth rustaceanvim"
       render: "console"
       placeholder: |
         Please paste the output here, as it may contain important information for debugging.
