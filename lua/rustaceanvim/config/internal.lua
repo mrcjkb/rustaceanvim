@@ -214,7 +214,7 @@ local RustaceanDefaultConfig = {
         local codelldb_package = mason_registry.get_package('codelldb')
         local mason_codelldb_path = compat.joinpath(codelldb_package:get_install_path(), 'extension')
         local codelldb_path = compat.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
-        local liblldb_path = compat.joinpath('lldb', 'lib', 'liblldb')
+        local liblldb_path = compat.joinpath(mason_codelldb_path, 'lldb', 'lib', 'liblldb')
         local shell = require('rustaceanvim.shell')
         if shell.is_windows() then
           codelldb_path = codelldb_path .. 'exe'
