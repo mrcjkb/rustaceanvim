@@ -4,11 +4,12 @@ local shell = require('rustaceanvim.shell')
 local M = {}
 
 function M.execute_command(command, args, cwd)
-  local full_command = shell.chain_commands {
-    shell.make_command_from_args('cd', { cwd }),
-    shell.make_command_from_args(command, args),
-  }
-
+  local commands = {}
+  if cwd then
+    table.insert(commands, shell.make_command_from_args('cd', { cwd }))
+  end
+  table.insert(commands, shell.make_command_from_args(command, args))
+  local full_command = shell.chain_commands(commands)
   vim.fn.VimuxRunCommand(full_command)
 end
 

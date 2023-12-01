@@ -26,7 +26,7 @@ function M.execute_command(command, args, cwd)
   -- open quickfix
   copen()
   -- go back to the previous window
-  vim.cmd('wincmd p')
+  vim.cmd.wincmd('p')
   -- clear the quickfix
   clear_qf()
 
@@ -34,7 +34,7 @@ function M.execute_command(command, args, cwd)
   local cmd = vim.list_extend({ command }, args)
   compat.system(
     cmd,
-    { cwd = cwd },
+    cwd and { cwd = cwd } or {},
     vim.schedule_wrap(function(sc)
       ---@cast sc vim.SystemCompleted
       local data = sc.stdout or sc.stderr
