@@ -210,7 +210,7 @@ local RustaceanDefaultConfig = {
       local result = false
       local has_mason, mason_registry = pcall(require, 'mason-registry')
       local mason_has_codelldb, codelldb = has_mason and pcall(mason_registry.get_package, 'codelldb') or false, nil
-      if mason_has_codelldb then
+      if mason_has_codelldb and codelldb ~= nil then
         local mason_codelldb_path = compat.joinpath(codelldb:get_install_path(), 'extension')
         local codelldb_path = compat.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
         local liblldb_path = compat.joinpath('lldb', 'lib', 'liblldb')
