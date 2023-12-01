@@ -462,9 +462,10 @@ vim.g.rustaceanvim = function()
     liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
   end
 
+  local cfg = require('rustaceanvim.config')
   return {
     dap = {
-      adapter = require('rustaceanvim.dap').get_codelldb_adapter(codelldb_path, liblldb_path),
+      adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path),
     },
   }
 end

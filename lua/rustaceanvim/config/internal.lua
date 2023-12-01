@@ -1,5 +1,6 @@
 local types = require('rustaceanvim.types.internal')
 local compat = require('rustaceanvim.compat')
+local config = require('rustaceanvim.compat')
 
 local RustaceanConfig
 
@@ -221,7 +222,7 @@ local RustaceanDefaultConfig = {
         else
           liblldb_path = liblldb_path .. (shell.is_macos() and '.dylib' or '.so')
         end
-        result = require('rustaceanvim.dap').get_codelldb_adapter(codelldb_path, liblldb_path)
+        result = config.get_codelldb_adapter(codelldb_path, liblldb_path)
       elseif vim.fn.executable('codelldb') == 1 then
         ---@cast result DapServerConfig
         result = {

@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- DAP: `loop error` when auto-detecting mason.nvim `codelldb` installation.
+- DAP: Deprecate `require('rustaceanvim.dap').get_codelldb_adapter`
+  (replaced with `require('rustaceanvim.config').get_codelldb_adapter`).
+
+## [3.9.1] - 2023-12-01
+
+### Fixed
+
 - DAP: Potential bug when loading mason.nvim's `codelldb` package.
 - DAP: Check that mason.nvim's `codelldb` package isn't `nil` before using it.
 

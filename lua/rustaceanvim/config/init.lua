@@ -117,4 +117,20 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@alias dap_adapter_type_executable "executable"
 ---@alias dap_adapter_type_server "server"
 
+---For the heroes who want to use it.
+---@param codelldb_path string Path to the codelldb executable
+---@param liblldb_path string Path to the liblldb dynamic library
+---@return DapServerConfig
+function M.get_codelldb_adapter(codelldb_path, liblldb_path)
+  return {
+    type = 'server',
+    port = '${port}',
+    host = '127.0.0.1',
+    executable = {
+      command = codelldb_path,
+      args = { '--liblldb', liblldb_path, '--port', '${port}' },
+    },
+  }
+end
+
 return M
