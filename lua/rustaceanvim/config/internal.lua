@@ -247,6 +247,7 @@ local RustaceanDefaultConfig = {
       return should_enable_dap_config_value(RustaceanConfig.dap.adapter)
     end,
   },
+  was_g_rustaceanvim_sourced = vim.g.rustaceanvim ~= nil,
 }
 
 local rustaceanvim = vim.g.rustaceanvim or {}

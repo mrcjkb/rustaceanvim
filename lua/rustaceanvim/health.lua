@@ -180,10 +180,8 @@ end
 
 local function check_config()
   start('Checking config')
-  if vim.g.rustaceanvim then
-    ok('vim.g.rustaceanvim is set')
-  else
-    ok('vim.g.rustaceanvim is not set')
+  if vim.g.rustaceanvim and not config.was_g_rustaceanvim_sourced then
+    error('vim.g.rustaceanvim is set, but it was sourced after rustaceanvim was initialized.')
   end
   local valid, err = require('rustaceanvim.config.check').validate(config)
   if valid then
