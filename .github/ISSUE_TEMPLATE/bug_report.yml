@@ -25,6 +25,8 @@ body:
     attributes:
       label: "Output of `:checkhealth rustaceanvim`"
       render: "console"
+      placeholder: |
+        Please paste the output here, as it may contain important information for debugging.
     validations:
       required: true
   - type: textarea
@@ -58,10 +60,8 @@ body:
       description: |
         See [this example](https://github.com/mrcjkb/rustaceanvim/blob/master/tests/minimal.lua).
       placeholder: |
-        -- Paste your minimal config here.
-        -- Please base it on the example,
-        -- including any additional plugins that must be installed
-        -- for the issue to be reproducible.
+        -- Paste your minimal config here. Please base it on the example provided by this plugin,
+        -- including any additional plugins that must be installed for the issue to be reproducible.
       render: "Lua"
     validations:
       required: true
