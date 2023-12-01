@@ -209,11 +209,8 @@ local RustaceanDefaultConfig = {
       --- @type DapExecutableConfig | DapServerConfig | disable
       local result = false
       local has_mason, mason_registry = pcall(require, 'mason-registry')
-      local mason_has_codelldb, codelldb_package = false, nil
-      if has_mason then
-        mason_has_codelldb, codelldb_package = pcall(mason_registry.get_package, 'codelldb')
-      end
-      if mason_has_codelldb and codelldb_package ~= nil then
+      if has_mason and mason_registry.has_package('codelldb') then
+        local codelldb_package = mason_registry.get_package('codelldb')
         local mason_codelldb_path = compat.joinpath(codelldb_package:get_install_path(), 'extension')
         local codelldb_path = compat.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
         local liblldb_path = compat.joinpath('lldb', 'lib', 'liblldb')
