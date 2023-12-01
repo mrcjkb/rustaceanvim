@@ -1,4 +1,5 @@
 local types = require('rustaceanvim.types.internal')
+local compat = require('rustaceanvim.compat')
 
 local RustaceanConfig
 
@@ -207,7 +208,21 @@ local RustaceanDefaultConfig = {
     adapter = function()
       --- @type DapExecutableConfig | DapServerConfig | disable
       local result = false
-      if vim.fn.executable('codelldb') == 1 then
+      local has_mason, mason_registry = pcall(require, 'mason-registry')
+      local mason_has_codelldb, codelldb = has_mason and pcall(mason_registry.get_package, 'codelldb') or false, nil
+      if mason_has_codelldb then
+        local mason_codelldb_path = compat.joinpath(codelldb:get_install_path(), 'extension')
+        local codelldb_path = compat.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
+        local liblldb_path = compat.joinpath('lldb', 'lib', 'liblldb')
+        local shell = require('rustaceanvim.shell')
+        if shell.is_windows() then
+          codelldb_path = codelldb_path .. 'exe'
+          liblldb_path = compat.joinpath(mason_codelldb_path, 'lldb', 'bin', 'liblldb.dll')
+        else
+          liblldb_path = liblldb_path .. (shell.is_macos() and '.dylib' or '.so')
+        end
+        result = require('rustaceanvim.dap').get_codelldb_adapter(codelldb_path, liblldb_path)
+      elseif vim.fn.executable('codelldb') == 1 then
         ---@cast result DapServerConfig
         result = {
           type = 'server',

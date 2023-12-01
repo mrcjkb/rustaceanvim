@@ -434,6 +434,8 @@ Some examples:
 
 - NixOS: [`vscode-extensions.vadimcn.vscode-lldb.adapter`](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/extensions/vadimcn.vscode-lldb/default.nix#L134)
 - Arch Linux: [`codelldb-bin` (AUR)](https://aur.archlinux.org/packages/codelldb-bin)
+- Using [`mason.nvim`](https://github.com/williamboman/mason.nvim):
+  `:MasonInstall codelldb`
 
 If your distribution does not have a `codelldb` package,
 you can configure it as follows:
