@@ -22,12 +22,6 @@ local dap = require('dap')
 local adapter = types.evaluate(config.dap.adapter)
 --- @cast adapter DapExecutableConfig | DapServerConfig | boolean
 
-if adapter ~= false then
-  ---@TODO: Add nvim-dap to lua-ls lint
-  ---@diagnostic disable-next-line: assign-type-mismatch
-  dap.adapters.rt_lldb = adapter
-end
-
 local M = {}
 
 ---@deprecated Use require('rustaceanvim.config').get_codelldb_adapter
@@ -270,40 +264,54 @@ function M.start(args)
         return
       end
 
-      -- create debug configuration
-      local dap_config = {
-        name = 'Rust tools debug',
-        type = 'rt_lldb',
-        request = 'launch',
-        program = executables[1],
-        args = args.executableArgs or {},
-        cwd = args.workspaceRoot,
-        stopOnEntry = false,
+      -- If the `lldb` adapter is not defined elsewhere, use the adapter
+      -- defined in `config.dap.adapter`
+      if dap.adapters.lldb == nil and adapter ~= false then
+        ---@TODO: Add nvim-dap to lua-ls lint
+        ---@diagnostic disable-next-line: assign-type-mismatch
+        dap.adapters.lldb = adapter
+      end
 
-        -- if you change `runInTerminal` to true, you might need to change the yama/ptrace_scope setting:
-        --
-        --    echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
-        --
-        -- Otherwise you might get the following error:
-        --
-        --    Error on launch: Failed to attach to the target process
-        --
-        -- But you should be aware of the implications:
-        -- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
-        runInTerminal = false,
-      }
-      local final_config = next(init_commands) ~= nil
-          and vim.tbl_deep_extend('force', dap_config, { initCommands = init_commands[args.workspaceRoot] })
-        or dap_config
+      -- Use the first configuration, if it exists
+      local _, dap_config = next(dap.configurations.rust or {})
 
-      local source_map = source_maps[args.workspaceRoot]
-      final_config = next(source_map) ~= nil
-          and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(source_map) })
-        or final_config
+      local local_config = types.evaluate(config.dap.configuration)
+      --- @cast local_config DapClientConfig | boolean
 
+      local final_config = local_config ~= false and local_config or dap_config
+      --- @cast final_config DapClientConfig
+
+      if dap.adapters[final_config.type] == nil then
+        scheduled_error(
+          'No adapter exists named "' .. final_config.type .. '". See ":h dap-adapter" for more information'
+        )
+        return
+      end
+
+      -- common entries
+      -- `program` and `args` aren't supported in probe-rs but are safely ignored
+      final_config.cwd = args.workspaceRoot
+      final_config.program = executables[1]
+      final_config.args = args.executableArgs or {}
       local environment = environments[args.workspaceRoot]
-      final_config = next(environment) ~= nil and vim.tbl_deep_extend('force', final_config, { env = environment })
+      final_config = next(environment or {}) ~= nil
+          and vim.tbl_deep_extend('force', final_config, { env = environment })
         or final_config
+
+      if string.find(final_config.type, 'lldb') ~= nil then
+        -- lldb specific entries
+        final_config = next(init_commands or {}) ~= nil
+            and vim.tbl_deep_extend('force', final_config, { initCommands = init_commands[args.workspaceRoot] })
+          or final_config
+
+        local source_map = source_maps[args.workspaceRoot]
+        final_config = next(source_map or {}) ~= nil
+            and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(source_map) })
+          or final_config
+      elseif string.find(final_config.type, 'probe-rs') ~= nil then
+        -- probe-rs specific entries
+        final_config.coreConfigs[1].programBinary = final_config.program
+      end
 
       -- start debugging
       dap.run(final_config)

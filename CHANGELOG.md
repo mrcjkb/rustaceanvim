@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- DAP: Load the `dap.adapter` config value into the `lldb` adapter, but only if the
+ `lldb` adapter is not already configured.
+- DAP: Add `dap.configuration` entry to config with the default behaviour of loading
+  `launch.json`, or falling back to a basic configuration of the `lldb` adapter.
+  - Use the `dap.configuration` config value to configure the debug session,
+    falling back to the `rust` configuration.
+- DAP: Support `probe-rs`.
+
 ## [3.9.6] - 2023-12-06
 
 ### Fixed
