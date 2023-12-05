@@ -373,6 +373,12 @@ for more configuration options.
   vim.cmd.RustLsp { 'flyCheck', 'clear' }
   vim.cmd.RustLsp { 'flyCheck', 'cancel' }
   ```
+
+  > [!NOTE]
+  >
+  > This is only useful if you set the option,
+  > `['rust-analzyer'].checkOnSave = false`.
+
 </details>
 
 <!-- markdownlint-restore -->
