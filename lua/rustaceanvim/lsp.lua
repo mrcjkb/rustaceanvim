@@ -16,7 +16,10 @@ local function override_apply_text_edits()
   end
 end
 
-local function is_library(fname)
+---Checks if there is an active client for file_name and returns its root directory if found.
+---@param file_name string
+---@return string | nil root_dir The root directory of the active client for file_name (if there is one)
+local function get_mb_active_client_root(file_name)
   ---@diagnostic disable-next-line: missing-parameter
   local cargo_home = compat.uv.os_getenv('CARGO_HOME') or joinpath(vim.env.HOME, '.cargo')
   local registry = joinpath(cargo_home, 'registry', 'src')
@@ -26,23 +29,23 @@ local function is_library(fname)
   local toolchains = joinpath(rustup_home, 'toolchains')
 
   for _, item in ipairs { toolchains, registry } do
-    if fname:sub(1, #item) == item then
+    if file_name:sub(1, #item) == item then
       local clients = rust_analyzer.get_active_rustaceanvim_clients()
       return clients[#clients].config.root_dir
     end
   end
 end
 
----@param fname string
----@return string
-local function get_root_dir(fname)
-  local reuse_active = is_library(fname)
+---@param file_name string
+---@return string | nil root_dir
+local function get_root_dir(file_name)
+  local reuse_active = get_mb_active_client_root(file_name)
   if reuse_active then
     return reuse_active
   end
   local cargo_crate_dir = vim.fs.dirname(vim.fs.find({ 'Cargo.toml' }, {
     upward = true,
-    path = vim.fs.dirname(fname),
+    path = vim.fs.dirname(file_name),
   })[1])
   local cargo_workspace_dir = nil
   if vim.fn.executable('cargo') == 1 then
@@ -72,10 +75,13 @@ local function get_root_dir(fname)
     or cargo_crate_dir
     or vim.fs.dirname(vim.fs.find({ 'rust-project.json', '.git' }, {
       upward = true,
-      path = vim.fs.dirname(fname),
+      path = vim.fs.dirname(file_name),
     })[1])
 end
 
+---@param client lsp.Client
+---@param root_dir string
+---@return boolean
 local function is_in_workspace(client, root_dir)
   if not client.workspace_folders then
     return false
@@ -104,7 +110,7 @@ M.start = function()
 
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
-    if not is_in_workspace(client, root_dir) then
+    if root_dir and not is_in_workspace(client, root_dir) then
       local workspace_folder = { uri = vim.uri_from_fname(root_dir), name = root_dir }
       local params = {
         event = {
