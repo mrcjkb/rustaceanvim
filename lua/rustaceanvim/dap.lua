@@ -19,8 +19,6 @@ if not ok then
   }
 end
 local dap = require('dap')
-local adapter = types.evaluate(config.dap.adapter)
---- @cast adapter DapExecutableConfig | DapServerConfig | boolean
 
 local M = {}
 
@@ -96,9 +94,10 @@ end
 
 ---codelldb expects a map,
 -- while lldb expects a list of tuples.
+---@param adapter DapExecutableConfig | DapServerConfig | boolean
 ---@param tbl { [string]: string }
 ---@return string[][] | { [string]: string }
-local function format_source_map(tbl)
+local function format_source_map(adapter, tbl)
   if adapter.type == 'server' then
     return tbl
   end
@@ -145,11 +144,12 @@ local function get_lldb_commands(workspace_root)
 end
 
 ---map for codelldb, list of strings for lldb-dap
+---@param adapter DapExecutableConfig | DapServerConfig | boolean
 ---@param key string
 ---@param segments string[]
 ---@param sep string
 ---@return {[string]: string} | string[]
-local function format_environment_variable(key, segments, sep)
+local function format_environment_variable(adapter, key, segments, sep)
   ---@diagnostic disable-next-line: missing-parameter
   local existing = compat.uv.os_getenv(key)
   existing = existing and sep .. existing or ''
@@ -163,8 +163,9 @@ end
 local environments = {}
 
 -- Most succinct description: https://github.com/bevyengine/bevy/issues/2589#issuecomment-1753413600
+---@param adapter DapExecutableConfig | DapServerConfig | boolean
 ---@param workspace_root string
-local function add_dynamic_library_paths(workspace_root)
+local function add_dynamic_library_paths(adapter, workspace_root)
   compat.system({ 'rustc', '--print', 'target-libdir' }, nil, function(sc)
     ---@cast sc vim.SystemCompleted
     local result = sc.stdout
@@ -175,21 +176,22 @@ local function add_dynamic_library_paths(workspace_root)
     local target_path = compat.joinpath(workspace_root, 'target', 'debug', 'deps')
     if shell.is_windows() then
       environments[workspace_root] = environments[workspace_root]
-        or format_environment_variable('PATH', { rustc_target_path, target_path }, ';')
+        or format_environment_variable(adapter, 'PATH', { rustc_target_path, target_path }, ';')
     elseif shell.is_macos() then
       ---@diagnostic disable-next-line: missing-parameter
       environments[workspace_root] = environments[workspace_root]
-        or format_environment_variable('DKLD_LIBRARY_PATH', { rustc_target_path, target_path }, ':')
+        or format_environment_variable(adapter, 'DKLD_LIBRARY_PATH', { rustc_target_path, target_path }, ':')
     else
       ---@diagnostic disable-next-line: missing-parameter
       environments[workspace_root] = environments[workspace_root]
-        or format_environment_variable('LD_LIBRARY_PATH', { rustc_target_path, target_path }, ':')
+        or format_environment_variable(adapter, 'LD_LIBRARY_PATH', { rustc_target_path, target_path }, ':')
     end
   end)
 end
 
+---@param adapter DapExecutableConfig | DapServerConfig | boolean
 ---@param args RADebuggableArgs
-local function handle_configured_options(args)
+local function handle_configured_options(adapter, args)
   local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
   ---@cast is_generate_source_map_enabled boolean
   if is_generate_source_map_enabled then
@@ -205,14 +207,17 @@ local function handle_configured_options(args)
   local is_add_dynamic_library_paths_enabled = types.evaluate(config.dap.add_dynamic_library_paths)
   ---@cast is_add_dynamic_library_paths_enabled boolean
   if is_add_dynamic_library_paths_enabled then
-    add_dynamic_library_paths(args.workspaceRoot)
+    add_dynamic_library_paths(adapter, args.workspaceRoot)
   end
 end
 
 ---@param args RADebuggableArgs
 function M.start(args)
+  local adapter = types.evaluate(config.dap.adapter)
+  --- @cast adapter DapExecutableConfig | DapServerConfig | boolean
+
   vim.notify('Compiling a debug build for debugging. This might take some time...')
-  handle_configured_options(args)
+  handle_configured_options(adapter, args)
 
   local cargo_args = get_cargo_args_from_runnables_args(args)
   local cmd = vim.list_extend({ 'cargo' }, cargo_args)
@@ -266,7 +271,7 @@ function M.start(args)
 
       -- If the `lldb` adapter is not defined elsewhere, use the adapter
       -- defined in `config.dap.adapter`
-      if dap.adapters.lldb == nil and adapter ~= false then
+      if dap.adapters.lldb == nil then
         ---@TODO: Add nvim-dap to lua-ls lint
         ---@diagnostic disable-next-line: assign-type-mismatch
         dap.adapters.lldb = adapter
@@ -306,7 +311,7 @@ function M.start(args)
 
         local source_map = source_maps[args.workspaceRoot]
         final_config = next(source_map or {}) ~= nil
-            and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(source_map) })
+            and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(adapter, source_map) })
           or final_config
       elseif string.find(final_config.type, 'probe%-rs') ~= nil then
         -- probe-rs specific entries
