@@ -123,7 +123,6 @@ function M.validate(cfg)
       args = { configuration.args, 'table', true },
       env = { configuration.env, 'string', true },
       initCommands = { configuration.initCommands, 'string', true },
-      sourceMap = { configuration.sourceMap, 'string', true },
       coreConfigs = { configuration.coreConfigs, 'table', true },
     })
   end
