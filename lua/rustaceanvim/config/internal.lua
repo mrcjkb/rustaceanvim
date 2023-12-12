@@ -289,7 +289,7 @@ local RustaceanDefaultConfig = {
       local pre_launch = vim.deepcopy(dap.configurations) or {}
       require('dap.ext.vscode').load_launchjs()
       for k, v in pairs(dap.configurations) do
-        if pre_launch[k] == nil or pre_launch[k] ~= v then
+        if pre_launch[k] == nil or not vim.deep_equal(pre_launch[k], v) then
           -- `configurations` are tables of `configuration` entries
           -- use the first `configuration`
           dap_config = v[1]
