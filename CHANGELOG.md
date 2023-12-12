@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+Thanks [@Andrew Collins](https://github.com/Andrew-Collins):
+
 - DAP: Load the `dap.adapter` config value into the `lldb` adapter, but only if the
  `lldb` adapter is not already configured.
 - DAP: Add `dap.configuration` entry to config with the default behaviour of loading
