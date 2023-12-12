@@ -118,6 +118,14 @@ function M.validate(cfg)
       type = { configuration.type, 'string' },
       name = { configuration.name, 'string' },
       request = { configuration.request, 'string' },
+      cwd = { configuration.cwd, 'string', true },
+      program = { configuration.program, 'string', true },
+      args = { configuration.args, 'table', true },
+      env = { configuration.env, 'string', true },
+      initCommands = { configuration.initCommands, 'string', true },
+      sourceMap = { configuration.sourceMap, 'string', true },
+      coreConfigs = { configuration.coreConfigs, 'table', true },
+
     })
   end
   if not ok then
