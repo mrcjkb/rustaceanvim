@@ -308,7 +308,7 @@ function M.start(args)
         final_config = next(source_map or {}) ~= nil
             and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(source_map) })
           or final_config
-      elseif string.find(final_config.type, 'probe-rs') ~= nil then
+      elseif string.find(final_config.type, 'probe%-rs') ~= nil then
         -- probe-rs specific entries
         final_config.coreConfigs[1].programBinary = final_config.program
       end

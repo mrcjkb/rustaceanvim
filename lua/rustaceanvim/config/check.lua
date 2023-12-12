@@ -125,7 +125,6 @@ function M.validate(cfg)
       initCommands = { configuration.initCommands, 'string', true },
       sourceMap = { configuration.sourceMap, 'string', true },
       coreConfigs = { configuration.coreConfigs, 'table', true },
-
     })
   end
   if not ok then
