@@ -215,8 +215,7 @@ DapClientConfig                                                *DapClientConfig*
         {program?}       (string)                                                                         Path to executable for most DAP clients
         {args?}          (string[])                                                                       Optional args to DAP client, not valid for all client types
         {env?}           (string)                                                                         Environmental variables
-        {initCommands?}  (string)                                                                         Initial commands to run, `lldb` clients only
-        {sourceMap?}     (string)                                                                         Map of source files, `lldb` clients only
+        {initCommands?}  (string[])                                                                       Initial commands to run, `lldb` clients only
         {coreConfigs?}   (table)                                                                          Essential config values for `probe-rs` client, see https://probe.rs/docs/tools/debugger/
 
 
