@@ -89,7 +89,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 
 ---@class RustaceanDapOpts
 ---@field adapter? DapExecutableConfig | DapServerConfig | disable | fun():(DapExecutableConfig | DapServerConfig | disable) Defaults to creating the `rt_lldb` adapter, which is a `DapServerConfig` if `codelldb` is detected, and a `DapExecutableConfig` if `lldb` is detected. Set to `false` to disable.
----@field configuration? DapClientConfig | disable | fun():(DapClientConfig | disable) Dap client configuration. Defaults to function that looks for a `launch.json` file or returns a `DapExecutableConfig` that launches the `rt_lldb` adapter. Set to `false` to disable.
+---@field configuration? DapClientConfig | disable | fun():(DapClientConfig | disable) Dap client configuration. Defaults to a function that looks for a `launch.json` file or returns a `DapExecutableConfig` that launches the `rt_lldb` adapter. Set to `false` to disable.
 ---@field add_dynamic_library_paths? boolean | fun():boolean Accommodate dynamically-linked targets by passing library paths to lldb. Default: `true`.
 ---@field auto_generate_source_map? fun():boolean | boolean Whether to auto-generate a source map for the standard library.
 ---@field load_rust_types? fun():boolean | boolean Whether to get Rust types via initCommands (rustlib/etc/lldb_commands). Default: `true`.
@@ -126,8 +126,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field program? string Path to executable for most DAP clients
 ---@field args? string[] Optional args to DAP client, not valid for all client types
 ---@field env? string  Environmental variables
----@field initCommands? string Initial commands to run, `lldb` clients only
----@field sourceMap? string Map of source files, `lldb` clients only
+---@field initCommands? string[] Initial commands to run, `lldb` clients only
 ---@field coreConfigs? table Essential config values for `probe-rs` client, see https://probe.rs/docs/tools/debugger/
 
 ---@alias dap_config_request_launch "launch"

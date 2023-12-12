@@ -273,8 +273,9 @@ local RustaceanDefaultConfig = {
       end
 
       -- default
+      ---@type DapClientConfig
       local dap_config = {
-        name = 'Rust tools debug',
+        name = 'Rust debug client',
         type = 'lldb',
         request = 'launch',
         stopOnEntry = false,

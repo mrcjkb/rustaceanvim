@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `launch.json`, or falling back to a basic configuration of the `lldb` adapter.
   - Use the `dap.configuration` config value to configure the debug session,
     falling back to the `rust` configuration.
-- DAP: Support `probe-rs`.
+- DAP: Support [`probe-rs`](https://probe.rs/).
 
 ## [3.9.6] - 2023-12-06
 
