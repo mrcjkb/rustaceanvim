@@ -265,6 +265,39 @@ local RustaceanDefaultConfig = {
     load_rust_types = function()
       return should_enable_dap_config_value(RustaceanConfig.dap.adapter)
     end,
+    --- @type DapClientConfig | disable | fun():(DapClientConfig | disable)
+    configuration = function()
+      local ok, _ = pcall(require, 'dap')
+      if not ok then
+        return false
+      end
+
+      -- default
+      ---@type DapClientConfig
+      local dap_config = {
+        name = 'Rust debug client',
+        type = 'lldb',
+        request = 'launch',
+        stopOnEntry = false,
+      }
+
+      ---@diagnostic disable-next-line: different-requires
+      local dap = require('dap')
+      -- Load configurations from a `launch.json`.
+      -- It is necessary to check for changes in the `dap.configurations` table, as
+      -- `load_launchjs` does not return anything, it loads directly into `dap.configurations`.
+      local pre_launch = vim.deepcopy(dap.configurations) or {}
+      require('dap.ext.vscode').load_launchjs()
+      for k, v in pairs(dap.configurations) do
+        if pre_launch[k] == nil or not vim.deep_equal(pre_launch[k], v) then
+          -- `configurations` are tables of `configuration` entries
+          -- use the first `configuration`
+          dap_config = v[1]
+          break
+        end
+      end
+      return dap_config
+    end,
   },
   was_g_rustaceanvim_sourced = vim.g.rustaceanvim ~= nil,
 }

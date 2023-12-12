@@ -109,6 +109,26 @@ function M.validate(cfg)
   if not ok then
     return false, err
   end
+  local configuration = types.evaluate(dap.configuration)
+  if configuration == false then
+    ok = true
+  else
+    ---@cast configuration DapClientConfig
+    ok, err = validate('dap.configuration', {
+      type = { configuration.type, 'string' },
+      name = { configuration.name, 'string' },
+      request = { configuration.request, 'string' },
+      cwd = { configuration.cwd, 'string', true },
+      program = { configuration.program, 'string', true },
+      args = { configuration.args, 'table', true },
+      env = { configuration.env, 'string', true },
+      initCommands = { configuration.initCommands, 'string', true },
+      coreConfigs = { configuration.coreConfigs, 'table', true },
+    })
+  end
+  if not ok then
+    return false, err
+  end
   return true
 end
 
