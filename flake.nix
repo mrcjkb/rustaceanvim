@@ -136,18 +136,20 @@
           };
         };
 
-        devShell = pkgs.mkShell {
+        devShell = pkgs.nvim-nightly-tests.overrideAttrs (oa: {
           name = "rustaceanvim devShell";
           inherit (pre-commit-check) shellHook;
-          buildInputs = with pre-commit-hooks.packages.${system}; [
-            alejandra
-            lua-language-server
-            stylua
-            luacheck
-            editorconfig-checker
-            markdownlint-cli
-          ];
-        };
+          buildInputs = with pre-commit-hooks.packages.${system};
+            [
+              alejandra
+              lua-language-server
+              stylua
+              luacheck
+              editorconfig-checker
+              markdownlint-cli
+            ]
+            ++ oa.buildInputs;
+        });
 
         docgen = pkgs.callPackage ./nix/docgen.nix {};
       in {
