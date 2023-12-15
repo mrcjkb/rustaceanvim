@@ -549,6 +549,8 @@ To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
 - [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim)
   Geared towards people who prefer manual LSP client configuration.
+  Has some features that have not yet
+  been implemented by this plugin.
 
 ## Inspiration
 
