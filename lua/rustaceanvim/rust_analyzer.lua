@@ -18,7 +18,7 @@ end
 ---@param bufnr integer Buffer handle, or 0 for current.
 ---@param method string LSP method name
 ---@param params table|nil Parameters to send to the server
----@param handler? lsp-handler See |lsp-handler|
+---@param handler? lsp.Handler See |lsp-handler|
 ---       If nil, follows resolution strategy defined in |lsp-handler-configuration|
 M.buf_request = function(bufnr, method, params, handler)
   if bufnr == nil or bufnr == 0 then

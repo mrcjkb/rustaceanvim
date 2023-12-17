@@ -1,4 +1,4 @@
----@diagnostic disable: deprecated, duplicate-doc-field
+---@diagnostic disable: deprecated, duplicate-doc-field, duplicate-doc-alias
 ---@mod rustaceanvim.compat Functions for backward compatibility with older Neovim versions
 
 local M = {}
@@ -56,5 +56,7 @@ M.list_contains = vim.list_contains
     end
     return false
   end
+
+---@alias lsp.Handler fun(err: lsp.ResponseError?, result: any, context: lsp.HandlerContext, config?: table): ...any
 
 return M
