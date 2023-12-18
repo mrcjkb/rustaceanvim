@@ -39,7 +39,7 @@ local function handler_factory(backend, output, pipe)
     end
 
     graph = string.gsub(graph, '\n', '')
-    print('rust-tools: Processing crate graph. This may take a while...')
+    vim.notify('rustaceanvim: Processing crate graph. This may take a while...')
 
     local cmd = 'dot -T' .. backend
     if pipe ~= nil then -- optionally pipe to `pipe`

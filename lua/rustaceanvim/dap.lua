@@ -112,9 +112,20 @@ local source_maps = {}
 local function generate_source_map(workspace_root)
   get_rustc_commit_hash(function(commit_hash)
     get_rustc_sysroot(function(rustc_sysroot)
+      local src_path
+      for _, src_dir in pairs { 'src', 'rustc-src' } do
+        src_path = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', src_dir, 'rust')
+        if compat.uv.fs_stat(src_path) then
+          break
+        end
+        src_path = nil
+      end
+      if not src_path then
+        return
+      end
       ---@type DapSourceMap
       local new_map = {
-        [compat.joinpath('/rustc', commit_hash)] = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'src', 'rust'),
+        [compat.joinpath('/rustc', commit_hash)] = src_path,
       }
       source_maps[workspace_root] = vim.tbl_extend('force', source_maps[workspace_root] or {}, new_map)
     end)
@@ -126,9 +137,11 @@ local init_commands = {}
 
 local function get_lldb_commands(workspace_root)
   get_rustc_sysroot(function(rustc_sysroot)
-    local script_import = 'command script import "'
-      .. compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_lookup.py')
-      .. '"'
+    local script = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_lookup.py')
+    if not compat.uv.fs_stat(script) then
+      return
+    end
+    local script_import = 'command script import "' .. script .. '"'
     local commands_file = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_commands')
     local file = io.open(commands_file, 'r')
     local workspace_root_cmds = {}
