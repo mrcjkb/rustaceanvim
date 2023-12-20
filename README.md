@@ -321,6 +321,9 @@ for more configuration options.
   ```lua
   vim.cmd.RustLsp { 'ssr', 'query' --[[ optional ]] }
   ```
+
+  ![tty](https://github.com/mrcjkb/rustaceanvim/assets/12857160/b61fbc56-ab53-48e6-bfdd-eb8d4de28795)
+
 </details>
 
 <details>
