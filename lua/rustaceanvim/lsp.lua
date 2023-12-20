@@ -31,7 +31,7 @@ local function get_mb_active_client_root(file_name)
   for _, item in ipairs { toolchains, registry } do
     if file_name:sub(1, #item) == item then
       local clients = rust_analyzer.get_active_rustaceanvim_clients()
-      return clients[#clients].config.root_dir
+      return clients and #clients > 0 and clients[#clients].config.root_dir or nil
     end
   end
 end

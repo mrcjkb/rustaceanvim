@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - SSR: Broken when command contains spaces [[#104](https://github.com/mrcjkb/rustaceanvim/issues/104)].
+- LSP: Prevent "attempt to index a `nil` value" error [[#105](https://github.com/mrcjkb/rustaceanvim/issues/105)].
 
 ## [3.10.3] - 2023-12-19
 
