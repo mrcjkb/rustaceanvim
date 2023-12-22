@@ -386,6 +386,23 @@ for more configuration options.
 
 </details>
 
+<details>
+  <summary>
+	<b>View Hir</b>
+  </summary>
+
+  Opens a buffer with a textual representation of the HIR
+  of the function containing the cursor.
+  Useful for debugging or when working on rust-analyzer itself.
+  
+  ```vimscript
+  :RustLsp viewHir
+  ```
+  ```lua
+  vim.cmd.RustLsp('viewHir')
+  ```
+</details>
+
 <!-- markdownlint-restore -->
 
 ## Advanced configuration

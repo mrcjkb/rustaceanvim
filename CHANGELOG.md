@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- LSP: `viewHir` command [[#14](https://github.com/mrcjkb/rustaceanvim/issues/14)].
+
 ## [3.10.5] - 2023-12-22
 
 ### Fixed

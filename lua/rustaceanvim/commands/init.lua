@@ -102,6 +102,9 @@ local command_tbl = {
     local cmd = args[1] or 'run'
     require('rustaceanvim.commands.fly_check')(cmd)
   end,
+  viewHir = function()
+    require('rustaceanvim.commands.hir')()
+  end,
   logFile = function()
     vim.cmd.e(config.server.logfile)
   end,
