@@ -85,11 +85,7 @@ local command_tbl = {
     require('rustaceanvim.commands.parent_module')()
   end,
   ssr = function(args)
-    if #args == 0 then
-      vim.notify('ssr: called without a query', vim.log.levels.ERROR)
-      return
-    end
-    local query = table.concat(args, ' ')
+    local query = args and #args > 0 and table.concat(args, ' ') or nil
     require('rustaceanvim.commands.ssr')(query)
   end,
   reloadWorkspace = function()

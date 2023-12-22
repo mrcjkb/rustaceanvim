@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - LSP: `viewHir` command [[#14](https://github.com/mrcjkb/rustaceanvim/issues/14)].
 
+### Fixed
+
+- SSR: Make query optional.
+
 ## [3.10.5] - 2023-12-22
 
 ### Fixed
