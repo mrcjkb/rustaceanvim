@@ -553,7 +553,7 @@ NVIM_DATA_MINIMAL="/tmp/minimal" NVIM_APP_NAME="nvim-minimal" nvim -u minimal.lu
 If you cannot reproduce your issue with a minimal config,
 it may be caused by another plugin,
 or a setting of your plugin manager.
-In this case, add additional plugins and and configurations to `minimal.lua`,
+In this case, add additional plugins and configurations to `minimal.lua`,
 until you can reproduce it.
 
 ## FAQ
