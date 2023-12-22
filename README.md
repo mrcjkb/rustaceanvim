@@ -551,8 +551,9 @@ NVIM_DATA_MINIMAL="/tmp/minimal" NVIM_APP_NAME="nvim-minimal" nvim -u minimal.lu
 > `nix run "github:mrcjkb/rustaceanvim#nvim-minimal-nightly"`.
 
 If you cannot reproduce your issue with a minimal config,
-it may be caused by another plugin.
-In this case, add additional plugins and their configurations to `minimal.lua`,
+it may be caused by another plugin,
+or a setting of your plugin manager.
+In this case, add additional plugins and and configurations to `minimal.lua`,
 until you can reproduce it.
 
 ## FAQ
