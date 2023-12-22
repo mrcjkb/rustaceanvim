@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.10.5] - 2023-12-22
+
+### Fixed
+
+- Health: Only report error if `lspconfig.rust_analyzer` has been setup,
+  not other lspconfig configurations.
+
 ## [3.10.4] - 2023-12-20
 
 ### Fixed

@@ -114,7 +114,12 @@ end
 local function check_for_conflicts()
   start('Checking for conflicting plugins')
   for _, autocmd in ipairs(vim.api.nvim_get_autocmds { event = 'FileType', pattern = 'rust' }) do
-    if autocmd.group_name and autocmd.group_name == 'lspconfig' then
+    if
+      autocmd.group_name
+      and autocmd.group_name == 'lspconfig'
+      and autocmd.desc
+      and autocmd.desc:match('rust_analyzer')
+    then
       error(
         'lspconfig.rust_analyzer has been setup. This will likely lead to conflicts with the rustaceanvim LSP client.'
       )
