@@ -388,18 +388,19 @@ for more configuration options.
 
 <details>
   <summary>
-	<b>View Hir</b>
+	<b>View HIR / MIR</b>
   </summary>
 
-  Opens a buffer with a textual representation of the HIR
+  Opens a buffer with a textual representation of the HIR or MIR
   of the function containing the cursor.
   Useful for debugging or when working on rust-analyzer itself.
   
   ```vimscript
-  :RustLsp viewHir
+  :RustLsp view [hir|mir]
   ```
   ```lua
-  vim.cmd.RustLsp('viewHir')
+  vim.cmd.RustLsp { 'view', 'hir' }
+  vim.cmd.RustLsp { 'view', 'mir' }
   ```
 </details>
 

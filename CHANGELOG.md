@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- LSP: `viewHir` command [[#14](https://github.com/mrcjkb/rustaceanvim/issues/14)].
+- LSP: `view [hir|mir]` command [[#14](https://github.com/mrcjkb/rustaceanvim/issues/14)],
+  [[#15](https://github.com/mrcjkb/rustaceanvim/issues/15)].
 
 ### Fixed
 
