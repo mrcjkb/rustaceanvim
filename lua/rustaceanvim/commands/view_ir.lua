@@ -6,16 +6,19 @@ local ui = require('rustaceanvim.ui')
 ---@type integer | nil
 local latest_buf_id = nil
 
-local function handler(err, result)
+---@alias ir_level 'Hir' | 'Mir'
+
+local function handler(level, err, result)
+  local requestType = 'view' .. level
   if err then
-    vim.notify('viewHir failed' .. result and ': ' .. result or '', vim.log.levels.ERROR)
+    vim.notify(requestType .. ' failed' .. (result and ': ' .. result or vim.inspect(err)), vim.log.levels.ERROR)
     return
   end
   if result and result:match('Not inside a function body') then
-    vim.notify('viewHir failed: Not inside a function body', vim.log.levels.ERROR)
+    vim.notify(requestType .. ' failed: Not inside a function body', vim.log.levels.ERROR)
     return
   elseif type(result) ~= 'string' then
-    vim.notify('viewHir failed: ' .. vim.inspect(result), vim.log.levels.ERROR)
+    vim.notify(requestType .. ' failed: ' .. vim.inspect(result), vim.log.levels.ERROR)
   end
 
   -- check if a buffer with the latest id is already open, if it is then
@@ -36,9 +39,12 @@ local function handler(err, result)
   vim.api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, lines)
 end
 
-function M.hir()
+---@param level ir_level
+function M.viewIR(level)
   local position_params = vim.lsp.util.make_position_params(0, nil)
-  rl.buf_request(0, 'rust-analyzer/viewHir', position_params, handler)
+  rl.buf_request(0, 'rust-analyzer/view' .. level, position_params, function(...)
+    return handler(level, ...)
+  end)
 end
 
-return M.hir
+return M.viewIR

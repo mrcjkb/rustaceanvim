@@ -98,8 +98,22 @@ local command_tbl = {
     local cmd = args[1] or 'run'
     require('rustaceanvim.commands.fly_check')(cmd)
   end,
-  viewHir = function()
-    require('rustaceanvim.commands.hir')()
+  view = function(args)
+    if not args or #args == 0 then
+      vim.notify("Expected argument: 'mir' or 'hir'", vim.log.levels.ERROR)
+      return
+    end
+    local level
+    local arg = args[1]:lower()
+    if arg == 'mir' then
+      level = 'Mir'
+    elseif arg == 'hir' then
+      level = 'Hir'
+    else
+      vim.notify('Unexpected argument: ' .. arg .. " Expected: 'mir' or 'hir'", vim.log.levels.ERROR)
+      return
+    end
+    require('rustaceanvim.commands.view_ir')(level)
   end,
   logFile = function()
     vim.cmd.e(config.server.logfile)
@@ -148,6 +162,9 @@ function M.create_rust_lsp_command()
       end
       if cmdline:match(match_start .. ' flyCheck' .. subcmd_match) then
         return { 'run', 'clear', 'cancel' }
+      end
+      if cmdline:match(match_start .. ' view' .. subcmd_match) then
+        return { 'mir', 'hir' }
       end
       if cmdline:match(match_start .. '%s+%w*$') then
         return vim.tbl_filter(function(command)
