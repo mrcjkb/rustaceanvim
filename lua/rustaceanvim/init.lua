@@ -29,6 +29,7 @@
 --- `ssr [query]` - Structural search and replace.
 --- `crateGraph [backend]` - Create and view a crate graph with graphviz.
 --- `syntaxTree` - View the syntax tree.
+--- `view [mir|hir]` - View MIR or HIR.
 --- `flyCheck` [run?|clear?|cancel?]
 ---            - Run `cargo check` or another compatible command (f.x. `clippy`)
 ---              in a background thread and provide LSP diagnostics based on
