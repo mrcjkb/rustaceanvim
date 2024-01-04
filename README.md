@@ -303,6 +303,10 @@ for more configuration options.
   <summary>
 	<b>Join Lines</b>
   </summary>
+
+  Join selected lines into one, 
+  smartly fixing up whitespace, 
+  trailing commas, and braces.
   
   ```vimscript
   :RustLsp joinLines
@@ -310,6 +314,9 @@ for more configuration options.
   ```lua
   vim.cmd.RustLsp('joinLines')
   ```
+
+  ![](https://user-images.githubusercontent.com/1711539/124515923-4504e800-dde9-11eb-8d58-d97945a1a785.gif)
+  
 </details>
 
 <details>
