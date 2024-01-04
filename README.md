@@ -557,6 +557,12 @@ or a setting of your plugin manager.
 In this case, add additional plugins and configurations to `minimal.lua`,
 until you can reproduce it.
 
+### rust-analyzer troubleshooting
+
+For issues related to rust-analyzer
+(e.g. LSP features not working), see also
+[the rust-analyzer troubleshooting guide](https://rust-analyzer.github.io/manual.html#troubleshooting).
+
 ## FAQ
 
 ### Where are inlay hints?
