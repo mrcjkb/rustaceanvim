@@ -1,16 +1,23 @@
 local M = {}
 
+---@class CommandCache
 local cache = {
+  ---@type RADebuggableArgs | nil
   last_debuggable = nil,
+  ---@type { choice: integer, runnable: RARunnable }
   last_runnable = nil,
 }
 
--- @param action
-M.set_last_runnable = function(choice, result)
-  cache.last_runnable = { choice, result }
+---@param choice integer
+---@param runnable RARunnable
+M.set_last_runnable = function(choice, runnable)
+  cache.last_runnable = {
+    choice = choice,
+    runnable = runnable,
+  }
 end
 
--- @param args
+---@param args RADebuggableArgs
 M.set_last_debuggable = function(args)
   cache.last_debuggable = args
 end
@@ -30,7 +37,7 @@ M.execute_last_runnable = function()
   local action = cache.last_runnable
   local runnables = require('rustaceanvim.runnables')
   if action then
-    runnables.run_command(action[1], action[2])
+    runnables.run_command(action.choice, action.runnable)
   else
     runnables.runnables()
   end

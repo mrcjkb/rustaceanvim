@@ -21,7 +21,7 @@ I use
 - [`luacheck`](https://github.com/mpeterv/luacheck),
   and [`markdownlint`](https://github.com/DavidAnson/markdownlint),
   for linting.
-- [`sumneko-lua-language-server`](https://github.com/sumneko/lua-language-server/wiki/Diagnosis-Report#create-a-report)
+- [`lua-language-server`](https://github.com/sumneko/lua-language-server/wiki/Diagnosis-Report#create-a-report)
   for static type checking.
 
 ### Running tests

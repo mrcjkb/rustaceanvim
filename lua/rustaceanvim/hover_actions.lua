@@ -83,7 +83,7 @@ function M.handler(_, result, ctx)
     'markdown',
     vim.tbl_extend('keep', config.tools.hover_actions, {
       focusable = true,
-      focus_id = 'rust-tools-hover-actions',
+      focus_id = 'rust-analyzer-hover-actions',
       close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
     })
   )

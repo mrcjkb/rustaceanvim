@@ -1,5 +1,6 @@
 local M = {}
 
+---@return { textDocument: lsp_text_document, position: nil }
 local function get_params()
   return {
     textDocument = vim.lsp.util.make_text_document_params(),
@@ -7,6 +8,14 @@ local function get_params()
   }
 end
 
+---@class RADebuggableArgs
+---@field cargoArgs string[]
+---@field cargoExtraArgs string[]
+---@field executableArgs string[]
+---@field workspaceRoot string
+
+---@param args RADebuggableArgs
+---@return string
 local function build_label(args)
   local ret = ''
   for _, value in ipairs(args.cargoArgs) do
@@ -26,7 +35,13 @@ local function build_label(args)
   return ret
 end
 
+---@class RADebuggable
+---@field args RADebuggableArgs
+
+---@param result RADebuggable[]
+---@return string[] option_strings
 local function get_options(result)
+  ---@type string[]
   local option_strings = {}
 
   for _, debuggable in ipairs(result) do
@@ -38,6 +53,8 @@ local function get_options(result)
   return option_strings
 end
 
+---@param args RADebuggableArgs
+---@return boolean
 local function is_valid_test(args)
   local is_not_cargo_check = args.cargoArgs[1] ~= 'check'
   return is_not_cargo_check
@@ -49,8 +66,11 @@ end
 -- This function also makes it so that the debuggable commands are more
 -- debugging friendly. For example, we move cargo run to cargo build, and cargo
 -- test to cargo test --no-run.
+---@param result RADebuggable[]
 local function sanitize_results_for_debugging(result)
+  ---@type RADebuggable[]
   local ret = vim.tbl_filter(function(value)
+    ---@cast value RADebuggable
     return is_valid_test(value.args)
   end, result or {})
 
@@ -62,6 +82,7 @@ local function sanitize_results_for_debugging(result)
   return ret
 end
 
+---@param result RADebuggable[]
 local function handler(_, result)
   if result == nil then
     return
@@ -89,9 +110,6 @@ end
 local rl = require('rustaceanvim.rust_analyzer')
 
 -- Sends the request to rust-analyzer to get the runnables and handles them
--- The opts provided here are forwarded to telescope, other than use_telescope
--- which is used to check whether we want to use telescope or the vanilla vim
--- way for input
 function M.debuggables()
   rl.buf_request(0, 'experimental/runnables', get_params(), handler)
 end

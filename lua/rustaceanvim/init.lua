@@ -29,11 +29,15 @@
 --- `ssr [query]` - Structural search and replace.
 --- `crateGraph [backend]` - Create and view a crate graph with graphviz.
 --- `syntaxTree` - View the syntax tree.
---- `flyCheck` - Run `cargo check` or another compatible command (f.x. `clippy`)
+--- `view [mir|hir]` - View MIR or HIR.
+--- `flyCheck` [run?|clear?|cancel?]
+---            - Run `cargo check` or another compatible command (f.x. `clippy`)
 ---              in a background thread and provide LSP diagnostics based on
 ---              the output of the command.
 ---              Useful in large projects where running `cargo check` on each save
 ---              can be costly.
+---              Defaults to `flyCheck run` if called without an argument.
+--- `logFile` - Open the rust-analyzer log file.
 ---@brief ]]
 
 local M = {}

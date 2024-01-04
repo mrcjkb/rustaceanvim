@@ -4,6 +4,7 @@ Table of Contents                                        *rustaceanvim.contents*
 Introduction ··························································· |intro|
  ································································ |rustaceanvim|
 plugin configuration ····································· |rustaceanvim.config|
+LSP configuration utility ························· |rustaceanvim.config.server|
 
 ==============================================================================
 Introduction                                                             *intro*
@@ -34,11 +35,15 @@ It accepts the following subcommands:
  `ssr [query]` - Structural search and replace.
  `crateGraph [backend]` - Create and view a crate graph with graphviz.
  `syntaxTree` - View the syntax tree.
- `flyCheck` - Run `cargo check` or another compatible command (f.x. `clippy`)
+ `view [mir|hir]` - View MIR or HIR.
+ `flyCheck` [run?|clear?|cancel?]
+            - Run `cargo check` or another compatible command (f.x. `clippy`)
               in a background thread and provide LSP diagnostics based on
               the output of the command.
               Useful in large projects where running `cargo check` on each save
               can be costly.
+              Defaults to `flyCheck run` if called without an argument.
+ `logFile` - Open the rust-analyzer log file.
 
 ==============================================================================
 plugin configuration                                       *rustaceanvim.config*
@@ -51,7 +56,8 @@ To configure rustaceanvim, set the variable `vim.g.rustaceanvim`,
 which is a `RustaceanOpts` table, in your neovim configuration.
 
 Example:
->
+
+>lua
 ---@type RustaceanOpts
 vim.g.rustaceanvim = {
    ---@type RustaceanToolsOpts
@@ -63,8 +69,10 @@ vim.g.rustaceanvim = {
      on_attach = function(client, bufnr)
        -- Set keybindings, etc. here.
      end,
-     ['rust-analyzer'] = {
-       -- ...
+     settings = {
+       -- rust-analyzer language server configuration
+       ['rust-analyzer'] = {
+       },
      },
      -- ...
    },
@@ -75,7 +83,11 @@ vim.g.rustaceanvim = {
  }
 <
 
-Note: `vim.g.rustaceanvim` can also be a function that returns a 'RustaceanOpts' table.
+Notes:
+
+ - `vim.g.rustaceanvim` can also be a function that returns a `RustaceanOpts` table.
+ - `server.settings`, by default, is a function that looks for a `rust-analyzer.json` file
+    in the project root, to load settings from it. It falls back to an empty table.
 
 
 RustaceanOpts                                                    *RustaceanOpts*
@@ -90,10 +102,11 @@ RustaceanToolsOpts                                          *RustaceanToolsOpts*
 
     Fields: ~
         {executor?}                          (RustaceanExecutor|executor_alias)
-        {on_initialized?}                    (fun(health:lsp_server_health_status))  Function that is invoked when the LSP server has finished initializing
-        {reload_workspace_from_cargo_toml?}  (boolean)                               Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
-        {hover_actions?}                     (RustaceanHoverActionsOpts)             Options for hover actions
-        {create_graph?}                      (RustaceanCrateGraphConfig)             Options for showing the crate graph based on graphviz and the dot
+        {on_initialized?}                    (fun(health:RustAnalyzerInitializedStatus))  Function that is invoked when the LSP server has finished initializing
+        {reload_workspace_from_cargo_toml?}  (boolean)                                    Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
+        {hover_actions?}                     (RustaceanHoverActionsOpts)                  Options for hover actions
+        {create_graph?}                      (RustaceanCrateGraphConfig)                  Options for showing the crate graph based on graphviz and the dot
+        {open_url?}                          (fun(url:string):nil)                        If set, overrides how to open URLs
 
 
 RustaceanHoverActionsOpts                            *RustaceanHoverActionsOpts*
@@ -112,6 +125,12 @@ lsp_server_health_status                              *lsp_server_health_status*
         "ok"|"warning"|"error"
 
 
+RustAnalyzerInitializedStatus                    *RustAnalyzerInitializedStatus*
+
+    Fields: ~
+        {health}  (lsp_server_health_status)
+
+
 RustaceanCrateGraphConfig                            *RustaceanCrateGraphConfig*
 
     Fields: ~
@@ -124,24 +143,136 @@ RustaceanCrateGraphConfig                            *RustaceanCrateGraphConfig*
 RustaceanLspClientOpts                                  *RustaceanLspClientOpts*
 
     Fields: ~
-        {auto_attach?}  (boolean|fun():boolean)    Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
-        {cmd?}          (string[]|fun():string[])  Command and arguments for starting rust-analyzer
-        {standalone?}   (boolean)                  Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
+        {auto_attach?}  (boolean|fun():boolean)                     Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
+        {cmd?}          (string[]|fun():string[])                   Command and arguments for starting rust-analyzer
+        {settings?}     (fun(project_root:string|nil):table|table)  Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
+        {standalone?}   (boolean)                                   Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
+        {logfile?}      (string)                                    The path to the rust-analyzer log file.
 
 
 RustaceanDapOpts                                              *RustaceanDapOpts*
-    @field rust-analyzer? table Options to send to rust-analyzer. See: https://rust-analyzer.github.io/manual.html#configuration
 
     Fields: ~
-        {adapter?}  (RustaceanDapAdapterOpts)  Options for the debug adapter
+        {adapter?}  (DapExecutableConfig|DapServerConfig|disable|fun():DapExecutableConfig|DapServerConfig|disable)
 
 
-RustaceanDapAdapterOpts                                *RustaceanDapAdapterOpts*
+disable                                                                *disable*
+
+    Type: ~
+        false
+
+
+DapCommand                                                          *DapCommand*
+
+    Type: ~
+        string
+
+
+DapExecutableConfig                                        *DapExecutableConfig*
 
     Fields: ~
-        {type?}     (string)  The type of debug adapter (default: `"executable"`)
-        {command?}  (string)  Default: `"lldb-vscode"`
-        {name?}     (string)  Default: `"rustaceanvim_lldb"`
+        {type}     (dap_adapter_type_executable)  The type of debug adapter.
+        {command}  (string)                       Default: `"lldb-vscode"`.
+        {args?}    (string)                       Default: unset.
+        {name?}    (string)                       Default: `"lldb"`.
+
+
+DapServerConfig                                                *DapServerConfig*
+
+    Fields: ~
+        {type}        (dap_adapter_type_server)  The type of debug adapter.
+        {host?}       (string)                   The host to connect to.
+        {port}        (string)                   The port to connect to.
+        {executable}  (DapExecutable)            The executable to run
+        {name?}       (string)
+
+
+DapExecutable                                                    *DapExecutable*
+
+    Fields: ~
+        {command}  (string)    The executable.
+        {args}     (string[])  Its arguments.
+
+
+dap_adapter_type_executable                        *dap_adapter_type_executable*
+
+    Type: ~
+        
+
+
+dap_adapter_type_server                                *dap_adapter_type_server*
+
+    Type: ~
+        
+
+
+DapClientConfig                                                *DapClientConfig*
+
+    Fields: ~
+        {type}           (string)                                                                         The dap adapter to use
+        {name}           (string)
+        {request}        (dap_config_request_launch|dap_config_request_attach|dap_config_request_custom)  The type of dap session
+        {cwd?}           (string)                                                                         Current working directory
+        {program?}       (string)                                                                         Path to executable for most DAP clients
+        {args?}          (string[])                                                                       Optional args to DAP client, not valid for all client types
+        {env?}           (string)                                                                         Environmental variables
+        {initCommands?}  (string[])                                                                       Initial commands to run, `lldb` clients only
+        {coreConfigs?}   (table)                                                                          Essential config values for `probe-rs` client, see https://probe.rs/docs/tools/debugger/
+
+
+dap_config_request_launch                            *dap_config_request_launch*
+
+    Type: ~
+        
+
+
+dap_config_request_attach                            *dap_config_request_attach*
+
+    Type: ~
+        
+
+
+dap_config_request_custom                            *dap_config_request_custom*
+
+    Type: ~
+        
+
+
+                                                        *M.get_codelldb_adapter*
+M.get_codelldb_adapter({codelldb_path}, {liblldb_path})
+    For the heroes who want to use it.
+
+    Parameters: ~
+        {codelldb_path}  (string)  Path to the codelldb executable
+        {liblldb_path}   (string)  Path to the liblldb dynamic library
+
+    Returns: ~
+        (DapServerConfig)
+
+
+==============================================================================
+LSP configuration utility                           *rustaceanvim.config.server*
+
+LoadRASettingsOpts                                          *LoadRASettingsOpts*
+
+    Fields: ~
+        {settings_file_pattern}  (string|nil)  File name or pattern to search for. Defaults to 'rust-analyzer.json'
+
+
+                                            *server.load_rust_analyzer_settings*
+server.load_rust_analyzer_settings({project_root}, {opts})
+     Load rust-analyzer settings from a JSON file,
+     falling back to the default settings if none is found or if it cannot be decoded.
+
+    Parameters: ~
+        {project_root}  (string|nil)              The project root
+        {opts}          (LoadRASettingsOpts|nil)
+
+    Returns: ~
+        (table)  server_settings
+
+    See: ~
+        |https://rust-analyzer.github.io/manual.html#configuration|
 
 
 vim:tw=78:ts=8:noet:ft=help:norl:

@@ -9,6 +9,17 @@ local function get_params()
   }
 end
 
+---@class RARunnable
+---@field args RARunnableArgs
+---@field label string
+
+---@class RARunnableArgs
+---@field workspaceRoot string
+---@field cargoArgs string[]
+---@field cargoExtraArgs string[]
+---@field executableArgs string[]
+
+---@param result RARunnable
 local function get_options(result)
   local option_strings = {}
 
@@ -22,12 +33,13 @@ end
 
 ---@alias CargoCmd 'cargo'
 
----comment
+---@param choice integer
+---@param runnables RARunnable[]
 ---@return CargoCmd command build command
----@return table args
+---@return string[] args
 ---@return string|nil dir
-local function getCommand(c, results)
-  local args = results[c].args
+local function getCommand(choice, runnables)
+  local args = runnables[choice].args
 
   local dir = args.workspaceRoot
 
@@ -39,15 +51,17 @@ local function getCommand(c, results)
   return 'cargo', ret, dir
 end
 
-function M.run_command(choice, result)
+---@param choice integer
+---@param runnables RARunnable[]
+function M.run_command(choice, runnables)
   -- do nothing if choice is too high or too low
-  if not choice or choice < 1 or choice > #result then
+  if not choice or choice < 1 or choice > #runnables then
     return
   end
 
   local opts = config.tools
 
-  local command, args, cwd = getCommand(choice, result)
+  local command, args, cwd = getCommand(choice, runnables)
   if not cwd then
     return
   end
@@ -55,6 +69,7 @@ function M.run_command(choice, result)
   opts.executor.execute_command(command, args, cwd)
 end
 
+---@param result RARunnable
 local function handler(_, result)
   if result == nil then
     return
@@ -62,6 +77,7 @@ local function handler(_, result)
   -- get the choice from the user
   local options = get_options(result)
   vim.ui.select(options, { prompt = 'Runnables', kind = 'rust-tools/runnables' }, function(_, choice)
+    ---@cast choice integer
     M.run_command(choice, result)
 
     local cached_commands = require('rustaceanvim.cached_commands')
@@ -70,9 +86,6 @@ local function handler(_, result)
 end
 
 -- Sends the request to rust-analyzer to get the runnables and handles them
--- The opts provided here are forwarded to telescope, other than use_telescope
--- which is used to check whether we want to use telescope or the vanilla vim
--- way for input
 function M.runnables()
   vim.lsp.buf_request(0, 'experimental/runnables', get_params(), handler)
 end

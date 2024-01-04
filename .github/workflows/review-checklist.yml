@@ -1,0 +1,50 @@
+---
+name: Review Checklist
+
+on:
+  pull_request_target:
+    types: [opened, review_requested]
+
+jobs:
+  review-checklist:
+    name: Review Checklist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body
+            if (body && (body.startsWith(":robot: I have created a release *beep* *boop*") || body.startsWith("Automated changes"))) { return; }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            // if comment already exists, then just return
+            if (comments.find(comment => comment.body.includes("### Review Checklist"))) { return; }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### Review Checklist
+
+            Does this PR follow the [Contribution Guidelines](https://github.com/mrcjkb/rustaceanvim/blob/master/CONTRIBUTING.md)? Following is a _partial_ checklist:
+
+            Proper [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) scoping:
+
+            - For example, fix(lsp): some lsp-related bugfix
+
+            - [ ] Pull request title has the appropriate conventional commit prefix.
+
+            If applicable:
+
+            - [ ] Tested
+              - [ ] Tests have been added.
+              - [ ] Tested manually (Steps to reproduce in PR description).
+            - [ ] Updated documentation.
+            - [ ] Updated [CHANGELOG.md](https://github.com/mrcjkb/rustaceanvim/blob/master/CHANGELOG.md)
+            `,
+            })

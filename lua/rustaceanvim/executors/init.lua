@@ -11,7 +11,7 @@ local vimux = require('rustaceanvim.executors.vimux')
 local M = {}
 
 ---@class RustaceanExecutor
----@field execute_command fun(cmd:string, args:string[], cwd:string)
+---@field execute_command fun(cmd:string, args:string[], cwd:string|nil)
 
 M.termopen = termopen
 M.quickfix = quickfix

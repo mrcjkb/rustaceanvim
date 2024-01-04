@@ -27,6 +27,12 @@ local command_tbl = {
   expandMacro = function(_)
     require('rustaceanvim.commands.expand_macro')()
   end,
+  explainError = function(_)
+    require('rustaceanvim.commands.explain_error')()
+  end,
+  rebuildProcMacros = function()
+    require('rustaceanvim.commands.rebuild_proc_macros')()
+  end,
   externalDocs = function(_)
     require('rustaceanvim.commands.external_docs')()
   end,
@@ -82,11 +88,7 @@ local command_tbl = {
     require('rustaceanvim.commands.parent_module')()
   end,
   ssr = function(args)
-    if #args == 0 then
-      vim.notify('ssr: called without a query', vim.log.levels.ERROR)
-      return
-    end
-    local query = args[1]
+    local query = args and #args > 0 and table.concat(args, ' ') or nil
     require('rustaceanvim.commands.ssr')(query)
   end,
   reloadWorkspace = function()
@@ -95,8 +97,29 @@ local command_tbl = {
   syntaxTree = function()
     require('rustaceanvim.commands.syntax_tree')()
   end,
-  flyCheck = function()
-    require('rustaceanvim.commands.fly_check')()
+  flyCheck = function(args)
+    local cmd = args[1] or 'run'
+    require('rustaceanvim.commands.fly_check')(cmd)
+  end,
+  view = function(args)
+    if not args or #args == 0 then
+      vim.notify("Expected argument: 'mir' or 'hir'", vim.log.levels.ERROR)
+      return
+    end
+    local level
+    local arg = args[1]:lower()
+    if arg == 'mir' then
+      level = 'Mir'
+    elseif arg == 'hir' then
+      level = 'Hir'
+    else
+      vim.notify('Unexpected argument: ' .. arg .. " Expected: 'mir' or 'hir'", vim.log.levels.ERROR)
+      return
+    end
+    require('rustaceanvim.commands.view_ir')(level)
+  end,
+  logFile = function()
+    vim.cmd.e(config.server.logfile)
   end,
 }
 
@@ -122,20 +145,34 @@ function M.create_rust_lsp_command()
     desc = 'Interacts with the rust-analyzer LSP client',
     complete = function(arg_lead, cmdline, _)
       local commands = vim.tbl_keys(command_tbl)
+      local match_start = '^' .. rust_lsp_cmd_name
+      local subcmd_match = '%s+%w*$'
       -- special case: crateGraph comes with graphviz backend completions
-      if cmdline:match('^' .. rust_lsp_cmd_name .. ' cr%s+%w*$') then
-        local backends = config.tools.crate_graph.enabled_graphviz_backends or {}
-        return vim.tbl_map(function(backend)
-          return 'crateGraph ' .. backend
-        end, backends)
+      if
+        cmdline:match(match_start .. ' debuggables' .. subcmd_match)
+        or cmdline:match(match_start .. ' runnables%s+%w*$')
+      then
+        return { 'last' }
       end
-      if cmdline:match('^' .. rust_lsp_cmd_name .. '%s+%w*$') then
-        return vim
-          .iter(commands)
-          :filter(function(command)
-            return command:find(arg_lead) ~= nil
-          end)
-          :totable()
+      if cmdline:match(match_start .. ' hover' .. subcmd_match) then
+        return { 'actions', 'range' }
+      end
+      if cmdline:match(match_start .. ' moveItem' .. subcmd_match) then
+        return { 'up', 'down' }
+      end
+      if cmdline:match(match_start .. ' crateGraph' .. subcmd_match) then
+        return config.tools.crate_graph.enabled_graphviz_backends or {}
+      end
+      if cmdline:match(match_start .. ' flyCheck' .. subcmd_match) then
+        return { 'run', 'clear', 'cancel' }
+      end
+      if cmdline:match(match_start .. ' view' .. subcmd_match) then
+        return { 'mir', 'hir' }
+      end
+      if cmdline:match(match_start .. '%s+%w*$') then
+        return vim.tbl_filter(function(command)
+          return command:find(arg_lead) ~= nil
+        end, commands)
       end
     end,
   })

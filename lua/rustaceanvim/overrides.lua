@@ -1,5 +1,6 @@
 local M = {}
 
+---@param spe? table
 function M.snippet_text_edits_to_text_edits(spe)
   if type(spe) ~= 'table' then
     return
@@ -22,6 +23,7 @@ end
 -- cargoArgs = { "run", "--package", "<program>", "--bin", "<program>" } for Debug entry.
 -- It doesn't make any sense to run a program before debugging.  Even more the debugging won't run if
 -- the program waits some input.  Take a look at rust-analyzer/editors/code/src/toolchain.ts.
+---@param command string[]
 function M.sanitize_command_for_debugging(command)
   if command[1] == 'run' then
     command[1] = 'build'

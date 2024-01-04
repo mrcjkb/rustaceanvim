@@ -35,7 +35,7 @@
 [![Build Status][ci-shield]][ci-url]
 [![LuaRocks][luarocks-shield]][luarocks-url]
 
-> **Note**
+> [!NOTE]
 >
 > - Just works. [No need to call `setup`!](https://mrcjkb.dev/posts/2023-08-22-setup.html)
 > - No dependency on `lspconfig`.
@@ -48,21 +48,31 @@
 - [Usage](#usage)
 - [Advanced configuration](#advanced-configuration)
 - [Troubleshooting](#troubleshooting)
+- [FAQ](#faq)
 
 ## Prerequisites
 
-- `neovim 0.9`
+### Required
+
+- `neovim >= 0.9`
 - [`rust-analyzer`](https://rust-analyzer.github.io/)
-- [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html)
-  (optional), for crate graphs.
-- [`cargo`](https://doc.rust-lang.org/cargo/)
-  (optional), required for Cargo projects.
-- A debug adapter, e.g. [`lldb`](https://lldb.llvm.org/)
-  (optional), required for debugging.
+
+### Optional
+
+- [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html),
+  for crate graphs.
+- [`cargo`](https://doc.rust-lang.org/cargo/),
+  required for Cargo projects.
+- A debug adapter (e.g. [`lldb`](https://lldb.llvm.org/)
+  or [`codelldb`](https://github.com/vadimcn/codelldb))
+  and [`nvim-dap`](https://github.com/mfussenegger/nvim-dap),
+  required for debugging.
 
 ## Installation
 
-This plugin is [available on LuaRocks][luarocks-url].
+This plugin is [available on LuaRocks][luarocks-url]:
+
+[`:Rocks install rustaceanvim`](https://github.com/nvim-neorocks/rocks.nvim)
 
 Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 
@@ -74,13 +84,13 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 }
 ```
 
->**Note**
+>[!NOTE]
 >
 >It is suggested to pin to tagged releases if you would like to avoid breaking changes.
 
 To manually generate documentation, use `:helptags ALL`.
 
->**Note**
+>[!NOTE]
 >
 > For NixOS users with flakes enabled, this project provides outputs in the
 > form of a package and an overlay; use it as you wish in your NixOS or
@@ -95,7 +105,7 @@ This plugin automatically configures the `rust-analyzer` builtin LSP
 client and integrates with other Rust tools.
 See the [Usage](#usage) section for more info.
 
->**Warning**
+>[!WARNING]
 >
 > Do not call the [`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
 > setup or set up the lsp client for `rust-analyzer` manually,
@@ -125,7 +135,7 @@ vim.keymap.set(
 )
 ```
 
->**Note**
+>[!NOTE]
 >
 > - For more LSP related keymaps, [see the `nvim-lspconfig` suggestions](https://github.com/neovim/nvim-lspconfig#suggested-configuration).
 > - See the [Advanced configuration](#advanced-configuration) section
@@ -183,6 +193,20 @@ for more configuration options.
 
 <details>
   <summary>
+	<b>Rebuild proc macros</b>
+  </summary>
+  
+  ```vimscript
+  :RustLsp rebuildProcMacros
+  ```
+  ```lua
+  vim.cmd.RustLsp('rebuildProcMacros')
+  ```
+
+</details>
+
+<details>
+  <summary>
 	<b>Move Item Up/Down</b>
   </summary>
   
@@ -228,6 +252,25 @@ for more configuration options.
   ```lua
   vim.cmd.RustLsp { 'hover', 'range' }
   ```
+</details>
+
+<details>
+  <summary>
+	<b>Explain errors</b>
+  </summary>
+
+  Display a hover window with explanations from the [rust error codes index](https://doc.rust-lang.org/error_codes/error-index.html)
+  over error diagnostics (if they have an error code).
+  
+  ```vimscript
+  :RustLsp explainError
+  ```
+  ```lua
+  vim.cmd.RustLsp('explainError')
+  ```
+
+![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/bac9b31c-22ca-40c4-bfd3-b8c5ba4cc49a)
+
 </details>
 
 <details>
@@ -278,8 +321,11 @@ for more configuration options.
   :RustLsp ssr [query]
   ```
   ```lua
-  vim.cmd.RustLsp { 'ssr', 'query' --[[ optional ]] }
+  vim.cmd.RustLsp { 'ssr', '<query>' --[[ optional ]] }
   ```
+
+  ![tty](https://github.com/mrcjkb/rustaceanvim/assets/12857160/b61fbc56-ab53-48e6-bfdd-eb8d4de28795)
+
 </details>
 
 <details>
@@ -324,10 +370,37 @@ for more configuration options.
   can be costly.
   
   ```vimscript
-  :RustLsp flyCheck
+  :RustLsp flyCheck [run?|clear?|cancel?]
   ```
   ```lua
-  vim.cmd.RustLsp('flyCheck')
+  vim.cmd.RustLsp('flyCheck') -- defaults to 'run'
+  vim.cmd.RustLsp { 'flyCheck', 'run' }
+  vim.cmd.RustLsp { 'flyCheck', 'clear' }
+  vim.cmd.RustLsp { 'flyCheck', 'cancel' }
+  ```
+
+  > [!NOTE]
+  >
+  > This is only useful if you set the option,
+  > `['rust-analzyer'].checkOnSave = false`.
+
+</details>
+
+<details>
+  <summary>
+	<b>View HIR / MIR</b>
+  </summary>
+
+  Opens a buffer with a textual representation of the HIR or MIR
+  of the function containing the cursor.
+  Useful for debugging or when working on rust-analyzer itself.
+  
+  ```vimscript
+  :RustLsp view [hir|mir]
+  ```
+  ```lua
+  vim.cmd.RustLsp { 'view', 'hir' }
+  vim.cmd.RustLsp { 'view', 'mir' }
   ```
 </details>
 
@@ -361,8 +434,10 @@ vim.g.rustaceanvim = {
     on_attach = function(client, bufnr)
       -- you can also put keymaps in here
     end,
-    -- rust-analyzer language server configuration
-    ['rust-analyzer'] = {
+    settings = {
+      -- rust-analyzer language server configuration
+      ['rust-analyzer'] = {
+      },
     },
   },
   -- DAP configuration
@@ -371,16 +446,93 @@ vim.g.rustaceanvim = {
 }
 ```
 
-> **Note**
+> [!NOTE]
 >
 > `vim.g.rustaceanvim` can also be a function that returns
 > a table.
+
+### Using `codelldb` for debugging
+
+For Rust, `codelldb` from the [CodeLLDB VSCode extension](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb)
+provides a better experience than `lldb`.
+If you are using a distribution that lets you install the `codelldb`
+executable, this plugin will automatically detect it and configure
+itself to use it as a debug adapter.
+
+Some examples:
+
+- NixOS: [`vscode-extensions.vadimcn.vscode-lldb.adapter`](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/extensions/vadimcn.vscode-lldb/default.nix#L134)
+- Arch Linux: [`codelldb-bin` (AUR)](https://aur.archlinux.org/packages/codelldb-bin)
+- Using [`mason.nvim`](https://github.com/williamboman/mason.nvim):
+  `:MasonInstall codelldb`
+
+If your distribution does not have a `codelldb` package,
+you can configure it as follows:
+
+1. Install the [CodeLLDB VSCode extension](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb).
+1. Find out where it is installed.
+   On Linux, this is typically in `$HOME/.vscode/extensions/`
+1. Update your configuration:
+
+```lua
+vim.g.rustaceanvim = function()
+  -- Update this path
+  local extension_path = vim.env.HOME .. '/.vscode/extensions/vadimcn.vscode-lldb-1.10.0/'
+  local codelldb_path = extension_path .. 'adapter/codelldb'
+  local liblldb_path = extension_path .. 'lldb/lib/liblldb'
+  local this_os = vim.uv.os_uname().sysname;
+
+  -- The path is different on Windows
+  if this_os:find "Windows" then
+    codelldb_path = extension_path .. "adapter\\codelldb.exe"
+    liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
+  else
+    -- The liblldb extension is .so for Linux and .dylib for MacOS
+    liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
+  end
+
+  local cfg = require('rustaceanvim.config')
+  return {
+    dap = {
+      adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path),
+    },
+  }
+end
+```
+
+### How to dynamically load different `rust-analyzer` settings per project
+
+By default, this plugin will look for a `rust-analyzer.json`
+file in the project root directory, and attempt to load it.
+If the file does not exist, or it can't be decoded,
+the default settings will be used.
+
+You can change this behaviour with the `server.settings` config:
+
+```lua
+vim.g.rustaceanvim = {
+  -- ...
+  server = {
+    ---@param project_root string Path to the project root
+    settings = function(project_root)
+      local ra = require('rustaceanvim.config.server')
+      return ra.load_rust_analyzer_settings(project_root, {
+        settings_file_pattern = 'rust-analyzer.json'
+      })
+    end,
+  },
+}
+```
 
 ## Troubleshooting
 
 ### Health checks
 
 For a health check, run `:checkhealth rustaceanvim`
+
+### `rust-analyzer` log file
+
+To open the `rust-analyzer` log file, run `:RustLsp logFile`.
 
 ### Minimal config
 
@@ -392,10 +544,33 @@ mkdir -p /tmp/minimal/
 NVIM_DATA_MINIMAL="/tmp/minimal" NVIM_APP_NAME="nvim-minimal" nvim -u minimal.lua
 ```
 
+> [!NOTE]
+>
+> If you use Nix, you can run
+> `nix run "github:mrcjkb/rustaceanvim#nvim-minimal-stable"`.
+> or
+> `nix run "github:mrcjkb/rustaceanvim#nvim-minimal-nightly"`.
+
 If you cannot reproduce your issue with a minimal config,
-it may be caused by another plugin.
-In this case, add additional plugins and their configurations to `minimal.lua`,
+it may be caused by another plugin,
+or a setting of your plugin manager.
+In this case, add additional plugins and configurations to `minimal.lua`,
 until you can reproduce it.
+
+### rust-analyzer troubleshooting
+
+For issues related to rust-analyzer
+(e.g. LSP features not working), see also
+[the rust-analyzer troubleshooting guide](https://rust-analyzer.github.io/manual.html#troubleshooting).
+
+## FAQ
+
+### Where are inlay hints?
+
+As Neovim >= 0.10 supports inlay hints natively, I have removed the
+code from this plugin.
+
+To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com/mrcjkb/rustaceanvim/discussions/46#discussioncomment-7620822).
 
 ## Related Projects
 
@@ -404,6 +579,8 @@ until you can reproduce it.
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
 - [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim)
   Geared towards people who prefer manual LSP client configuration.
+  Has some features that have not yet
+  been implemented by this plugin.
 
 ## Inspiration
 

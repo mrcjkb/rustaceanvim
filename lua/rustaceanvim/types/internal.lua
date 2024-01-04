@@ -2,6 +2,7 @@
 ---@alias lsp_range { start: lsp_position, end: lsp_position }
 ---@alias lsp_text_document { uri: string }
 ---@alias lsp_range_params { textDocument: lsp_text_document, range: lsp_range }
+---@alias lsp_position_params { textDocument: lsp_text_document, position: lsp_position }
 
 local M = {}
 

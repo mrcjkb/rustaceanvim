@@ -7,10 +7,12 @@ local latest_buf_id = nil
 function M.execute_command(command, args, cwd)
   local shell = require('rustaceanvim.shell')
   local ui = require('rustaceanvim.ui')
-  local full_command = shell.chain_commands {
-    shell.make_command_from_args('cd', { cwd }),
-    shell.make_command_from_args(command, args),
-  }
+  local commands = {}
+  if cwd then
+    table.insert(commands, shell.make_command_from_args('cd', { cwd }))
+  end
+  table.insert(commands, shell.make_command_from_args(command, args))
+  local full_command = shell.chain_commands(commands)
 
   -- check if a buffer with the latest id is already open, if it is then
   -- delete it and continue
