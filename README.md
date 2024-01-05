@@ -49,6 +49,7 @@
 - [Advanced configuration](#advanced-configuration)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
+- [Migrating from rust-tools](https://github.com/mrcjkb/rustaceanvim/discussions/122)
 
 ## Prerequisites
 
