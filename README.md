@@ -141,7 +141,8 @@ vim.keymap.set(
 > - For more LSP related keymaps, [see the `nvim-lspconfig` suggestions](https://github.com/neovim/nvim-lspconfig#suggested-configuration).
 > - See the [Advanced configuration](#advanced-configuration) section
 for more configuration options.
-
+<!-- markdownlint-disable -->
+<!-- markdownlint-restore -->
 >[!IMPORTANT]
 >
 > - Do **not** set `vim.g.rustaceanvim`
