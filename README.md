@@ -142,6 +142,13 @@ vim.keymap.set(
 > - See the [Advanced configuration](#advanced-configuration) section
 for more configuration options.
 
+>[!IMPORTANT]
+>
+> - Do **not** set `vim.g.rustaceanvim`
+>   in `after/ftplugin/rust.lua`, as
+>   the file is sourced after the plugin
+>   is initialized.
+
 ## Usage
 
 <!-- markdownlint-disable -->
