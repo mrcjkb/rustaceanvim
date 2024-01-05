@@ -125,15 +125,16 @@ so I suggest you define them in `~/.config/nvim/after/ftplugin/rust.lua`[^1]
 Example:
 
 ```lua
-local bufnr = vim.api.nvim_get_current_buf()
-vim.keymap.set(
-  "n", 
-  "<leader>a", 
-  function()
-    vim.cmd.RustLsp('codeAction') 
-  end,
-  { silent = true, buffer = bufnr }
-)
+vim.g.rustaceanvim = {
+  server = {
+    on_attach = function(client, bufnr)
+      -- semantic highlighting is poorly supported by many themes. It also causes the colors to change after rust-analyzer ran.
+      client.server_capabilities.semanticTokensProvider = nil
+      -- Map leader a to code actions
+      vim.keymap.set( "n", "<Leader>a", function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = bufnr })
+      end,
+  }
+}
 ```
 
 >[!NOTE]
