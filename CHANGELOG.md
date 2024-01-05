@@ -409,6 +409,6 @@ Thanks [@Andrew Collins](https://github.com/Andrew-Collins):
   if the `rust-analyzer` binary is found.
 - Removed `rt = require('rust-tools')` table.
   You can access the commands using Neovim's `vim.cmd` Lua bridge,
-  for example `:lua vim.cmd.RustSSR()` or `:RustSSR`.
+  for example ~~`:lua vim.cmd.RustSSR()` or `:RustSSR`~~ [This has changed! See above.].
 - Bumped minimum Neovim version to `0.9`.
 - Removed inlay hints, as this feature will be built into Neovim `0.10`.
