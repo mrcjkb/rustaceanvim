@@ -130,7 +130,7 @@ vim.keymap.set(
   "n", 
   "<leader>a", 
   function()
-    vim.cmd.RustLsp('codeAction'), 
+    vim.cmd.RustLsp('codeAction') 
   end,
   { silent = true, buffer = bufnr }
 )
