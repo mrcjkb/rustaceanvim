@@ -28,11 +28,14 @@ end
 ---@return string|nil error_message
 function M.validate(cfg)
   local ok, err
-  validate('rustaceanvim', {
+  ok, err = validate('rustaceanvim', {
     tools = { cfg.tools, 'table' },
     server = { cfg.server, 'table' },
     dap = { cfg.dap, 'table' },
   })
+  if not ok then
+    return false, err
+  end
   local tools = cfg.tools
   local crate_graph = tools.crate_graph
   ok, err = validate('tools.crate_graph', {
