@@ -3,9 +3,13 @@
 local health = {}
 
 local h = vim.health or require('health')
+---@diagnostic disable-next-line: deprecated
 local start = h.start or h.report_start
+---@diagnostic disable-next-line: deprecated
 local ok = h.ok or h.report_ok
+---@diagnostic disable-next-line: deprecated
 local error = h.error or h.report_error
+---@diagnostic disable-next-line: deprecated
 local warn = h.warn or h.report_warn
 
 ---@class LuaDependency
