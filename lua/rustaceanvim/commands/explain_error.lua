@@ -53,7 +53,9 @@ function M.explain_error()
     local output = sc.stdout:gsub('```', '```rust', 1)
     local markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(output, {})
     vim.schedule(function()
-      local _, winnr = vim.lsp.util.open_floating_preview( markdown_lines, 'markdown',
+      local _, winnr = vim.lsp.util.open_floating_preview(
+        markdown_lines,
+        'markdown',
         vim.tbl_extend('keep', config.tools.hover_actions, {
           focus = false,
           focusable = true,
