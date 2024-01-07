@@ -46,7 +46,7 @@ local RustaceanDefaultConfig = {
       ---@type boolean
       replace_builtin_hover = true,
 
-      -- the border that is used for the hover window
+      -- the border that is used for the hover window or explain_error window
       ---@see vim.api.nvim_open_win()
       ---@type string[][]
       border = {
@@ -60,15 +60,15 @@ local RustaceanDefaultConfig = {
         { '│', 'FloatBorder' },
       },
 
-      --- maximal width of the hover window. Nil means no max.
+      --- maximal width of the hover window or explain_error window. Nil means no max.
       ---@type integer | nil
       max_width = nil,
 
-      --- maximal height of the hover window. Nil means no max.
+      --- maximal height of the hover window or explain_error window. Nil means no max.
       ---@type integer | nil
       max_height = nil,
 
-      --- whether the hover action window gets automatically focused
+      --- whether the hover window or explain_error window gets automatically focused
       --- default: false
       ---@type boolean
       auto_focus = false,
