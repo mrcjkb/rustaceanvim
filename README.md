@@ -518,10 +518,13 @@ end
 
 ### How to dynamically load different `rust-analyzer` settings per project
 
-By default, this plugin will look for a `rust-analyzer.json`
+By default, this plugin will look for a `rust-analyzer.json`[^2]
 file in the project root directory, and attempt to load it.
 If the file does not exist, or it can't be decoded,
 the default settings will be used.
+
+[^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
+      and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/manual.html#configuration).
 
 You can change this behaviour with the `server.settings` config:
 

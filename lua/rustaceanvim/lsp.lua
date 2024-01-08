@@ -141,9 +141,6 @@ M.start = function()
   -- snippets
   capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-  -- output highlights for all semantic tokens
-  capabilities.textDocument.semanticTokens.augmentsSyntaxTokens = false
-
   -- send actions with hover request
   capabilities.experimental = {
     hoverActions = true,
