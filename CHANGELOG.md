@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from `hover_actions` to `float_win_config`.
   The `hover_actions` window options are still applied
   if they exist, so as not to break compatibility.
+  Thanks [@saying121](https://github.com/saying121)!
 
 ## [3.12.2] - 2024-01-07
 
