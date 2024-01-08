@@ -58,10 +58,13 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field executor? RustaceanExecutor | executor_alias
 ---@field on_initialized? fun(health:RustAnalyzerInitializedStatus) Function that is invoked when the LSP server has finished initializing
 ---@field reload_workspace_from_cargo_toml? boolean Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
----@field replace_builtin_hover ? boolean whether use plugin's hover to replace Neovim's built-in `vim.lsp.buf.hover`.
----@field float_win_config table Options applied to floating windows. See `vim.lsp.util.open_floating_preview`.
+---@field hover_actions? RustaceanHoverActionsOpts Options for hover actions
+---@field float_win_config? table Options applied to floating windows. See |api-win_config|.
 ---@field create_graph? RustaceanCrateGraphConfig Options for showing the crate graph based on graphviz and the dot
 ---@field open_url? fun(url:string):nil If set, overrides how to open URLs
+
+---@class RustaceanHoverActionsOpts
+---@field replace_builtin_hover? boolean Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions. Default: `true`
 
 ---@alias lsp_server_health_status 'ok' | 'warning' | 'error'
 

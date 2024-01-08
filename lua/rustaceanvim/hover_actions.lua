@@ -78,10 +78,8 @@ function M.handler(_, result, ctx)
     return
   end
 
-  local win_opt = config.tools.float_win_config
-  if vim.g.rustaceanvim.tools.hover_actions then
-    win_opt = config.tools.hover_actions
-  end
+  -- NOTE: This is for backward compatibility
+  local win_opt = vim.tbl_deep_extend('force', config.tools.float_win_config, config.tools.hover_actions)
 
   local bufnr, winnr = lsp_util.open_floating_preview(
     markdown_lines,

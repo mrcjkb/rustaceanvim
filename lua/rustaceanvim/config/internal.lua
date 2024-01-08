@@ -43,44 +43,14 @@ local RustaceanDefaultConfig = {
     hover_actions = {
 
       --- whether to replace Neovim's built-in `vim.lsp.buf.hover`.
+      --- default: true
       ---@type boolean
       replace_builtin_hover = true,
-
-      -- the border that is used for the hover window.
-      ---@see vim.api.nvim_open_win()
-      ---@type string[][]
-      border = {
-        { '╭', 'FloatBorder' },
-        { '─', 'FloatBorder' },
-        { '╮', 'FloatBorder' },
-        { '│', 'FloatBorder' },
-        { '╯', 'FloatBorder' },
-        { '─', 'FloatBorder' },
-        { '╰', 'FloatBorder' },
-        { '│', 'FloatBorder' },
-      },
-
-      --- maximal width of the hover window. Nil means no max.
-      ---@type integer | nil
-      max_width = nil,
-
-      --- maximal height of the hover window. Nil means no max.
-      ---@type integer | nil
-      max_height = nil,
-
-      --- whether the hover window  gets automatically focused
-      --- default: false
-      ---@type boolean
-      auto_focus = false,
     },
-
-    --- whether use plugin's hover to replace Neovim's built-in `vim.lsp.buf.hover`.
-    ---@type boolean
-    replace_builtin_hover = true,
 
     --- options same as lsp hover
     ---@see vim.lsp.util.open_floating_preview
-    ---@class table Options applied to floating windows.
+    ---@type table Options applied to floating windows.
     float_win_config = {
 
       -- the border that is used for the hover window or explain_error window
@@ -360,10 +330,6 @@ if opts.dap and opts.dap.adapter then
   elseif user_adapter ~= nil then
     RustaceanConfig.dap.adapter = user_adapter
   end
-end
-
-if opts.tools.hover_actions == nil then
-  RustaceanConfig.tools.hover_actions = nil
 end
 
 local check = require('rustaceanvim.config.check')
