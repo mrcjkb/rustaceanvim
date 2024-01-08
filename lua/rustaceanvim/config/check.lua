@@ -72,8 +72,6 @@ function M.validate(cfg)
     on_initialized = { tools.on_initialized, 'function', true },
     reload_workspace_from_cargo_toml = { tools.reload_workspace_from_cargo_toml, 'boolean' },
     open_url = { tools.open_url, 'function' },
-    replace_builtin_hover = { tools.replace_builtin_hover, 'boolean' },
-    hover_actions = { tools.hover_actions, { 'table' }, true },
   })
   if not ok then
     return false, err
