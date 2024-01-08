@@ -71,7 +71,7 @@ local RustaceanDefaultConfig = {
       ---@type integer | nil
       max_width = nil,
 
-      --- maximal height of the hover window or explain_error window. Nil means no max.
+      --- maximal height of floating windows. Nil means no max.
       ---@type integer | nil
       max_height = nil,
 
