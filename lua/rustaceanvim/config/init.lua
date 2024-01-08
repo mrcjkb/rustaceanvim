@@ -89,7 +89,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field configuration? DapClientConfig | disable | fun():(DapClientConfig | disable) Dap client configuration. Defaults to a function that looks for a `launch.json` file or returns a `DapExecutableConfig` that launches the `rt_lldb` adapter. Set to `false` to disable.
 ---@field add_dynamic_library_paths? boolean | fun():boolean Accommodate dynamically-linked targets by passing library paths to lldb. Default: `true`.
 ---@field auto_generate_source_map? fun():boolean | boolean Whether to auto-generate a source map for the standard library.
----@field load_rust_types? fun():boolean | boolean Whether to get Rust types via initCommands (rustlib/etc/lldb_commands). Default: `true`.
+---@field load_rust_types? fun():boolean | boolean Whether to get Rust types via initCommands (rustlib/etc/lldb_commands, lldb only). Default: `true`.
 
 ---@alias disable false
 

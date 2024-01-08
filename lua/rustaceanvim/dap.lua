@@ -227,7 +227,7 @@ end
 ---@param args RADebuggableArgs
 function M.start(args)
   local adapter = types.evaluate(config.dap.adapter)
-  --- @cast adapter DapExecutableConfig | DapServerConfig | boolean
+  --- @cast adapter DapExecutableConfig | DapServerConfig | disable
 
   vim.notify('Compiling a debug build for debugging. This might take some time...')
   handle_configured_options(adapter, args)

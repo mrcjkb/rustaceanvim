@@ -270,7 +270,12 @@ local RustaceanDefaultConfig = {
     --- Get Rust types via initCommands (rustlib/etc/lldb_commands).
     ---@type boolean | fun():boolean
     load_rust_types = function()
-      return should_enable_dap_config_value(RustaceanConfig.dap.adapter)
+      if not should_enable_dap_config_value(RustaceanConfig.dap.adapter) then
+        return false
+      end
+      local adapter = types.evaluate(RustaceanConfig.dap.adapter)
+      --- @cast adapter DapExecutableConfig | DapServerConfig | disable
+      return adapter ~= false and adapter.type == 'executable'
     end,
     --- @type DapClientConfig | disable | fun():(DapClientConfig | disable)
     configuration = function()
