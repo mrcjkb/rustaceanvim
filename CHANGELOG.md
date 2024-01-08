@@ -10,9 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Config: Add `tools.float_win_config` apply to floating Windows.
-  Move `border`, `max_width`, `max_height`, `auto_focus`
+- Config: `tools.float_win_config` for all floating Windows
+  created by this plugin.
+  Moved `border`, `max_width`, `max_height`, `auto_focus`
   from `hover_actions` to `float_win_config`.
+  The `hover_actions` window options are still applied
+  if they exist, so as not to break compatibility.
 
 ## [3.12.2] - 2024-01-07
 
