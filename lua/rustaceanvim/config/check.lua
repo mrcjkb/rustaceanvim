@@ -49,13 +49,11 @@ function M.validate(cfg)
     return false, err
   end
   local hover_actions = tools.hover_actions
-  if hover_actions then
-    ok, err = validate('tools.hover_actions', {
-      replace_builtin_hover = { hover_actions.replace_builtin_hover, 'boolean' },
-    })
-    if not ok then
-      return false, err
-    end
+  ok, err = validate('tools.hover_actions', {
+    replace_builtin_hover = { hover_actions.replace_builtin_hover, 'boolean' },
+  })
+  if not ok then
+    return false, err
   end
   local float_win_config = tools.float_win_config
   ok, err = validate('tools.float_win_config', {
