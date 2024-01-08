@@ -67,7 +67,7 @@ local RustaceanDefaultConfig = {
         { '│', 'FloatBorder' },
       }, -- maybe: 'double', 'rounded', 'shadow', 'single',
 
-      --- maximal width of the hover window or explain_error window. Nil means no max.
+      --- maximal width of floating windows. Nil means no max.
       ---@type integer | nil
       max_width = nil,
 
