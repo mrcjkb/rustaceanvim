@@ -3,8 +3,6 @@ name: Generate docs
 on:
   workflow_dispatch:
   push:
-    branches-ignore:
-      - master
 
 jobs:
   docs:
