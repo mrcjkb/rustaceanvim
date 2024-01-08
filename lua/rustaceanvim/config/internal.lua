@@ -53,7 +53,7 @@ local RustaceanDefaultConfig = {
     ---@type table Options applied to floating windows.
     float_win_config = {
 
-      -- the border that is used for the hover window or explain_error window
+      -- the border that is used for floating windows
       ---@see vim.api.nvim_open_win()
       ---@type string[][] | string
       border = {
