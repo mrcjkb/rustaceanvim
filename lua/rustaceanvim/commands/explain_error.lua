@@ -56,7 +56,7 @@ function M.explain_error()
       local _, winnr = vim.lsp.util.open_floating_preview(
         markdown_lines,
         'markdown',
-        vim.tbl_extend('keep', config.tools.hover_actions, {
+        vim.tbl_extend('keep', config.tools.float_win_config, {
           focus = false,
           focusable = true,
           focus_id = 'rustc-explain-error',
@@ -64,7 +64,7 @@ function M.explain_error()
         })
       )
 
-      if config.tools.hover_actions.auto_focus then
+      if config.tools.float_win_config.auto_focus then
         vim.api.nvim_set_current_win(winnr)
       end
     end)

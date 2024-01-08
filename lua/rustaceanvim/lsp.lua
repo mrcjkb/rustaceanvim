@@ -172,8 +172,14 @@ M.start = function()
   local custom_handlers = {}
   custom_handlers['experimental/serverStatus'] = require('rustaceanvim.server_status').handler
 
-  if config.tools.hover_actions.replace_builtin_hover then
-    custom_handlers['textDocument/hover'] = require('rustaceanvim.hover_actions').handler
+  if config.tools.hover_actions then
+    if config.tools.hover_actions.replace_builtin_hover then
+      custom_handlers['textDocument/hover'] = require('rustaceanvim.hover_actions').handler
+    end
+  else
+    if config.tools.replace_builtin_hover then
+      custom_handlers['textDocument/hover'] = require('rustaceanvim.hover_actions').handler
+    end
   end
 
   lsp_start_opts.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_opts.handlers or {})
