@@ -1,3 +1,4 @@
+local config = require('rustaceanvim.config.internal')
 local M = {}
 
 local compat = require('rustaceanvim.compat')
@@ -52,12 +53,20 @@ function M.explain_error()
     local output = sc.stdout:gsub('```', '```rust', 1)
     local markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(output, {})
     vim.schedule(function()
-      vim.lsp.util.open_floating_preview(markdown_lines, 'markdown', {
-        focus = false,
-        focusable = true,
-        focus_id = 'rustc-explain-error',
-        close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
-      })
+      local _, winnr = vim.lsp.util.open_floating_preview(
+        markdown_lines,
+        'markdown',
+        vim.tbl_extend('keep', config.tools.float_win_config, {
+          focus = false,
+          focusable = true,
+          focus_id = 'rustc-explain-error',
+          close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
+        })
+      )
+
+      if config.tools.float_win_config.auto_focus then
+        vim.api.nvim_set_current_win(winnr)
+      end
     end)
   end
 

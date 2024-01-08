@@ -50,11 +50,17 @@ function M.validate(cfg)
   end
   local hover_actions = tools.hover_actions
   ok, err = validate('tools.hover_actions', {
-    auto_focus = { hover_actions.auto_focus, 'boolean' },
-    border = { hover_actions.border, 'table' },
-    max_height = { hover_actions.max_height, 'number', true },
-    max_width = { hover_actions.max_width, 'number', true },
     replace_builtin_hover = { hover_actions.replace_builtin_hover, 'boolean' },
+  })
+  if not ok then
+    return false, err
+  end
+  local float_win_config = tools.float_win_config
+  ok, err = validate('tools.float_win_config', {
+    border = { float_win_config.border, { 'table', 'string' } },
+    max_height = { float_win_config.max_height, 'number', true },
+    max_width = { float_win_config.max_width, 'number', true },
+    auto_focus = { float_win_config.auto_focus, 'boolean' },
   })
   if not ok then
     return false, err
