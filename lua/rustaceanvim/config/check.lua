@@ -51,10 +51,6 @@ function M.validate(cfg)
   local hover_actions = tools.hover_actions
   if hover_actions then
     ok, err = validate('tools.hover_actions', {
-      auto_focus = { hover_actions.auto_focus, 'boolean' },
-      border = { hover_actions.border, 'table' },
-      max_height = { hover_actions.max_height, 'number', true },
-      max_width = { hover_actions.max_width, 'number', true },
       replace_builtin_hover = { hover_actions.replace_builtin_hover, 'boolean' },
     })
     if not ok then
