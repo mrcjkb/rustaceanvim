@@ -157,7 +157,7 @@ local function get_lldb_commands(workspace_root)
 end
 
 ---map for codelldb, list of strings for lldb-dap
----@param adapter DapExecutableConfig | DapServerConfig | boolean
+---@param adapter DapExecutableConfig | DapServerConfig
 ---@param key string
 ---@param segments string[]
 ---@param sep string
@@ -176,7 +176,7 @@ end
 local environments = {}
 
 -- Most succinct description: https://github.com/bevyengine/bevy/issues/2589#issuecomment-1753413600
----@param adapter DapExecutableConfig | DapServerConfig | boolean
+---@param adapter DapExecutableConfig | DapServerConfig
 ---@param workspace_root string
 local function add_dynamic_library_paths(adapter, workspace_root)
   compat.system({ 'rustc', '--print', 'target-libdir' }, nil, function(sc)
@@ -202,7 +202,7 @@ local function add_dynamic_library_paths(adapter, workspace_root)
   end)
 end
 
----@param adapter DapExecutableConfig | DapServerConfig | boolean
+---@param adapter DapExecutableConfig | DapServerConfig
 ---@param args RADebuggableArgs
 local function handle_configured_options(adapter, args)
   local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
@@ -228,6 +228,10 @@ end
 function M.start(args)
   local adapter = types.evaluate(config.dap.adapter)
   --- @cast adapter DapExecutableConfig | DapServerConfig | disable
+  if adapter == false then
+    vim.notify('Debug adapter is disabled.', vim.log.levels.ERROR)
+    return
+  end
 
   vim.notify('Compiling a debug build for debugging. This might take some time...')
   handle_configured_options(adapter, args)
@@ -282,12 +286,14 @@ function M.start(args)
         return
       end
 
-      -- If the `lldb` adapter is not defined elsewhere, use the adapter
+      -- If the adapter is not defined elsewhere, use the adapter
       -- defined in `config.dap.adapter`
-      if dap.adapters.lldb == nil then
+      local is_codelldb = adapter.type == 'server'
+      local adapter_key = is_codelldb and 'codelldb' or 'lldb'
+      if dap.adapters[adapter_key] == nil then
         ---@TODO: Add nvim-dap to lua-ls lint
         ---@diagnostic disable-next-line: assign-type-mismatch
-        dap.adapters.lldb = adapter
+        dap.adapters[adapter_key] = adapter
       end
 
       -- Use the first configuration, if it exists
