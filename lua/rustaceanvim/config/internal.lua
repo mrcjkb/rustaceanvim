@@ -18,6 +18,16 @@ local function should_enable_dap_config_value(dap_adapter)
   return vim.fn.executable('rustc') == 1
 end
 
+---@param adapter DapServerConfig | DapExecutableConfig
+local function is_codelldb_adapter(adapter)
+  return adapter.type == 'server'
+end
+
+---@param adapter DapServerConfig | DapExecutableConfig
+local function is_lldb_adapter(adapter)
+  return adapter.type == 'executable'
+end
+
 ---@class RustaceanConfig
 local RustaceanDefaultConfig = {
   ---@class RustaceanToolsConfig
@@ -274,8 +284,8 @@ local RustaceanDefaultConfig = {
         return false
       end
       local adapter = types.evaluate(RustaceanConfig.dap.adapter)
-      --- @cast adapter DapExecutableConfig | DapServerConfig | disable
-      return adapter ~= false and adapter.type == 'executable'
+      ---@cast adapter DapExecutableConfig | DapServerConfig | disable
+      return adapter ~= false and is_lldb_adapter(adapter)
     end,
     --- @type DapClientConfig | disable | fun():(DapClientConfig | disable)
     configuration = function()
@@ -284,11 +294,19 @@ local RustaceanDefaultConfig = {
         return false
       end
 
+      local adapter = types.evaluate(RustaceanConfig.dap.adapter)
+      ---@cast adapter DapExecutableConfig | DapServerConfig | disable
+      if adapter == false then
+        return false
+      end
+      ---@cast adapter DapExecutableConfig | DapServerConfig
+      local type = is_codelldb_adapter(adapter) and 'codelldb' or 'lldb'
+
       -- default
       ---@type DapClientConfig
       local dap_config = {
         name = 'Rust debug client',
-        type = 'lldb',
+        type = type,
         request = 'launch',
         stopOnEntry = false,
       }

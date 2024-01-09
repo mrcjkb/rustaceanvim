@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - DAP: Don't load `lldb_commands` when using `codelldb`.
+- DAP: Make sure the client configuration type is 'codelldb'
+  when using a 'codelldb' adapter.
 
 ## [3.12.2] - 2024-01-07
 
