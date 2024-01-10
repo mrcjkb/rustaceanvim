@@ -29,6 +29,9 @@ It accepts the following subcommands:
  `expandMacro` - Expand macros recursively.
  `moveItem [up|down]` - Move items up or down.
  `hover [action|range]` - Hover actions, or hover over visually selected range.
+ `explainError` - Display a hover window with explanations form the Rust error index.
+ `renderDiagnostic` - Display a hover window with the rendered diagnostic,
+                      as displayed during `cargo build`.
  `openCargo` - Open the Cargo.toml file for the current package.
  `parentModule` - Open the current module's parent module.
  `joinLines` - Join adjacent lines.
