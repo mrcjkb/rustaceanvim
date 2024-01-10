@@ -284,6 +284,28 @@ for more configuration options.
 
 <details>
   <summary>
+	<b>Render diagnostics</b>
+  </summary>
+
+  Display a hover window with the rendered diagnostic, as displayed
+  during `cargo build`.
+  Useful for solving bugs around borrowing and generics,
+  as it consolidates the important bits (sometimes across files)
+  together.
+  
+  ```vimscript
+  :RustLsp renderDiagnostic
+  ```
+  ```lua
+  vim.cmd.RustLsp('renderDiagnostic')
+  ```
+
+![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/a972c6b6-c504-4c2a-8380-53451bb8c2de)
+
+</details>
+
+<details>
+  <summary>
 	<b>Open Cargo.toml</b>
   </summary>
   

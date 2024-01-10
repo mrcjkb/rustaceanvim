@@ -7,7 +7,13 @@ local function get_params()
   return lsp_util.make_position_params(0, nil)
 end
 
-local _state = { winnr = nil, commands = nil }
+---@class HoverActionsState
+local _state = {
+  ---@type integer
+  winnr = nil,
+  ---@type unknown
+  commands = nil,
+}
 
 local function close_hover()
   local ui = require('rustaceanvim.ui')
@@ -38,6 +44,7 @@ local function run_command(ctx)
   execute_rust_analyzer_command(action, ctx)
 end
 
+---@return string[]
 local function parse_commands()
   local prompt = {}
 
@@ -69,6 +76,7 @@ function M.handler(_, result, ctx)
     for _, value in ipairs(prompt) do
       table.insert(l, value)
     end
+    table.insert(l, '---')
 
     markdown_lines = vim.list_extend(l, markdown_lines)
   end
@@ -102,6 +110,7 @@ function M.handler(_, result, ctx)
   -- update the window number here so that we can map escape to close even
   -- when there are no actions, update the rest of the state later
   _state.winnr = winnr
+  vim.keymap.set('n', 'q', close_hover, { buffer = bufnr, noremap = true, silent = true })
   vim.keymap.set('n', '<Esc>', close_hover, { buffer = bufnr, noremap = true, silent = true })
 
   vim.api.nvim_buf_attach(bufnr, false, {

@@ -28,7 +28,10 @@ local command_tbl = {
     require('rustaceanvim.commands.expand_macro')()
   end,
   explainError = function(_)
-    require('rustaceanvim.commands.explain_error')()
+    require('rustaceanvim.commands.diagnostic').explain_error()
+  end,
+  renderDiagnostic = function(_)
+    require('rustaceanvim.commands.diagnostic').render_diagnostic()
   end,
   rebuildProcMacros = function()
     require('rustaceanvim.commands.rebuild_proc_macros')()
