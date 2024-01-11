@@ -96,13 +96,15 @@ local function is_in_workspace(client, root_dir)
   return false
 end
 
--- Start or attach the LSP client
+--- Start or attach the LSP client
+---@param bufnr? number The buffer number (optional), defaults to the current buffer
 ---@return integer|nil client_id The LSP client ID
-M.start = function()
+M.start = function(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
   local client_config = config.server
   ---@type RustaceanLspClientConfig
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
-  local root_dir = get_root_dir(vim.api.nvim_buf_get_name(0))
+  local root_dir = get_root_dir(vim.api.nvim_buf_get_name(bufnr))
   lsp_start_opts.root_dir = root_dir
 
   local settings = client_config.settings
@@ -123,7 +125,7 @@ M.start = function()
         client.workspace_folders = {}
       end
       table.insert(client.workspace_folders, workspace_folder)
-      vim.lsp.buf_attach_client(0, client.id)
+      vim.lsp.buf_attach_client(bufnr, client.id)
       return
     end
   end
@@ -213,21 +215,67 @@ M.start = function()
 end
 
 ---Stop the LSP client.
+---@param bufnr? number The buffer number, defaults to the current buffer
 ---@return table[] clients A list of clients that will be stopped
-M.stop = function()
-  local bufnr = vim.api.nvim_get_current_buf()
+M.stop = function(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   vim.lsp.stop_client(clients)
   return clients
 end
 
+---Restart the LSP client.
+---Fails silently if the buffer's filetype is not one of the filetypes specified in the config.
+---@param bufnr? number The buffer number (optional), defaults to the current buffer
+---@return number|nil client_id The LSP client ID after restart
+M.restart = function(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  local clients = M.stop(bufnr)
+  local timer, _, _ = compat.uv.new_timer()
+  if not timer then
+    -- TODO: Log error when logging is implemented
+    return
+  end
+  local attempts_to_live = 50
+  local stopped_client_count = 0
+  timer:start(200, 100, function()
+    for _, client in ipairs(clients) do
+      if client:is_stopped() then
+        stopped_client_count = stopped_client_count + 1
+        vim.schedule(function()
+          M.start(bufnr)
+        end)
+      end
+    end
+    if stopped_client_count >= #clients then
+      timer:stop()
+      attempts_to_live = 0
+    elseif attempts_to_live <= 0 then
+      vim.notify('rustaceanvim.lsp: Could not restart all LSP clients.', vim.log.levels.ERROR)
+      timer:stop()
+      attempts_to_live = 0
+    end
+    attempts_to_live = attempts_to_live - 1
+  end)
+end
+
+---@enum RustAnalyzerCmd
+local RustAnalyzerCmd = {
+  start = 'start',
+  stop = 'stop',
+  restart = 'restart',
+}
+
 local function rust_analyzer_cmd(opts)
   local fargs = opts.fargs
   local cmd = fargs[1]
-  if cmd == 'start' then
+  ---@cast cmd RustAnalyzerCmd
+  if cmd == RustAnalyzerCmd.start then
     M.start()
-  elseif cmd == 'stop' then
+  elseif cmd == RustAnalyzerCmd.stop then
     M.stop()
+  elseif cmd == RustAnalyzerCmd.restart then
+    M.restart()
   end
 end
 
@@ -235,10 +283,8 @@ vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
   nargs = '+',
   desc = 'Starts or stops the rust-analyzer LSP client',
   complete = function(arg_lead, cmdline, _)
-    local commands = {
-      'start',
-      'stop',
-    }
+    ---@type RustAnalyzerCmd[]
+    local commands = vim.tbl_keys(RustAnalyzerCmd)
     if cmdline:match('^RustAnalyzer%s+%w*$') then
       return vim.tbl_filter(function(command)
         return command:find(arg_lead) ~= nil
