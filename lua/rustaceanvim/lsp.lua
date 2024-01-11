@@ -283,8 +283,9 @@ vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
   nargs = '+',
   desc = 'Starts or stops the rust-analyzer LSP client',
   complete = function(arg_lead, cmdline, _)
+    local clients = rust_analyzer.get_active_rustaceanvim_clients()
     ---@type RustAnalyzerCmd[]
-    local commands = vim.tbl_keys(RustAnalyzerCmd)
+    local commands = #clients == 0 and { 'start' } or { 'stop', 'restart' }
     if cmdline:match('^RustAnalyzer%s+%w*$') then
       return vim.tbl_filter(function(command)
         return command:find(arg_lead) ~= nil

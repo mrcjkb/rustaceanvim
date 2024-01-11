@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `:RustAnalyzer restart` command.
+- Smarter completions for `:RustAnalyzer` commands.
+  - Only suggest `start` command if there is no
+    active client for the current buffer
+  - Only suggest `stop` and `restart` if there is an
+    active client for the current buffer
 
 ## [3.14.0] - 2024-01-10
 
