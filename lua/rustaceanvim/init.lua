@@ -14,6 +14,7 @@
 ---
 --- `:RustAnalyzer start` - Start the LSP client.
 --- `:RustAnalyzer stop` - Stop the LSP client.
+--- `:RustAnalyzer restart` - Restart the LSP client.
 ---
 ---The `:RustLsp` command is available after the LSP client has initialized.
 ---It accepts the following subcommands:
