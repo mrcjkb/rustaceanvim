@@ -105,6 +105,14 @@ M.start = function(bufnr)
   ---@type RustaceanLspClientConfig
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = get_root_dir(vim.api.nvim_buf_get_name(bufnr))
+   local function normalize_path(path)
+    local has_windows_drive_letter = path:match '^%a:'
+    if has_windows_drive_letter then
+      return path:sub(1,1):lower()..path:sub(2)
+    end
+    return path
+  end
+  root_dir = normalize_path(root_dir)
   lsp_start_opts.root_dir = root_dir
 
   local settings = client_config.settings
