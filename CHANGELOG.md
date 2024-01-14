@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- LSP: If inlay hints are enabled for a buffer, force Neovim
+  to redraw them when rust-analyzer has fully initialized.
+  This is a workaround for [neovim/26511](https://github.com/neovim/neovim/issues/26511).
+- LSP: On client stop, reset the `experimental/serverStatus` handler's
+  internal state for the respective client, so that the handler can be
+  rerun on restart.
+
 ## [3.15.0] - 2024-01-11
 
 ### Added

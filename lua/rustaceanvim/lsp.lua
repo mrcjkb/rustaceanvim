@@ -4,6 +4,7 @@ local config = require('rustaceanvim.config.internal')
 local compat = require('rustaceanvim.compat')
 local types = require('rustaceanvim.types.internal')
 local rust_analyzer = require('rustaceanvim.rust_analyzer')
+local server_status = require('rustaceanvim.server_status')
 local joinpath = compat.joinpath
 
 local function override_apply_text_edits()
@@ -172,7 +173,7 @@ M.start = function(bufnr)
   lsp_start_opts.capabilities = vim.tbl_deep_extend('force', capabilities, lsp_start_opts.capabilities or {})
 
   local custom_handlers = {}
-  custom_handlers['experimental/serverStatus'] = require('rustaceanvim.server_status').handler
+  custom_handlers['experimental/serverStatus'] = server_status.handler
 
   if config.tools.hover_actions.replace_builtin_hover then
     custom_handlers['textDocument/hover'] = require('rustaceanvim.hover_actions').handler
@@ -221,6 +222,12 @@ M.stop = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   vim.lsp.stop_client(clients)
+  if type(clients) == 'table' then
+    ---@cast clients lsp.Client[]
+    for _, client in ipairs(clients) do
+      server_status.reset_client_state(client.id)
+    end
+  end
   return clients
 end
 
