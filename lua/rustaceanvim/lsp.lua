@@ -97,6 +97,19 @@ local function is_in_workspace(client, root_dir)
   return false
 end
 
+---Normalize path for Windows, which is case insensitive
+---@param path string
+---@return string normalize_path
+local function normalize_path(path)
+  if require('rustaceanvim.shell').is_windows() then
+    local has_windows_drive_letter = path:match('^%a:')
+    if has_windows_drive_letter then
+      return path:sub(1, 1):lower() .. path:sub(2)
+    end
+  end
+  return path
+end
+
 --- Start or attach the LSP client
 ---@param bufnr? number The buffer number (optional), defaults to the current buffer
 ---@return integer|nil client_id The LSP client ID
@@ -106,6 +119,7 @@ M.start = function(bufnr)
   ---@type RustaceanLspClientConfig
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = get_root_dir(vim.api.nvim_buf_get_name(bufnr))
+  root_dir = root_dir and normalize_path(root_dir)
   lsp_start_opts.root_dir = root_dir
 
   local settings = client_config.settings
