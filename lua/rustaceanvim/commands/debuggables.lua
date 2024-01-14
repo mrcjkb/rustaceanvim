@@ -82,14 +82,9 @@ local function sanitize_results_for_debugging(result)
   return ret
 end
 
----@param result RADebuggable[]
-local function handler(_, result)
-  if result == nil then
-    return
-  end
-  result = sanitize_results_for_debugging(result)
-
-  local options = get_options(result)
+---@param debuggables RADebuggable[]
+local function ui_select_debuggable(debuggables)
+  local options = get_options(debuggables)
   if #options == 0 then
     return
   end
@@ -98,7 +93,7 @@ local function handler(_, result)
       return
     end
 
-    local args = result[choice].args
+    local args = debuggables[choice].args
     local rt_dap = require('rustaceanvim.dap')
     rt_dap.start(args)
 
@@ -107,11 +102,23 @@ local function handler(_, result)
   end)
 end
 
+---@param callback fun(result:RADebuggable[])
+local function mk_handler(callback)
+  return function(_, result, _, _)
+    ---@cast result RADebuggable[]
+    if result == nil then
+      return
+    end
+    result = sanitize_results_for_debugging(result)
+    callback(result)
+  end
+end
+
 local rl = require('rustaceanvim.rust_analyzer')
 
 -- Sends the request to rust-analyzer to get the runnables and handles them
 function M.debuggables()
-  rl.buf_request(0, 'experimental/runnables', get_params(), handler)
+  rl.buf_request(0, 'experimental/runnables', get_params(), mk_handler(ui_select_debuggable))
 end
 
 return M.debuggables
