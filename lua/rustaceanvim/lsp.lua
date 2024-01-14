@@ -96,14 +96,14 @@ local function is_in_workspace(client, root_dir)
   return false
 end
 
---- Fast fix for root_dir fix on windows
+---Normalize path for Windows, which is case insensitive
 ---@param path string
 ---@return string normalize_path
 local function normalize_path(path)
   if require('rustaceanvim.shell').is_windows() then
-    local has_windows_drive_letter = path:match '^%a:'
+    local has_windows_drive_letter = path:match('^%a:')
     if has_windows_drive_letter then
-      return path:sub(1,1):lower()..path:sub(2)
+      return path:sub(1, 1):lower() .. path:sub(2)
     end
   end
   return path
