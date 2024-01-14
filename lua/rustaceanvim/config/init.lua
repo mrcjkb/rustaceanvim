@@ -85,6 +85,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field logfile? string The path to the rust-analyzer log file.
 
 ---@class RustaceanDapOpts
+--- @field autoload_configurations boolean Whether to autoload nvim-dap configurations when rust-analyzer has attached? Default: `true`.
 ---@field adapter? DapExecutableConfig | DapServerConfig | disable | fun():(DapExecutableConfig | DapServerConfig | disable) Defaults to creating the `rt_lldb` adapter, which is a `DapServerConfig` if `codelldb` is detected, and a `DapExecutableConfig` if `lldb` is detected. Set to `false` to disable.
 ---@field configuration? DapClientConfig | disable | fun():(DapClientConfig | disable) Dap client configuration. Defaults to a function that looks for a `launch.json` file or returns a `DapExecutableConfig` that launches the `rt_lldb` adapter. Set to `false` to disable.
 ---@field add_dynamic_library_paths? boolean | fun():boolean Accommodate dynamically-linked targets by passing library paths to lldb. Default: `true`.

@@ -154,7 +154,7 @@ RustaceanLspClientOpts                                  *RustaceanLspClientOpts*
 RustaceanDapOpts                                              *RustaceanDapOpts*
 
     Fields: ~
-        {adapter?}  (DapExecutableConfig|DapServerConfig|disable|fun():DapExecutableConfig|DapServerConfig|disable)
+        {adapter?}  (DapExecutableConfig|DapServerConfig|disable|fun():DapExecutableConfig|DapServerConfig|disable)   @field autoload_configurations boolean Whether to autoload nvim-dap configurations when rust-analyzer has attached? Default: `true`.
 
 
 disable                                                                *disable*

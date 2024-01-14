@@ -17,7 +17,7 @@ local command_tbl = {
   end,
   debuggables = function(args)
     if #args == 0 then
-      require('rustaceanvim.commands.debuggables')()
+      require('rustaceanvim.commands.debuggables').debuggables()
     elseif #args == 1 and args[1] == 'last' then
       require('rustaceanvim.cached_commands').execute_last_debuggable()
     else

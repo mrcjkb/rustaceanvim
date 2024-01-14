@@ -2,6 +2,7 @@ local config = require('rustaceanvim.config.internal')
 
 local M = {}
 
+---@return { textDocument: lsp_text_document, position: nil }
 local function get_params()
   return {
     textDocument = vim.lsp.util.make_text_document_params(0),
