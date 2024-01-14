@@ -130,7 +130,8 @@ vim.keymap.set(
   "n", 
   "<leader>a", 
   function()
-    vim.cmd.RustLsp('codeAction') 
+    vim.cmd.RustLsp('codeAction') -- supports rust-analyzer's grouping
+    -- or vim.lsp.buf.codeAction() if you don't want grouping.
   end,
   { silent = true, buffer = bufnr }
 )
@@ -256,6 +257,9 @@ vim.keymap.set(
  ```lua
  vim.cmd.RustLsp { 'hover', 'actions' }
  ```
+
+ By default, this plugin replaces Neovim's built-in hover handler with hover
+ actions, so you can also use `vim.lsp.buf.hover()`.
 
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/c7b6c730-4439-47b0-9a75-7ea4e6831f7a)
 
