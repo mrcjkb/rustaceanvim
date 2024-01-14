@@ -95,8 +95,10 @@ local function ui_select_debuggable(debuggables)
 
     local args = debuggables[choice].args
     local rt_dap = require('rustaceanvim.dap')
-    rt_dap.start(args)
-
+    local ok, dap = pcall(require, 'dap')
+    if ok then
+      rt_dap.start(args, true, dap.run)
+    end
     local cached_commands = require('rustaceanvim.cached_commands')
     cached_commands.set_last_debuggable(args)
   end)

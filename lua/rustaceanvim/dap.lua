@@ -225,15 +225,21 @@ local function handle_configured_options(adapter, args)
 end
 
 ---@param args RADebuggableArgs
-function M.start(args)
+---@param verbose boolean
+---@param callback fun(config: DapClientConfig)
+function M.start(args, verbose, callback)
   local adapter = types.evaluate(config.dap.adapter)
   --- @cast adapter DapExecutableConfig | DapServerConfig | disable
   if adapter == false then
-    vim.notify('Debug adapter is disabled.', vim.log.levels.ERROR)
+    if verbose then
+      vim.notify('Debug adapter is disabled.', vim.log.levels.ERROR)
+    end
     return
   end
 
-  vim.notify('Compiling a debug build for debugging. This might take some time...')
+  if verbose then
+    vim.notify('Compiling a debug build for debugging. This might take some time...')
+  end
   handle_configured_options(adapter, args)
 
   local cargo_args = get_cargo_args_from_runnables_args(args)
@@ -242,10 +248,12 @@ function M.start(args)
     ---@cast sc vim.SystemCompleted
     local output = sc.stdout
     if sc.code ~= 0 or output == nil then
-      scheduled_error(
-        'An error occurred while compiling. Please fix all compilation issues and try again'
-          .. (sc.stderr and ': ' .. sc.stderr or '.')
-      )
+      if verbose then
+        scheduled_error(
+          'An error occurred while compiling. Please fix all compilation issues and try again'
+            .. (sc.stderr and ': ' .. sc.stderr or '.')
+        )
+      end
       return
     end
     vim.schedule(function()
@@ -278,11 +286,15 @@ function M.start(args)
       end
       -- only 1 executable is allowed for debugging - error out if zero or many were found
       if #executables <= 0 then
-        scheduled_error('No compilation artifacts found.')
+        if verbose then
+          scheduled_error('No compilation artifacts found.')
+        end
         return
       end
       if #executables > 1 then
-        scheduled_error('Multiple compilation artifacts are not supported.')
+        if verbose then
+          scheduled_error('Multiple compilation artifacts are not supported.')
+        end
         return
       end
 
@@ -306,9 +318,11 @@ function M.start(args)
       --- @cast final_config DapClientConfig
 
       if dap.adapters[final_config.type] == nil then
-        scheduled_error(
-          'No adapter exists named "' .. final_config.type .. '". See ":h dap-adapter" for more information'
-        )
+        if verbose then
+          scheduled_error(
+            'No adapter exists named "' .. final_config.type .. '". See ":h dap-adapter" for more information'
+          )
+        end
         return
       end
 
@@ -338,7 +352,7 @@ function M.start(args)
       end
 
       -- start debugging
-      dap.run(final_config)
+      callback(final_config)
     end)
   end)
 end
