@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LSP: On client stop, reset the `experimental/serverStatus` handler's
   internal state for the respective client, so that the handler can be
   rerun on restart.
+- LSP/Windows: Normalize case sensitive `root_dir` [[#151](https://github.com/mrcjkb/rustaceanvim/issues/151)].
+  Thanks [@TrungNguyen153](https://github.com/TrungNguyen153)!
 
 ## [3.15.0] - 2024-01-11
 
