@@ -8,6 +8,9 @@ local function get_params()
   }
 end
 
+---@type { [string]: boolean? } Used to prevent this plugin from adding the same configuration twice
+local _dap_configuration_added = {}
+
 ---@class RADebuggableArgs
 ---@field cargoArgs string[]
 ---@field cargoExtraArgs string[]
@@ -104,6 +107,26 @@ local function ui_select_debuggable(debuggables)
   end)
 end
 
+---@param debuggables RADebuggable[]
+local function add_debuggables_to_nvim_dap(debuggables)
+  local ok, dap = pcall(require, 'dap')
+  if not ok then
+    return
+  end
+  local rt_dap = require('rustaceanvim.dap')
+  dap.configurations.rust = dap.configurations.rust or {}
+  for _, debuggable in pairs(debuggables) do
+    rt_dap.start(debuggable.args, false, function(configuration)
+      local name = 'Cargo: ' .. build_label(debuggable.args)
+      if not _dap_configuration_added[name] then
+        configuration.name = name
+        table.insert(dap.configurations.rust, configuration)
+        _dap_configuration_added[name] = true
+      end
+    end)
+  end
+end
+
 ---@param callback fun(result:RADebuggable[])
 local function mk_handler(callback)
   return function(_, result, _, _)
@@ -118,9 +141,20 @@ end
 
 local rl = require('rustaceanvim.rust_analyzer')
 
--- Sends the request to rust-analyzer to get the runnables and handles them
-function M.debuggables()
-  rl.buf_request(0, 'experimental/runnables', get_params(), mk_handler(ui_select_debuggable))
+---@param handler? lsp.Handler See |lsp-handler|
+local function runnables_request(handler)
+  rl.buf_request(0, 'experimental/runnables', get_params(), handler)
 end
 
-return M.debuggables
+--- Sends the request to rust-analyzer to get the debuggables and handles them
+function M.debuggables()
+  runnables_request(mk_handler(ui_select_debuggable))
+end
+
+--- Sends the request to rust-analyzer to get the debuggables and adds them to nvim-dap's
+--- configurations
+function M.add_dap_debuggables()
+  runnables_request(mk_handler(add_debuggables_to_nvim_dap))
+end
+
+return M

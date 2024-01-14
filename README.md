@@ -168,6 +168,14 @@ vim.keymap.set(
   vim.cmd.RustLsp {'debuggables', 'last' --[[ optional ]] }
   ```
 
+  > [!NOTE]
+  >
+  > By default, this plugin will silently attempt to autoload `nvim-dap`
+  > configurations when the LSP client attaches.
+  > You can call them with `require('dap').continue()` once
+  > they have been loaded. The feature can be disabled by setting
+  > `vim.g.rustaceanvim.dap.autoload_configurations = false`.
+
   ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/ce17d228-ae0a-416a-8159-fe095a85dcb7)
 
 </details>

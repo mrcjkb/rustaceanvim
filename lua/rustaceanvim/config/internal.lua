@@ -222,6 +222,8 @@ local RustaceanDefaultConfig = {
   --- debugging stuff
   --- @class RustaceanDapConfig
   dap = {
+    --- @type boolean Whether to autoload nvim-dap configurations when rust-analyzer has attached?
+    autoload_configurations = true,
     --- @type DapExecutableConfig | DapServerConfig | disable | fun():(DapExecutableConfig | DapServerConfig | disable)
     adapter = function()
       --- @type DapExecutableConfig | DapServerConfig | disable

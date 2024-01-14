@@ -6,7 +6,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.16.0] - 2024-01-15
+
+### Added
+
+- DAP: Better `nvim-dap` integration:
+  Automatically try to load Rust debug configurations on LSP attach.
+  This lets you use `require('dap').continue()` instead of `:RustLsp debuggables`,
+  once the configurations have been loaded.
+  Can be disabled by setting `vim.g.rustaceanvim.dap.autoload_configurations = false`.
 
 ### Fixed
 
