@@ -139,8 +139,11 @@ vim.keymap.set(
 >[!NOTE]
 >
 > - For more LSP related keymaps, [see the `nvim-lspconfig` suggestions](https://github.com/neovim/nvim-lspconfig#suggested-configuration).
+> - If you want to share keymaps with `nvim-lspconfig`,
+>   you can also use the `vim.g.rustaceanvim.server.on_attach` function,
+>   or an `LspAttach` autocommand.
 > - See the [Advanced configuration](#advanced-configuration) section
-for more configuration options.
+>   for more configuration options.
 <!-- markdownlint-disable -->
 <!-- markdownlint-restore -->
 >[!IMPORTANT]
