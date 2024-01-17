@@ -70,7 +70,7 @@ function M.explain_error()
       and diagnostic.severity == vim.diagnostic.severity.ERROR
   end, vim.diagnostic.get(0, {}))
   if #diagnostics == 0 then
-    vim.notify('No explainnable errors found.', vim.log.levels.INFO)
+    vim.notify('No explainable errors found.', vim.log.levels.INFO)
     return
   end
   local win_id = vim.api.nvim_get_current_win()
