@@ -28,6 +28,9 @@ function M.handler(_, result, ctx, _)
   if config.tools.on_initialized then
     config.tools.on_initialized(result)
   end
+  if config.dap.autoload_configurations then
+    require('rustaceanvim.commands.debuggables').add_dap_debuggables()
+  end
   _ran_once[ctx.client_id] = true
 end
 

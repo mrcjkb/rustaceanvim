@@ -169,13 +169,17 @@ vim.keymap.set(
   vim.cmd.RustLsp {'debuggables', 'last' --[[ optional ]] }
   ```
 
-  > [!NOTE]
-  >
-  > By default, this plugin will silently attempt to autoload `nvim-dap`
-  > configurations when the LSP client attaches.
-  > You can call them with `require('dap').continue()` once
-  > they have been loaded. The feature can be disabled by setting
-  > `vim.g.rustaceanvim.dap.autoload_configurations = false`.
+  By default, this plugin will silently attempt to autoload `nvim-dap`
+  configurations when the LSP client attaches.
+  You can call them with `require('dap').continue()` once
+  they have been loaded. The feature can be disabled by setting
+  `vim.g.rustaceanvim.dap.autoload_configurations = false`.
+  
+  - `:RustLsp debuggables` will only load debug configurations
+    created by `rust-analyzer`.
+  - `require('dap').continue()` will load all Rust debug configurations,
+    including those specified in a `.vscode/launch.json`
+    (see [`:h dap-launch.json`](https://github.com/mfussenegger/nvim-dap/blob/9adbfdca13afbe646d09a8d7a86d5d031fb9c5a5/doc/dap.txt#L316)).
 
   ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/ce17d228-ae0a-416a-8159-fe095a85dcb7)
 
