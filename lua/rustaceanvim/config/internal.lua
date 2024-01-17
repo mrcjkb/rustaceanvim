@@ -319,7 +319,7 @@ local RustaceanDefaultConfig = {
       -- It is necessary to check for changes in the `dap.configurations` table, as
       -- `load_launchjs` does not return anything, it loads directly into `dap.configurations`.
       local pre_launch = vim.deepcopy(dap.configurations) or {}
-      require('dap.ext.vscode').load_launchjs()
+      require('dap.ext.vscode').load_launchjs(nil, { lldb = { 'rust' }, codelldb = { 'rust' } })
       for k, v in pairs(dap.configurations) do
         if pre_launch[k] == nil or not vim.deep_equal(pre_launch[k], v) then
           -- `configurations` are tables of `configuration` entries

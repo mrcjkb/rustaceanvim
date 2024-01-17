@@ -218,11 +218,11 @@ M.start = function(bufnr)
 
   local old_on_attach = lsp_start_opts.on_attach
   lsp_start_opts.on_attach = function(...)
-    if config.dap.autoload_configurations then
-      require('rustaceanvim.commands.debuggables').add_dap_debuggables()
-    end
     if type(old_on_attach) == 'function' then
       old_on_attach(...)
+    end
+    if config.dap.autoload_configurations then
+      require('rustaceanvim.commands.debuggables').add_dap_debuggables()
     end
   end
 
