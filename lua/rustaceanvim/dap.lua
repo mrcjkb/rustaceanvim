@@ -225,9 +225,15 @@ local function handle_configured_options(adapter, args)
 end
 
 ---@param args RADebuggableArgs
----@param verbose boolean
----@param callback fun(config: DapClientConfig)
+---@param verbose? boolean
+---@param callback? fun(config: DapClientConfig)
 function M.start(args, verbose, callback)
+  if verbose == nil then
+    verbose = true
+  end
+  if type(callback) ~= 'function' then
+    callback = dap.run
+  end
   local adapter = types.evaluate(config.dap.adapter)
   --- @cast adapter DapExecutableConfig | DapServerConfig | disable
   if adapter == false then
