@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Performance (DAP): Use cached source map,
   LLDB commands and library path.
+- DAP: Set `autoload_configurations` only for Neovim >= 0.10,
+  as compiling the debug build is not async in Neovim 0.9.
 
 ## [3.16.2] - 2024-01-19
 
