@@ -110,6 +110,9 @@ local source_maps = {}
 ---See https://github.com/vadimcn/codelldb/issues/204
 ---@param workspace_root string
 local function generate_source_map(workspace_root)
+  if source_maps[workspace_root] then
+    return
+  end
   get_rustc_commit_hash(function(commit_hash)
     get_rustc_sysroot(function(rustc_sysroot)
       local src_path
@@ -124,10 +127,9 @@ local function generate_source_map(workspace_root)
         return
       end
       ---@type DapSourceMap
-      local new_map = {
+      source_maps[workspace_root] = {
         [compat.joinpath('/rustc', commit_hash)] = src_path,
       }
-      source_maps[workspace_root] = vim.tbl_extend('force', source_maps[workspace_root] or {}, new_map)
     end)
   end)
 end
@@ -136,6 +138,9 @@ end
 local init_commands = {}
 
 local function get_lldb_commands(workspace_root)
+  if init_commands[workspace_root] then
+    return
+  end
   get_rustc_sysroot(function(rustc_sysroot)
     local script = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_lookup.py')
     if not compat.uv.fs_stat(script) then
@@ -179,6 +184,9 @@ local environments = {}
 ---@param adapter DapExecutableConfig | DapServerConfig
 ---@param workspace_root string
 local function add_dynamic_library_paths(adapter, workspace_root)
+  if environments[workspace_root] then
+    return
+  end
   compat.system({ 'rustc', '--print', 'target-libdir' }, nil, function(sc)
     ---@cast sc vim.SystemCompleted
     local result = sc.stdout
