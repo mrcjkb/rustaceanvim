@@ -251,13 +251,13 @@ function M.start(args, verbose, callback)
     return
   end
 
-  if verbose then
-    vim.notify('Compiling a debug build for debugging. This might take some time...')
-  end
   handle_configured_options(adapter, args)
 
   local cargo_args = get_cargo_args_from_runnables_args(args)
   local cmd = vim.list_extend({ 'cargo' }, cargo_args)
+  if verbose then
+    vim.notify('Compiling a debug build for debugging. This might take some time...')
+  end
   compat.system(cmd, { cwd = args.workspaceRoot }, function(sc)
     ---@cast sc vim.SystemCompleted
     local output = sc.stdout
