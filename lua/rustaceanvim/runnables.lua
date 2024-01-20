@@ -20,7 +20,7 @@ end
 ---@field cargoExtraArgs string[]
 ---@field executableArgs string[]
 
----@param result RARunnable
+---@param result RARunnable[]
 local function get_options(result)
   local option_strings = {}
 
@@ -70,7 +70,7 @@ function M.run_command(choice, runnables)
   opts.executor.execute_command(command, args, cwd)
 end
 
----@param result RARunnable
+---@param result RARunnable[]
 local function handler(_, result)
   if result == nil then
     return

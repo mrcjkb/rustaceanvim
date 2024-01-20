@@ -10,6 +10,8 @@ end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
   local runnables = require('rustaceanvim.runnables')
+  local cached_commands = require('rustaceanvim.cached_commands')
+  cached_commands.set_last_runnable(1, command.arguments)
   runnables.run_command(1, command.arguments)
 end
 
@@ -26,9 +28,12 @@ end
 
 vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
   local overrides = require('rustaceanvim.overrides')
-  overrides.sanitize_command_for_debugging(command.arguments[1].args.cargoArgs)
+  local args = command.arguments[1].args
+  overrides.sanitize_command_for_debugging(args)
+  local cached_commands = require('rustaceanvim.cached_commands')
+  cached_commands.set_last_debuggable(args)
   local rt_dap = require('rustaceanvim.dap')
-  rt_dap.start(command.arguments[1].args)
+  rt_dap.start(args)
 end
 
 lsp.start()
