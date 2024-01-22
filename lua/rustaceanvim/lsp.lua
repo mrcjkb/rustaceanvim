@@ -110,24 +110,39 @@ local function normalize_path(path)
   return path
 end
 
+---@class LspStartOpts: RustaceanLspClientConfig
+---@field root_dir string | nil
+---@field init_options table
+---@field settings table
+---@field cmd string[]
+---@field name string
+---@field filetypes string[]
+---@field capabilities table
+---@field handlers lsp.Handler[]
+---@field on_init function
+---@field on_attach function
+---@field on_exit function
+
 --- Start or attach the LSP client
 ---@param bufnr? number The buffer number (optional), defaults to the current buffer
 ---@return integer|nil client_id The LSP client ID
 M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local client_config = config.server
-  ---@type RustaceanLspClientConfig
+  ---@type LspStartOpts
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = get_root_dir(vim.api.nvim_buf_get_name(bufnr))
   root_dir = root_dir and normalize_path(root_dir)
   lsp_start_opts.root_dir = root_dir
   if not root_dir then
-    --- No project root found. Run in detached mode.
+    --- No project root found. Runnitn
     lsp_start_opts.init_options = { detachedFiles = { vim.api.nvim_buf_get_name(0) } }
   end
 
   local settings = client_config.settings
-  lsp_start_opts.settings = type(settings) == 'function' and settings(root_dir) or settings
+  local evaluated_settings = type(settings) == 'function' and settings(root_dir) or settings
+  ---@cast evaluated_settings table
+  lsp_start_opts.settings = evaluated_settings
 
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
@@ -154,6 +169,7 @@ M.start = function(bufnr)
     vim.notify('rust-analyzer binary not found.', vim.log.levels.ERROR)
     return
   end
+  ---@cast rust_analyzer_cmd string[]
   lsp_start_opts.cmd = rust_analyzer_cmd
   lsp_start_opts.name = 'rust-analyzer'
   lsp_start_opts.filetypes = { 'rust' }

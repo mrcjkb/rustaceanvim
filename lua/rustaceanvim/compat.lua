@@ -21,7 +21,7 @@ M.system = vim.system
   -- wrapper around vim.fn.system to give it a similar API to vim.system
   or function(cmd, opts, on_exit)
     ---@cast cmd string[]
-    ---@cast opts SystemOpts | nil
+    ---@cast opts vim.SystemOpts | nil
     ---@cast on_exit fun(sc: vim.SystemCompleted) | nil
     ---@diagnostic disable-next-line: undefined-field
     if opts and opts.cwd then

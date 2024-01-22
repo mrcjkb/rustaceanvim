@@ -306,6 +306,12 @@ function M.on_cursor_move()
   end
 end
 
+---@class CodeActionWindowState
+---@field bufnr integer | nil
+---@field winnr integer | nil
+---@field geometry CodeActionWindowGeometry | nil
+---@field clear fun()
+
 ---@class CodeActionInternalState
 M.state = {
   ctx = {},
@@ -318,13 +324,10 @@ M.state = {
   },
   ---@type number | nil
   active_group_index = nil,
-  ---@class CodeActionWindowState
+  ---@type CodeActionWindowState
   primary = {
-    ---@type integer | nil
     bufnr = nil,
-    ---@type integer | nil
     winnr = nil,
-    ---@type CodeActionWindowGeometry | nil
     geometry = nil,
     clear = function()
       M.state.primary.geometry = nil
