@@ -74,7 +74,7 @@ local function get_root_dir(file_name)
   end
   return cargo_workspace_dir
     or cargo_crate_dir
-    or vim.fs.dirname(vim.fs.find({ 'rust-project.json', '.git' }, {
+    or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
       upward = true,
       path = vim.fs.dirname(file_name),
     })[1])
@@ -121,6 +121,10 @@ M.start = function(bufnr)
   local root_dir = get_root_dir(vim.api.nvim_buf_get_name(bufnr))
   root_dir = root_dir and normalize_path(root_dir)
   lsp_start_opts.root_dir = root_dir
+  if not root_dir then
+    --- No project root found. Run in detached mode.
+    lsp_start_opts.init_options = { detachedFiles = { vim.api.nvim_buf_get_name(0) } }
+  end
 
   local settings = client_config.settings
   lsp_start_opts.settings = type(settings) == 'function' and settings(root_dir) or settings

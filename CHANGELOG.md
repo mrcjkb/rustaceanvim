@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.17.1] - 2024-01-22
+
+### Fixed
+
+- Spawn rust-analyzer in detached mode when no project root is found.
+  This adds support for standalone files without a Rust project.
+
 ## [3.17.0] - 2024-01-20
 
 ### Added
