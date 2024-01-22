@@ -1,8 +1,5 @@
 local compat = require('rustaceanvim.compat')
 
----@type RustaceanExecutor
-local M = {}
-
 local function clear_qf()
   vim.fn.setqflist({}, ' ', { title = 'cargo' })
 end
@@ -22,25 +19,28 @@ local function copen()
   vim.cmd('copen')
 end
 
-function M.execute_command(command, args, cwd)
-  -- open quickfix
-  copen()
-  -- go back to the previous window
-  vim.cmd.wincmd('p')
-  -- clear the quickfix
-  clear_qf()
+---@type RustaceanExecutor
+local M = {
+  execute_command = function(command, args, cwd)
+    -- open quickfix
+    copen()
+    -- go back to the previous window
+    vim.cmd.wincmd('p')
+    -- clear the quickfix
+    clear_qf()
 
-  -- start compiling
-  local cmd = vim.list_extend({ command }, args)
-  compat.system(
-    cmd,
-    cwd and { cwd = cwd } or {},
-    vim.schedule_wrap(function(sc)
-      ---@cast sc vim.SystemCompleted
-      local data = sc.stdout or sc.stderr
-      append_qf(data)
-    end)
-  )
-end
+    -- start compiling
+    local cmd = vim.list_extend({ command }, args)
+    compat.system(
+      cmd,
+      cwd and { cwd = cwd } or {},
+      vim.schedule_wrap(function(sc)
+        ---@cast sc vim.SystemCompleted
+        local data = sc.stdout or sc.stderr
+        append_qf(data)
+      end)
+    )
+  end,
+}
 
 return M

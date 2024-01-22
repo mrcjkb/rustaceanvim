@@ -351,8 +351,10 @@ if opts.dap and opts.dap.adapter then
     and type(default_adapter) == 'table'
     and user_adapter.type == default_adapter.type
   then
+    ---@diagnostic disable-next-line: inject-field
     RustaceanConfig.dap.adapter = vim.tbl_deep_extend('force', default_adapter, user_adapter)
   elseif user_adapter ~= nil then
+    ---@diagnostic disable-next-line: inject-field
     RustaceanConfig.dap.adapter = user_adapter
   end
 end
