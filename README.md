@@ -634,8 +634,9 @@ To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com
 
 ## Related Projects
 
-- [`simrat39/rust-tools.nvim`](https://github.com/simrat39/rust-tools.nvim)
-  This plugin is a heavily modified fork of `rust-tools.nvim`.
+- [`rouge8/neotest-rust`](https://github.com/rouge8/neotest-rust)
+  A [`neotest`](https://github.com/nvim-neotest/neotest)
+  adapter for Rust, using [`cargo-nextest`](https://nexte.st/).
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
 - [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim)
   Geared towards people who prefer manual LSP client configuration.
