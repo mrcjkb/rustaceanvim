@@ -111,6 +111,7 @@ end
 ---@param results { [number]: RACodeActionResult }
 ---@param ctx table
 local function on_code_action_results(results, ctx)
+  local cur_win = vim.api.nvim_get_current_win()
   M.state.ctx = ctx
 
   ---@type action_tuple[]
@@ -182,7 +183,10 @@ local function on_code_action_results(results, ctx)
   vim.api.nvim_buf_attach(M.state.primary.bufnr, false, {
     on_detach = function(_, _)
       M.state.primary.clear()
-      vim.schedule(M.cleanup)
+      vim.schedule(function()
+        M.cleanup()
+        pcall(vim.api.nvim_set_current_win, cur_win)
+      end)
     end,
   })
 
