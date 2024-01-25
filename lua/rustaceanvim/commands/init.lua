@@ -7,7 +7,7 @@ local M = {}
 
 local rust_lsp_cmd_name = 'RustLsp'
 
----@type { string: fun(args: string[]) }
+---@type { string: fun(args: string[], opts: vim.api.keyset.user_command) }
 local command_tbl = {
   codeAction = function(_)
     require('rustaceanvim.commands.code_action_group')()
@@ -15,13 +15,11 @@ local command_tbl = {
   crateGraph = function(args)
     require('rustaceanvim.commands.crate_graph')(unpack(args))
   end,
-  debuggables = function(args)
-    if #args == 0 then
-      require('rustaceanvim.commands.debuggables').debuggables()
-    elseif #args == 1 and args[1] == 'last' then
+  debuggables = function(args, opts)
+    if opts.bang then
       require('rustaceanvim.cached_commands').execute_last_debuggable()
     else
-      vim.notify('debuggables: unexpected arguments: ' .. vim.inspect(args), vim.log.levels.ERROR)
+      require('rustaceanvim.commands.debuggables').debuggables(args)
     end
   end,
   expandMacro = function(_)
@@ -53,13 +51,11 @@ local command_tbl = {
       vim.notify('hover: unknown subcommand: ' .. subcmd .. " expected 'actions' or 'range'", vim.log.levels.ERROR)
     end
   end,
-  runnables = function(args)
-    if #args == 0 then
-      require('rustaceanvim.runnables').runnables()
-    elseif #args == 1 and args[1] == 'last' then
+  runnables = function(args, opts)
+    if opts.bang then
       require('rustaceanvim.cached_commands').execute_last_runnable()
     else
-      vim.notify('runnables: unexpected arguments: ' .. vim.inspect(args), vim.log.levels.ERROR)
+      require('rustaceanvim.runnables').runnables(args)
     end
   end,
   joinLines = function(_)
@@ -134,7 +130,7 @@ local function rust_lsp(opts)
     vim.notify(rust_lsp_cmd_name .. ': Unknown subcommand: ' .. cmd, vim.log.levels.ERROR)
     return
   end
-  command(args)
+  command(args, opts)
 end
 
 ---Create the `:RustLsp` command
@@ -142,31 +138,32 @@ function M.create_rust_lsp_command()
   vim.api.nvim_create_user_command(rust_lsp_cmd_name, rust_lsp, {
     nargs = '+',
     range = true,
+    bang = true,
     desc = 'Interacts with the rust-analyzer LSP client',
     complete = function(arg_lead, cmdline, _)
       local commands = vim.tbl_keys(command_tbl)
-      local match_start = '^' .. rust_lsp_cmd_name
+      local match_start = '^' .. rust_lsp_cmd_name .. '[!]*'
       local subcmd_match = '%s+%w*$'
       -- special case: crateGraph comes with graphviz backend completions
       if
-        cmdline:match(match_start .. ' debuggables' .. subcmd_match)
-        or cmdline:match(match_start .. ' runnables%s+%w*$')
+        cmdline:match(match_start .. '%sdebuggables' .. subcmd_match)
+        or cmdline:match(match_start .. '%srunnables%s+%w*$')
       then
         return { 'last' }
       end
-      if cmdline:match(match_start .. ' hover' .. subcmd_match) then
+      if cmdline:match(match_start .. '%shover' .. subcmd_match) then
         return { 'actions', 'range' }
       end
-      if cmdline:match(match_start .. ' moveItem' .. subcmd_match) then
+      if cmdline:match(match_start .. '%smoveItem' .. subcmd_match) then
         return { 'up', 'down' }
       end
-      if cmdline:match(match_start .. ' crateGraph' .. subcmd_match) then
+      if cmdline:match(match_start .. '%scrateGraph' .. subcmd_match) then
         return config.tools.crate_graph.enabled_graphviz_backends or {}
       end
-      if cmdline:match(match_start .. ' flyCheck' .. subcmd_match) then
+      if cmdline:match(match_start .. '%sflyCheck' .. subcmd_match) then
         return { 'run', 'clear', 'cancel' }
       end
-      if cmdline:match(match_start .. ' view' .. subcmd_match) then
+      if cmdline:match(match_start .. '%sview' .. subcmd_match) then
         return { 'mir', 'hir' }
       end
       if cmdline:match(match_start .. '%s+%w*$') then

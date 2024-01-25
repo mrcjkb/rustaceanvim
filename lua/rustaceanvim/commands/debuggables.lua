@@ -86,7 +86,16 @@ local function sanitize_results_for_debugging(result)
 end
 
 ---@param debuggables RADebuggable[]
-local function ui_select_debuggable(debuggables)
+---@param executableArgsOverride? string[]
+local function ui_select_debuggable(debuggables, executableArgsOverride)
+  if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
+    local unique_debuggables = {}
+    for _, debuggable in pairs(debuggables) do
+      debuggable.args.executableArgs = executableArgsOverride
+      unique_debuggables[vim.inspect(debuggable)] = debuggable
+    end
+    debuggables = vim.tbl_values(unique_debuggables)
+  end
   local options = get_options(debuggables)
   if #options == 0 then
     return
@@ -146,9 +155,12 @@ local function runnables_request(handler)
   rl.buf_request(0, 'experimental/runnables', get_params(), handler)
 end
 
---- Sends the request to rust-analyzer to get the debuggables and handles them
-function M.debuggables()
-  runnables_request(mk_handler(ui_select_debuggable))
+---Sends the request to rust-analyzer to get the debuggables and handles them
+---@param executableArgsOverride? string[]
+function M.debuggables(executableArgsOverride)
+  runnables_request(mk_handler(function(debuggables)
+    ui_select_debuggable(debuggables, executableArgsOverride)
+  end))
 end
 
 --- Sends the request to rust-analyzer to get the debuggables and adds them to nvim-dap's

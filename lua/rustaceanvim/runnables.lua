@@ -21,11 +21,12 @@ end
 ---@field executableArgs string[]
 
 ---@param result RARunnable[]
-local function get_options(result)
+---@param executableArgsOverride? string[]
+local function get_options(result, executableArgsOverride)
   local option_strings = {}
 
   for _, runnable in ipairs(result) do
-    local str = runnable.label
+    local str = runnable.label .. (executableArgsOverride and ' -- ' .. table.concat(executableArgsOverride, ' ') or '')
     table.insert(option_strings, str)
   end
 
@@ -70,25 +71,38 @@ function M.run_command(choice, runnables)
   opts.executor.execute_command(command, args, cwd)
 end
 
----@param result RARunnable[]
-local function handler(_, result)
-  if result == nil then
-    return
-  end
-  -- get the choice from the user
-  local options = get_options(result)
-  vim.ui.select(options, { prompt = 'Runnables', kind = 'rust-tools/runnables' }, function(_, choice)
-    ---@cast choice integer
-    M.run_command(choice, result)
+---@param executableArgsOverride? string[]
+---@return fun(_, result: RARunnable[])
+local function mk_handler(executableArgsOverride)
+  ---@param runnables RARunnable[]
+  return function(_, runnables)
+    if runnables == nil then
+      return
+    end
+    if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
+      local unique_runnables = {}
+      for _, runnable in pairs(runnables) do
+        runnable.args.executableArgs = executableArgsOverride
+        unique_runnables[vim.inspect(runnable)] = runnable
+      end
+      runnables = vim.tbl_values(unique_runnables)
+    end
+    -- get the choice from the user
+    local options = get_options(runnables, executableArgsOverride)
+    vim.ui.select(options, { prompt = 'Runnables', kind = 'rust-tools/runnables' }, function(_, choice)
+      ---@cast choice integer
+      M.run_command(choice, runnables)
 
-    local cached_commands = require('rustaceanvim.cached_commands')
-    cached_commands.set_last_runnable(choice, result)
-  end)
+      local cached_commands = require('rustaceanvim.cached_commands')
+      cached_commands.set_last_runnable(choice, runnables)
+    end)
+  end
 end
 
--- Sends the request to rust-analyzer to get the runnables and handles them
-function M.runnables()
-  vim.lsp.buf_request(0, 'experimental/runnables', get_params(), handler)
+---Sends the request to rust-analyzer to get the runnables and handles them
+---@param executableArgsOverride? string[]
+function M.runnables(executableArgsOverride)
+  vim.lsp.buf_request(0, 'experimental/runnables', get_params(), mk_handler(executableArgsOverride))
 end
 
 return M
