@@ -15,7 +15,7 @@ local _dap_configuration_added = {}
 ---@field cargoArgs string[]
 ---@field cargoExtraArgs string[]
 ---@field executableArgs string[]
----@field workspaceRoot string
+---@field workspaceRoot string | nil
 
 ---@param args RADebuggableArgs
 ---@return string
