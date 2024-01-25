@@ -80,7 +80,7 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 ```lua
 {
   'mrcjkb/rustaceanvim',
-  version = '^3', -- Recommended
+  version = '^4', -- Recommended
   ft = { 'rust' },
 }
 ```
