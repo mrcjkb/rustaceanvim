@@ -108,9 +108,9 @@ end
 local source_maps = {}
 
 ---See https://github.com/vadimcn/codelldb/issues/204
----@param workspace_root string
+---@param workspace_root? string
 local function generate_source_map(workspace_root)
-  if source_maps[workspace_root] then
+  if not workspace_root or source_maps[workspace_root] then
     return
   end
   get_rustc_commit_hash(function(commit_hash)
@@ -137,8 +137,9 @@ end
 ---@type {[string]: string[]}
 local init_commands = {}
 
+---@param workspace_root? string
 local function get_lldb_commands(workspace_root)
-  if init_commands[workspace_root] then
+  if not workspace_root or init_commands[workspace_root] then
     return
   end
   get_rustc_sysroot(function(rustc_sysroot)
@@ -182,9 +183,9 @@ local environments = {}
 
 -- Most succinct description: https://github.com/bevyengine/bevy/issues/2589#issuecomment-1753413600
 ---@param adapter DapExecutableConfig | DapServerConfig
----@param workspace_root string
+---@param workspace_root string | nil
 local function add_dynamic_library_paths(adapter, workspace_root)
-  if environments[workspace_root] then
+  if not workspace_root or environments[workspace_root] then
     return
   end
   compat.system({ 'rustc', '--print', 'target-libdir' }, nil, function(sc)
@@ -345,19 +346,21 @@ function M.start(args, verbose, callback)
       final_config.cwd = args.workspaceRoot
       final_config.program = executables[1]
       final_config.args = args.executableArgs or {}
-      local environment = environments[args.workspaceRoot]
+      local environment = args.workspaceRoot and environments[args.workspaceRoot]
       final_config = next(environment or {}) ~= nil
           and vim.tbl_deep_extend('force', final_config, { env = environment })
         or final_config
 
       if string.find(final_config.type, 'lldb') ~= nil then
         -- lldb specific entries
-        final_config = next(init_commands or {}) ~= nil
+        final_config = args.workspaceRoot
+            and next(init_commands or {}) ~= nil
             and vim.tbl_deep_extend('force', final_config, { initCommands = init_commands[args.workspaceRoot] })
           or final_config
 
-        local source_map = source_maps[args.workspaceRoot]
-        final_config = next(source_map or {}) ~= nil
+        local source_map = args.workspaceRoot and source_maps[args.workspaceRoot]
+        final_config = source_map
+            and next(source_map or {}) ~= nil
             and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(adapter, source_map) })
           or final_config
       elseif string.find(final_config.type, 'probe%-rs') ~= nil then
