@@ -22,11 +22,15 @@ Commands:
  `:RustAnalyzer stop` - Stop the LSP client.
  `:RustAnalyzer restart` - Restart the LSP client.
 
-The `:RustLsp` command is available after the LSP client has initialized.
+The `:RustLsp[!]` command is available after the LSP client has initialized.
 It accepts the following subcommands:
 
- `runnables [last]?` - Run tests, etc.
-                       `last` means run the last test that was run.
+ `runnables [args[]]?` - Run tests, executables, etc.
+                         `:RustLsp!` means run the last runnable (ignores any args).
+                         `args[]` allows you to override the executable's arguments.
+ `debuggables [args[]]?` - Debug tests, executables, etc. (requires |nvim-dap|).
+                           `:RustLsp!` means run the last debuggable (ignores any args).
+                           `args[]` allows you to override the executable's arguments.
  `expandMacro` - Expand macros recursively.
  `moveItem [up|down]` - Move items up or down.
  `hover [action|range]` - Hover actions, or hover over visually selected range.

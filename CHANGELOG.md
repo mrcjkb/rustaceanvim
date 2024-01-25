@@ -6,12 +6,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 4.0.0 - 2024-01-25
+
+### BREAKING CHANGES
+
+- To run the previous runnable/debuggable, you would call `:RustLsp runnables last`
+  or `:RustLsp debuggables last`.
+  These two functions now take optional arguments that you can pass to the executables.
+  The new way to run the previous runnable/debuggable is with a bang (`!`).
+  e.g. `:RustLsp! debuggables`.
+  In Lua, this is `vim.cmd.RustLsp { 'debuggables', bang = true }`, and the same
+  for `'runnables'`.
 
 ### Added
 
 - LSP: Option to fall back to `vim.ui.select` if there
   are no code action groups when running `:RustLsp codeAction`.
+- LSP/DAP: Allow overriding executable args with
+  `:RustLsp runnables args[]` and `:RustLsp debuggables args[]`.
 
 ### Fixed
 

@@ -163,10 +163,14 @@ vim.keymap.set(
   </summary>
   
   ```vimscript
-  :RustLsp debuggables [last?]
+  :RustLsp[!] debuggables [args[]]
   ```
   ```lua
-  vim.cmd.RustLsp {'debuggables', 'last' --[[ optional ]] }
+  vim.cmd.RustLsp('debuggables')
+  -- or, to run the previous debuggable:
+  vim.cmd.RustLsp { 'debuggables', bang = true }
+  -- or, to override the executable's args:
+  vim.cmd.RustLsp {'debuggables', 'arg1', 'arg2' }
   ```
 
   By default, this plugin will silently attempt to autoload `nvim-dap`
@@ -191,10 +195,14 @@ vim.keymap.set(
   </summary>
   
   ```vimscript
-  :RustLsp runnables [last?]
+  :RustLsp[!] runnables [args[]]
   ```
   ```lua
-  vim.cmd.RustLsp {'runnables', 'last' --[[ optional ]] }
+  vim.cmd.RustLsp('runnables')
+  -- or, to run the previous runnable:
+  vim.cmd.RustLsp { 'runnables', bang = true }
+  -- or, to override the executable's args:
+  vim.cmd.RustLsp {'runnables', 'arg1', 'arg2' }
   ```
 
   ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/95183192-5669-4a07-804b-83f67831be57)
