@@ -53,9 +53,14 @@ local RustaceanDefaultConfig = {
     hover_actions = {
 
       --- whether to replace Neovim's built-in `vim.lsp.buf.hover`.
-      --- default: true
       ---@type boolean
       replace_builtin_hover = true,
+    },
+
+    code_actions = {
+      --- whether to fall back to `vim.ui.select` if there are no grouped code actions
+      ---@type boolean
+      ui_select_fallback = false,
     },
 
     --- options same as lsp hover
@@ -331,6 +336,7 @@ local RustaceanDefaultConfig = {
       return dap_config
     end,
   },
+  -- debug info
   was_g_rustaceanvim_sourced = vim.g.rustaceanvim ~= nil,
 }
 local rustaceanvim = vim.g.rustaceanvim or {}

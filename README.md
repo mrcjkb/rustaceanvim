@@ -247,6 +247,30 @@ vim.keymap.set(
 
 <details>
   <summary>
+	<b>Grouped code actions</b>
+  </summary>
+  
+ Sometimes, rust-analyzer groups code actions by category,
+ which is not supported by Neovim's built-in `vim.lsp.buf.codeAction`.
+ This plugin provides a command with a UI that does:
+
+ ```vimscript
+ :RustLsp codeAction
+ ```
+ ```lua
+ vim.cmd.RustLsp('codeAction')
+ ```
+
+ If you set the option `vim.g.rustaceanvim.tools.code_actions.ui_select_fallback`
+ to `true` (defaults to `false`), it will fall back to `vim.ui.select`
+ if there are no grouped code actions.
+
+![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/866d3cb1-8e56-4380-8c03-812386441f47)
+
+</details>
+
+<details>
+  <summary>
 	<b>Hover Actions</b>
   </summary>
   

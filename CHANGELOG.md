@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- LSP: Option to fall back to `vim.ui.select` if there
+  are no code action groups when running `:RustLsp codeAction`.
+
 ### Fixed
 
 - LSP: Focus lost when secondary float opens on `:RustLsp codeAction` [[#169](https://github.com/mrcjkb/rustaceanvim/issues/169)].

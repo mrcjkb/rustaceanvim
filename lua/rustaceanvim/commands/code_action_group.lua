@@ -1,4 +1,5 @@
 local ui = require('rustaceanvim.ui')
+local config = require('rustaceanvim.config.internal')
 local M = {}
 
 ---@class RACodeAction
@@ -147,6 +148,22 @@ local function on_code_action_results(results, ctx)
       table.insert(M.state.actions.ungrouped, value)
     end
   end
+
+  if #M.state.actions.grouped == 0 and config.tools.code_actions.ui_select_fallback then
+    ---@param item action_tuple
+    local function format_item(item)
+      local title = item[2].title:gsub('\r\n', '\\r\\n')
+      return title:gsub('\n', '\\n')
+    end
+    local select_opts = {
+      prompt = 'Code actions:',
+      kind = 'codeaction',
+      format_item = format_item,
+    }
+    vim.ui.select(M.state.actions.ungrouped, select_opts, M.on_user_choice)
+    return
+  end
+
   M.state.primary.bufnr = vim.api.nvim_create_buf(false, true)
   M.state.primary.winnr = vim.api.nvim_open_win(M.state.primary.bufnr, true, {
     relative = 'cursor',
