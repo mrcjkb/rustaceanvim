@@ -6,14 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 4.0.1 - 2024-01-27
+## [Unreleased]
 
 ### Fixed
 
 - Only setup `vim.lsp.commands` for rust-analyzer on the first
   initialization.
 
-## 4.0.0 - 2024-01-25
+## [4.0.0] - 2024-01-25
 
 ### BREAKING CHANGES
 
@@ -515,7 +515,7 @@ Thanks [@Andrew Collins](https://github.com/Andrew-Collins):
 
 ## [2.0.0] - 2023-10-21
 
-### Breaking changes
+### BREAKING CHANGES
 
 - Don't pollute the command space:
   Use a single command with subcommands and completions.
@@ -558,7 +558,7 @@ Thanks [@Andrew Collins](https://github.com/Andrew-Collins):
 - Erroneous semantic token highlights.
 - Make sure we only send LSP requests to the correct client.
 
-### Breaking changes compared to `rust-tools.nvim`
+### BREAKING CHANGES compared to `rust-tools.nvim`
 
 - [Removed the `setup` function](https://mrcjkb.dev/posts/2023-08-22-setup.html)
   and revamped the architecture to be less prone to type errors.
