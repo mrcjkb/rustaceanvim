@@ -6,14 +6,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.0.1] - 2024-01-27
 
 ### Fixed
 
-- LSP: Only setup `vim.lsp.commands` for rust-analyzer on the first
-  initialization.
 - LSP: Fix resetting client state on `:RustAnalyzer stop`
   if only one client is attached.
+
+### Performance
+
+- Only setup `vim.lsp.commands` for rust-analyzer on the first
+  initialization.
+- Don't run `ftplugin/rust.lua` more than once on the same
+  buffer.
 
 ## [4.0.0] - 2024-01-25
 

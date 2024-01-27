@@ -1,3 +1,8 @@
+local bufnr = vim.api.nvim_get_current_buf()
+if vim.b[bufnr].did_rustaceanvim_ftplugin then
+  return
+end
+
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
 local types = require('rustaceanvim.types.internal')
@@ -42,3 +47,5 @@ if not auto_attach then
 end
 
 lsp.start()
+
+vim.b[bufnr].did_rustaceanvim_ftplugin = true
