@@ -10,8 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Only setup `vim.lsp.commands` for rust-analyzer on the first
+- LSP: Only setup `vim.lsp.commands` for rust-analyzer on the first
   initialization.
+- LSP: Fix resetting client state on `:RustAnalyzer stop`
+  if only one client is attached.
 
 ## [4.0.0] - 2024-01-25
 

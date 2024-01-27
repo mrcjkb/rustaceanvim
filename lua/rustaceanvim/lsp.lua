@@ -271,6 +271,9 @@ M.stop = function(bufnr)
     for _, client in ipairs(clients) do
       server_status.reset_client_state(client.id)
     end
+  else
+    ---@cast clients lsp.Client
+    server_status.reset_client_state(clients.id)
   end
   return clients
 end
