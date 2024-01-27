@@ -135,7 +135,7 @@ M.start = function(bufnr)
   root_dir = root_dir and normalize_path(root_dir)
   lsp_start_opts.root_dir = root_dir
   if not root_dir then
-    --- No project root found. Runnitn
+    --- No project root found. Start in detached/standalone mode.
     lsp_start_opts.init_options = { detachedFiles = { vim.api.nvim_buf_get_name(0) } }
   end
 
