@@ -110,9 +110,9 @@ local function normalize_path(path)
   return path
 end
 
----@class LspStartOpts: RustaceanLspClientConfig
+---@class LspStartConfig: RustaceanLspClientConfig
 ---@field root_dir string | nil
----@field init_options table
+---@field init_options? table
 ---@field settings table
 ---@field cmd string[]
 ---@field name string
@@ -129,7 +129,7 @@ end
 M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local client_config = config.server
-  ---@type LspStartOpts
+  ---@type LspStartConfig
   local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = get_root_dir(vim.api.nvim_buf_get_name(bufnr))
   root_dir = root_dir and normalize_path(root_dir)
