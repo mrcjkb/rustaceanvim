@@ -130,19 +130,19 @@ M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local client_config = config.server
   ---@type LspStartConfig
-  local lsp_start_opts = vim.tbl_deep_extend('force', {}, client_config)
+  local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = get_root_dir(vim.api.nvim_buf_get_name(bufnr))
   root_dir = root_dir and normalize_path(root_dir)
-  lsp_start_opts.root_dir = root_dir
+  lsp_start_config.root_dir = root_dir
   if not root_dir then
     --- No project root found. Start in detached/standalone mode.
-    lsp_start_opts.init_options = { detachedFiles = { vim.api.nvim_buf_get_name(0) } }
+    lsp_start_config.init_options = { detachedFiles = { vim.api.nvim_buf_get_name(bufnr) } }
   end
 
   local settings = client_config.settings
   local evaluated_settings = type(settings) == 'function' and settings(root_dir) or settings
   ---@cast evaluated_settings table
-  lsp_start_opts.settings = evaluated_settings
+  lsp_start_config.settings = evaluated_settings
 
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
@@ -170,9 +170,9 @@ M.start = function(bufnr)
     return
   end
   ---@cast rust_analyzer_cmd string[]
-  lsp_start_opts.cmd = rust_analyzer_cmd
-  lsp_start_opts.name = 'rust-analyzer'
-  lsp_start_opts.filetypes = { 'rust' }
+  lsp_start_config.cmd = rust_analyzer_cmd
+  lsp_start_config.name = 'rust-analyzer'
+  lsp_start_config.filetypes = { 'rust' }
   local capabilities = vim.lsp.protocol.make_client_capabilities()
 
   -- snippets
@@ -204,7 +204,7 @@ M.start = function(bufnr)
     },
   }
 
-  lsp_start_opts.capabilities = vim.tbl_deep_extend('force', capabilities, lsp_start_opts.capabilities or {})
+  lsp_start_config.capabilities = vim.tbl_deep_extend('force', capabilities, lsp_start_config.capabilities or {})
 
   local custom_handlers = {}
   custom_handlers['experimental/serverStatus'] = server_status.handler
@@ -213,13 +213,13 @@ M.start = function(bufnr)
     custom_handlers['textDocument/hover'] = require('rustaceanvim.hover_actions').handler
   end
 
-  lsp_start_opts.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_opts.handlers or {})
+  lsp_start_config.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_config.handlers or {})
 
   local augroup = vim.api.nvim_create_augroup('RustaceanAutoCmds', { clear = true })
 
   local commands = require('rustaceanvim.commands')
-  local old_on_init = lsp_start_opts.on_init
-  lsp_start_opts.on_init = function(...)
+  local old_on_init = lsp_start_config.on_init
+  lsp_start_config.on_init = function(...)
     override_apply_text_edits()
     commands.create_rust_lsp_command()
     if config.tools.reload_workspace_from_cargo_toml then
@@ -236,8 +236,8 @@ M.start = function(bufnr)
     end
   end
 
-  local old_on_attach = lsp_start_opts.on_attach
-  lsp_start_opts.on_attach = function(...)
+  local old_on_attach = lsp_start_config.on_attach
+  lsp_start_config.on_attach = function(...)
     if type(old_on_attach) == 'function' then
       old_on_attach(...)
     end
@@ -246,8 +246,8 @@ M.start = function(bufnr)
     end
   end
 
-  local old_on_exit = lsp_start_opts.on_exit
-  lsp_start_opts.on_exit = function(...)
+  local old_on_exit = lsp_start_config.on_exit
+  lsp_start_config.on_exit = function(...)
     override_apply_text_edits()
     commands.delete_rust_lsp_command()
     vim.api.nvim_del_augroup_by_id(augroup)
@@ -256,7 +256,7 @@ M.start = function(bufnr)
     end
   end
 
-  return vim.lsp.start(lsp_start_opts)
+  return vim.lsp.start(lsp_start_config)
 end
 
 ---Stop the LSP client.
