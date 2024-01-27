@@ -1,3 +1,9 @@
+if vim.b.did_ftplugin_rustacean then
+  return
+end
+
+vim.b.did_ftplugin_rustacean = 1
+
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
 local types = require('rustaceanvim.types.internal')

@@ -256,6 +256,15 @@ M.start = function(bufnr)
     end
   end
 
+  if not root_dir and vim.tbl_isempty(rust_analyzer.get_active_rustaceanvim_clients(bufnr)) then
+    return vim.lsp.start(lsp_start_opts, {
+      reuse_client = function()
+        return false
+      end,
+      bufnr = bufnr,
+    })
+  end
+
   return vim.lsp.start(lsp_start_opts)
 end
 
