@@ -98,6 +98,11 @@ local command_tbl = {
     require('rustaceanvim.commands.fly_check')(cmd)
   end,
   rustcUnpretty = function(args)
+    local err_msg = table.concat(require('rustaceanvim.commands.rustc_unpretty').available_unpretty, ' | ')
+    if not args or #args == 0 then
+      vim.notify('Expected argument list: ' .. err_msg, vim.log.levels.ERROR)
+      return
+    end
     local arg = args[1]:lower()
     local available = false
     for _, value in ipairs(require('rustaceanvim.commands.rustc_unpretty').available_unpretty) do
@@ -106,8 +111,7 @@ local command_tbl = {
         break
       end
     end
-    if not available or not args or #args == 0 then
-      local err_msg = table.concat(require('rustaceanvim.commands.rustc_unpretty').available_unpretty, ' | ')
+    if not available then
       vim.notify('Expected argument list: ' .. err_msg, vim.log.levels.ERROR)
       return
     end
