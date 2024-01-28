@@ -500,6 +500,9 @@ vim.keymap.set(
   of the function containing the cursor.
   Achieve an experience similar to Rust Playground.
 
+  NOTE: the feature need [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
+  install rust parser.
+
   ```vimscript
   :RustLsp rustcUnpretty [hir|mir|...]
   ```
