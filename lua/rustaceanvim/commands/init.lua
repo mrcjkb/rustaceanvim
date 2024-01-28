@@ -97,6 +97,23 @@ local command_tbl = {
     local cmd = args[1] or 'run'
     require('rustaceanvim.commands.fly_check')(cmd)
   end,
+  rustcUnpretty = function(args)
+    local arg = args[1]:lower()
+    local available = false
+    for _, value in ipairs(require('rustaceanvim.commands.rustc_unpretty').available_unpretty) do
+      if value == arg then
+        available = true
+        break
+      end
+    end
+    if not available or not args or #args == 0 then
+      local err_msg = table.concat(require('rustaceanvim.commands.rustc_unpretty').available_unpretty, ' | ')
+      vim.notify('Expected argument list: ' .. err_msg, vim.log.levels.ERROR)
+      return
+    end
+
+    require('rustaceanvim.commands.rustc_unpretty').rustc_unpretty(arg)
+  end,
   view = function(args)
     if not args or #args == 0 then
       vim.notify("Expected argument: 'mir' or 'hir'", vim.log.levels.ERROR)
@@ -165,6 +182,9 @@ function M.create_rust_lsp_command()
       end
       if cmdline:match(match_start .. '%sview' .. subcmd_match) then
         return { 'mir', 'hir' }
+      end
+      if cmdline:match(match_start .. '%srustcUnpretty' .. subcmd_match) then
+        return require('rustaceanvim.commands.rustc_unpretty').available_unpretty
       end
       if cmdline:match(match_start .. '%s+%w*$') then
         return vim.tbl_filter(function(command)

@@ -1,0 +1,143 @@
+local M = {}
+
+local config = require('rustaceanvim.config.internal')
+local compat = require('rustaceanvim.compat')
+local ui = require('rustaceanvim.ui')
+local api = vim.api
+local ts = vim.treesitter
+
+local rustc = 'rustc'
+
+M.available_unpretty = {
+  'normal',
+  'identified',
+  'expanded',
+  'expanded,identified',
+  'expanded,hygiene',
+  'ast-tree',
+  'ast-tree,expanded',
+  'hir',
+  'hir,identified',
+  'hir,typed',
+  'hir-tree',
+  'thir-tree',
+  'thir-flat',
+  'mir',
+  'stable-mir',
+  'mir-cfg',
+}
+---@alias rustcir_level 'normal'| 'identified'| 'expanded'| 'expanded,identified'| 'expanded,hygiene'| 'ast-tree'| 'ast-tree,expanded'| 'hir'| 'hir,identified'| 'hir,typed'| 'hir-tree'| 'thir-tree'| 'thir-flat'| 'mir'| 'stable-mir'| 'mir-cfg'
+
+---@type integer | nil
+local latest_buf_id = nil
+
+-- Get a compatible vim range (1 index based) from a TS node range.
+--
+-- TS nodes start with 0 and the end col is ending exclusive.
+-- They also treat a EOF/EOL char as a char ending in the first
+-- col of the next row.
+---comment
+---@param range integer[]
+---@param buf integer|nil
+---@return integer, integer, integer, integer
+local function get_vim_range(range, buf)
+  ---@type integer, integer, integer, integer
+  local srow, scol, erow, ecol = unpack(range)
+  srow = srow + 1
+  scol = scol + 1
+  erow = erow + 1
+
+  if ecol == 0 then
+    -- Use the value of the last col of the previous row instead.
+    erow = erow - 1
+    if not buf or buf == 0 then
+      ecol = vim.fn.col { erow, '$' } - 1
+    else
+      ecol = #vim.api.nvim_buf_get_lines(buf, erow - 1, erow, false)[1]
+    end
+    ecol = math.max(ecol, 1)
+  end
+
+  return srow, scol, erow, ecol
+end
+
+---@param node TSNode
+local function get_rows(node)
+  local start_row, _, end_row, _ = get_vim_range({ ts.get_node_range(node) }, 0)
+  return vim.api.nvim_buf_get_lines(0, start_row - 1, end_row, true)
+end
+
+---@param sc vim.SystemCompleted
+local function handler(sc)
+  if sc.code ~= 0 then
+    vim.notify('rustc unpretty failed' .. sc.stderr, vim.log.levels.ERROR)
+    return
+  end
+
+  -- check if a buffer with the latest id is already open, if it is then
+  -- delete it and continue
+  ui.delete_buf(latest_buf_id)
+
+  -- create a new buffer
+  latest_buf_id = vim.api.nvim_create_buf(false, true) -- not listed and scratch
+
+  -- split the window to create a new buffer and set it to our window
+  ui.split(true, latest_buf_id)
+
+  local lines = vim.split(sc.stdout, '\n')
+
+  -- set filetype to rust for syntax highlighting
+  vim.bo[latest_buf_id].filetype = 'rust'
+  -- write the expansion content to the buffer
+  vim.api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, lines)
+end
+
+---@param level rustcir_level
+function M.rustc_unpretty(level)
+  if #api.nvim_get_runtime_file('parser/rust.so', true) == 0 then
+    vim.notify('please install rust parser in nvim-treesitter', vim.log.levels.ERROR)
+    return
+  end
+  if vim.fn.executable(rustc) ~= 1 then
+    vim.notify('rustc is needed to rustc unpretty.', vim.log.levels.ERROR)
+    return
+  end
+
+  local text
+
+  local cursor = api.nvim_win_get_cursor(0)
+  local pos = { cursor[1] - 1, cursor[2] }
+
+  local cline = api.nvim_get_current_line()
+  if not string.find(cline, 'fn%s*') then
+    local temp = vim.fn.searchpos('fn ', 'bcn', vim.fn.line('w0'))
+    pos = { temp[1] - 1, temp[2] }
+  end
+
+  local node = ts.get_node { pos = pos }
+
+  if node == nil or node:type() ~= 'function_item' then
+    vim.notify('not found function or function is uncomplete', vim.log.levels.ERROR)
+    return
+  end
+
+  local b = get_rows(node)
+  if b == nil then
+    vim.notify('get code text failed', vim.log.levels.ERROR)
+    return
+  end
+  text = table.concat(b, '\n')
+
+  -- rustc need a main function for `-Z unpretty`
+  if not string.find(text, 'fn%s*main') then
+    text = text .. 'fn main() {}'
+  end
+
+  compat.system(
+    { rustc, '--edition', config.tools.rustc_unpretty.edition, '-Z', 'unpretty=' .. level, '-' },
+    { stdin = text },
+    vim.schedule_wrap(handler)
+  )
+end
+
+return M

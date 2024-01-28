@@ -184,6 +184,12 @@ local RustaceanDefaultConfig = {
     open_url = function(url)
       require('rustaceanvim.os').open_url(url)
     end,
+    ---settings for rustc -Z unpretty
+    ---@type table
+    rustc_unpretty = {
+      ---@type string
+      edition = '2021',
+    },
   },
 
   --- all the opts to send to the LSP client
