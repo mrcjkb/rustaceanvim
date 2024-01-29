@@ -31,11 +31,11 @@ M.available_unpretty = {
 ---@type integer | nil
 local latest_buf_id = nil
 
--- Get a compatible vim range (1 index based) from a TS node range.
---
--- TS nodes start with 0 and the end col is ending exclusive.
--- They also treat a EOF/EOL char as a char ending in the first
--- col of the next row.
+---Get a compatible vim range (1 index based) from a TS node range.
+---
+---TS nodes start with 0 and the end col is ending exclusive.
+---They also treat a EOF/EOL char as a char ending in the first
+---col of the next row.
 ---comment
 ---@param range integer[]
 ---@param buf integer|nil
@@ -95,7 +95,7 @@ end
 ---@param level rustcir_level
 function M.rustc_unpretty(level)
   if #api.nvim_get_runtime_file('parser/rust.so', true) == 0 then
-    vim.notify('please install rust parser in nvim-treesitter', vim.log.levels.ERROR)
+    vim.notify("a treesitter parser for Rust is required for 'rustc unpretty'", vim.log.levels.ERROR)
     return
   end
   if vim.fn.executable(rustc) ~= 1 then
@@ -106,18 +106,18 @@ function M.rustc_unpretty(level)
   local text
 
   local cursor = api.nvim_win_get_cursor(0)
-  local pos = { cursor[1] - 1, cursor[2] }
+  local pos = { math.max(cursor[1] - 1, 0), cursor[2] }
 
   local cline = api.nvim_get_current_line()
   if not string.find(cline, 'fn%s*') then
     local temp = vim.fn.searchpos('fn ', 'bcn', vim.fn.line('w0'))
-    pos = { temp[1] - 1, temp[2] }
+    pos = { math.max(temp[1] - 1, 0), temp[2] }
   end
 
   local node = ts.get_node { pos = pos }
 
   if node == nil or node:type() ~= 'function_item' then
-    vim.notify('not found function or function is uncomplete', vim.log.levels.ERROR)
+    vim.notify('no function found or function is incomplete', vim.log.levels.ERROR)
     return
   end
 

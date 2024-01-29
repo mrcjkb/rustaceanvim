@@ -501,7 +501,7 @@ vim.keymap.set(
   Achieve an experience similar to Rust Playground.
 
   NOTE: the feature need [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
-  install rust parser.
+  install rust parser and need nightly rustc.
 
   ```vimscript
   :RustLsp rustcUnpretty [hir|mir|...]
