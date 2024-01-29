@@ -494,6 +494,8 @@ vim.keymap.set(
   vim.cmd.RustLsp { 'view', 'hir' }
   vim.cmd.RustLsp { 'view', 'mir' }
   ```
+</details>
+
 <details>
   <summary>
 	<b>Rustc Unpretty</b>
