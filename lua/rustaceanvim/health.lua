@@ -133,6 +133,16 @@ local function check_for_conflicts()
   ok('No conflicting plugins detected.')
 end
 
+local function check_tree_sitter()
+  start('Checking for tree-sitter parser')
+  local has_tree_sitter_rust_parser = #vim.api.nvim_get_runtime_file('parser/rust.so', true) > 0
+  if has_tree_sitter_rust_parser then
+    ok('tree-sitter parser for Rust detected.')
+  else
+    warn("No tree-sitter parser for Rust detected. Required by 'Rustc unpretty' command.")
+  end
+end
+
 function health.check()
   local types = require('rustaceanvim.types.internal')
   local config = require('rustaceanvim.config.internal')
@@ -226,6 +236,7 @@ function health.check()
   end
   check_config(config)
   check_for_conflicts()
+  check_tree_sitter()
 end
 
 return health

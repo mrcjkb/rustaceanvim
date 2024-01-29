@@ -65,9 +65,9 @@ function M.validate(cfg)
   if not ok then
     return false, err
   end
-  local rustc_unpretty = tools.rustc_unpretty
-  ok, err = validate('tools.rustc_ir', {
-    edition = { rustc_unpretty.edition, 'string' },
+  local rustc = tools.rustc
+  ok, err = validate('tools.rustc', {
+    edition = { rustc.edition, 'string' },
   })
   if not ok then
     return false, err
