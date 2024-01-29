@@ -14,7 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Use `rustc -Z unpretty=[mir|hir|...]` to inspect mir and other things,
   and achieve an experience similar to Rust Playground.
   (currently requires a nightly compiler).
+  Thanks [saying121](https://github.com/saying121)!
 - Config: `tools.rustc_unpretty` arguments for `rustc`.
+
+### Changed
+
+- Improved command completions.
+  - Filter suggested subcommand arguments based on existing user input.
+  - When calling, `:RustLsp!`, show only subcommands that change
+    behaviour with a bang.
+
+### Fixed
+
+- Command completions: Removed completions
+  for `runnables/debuggables last`.
 
 ## [4.0.3] - 2024-01-28
 
