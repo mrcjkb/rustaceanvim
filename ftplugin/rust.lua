@@ -8,7 +8,7 @@ local config = require('rustaceanvim.config.internal')
 local types = require('rustaceanvim.types.internal')
 local lsp = require('rustaceanvim.lsp')
 
-if not vim.g.did_rustaceanvim_setup_commands then
+if not vim.g.did_rustaceanvim_initialize then
   vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
     local runnables = require('rustaceanvim.runnables')
     local cached_commands = require('rustaceanvim.cached_commands')
@@ -36,9 +36,12 @@ if not vim.g.did_rustaceanvim_setup_commands then
     local rt_dap = require('rustaceanvim.dap')
     rt_dap.start(args)
   end
+
+  local commands = require('rustaceanvim.commands')
+  commands.create_rustc_command()
 end
 
-vim.g.did_rustaceanvim_setup_commands = true
+vim.g.did_rustaceanvim_initialize = true
 
 local auto_attach = types.evaluate(config.server.auto_attach)
 

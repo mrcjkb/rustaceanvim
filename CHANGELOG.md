@@ -6,6 +6,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2024-01-29
+
+### Added
+
+- `:Rustc unpretty` command:
+  Use `rustc -Z unpretty=[mir|hir|...]` to inspect mir and other things,
+  and achieve an experience similar to Rust Playground.
+  (currently requires a nightly compiler).
+  Thanks [saying121](https://github.com/saying121)!
+- Config: `tools.rustc_unpretty` arguments for `rustc`.
+
+### Changed
+
+- Improved command completions.
+  - Filter suggested subcommand arguments based on existing user input.
+  - When calling, `:RustLsp!`, show only subcommands that change
+    behaviour with a bang.
+
+### Fixed
+
+- Command completions: Removed completions
+  for `runnables/debuggables last`.
+
 ## [4.0.3] - 2024-01-28
 
 ### Fixed

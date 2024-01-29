@@ -63,6 +63,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field float_win_config? table Options applied to floating windows. See |api-win_config|.
 ---@field create_graph? RustaceanCrateGraphConfig Options for showing the crate graph based on graphviz and the dot
 ---@field open_url? fun(url:string):nil If set, overrides how to open URLs
+---@field rustc? RustcOpts Options for `rustc`
 
 ---@class RustaceanHoverActionsOpts
 ---@field replace_builtin_hover? boolean Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions. Default: `true`
@@ -80,6 +81,9 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field output? string Where to store the output. No output if unset. Relative path from `cwd`.
 ---@field enabled_graphviz_backends? string[] Override the enabled graphviz backends list, used for input validation and autocompletion.
 ---@field pipe? string Overide the pipe symbol in the shell command. Useful if using a shell that is not supported by this plugin.
+
+---@class RustcOpts
+---@field edition string The edition to use. See https://rustc-dev-guide.rust-lang.org/guides/editions.html. Default '2021'.
 
 ---@class RustaceanLspClientOpts
 ---@field auto_attach? boolean | fun():boolean Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.

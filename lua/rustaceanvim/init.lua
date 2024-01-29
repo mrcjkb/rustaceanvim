@@ -46,6 +46,15 @@
 ---              can be costly.
 ---              Defaults to `flyCheck run` if called without an argument.
 --- `logFile` - Open the rust-analyzer log file.
+---
+---The `:Rustc` command can be used to interact with rustc.
+---It accepts the following subcommands:
+---
+--- `unpretty args[]` - Opens a buffer with a textual representation of the MIR or others things,
+---                     of the function closest to the cursor.
+---                     Achieves an experience similar to Rust Playground.
+---                     NOTE: This currently requires a tree-sitter parser for Rust,
+---                     and a nightly compiler toolchain.
 ---@brief ]]
 
 local M = {}

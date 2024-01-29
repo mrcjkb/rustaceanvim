@@ -68,6 +68,9 @@
   or [`codelldb`](https://github.com/vadimcn/codelldb))
   and [`nvim-dap`](https://github.com/mfussenegger/nvim-dap),
   required for debugging.
+- A tree-sitter parser for Rust (required for the `:Rustc unpretty` command).
+  Can be installed using [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter),
+  which also provides highlights, etc.
 
 ## Installation
 
@@ -490,6 +493,26 @@ vim.keymap.set(
   ```lua
   vim.cmd.RustLsp { 'view', 'hir' }
   vim.cmd.RustLsp { 'view', 'mir' }
+  ```
+<details>
+  <summary>
+	<b>Rustc Unpretty</b>
+  </summary>
+
+  Opens a buffer with a textual representation of the MIR or others things,
+  of the function closest to the cursor.
+  Achieves an experience similar to Rust Playground.
+
+  NOTE: This currently requires a tree-sitter parser for Rust,
+  and a nightly compiler toolchain.
+
+  ```vimscript
+  :Rustc unpretty [hir|mir|...]
+  ```
+  ```lua
+  vim.cmd.Rustc { 'unpretty', 'hir' }
+  vim.cmd.Rustc { 'unpretty', 'mir' }
+  -- ...
   ```
 </details>
 

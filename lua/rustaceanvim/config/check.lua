@@ -65,6 +65,13 @@ function M.validate(cfg)
   if not ok then
     return false, err
   end
+  local rustc = tools.rustc
+  ok, err = validate('tools.rustc', {
+    edition = { rustc.edition, 'string' },
+  })
+  if not ok then
+    return false, err
+  end
   ok, err = validate('tools', {
     executor = { tools.executor, { 'table', 'string' } },
     on_initialized = { tools.on_initialized, 'function', true },
