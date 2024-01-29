@@ -496,19 +496,20 @@ vim.keymap.set(
 	<b>Rustc Unpretty</b>
   </summary>
 
-  Opens a buffer with a textual representation of the MIR or others things
-  of the function containing the cursor.
-  Achieve an experience similar to Rust Playground.
+  Opens a buffer with a textual representation of the MIR or others things,
+  of the function closest to the cursor.
+  Achieves an experience similar to Rust Playground.
 
-  NOTE: the feature need [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
-  install rust parser and need nightly rustc.
+  NOTE: This currently requires a tree-sitter parser for Rust,
+  and a nightly compiler toolchain.
 
   ```vimscript
-  :RustLsp rustcUnpretty [hir|mir|...]
+  :Rustc unpretty [hir|mir|...]
   ```
   ```lua
-  vim.cmd.RustLsp { 'rustcUnpretty', 'hir' }
-  vim.cmd.RustLsp { 'rustcUnpretty', 'mir' }
+  vim.cmd.Rustc { 'unpretty', 'hir' }
+  vim.cmd.Rustc { 'unpretty', 'mir' }
+  -- ...
   ```
 </details>
 

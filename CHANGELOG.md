@@ -10,9 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `:RustLsp rustcUnpretty` command:
-  Use `rustc -Z unpretty=mir` to inspect mir and other things,
+- `:Rustc unpretty` command:
+  Use `rustc -Z unpretty=[mir|hir|...]` to inspect mir and other things,
   and achieve an experience similar to Rust Playground.
+  (currently requires a nightly compiler).
 - Config: `tools.rustc_unpretty` arguments for `rustc`.
 
 ## [4.0.3] - 2024-01-28
