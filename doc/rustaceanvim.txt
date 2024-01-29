@@ -53,6 +53,15 @@ It accepts the following subcommands:
               Defaults to `flyCheck run` if called without an argument.
  `logFile` - Open the rust-analyzer log file.
 
+The `:Rustc` command can be used to interact with rustc.
+It accepts the following subcommands:
+
+ `unpretty args[]` - Opens a buffer with a textual representation of the MIR or others things,
+                     of the function closest to the cursor.
+                     Achieves an experience similar to Rust Playground.
+                     NOTE: This currently requires a tree-sitter parser for Rust,
+                     and a nightly compiler toolchain.
+
 ==============================================================================
 plugin configuration                                       *rustaceanvim.config*
 
@@ -117,6 +126,7 @@ RustaceanToolsOpts                                          *RustaceanToolsOpts*
         {float_win_config?}                  (table)                                      Options applied to floating windows. See |api-win_config|.
         {create_graph?}                      (RustaceanCrateGraphConfig)                  Options for showing the crate graph based on graphviz and the dot
         {open_url?}                          (fun(url:string):nil)                        If set, overrides how to open URLs
+        {rustc?}                             (RustcOpts)                                  Options for `rustc`
 
 
 RustaceanHoverActionsOpts                            *RustaceanHoverActionsOpts*
@@ -150,6 +160,12 @@ RustaceanCrateGraphConfig                            *RustaceanCrateGraphConfig*
         {output?}                     (string)    Where to store the output. No output if unset. Relative path from `cwd`.
         {enabled_graphviz_backends?}  (string[])  Override the enabled graphviz backends list, used for input validation and autocompletion.
         {pipe?}                       (string)    Overide the pipe symbol in the shell command. Useful if using a shell that is not supported by this plugin.
+
+
+RustcOpts                                                            *RustcOpts*
+
+    Fields: ~
+        {edition}  (string)  The edition to use. See https://rustc-dev-guide.rust-lang.org/guides/editions.html. Default '2021'.
 
 
 RustaceanLspClientOpts                                  *RustaceanLspClientOpts*

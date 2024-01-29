@@ -184,9 +184,9 @@ local RustaceanDefaultConfig = {
     open_url = function(url)
       require('rustaceanvim.os').open_url(url)
     end,
-    ---settings for rustc -Z unpretty
+    ---settings for rustc
     ---@type table
-    rustc_unpretty = {
+    rustc = {
       ---@type string
       edition = '2021',
     },

@@ -8,6 +8,7 @@ local ts = vim.treesitter
 
 local rustc = 'rustc'
 
+-- TODO: See if these can be queried from rustc?
 M.available_unpretty = {
   'normal',
   'identified',
@@ -134,7 +135,7 @@ function M.rustc_unpretty(level)
   end
 
   compat.system(
-    { rustc, '--edition', config.tools.rustc_unpretty.edition, '-Z', 'unpretty=' .. level, '-' },
+    { rustc, '--edition', config.tools.rustc.edition, '-Z', 'unpretty=' .. level, '-' },
     { stdin = text },
     vim.schedule_wrap(handler)
   )
