@@ -63,6 +63,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field float_win_config? table Options applied to floating windows. See |api-win_config|.
 ---@field create_graph? RustaceanCrateGraphConfig Options for showing the crate graph based on graphviz and the dot
 ---@field open_url? fun(url:string):nil If set, overrides how to open URLs
+---@field rustc_unpretty? table Options for `rustcUnpretty`
 
 ---@class RustaceanHoverActionsOpts
 ---@field replace_builtin_hover? boolean Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions. Default: `true`
