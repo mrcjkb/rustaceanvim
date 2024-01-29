@@ -1,11 +1,19 @@
 local M = {}
 
-local function get_opts(query)
-  local opts = vim.lsp.util.make_position_params()
-  opts.query = query
-  opts.parseOnly = false
-  opts.selections = { vim.lsp.util.make_range_params().range }
-  return opts
+local ui = require('rustaceanvim.ui')
+
+---@param query string
+---@param is_range boolean
+local function get_opts(query, is_range)
+  local params = vim.lsp.util.make_position_params()
+  params.query = query
+  params.parseOnly = false
+  if is_range then
+    params.selections = { vim.print(ui.get_visual_selected_range()) }
+  else
+    params.selections = {}
+  end
+  return params
 end
 
 local function handler(err, result, ctx)
@@ -22,7 +30,9 @@ end
 
 local rl = require('rustaceanvim.rust_analyzer')
 
-function M.ssr(query)
+---@param query string | nil
+---@param is_range boolean
+function M.ssr(query, is_range)
   if not query then
     vim.ui.input({ prompt = 'Enter query: ' }, function(input)
       query = input
@@ -30,7 +40,7 @@ function M.ssr(query)
   end
 
   if query then
-    rl.buf_request(0, 'experimental/ssr', get_opts(query), handler)
+    rl.buf_request(0, 'experimental/ssr', get_opts(query, is_range), handler)
   end
 end
 

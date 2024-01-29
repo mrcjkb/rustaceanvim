@@ -119,6 +119,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   once the configurations have been loaded.
   Can be disabled by setting `vim.g.rustaceanvim.dap.autoload_configurations = false`.
 
+### Added
+
+- LSP: Support structural search and replace (SSR)
+  just for the selected range.
+
 ### Fixed
 
 - LSP: If inlay hints are enabled for a buffer, force Neovim

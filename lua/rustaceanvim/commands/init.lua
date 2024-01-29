@@ -83,9 +83,11 @@ local command_tbl = {
   parentModule = function(_)
     require('rustaceanvim.commands.parent_module')()
   end,
-  ssr = function(args)
+  ssr = function(args, opts)
+    ---@cast opts vim.api.keyset.user_command
+    local is_range = opts.range and opts.range > 0
     local query = args and #args > 0 and table.concat(args, ' ') or nil
-    require('rustaceanvim.commands.ssr')(query)
+    require('rustaceanvim.commands.ssr')(query, is_range)
   end,
   reloadWorkspace = function()
     require('rustaceanvim.commands.workspace_refresh')()
