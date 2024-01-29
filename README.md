@@ -68,6 +68,9 @@
   or [`codelldb`](https://github.com/vadimcn/codelldb))
   and [`nvim-dap`](https://github.com/mfussenegger/nvim-dap),
   required for debugging.
+- A tree-sitter parser for Rust (required for the `:Rustc unpretty` command).
+  Can be installed using [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter),
+  which also provides highlights, etc.
 
 ## Installation
 
