@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and achieve an experience similar to Rust Playground.
 - Config: `tools.rustc_unpretty` arguments for `rustc`.
 
+## [4.0.3] - 2024-01-28
+
+### Fixed
+
+- `renderDiagnostic`: Window closes immediately if `auto_focus`
+  is disabled [[#193](https://github.com/mrcjkb/rustaceanvim/issues/193)].
+- `explainError`/`renderDiagnostic`: Fall back to first
+  detected diagnostic if none is found close to the cursor.
+
 ## [4.0.2] - 2024-01-27
 
 ### Fixed

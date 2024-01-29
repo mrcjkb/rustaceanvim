@@ -96,6 +96,10 @@ function M.explain_error()
     local searched_all = pos_map[pos_id] ~= nil
   until diagnostic == nil or found or searched_all
   if not found then
+    -- Fall back to first diagnostic
+    diagnostic = diagnostics[1]
+    local pos = { diagnostic.lnum, diagnostic.col }
+    opts.cursor_position = pos
     return
   end
 
@@ -181,7 +185,9 @@ function M.render_diagnostic()
     local searched_all = pos_map[pos_id] ~= nil
   until diagnostic == nil or rendered_diagnostic ~= nil or searched_all
   if not rendered_diagnostic then
-    return
+    -- No diagnostics found. Fall back to first result from filter,
+    rendered_diagnostic = get_rendered_diagnostic(diagnostics[1])
+    ---@cast rendered_diagnostic string
   end
 
   -- Save position in the window's jumplist
@@ -194,22 +200,25 @@ function M.render_diagnostic()
   local float_preview_lines = vim.deepcopy(markdown_lines)
   table.insert(float_preview_lines, 1, '---')
   table.insert(float_preview_lines, 1, '1. Open in split')
-  close_hover()
-  local bufnr, winnr = vim.lsp.util.open_floating_preview(
-    float_preview_lines,
-    'markdown',
-    vim.tbl_extend('keep', config.tools.float_win_config, {
-      focus = false,
-      focusable = true,
-      focus_id = 'ra-render-diagnostic',
-      close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
-    })
-  )
-  _window_state.winnr = winnr
-  set_open_split_keymap(bufnr, winnr, markdown_lines)
-  if config.tools.float_win_config.auto_focus then
-    vim.api.nvim_set_current_win(winnr)
-  end
+  vim.schedule(function()
+    close_hover()
+    local bufnr, winnr = vim.lsp.util.open_floating_preview(
+      float_preview_lines,
+      'markdown',
+      vim.tbl_extend('keep', config.tools.float_win_config, {
+        focus = false,
+        focusable = true,
+        focus_id = 'ra-render-diagnostic',
+        close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
+      })
+    )
+    _window_state.float_winnr = winnr
+    set_close_keymaps(bufnr)
+    set_open_split_keymap(bufnr, winnr, markdown_lines)
+    if config.tools.float_win_config.auto_focus then
+      vim.api.nvim_set_current_win(winnr)
+    end
+  end)
 end
 
 return M
