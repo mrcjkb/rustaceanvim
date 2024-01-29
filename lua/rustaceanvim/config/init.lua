@@ -65,6 +65,11 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field open_url? fun(url:string):nil If set, overrides how to open URLs
 ---@field rustc? RustcOpts Options for `rustc`
 
+---@class RustaceanExecutor
+---@field execute_command fun(cmd:string, args:string[], cwd:string|nil)
+
+---@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux'
+
 ---@class RustaceanHoverActionsOpts
 ---@field replace_builtin_hover? boolean Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions. Default: `true`
 

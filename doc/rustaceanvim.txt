@@ -129,6 +129,18 @@ RustaceanToolsOpts                                          *RustaceanToolsOpts*
         {rustc?}                             (RustcOpts)                                  Options for `rustc`
 
 
+RustaceanExecutor                                            *RustaceanExecutor*
+
+    Fields: ~
+        {execute_command}  (fun(cmd:string,args:string[],cwd:string|nil))
+
+
+executor_alias                                                  *executor_alias*
+
+    Type: ~
+        "termopen"|"quickfix"|"toggleterm"|"vimux"
+
+
 RustaceanHoverActionsOpts                            *RustaceanHoverActionsOpts*
 
     Fields: ~
