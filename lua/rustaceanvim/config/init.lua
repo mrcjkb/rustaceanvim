@@ -55,7 +55,8 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field dap? RustaceanDapOpts Debug adapter options
 
 ---@class RustaceanToolsOpts
----@field executor? RustaceanExecutor | executor_alias
+---@field executor? RustaceanExecutor | executor_alias The executor to use for runnables/debuggables
+---@field test_executor? RustaceanExecutor | test_executor_alias The executor to use for runnables that are tests / testables
 ---@field on_initialized? fun(health:RustAnalyzerInitializedStatus) Function that is invoked when the LSP server has finished initializing
 ---@field reload_workspace_from_cargo_toml? boolean Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
 ---@field hover_actions? RustaceanHoverActionsOpts Options for hover actions
@@ -66,9 +67,14 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field rustc? RustcOpts Options for `rustc`
 
 ---@class RustaceanExecutor
----@field execute_command fun(cmd:string, args:string[], cwd:string|nil)
+---@field execute_command fun(cmd:string, args:string[], cwd:string|nil, opts?: RustaceanExecutorOpts)
+
+---@class RustaceanExecutorOpts
+---@field bufnr? integer The buffer from which the executor was invoked.
 
 ---@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux'
+
+---@alias test_executor_alias executor_alias | 'background'
 
 ---@class RustaceanHoverActionsOpts
 ---@field replace_builtin_hover? boolean Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions. Default: `true`

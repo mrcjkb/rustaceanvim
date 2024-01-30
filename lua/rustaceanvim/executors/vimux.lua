@@ -2,7 +2,7 @@ local shell = require('rustaceanvim.shell')
 
 ---@type RustaceanExecutor
 local M = {
-  execute_command = function(command, args, cwd)
+  execute_command = function(command, args, cwd, _)
     local commands = {}
     if cwd then
       table.insert(commands, shell.make_command_from_args('cd', { cwd }))

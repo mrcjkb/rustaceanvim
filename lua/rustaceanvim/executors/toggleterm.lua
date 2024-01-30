@@ -1,6 +1,6 @@
 ---@type RustaceanExecutor
 local M = {
-  execute_command = function(command, args, cwd)
+  execute_command = function(command, args, cwd, _)
     local ok, term = pcall(require, 'toggleterm.terminal')
     if not ok then
       vim.schedule(function()
