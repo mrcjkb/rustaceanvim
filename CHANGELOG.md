@@ -6,7 +6,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- LSP: Only advertise `rust-analyzer.debugSingle` command capability
+  if nvim-dap is installed.
+
 ## [4.2.0] - 2024-01-30
+
+### Added
 
 - Config: Separate `tools.executor` and `tools.test_executor` options.
   The `test_executor` is used for test runnables (e.g. `cargo test`).

@@ -194,14 +194,18 @@ M.start = function(bufnr)
   }
 
   -- rust analyzer goodies
+  local experimental_commands = {
+    'rust-analyzer.runSingle',
+    'rust-analyzer.showReferences',
+    'rust-analyzer.gotoLocation',
+    'editor.action.triggerParameterHints',
+  }
+  if package.loaded['dap'] ~= nil then
+    table.insert(experimental_commands, 'rust-analyzer.debugSingle')
+  end
+
   capabilities.experimental.commands = {
-    commands = {
-      'rust-analyzer.runSingle',
-      'rust-analyzer.debugSingle',
-      'rust-analyzer.showReferences',
-      'rust-analyzer.gotoLocation',
-      'editor.action.triggerParameterHints',
-    },
+    commands = experimental_commands,
   }
 
   lsp_start_config.capabilities = vim.tbl_deep_extend('force', capabilities, lsp_start_config.capabilities or {})
