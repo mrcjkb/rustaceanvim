@@ -50,7 +50,7 @@ M.execute_last_testable = function()
   if action then
     runnables.run_command(action.choice, action.runnables)
   else
-    runnables.runnables()
+    runnables.runnables { tests_only = true }
   end
 end
 

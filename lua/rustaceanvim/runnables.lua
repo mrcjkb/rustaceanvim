@@ -124,7 +124,7 @@ end
 ---@param opts? RunnablesOpts
 function M.runnables(executableArgsOverride, opts)
   ---@type RunnablesOpts
-  opts = vim.tbl_deep_extend('force', { tests_only = false }, opts)
+  opts = vim.tbl_deep_extend('force', { tests_only = false }, opts or {})
   vim.lsp.buf_request(0, 'experimental/runnables', get_params(), mk_handler(executableArgsOverride, opts))
 end
 
