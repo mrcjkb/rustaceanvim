@@ -3,7 +3,7 @@ local latest_buf_id = nil
 
 ---@type RustaceanExecutor
 local M = {
-  execute_command = function(command, args, cwd)
+  execute_command = function(command, args, cwd, _)
     local shell = require('rustaceanvim.shell')
     local ui = require('rustaceanvim.ui')
     local commands = {}

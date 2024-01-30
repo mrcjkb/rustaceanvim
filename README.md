@@ -166,7 +166,7 @@ vim.keymap.set(
   </summary>
   
   ```vimscript
-  :RustLsp[!] debuggables [args[]]
+  :RustLsp[!] debuggables [args[]]?
   ```
   ```lua
   vim.cmd.RustLsp('debuggables')
@@ -198,7 +198,7 @@ vim.keymap.set(
   </summary>
   
   ```vimscript
-  :RustLsp[!] runnables [args[]]
+  :RustLsp[!] runnables [args[]]?
   ```
   ```lua
   vim.cmd.RustLsp('runnables')
@@ -215,7 +215,34 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Expand Macros Recursively</b>
+	<b>Testables and failed test diagnostics</b>
+  </summary>
+
+  If you are using Neovim >= 0.10, you can set the `vim.g.rustaceanvim.tools.test_executor`
+  option to `'background'`, and this plugin will run tests in the background,
+  parse the results, and - if possible - display failed tests as diagnostics.
+
+  This is also possible in Neovim 0.9, but tests won't be run in the background,
+  and will block the UI.
+  
+  ```vimscript
+  :RustLsp[!] testables [args[]]?
+  ```
+  ```lua
+  vim.cmd.RustLsp('testables')
+  -- or, to run the previous testables:
+  vim.cmd.RustLsp { 'testables', bang = true }
+  -- or, to override the executable's args:
+  vim.cmd.RustLsp {'testables', 'arg1', 'arg2' }
+  ```
+
+  ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/b3639b7a-105e-49de-9bdc-9c88e8e508a2)
+
+</details>
+
+<details>
+  <summary>
+	<b>Expand macros recursively</b>
   </summary>
   
   ```vimscript
@@ -243,7 +270,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Move Item Up/Down</b>
+	<b>Move item up/down</b>
   </summary>
   
   ```vimscript
@@ -282,7 +309,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Hover Actions</b>
+	<b>Hover actions</b>
   </summary>
   
  Note: To activate hover actions, run the command twice.
@@ -306,7 +333,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Hover Range</b>
+	<b>Hover range</b>
   </summary>
 
   ```vimscript
@@ -386,7 +413,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Join Lines</b>
+	<b>Join lines</b>
   </summary>
 
   Join selected lines into one, 
@@ -406,7 +433,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Structural Search Replace</b>
+	<b>Structural search replace</b>
   </summary>
   
   ```vimscript
@@ -422,7 +449,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>View Crate Graph</b>
+	<b>View crate graph</b>
   </summary>
   
   ```vimscript
@@ -435,7 +462,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>View Syntax Tree</b>
+	<b>View syntax tree</b>
   </summary>
   
   ```vimscript
@@ -498,7 +525,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Rustc Unpretty</b>
+	<b>Rustc unpretty</b>
   </summary>
 
   Opens a buffer with a textual representation of the MIR or others things,

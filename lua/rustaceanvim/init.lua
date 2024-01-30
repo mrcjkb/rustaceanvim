@@ -25,6 +25,9 @@
 --- `debuggables [args[]]?` - Debug tests, executables, etc. (requires |nvim-dap|).
 ---                           `:RustLsp!` means run the last debuggable (ignores any args).
 ---                           `args[]` allows you to override the executable's arguments.
+--- `testables [args[]]?` - Run tests
+---                         `:RustLsp!` means run the last testable (ignores any args).
+---                         `args[]` allows you to override the executable's arguments.
 --- `expandMacro` - Expand macros recursively.
 --- `moveItem [up|down]` - Move items up or down.
 --- `hover [action|range]` - Hover actions, or hover over visually selected range.

@@ -94,6 +94,16 @@ local rustlsp_command_tbl = {
     end,
     bang = true,
   },
+  testables = {
+    impl = function(args, opts)
+      if opts.bang then
+        require('rustaceanvim.cached_commands').execute_last_testable()
+      else
+        require('rustaceanvim.runnables').runnables(args, { tests_only = true })
+      end
+    end,
+    bang = true,
+  },
   joinLines = {
     impl = function(_)
       require('rustaceanvim.commands.join_lines')()

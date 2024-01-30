@@ -68,12 +68,17 @@ function M.run_command(choice, runnables)
     return
   end
 
-  opts.executor.execute_command(command, args, cwd)
+  if #args > 0 and vim.startswith(args[1], 'test') then
+    opts.test_executor.execute_command(command, args, cwd, { bufnr = vim.api.nvim_get_current_buf() })
+  else
+    opts.executor.execute_command(command, args, cwd)
+  end
 end
 
 ---@param executableArgsOverride? string[]
+---@param opts RunnablesOpts
 ---@return fun(_, result: RARunnable[])
-local function mk_handler(executableArgsOverride)
+local function mk_handler(executableArgsOverride, opts)
   ---@param runnables RARunnable[]
   return function(_, runnables)
     if runnables == nil then
@@ -87,6 +92,14 @@ local function mk_handler(executableArgsOverride)
       end
       runnables = vim.tbl_values(unique_runnables)
     end
+    if opts.tests_only then
+      runnables = vim.tbl_filter(function(runnable)
+        ---@cast runnable RARunnable
+        local cargoArgs = runnable.args and runnable.args.cargoArgs or {}
+        return #cargoArgs > 0 and vim.startswith(cargoArgs[1], 'test')
+      end, runnables)
+    end
+
     -- get the choice from the user
     local options = get_options(runnables, executableArgsOverride)
     vim.ui.select(options, { prompt = 'Runnables', kind = 'rust-tools/runnables' }, function(_, choice)
@@ -94,15 +107,25 @@ local function mk_handler(executableArgsOverride)
       M.run_command(choice, runnables)
 
       local cached_commands = require('rustaceanvim.cached_commands')
-      cached_commands.set_last_runnable(choice, runnables)
+      if opts.tests_only then
+        cached_commands.set_last_testable(choice, runnables)
+      else
+        cached_commands.set_last_runnable(choice, runnables)
+      end
     end)
   end
 end
 
+---@class RunnablesOpts
+---@field tests_only? boolean
+
 ---Sends the request to rust-analyzer to get the runnables and handles them
 ---@param executableArgsOverride? string[]
-function M.runnables(executableArgsOverride)
-  vim.lsp.buf_request(0, 'experimental/runnables', get_params(), mk_handler(executableArgsOverride))
+---@param opts? RunnablesOpts
+function M.runnables(executableArgsOverride, opts)
+  ---@type RunnablesOpts
+  opts = vim.tbl_deep_extend('force', { tests_only = false }, opts)
+  vim.lsp.buf_request(0, 'experimental/runnables', get_params(), mk_handler(executableArgsOverride, opts))
 end
 
 return M

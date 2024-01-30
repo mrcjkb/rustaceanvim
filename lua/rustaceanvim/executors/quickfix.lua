@@ -21,7 +21,7 @@ end
 
 ---@type RustaceanExecutor
 local M = {
-  execute_command = function(command, args, cwd)
+  execute_command = function(command, args, cwd, _)
     -- open quickfix
     copen()
     -- go back to the previous window

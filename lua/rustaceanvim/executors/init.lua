@@ -4,13 +4,15 @@ local termopen = require('rustaceanvim.executors.termopen')
 local quickfix = require('rustaceanvim.executors.quickfix')
 local toggleterm = require('rustaceanvim.executors.toggleterm')
 local vimux = require('rustaceanvim.executors.vimux')
+local background = require('rustaceanvim.executors.background')
 
----@type { [executor_alias]: RustaceanExecutor }
+---@type { [test_executor_alias]: RustaceanExecutor }
 local M = {}
 
 M.termopen = termopen
 M.quickfix = quickfix
 M.toggleterm = toggleterm
 M.vimux = vimux
+M.background = background
 
 return M

@@ -1,6 +1,7 @@
 local types = require('rustaceanvim.types.internal')
 local compat = require('rustaceanvim.compat')
 local config = require('rustaceanvim.config')
+local executors = require('rustaceanvim.executors')
 
 local RustaceanConfig
 
@@ -36,7 +37,10 @@ local RustaceanDefaultConfig = {
     --- how to execute terminal commands
     --- options right now: termopen / quickfix / toggleterm / vimux
     ---@type RustaceanExecutor
-    executor = require('rustaceanvim.executors').termopen,
+    executor = executors.termopen,
+
+    ---@type RustaceanExecutor
+    test_executor = vim.fn.has('nvim-0.10.0') == 1 and executors.background or executors.termopen,
 
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
@@ -348,7 +352,7 @@ local RustaceanDefaultConfig = {
 local rustaceanvim = vim.g.rustaceanvim or {}
 local opts = type(rustaceanvim) == 'function' and rustaceanvim() or rustaceanvim
 if opts.tools and opts.tools.executor and type(opts.tools.executor) == 'string' then
-  opts.tools.executor = assert(require('rustaceanvim.executors')[opts.tools.executor], 'Unknown RustaceanExecutor')
+  opts.tools.executor = assert(executors[opts.tools.executor], 'Unknown RustaceanExecutor')
 end
 
 ---@type RustaceanConfig
