@@ -5,6 +5,7 @@
       "plugins": [
         "nvim-dap",
         "toggleterm.nvim",
+        "neotest",
       ]
     }
   },
