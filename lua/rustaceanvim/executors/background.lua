@@ -10,52 +10,8 @@ end
 ---@diagnostic disable-next-line: missing-fields
 local M = {}
 
----@package
----@param file_name string
----@param output string
----@return vim.Diagnostic[]
----@diagnostic disable-next-line: inject-field
-M.parse_diagnostics = function(file_name, output)
-  output = output:gsub('\r\n', '\n')
-  local lines = vim.split(output, '\n')
-  ---@type vim.Diagnostic[]
-  local diagnostics = {}
-  for i, line in ipairs(lines) do
-    local message = ''
-    local file, lnum, col = line:match("thread '[^']+' panicked at ([^:]+):(%d+):(%d+):")
-    if lnum and col and message and vim.endswith(file_name, file) then
-      local next_i = i + 1
-      while #lines >= next_i and lines[next_i] ~= '' do
-        message = message .. lines[next_i] .. '\n'
-        next_i = next_i + 1
-      end
-      local diagnostic = {
-        lnum = tonumber(lnum) - 1,
-        col = tonumber(col) or 0,
-        message = message,
-        source = 'rustaceanvim',
-        severity = vim.diagnostic.severity.ERROR,
-      }
-      table.insert(diagnostics, diagnostic)
-    end
-  end
-  if #diagnostics == 0 then
-    --- Fall back to old format
-    for message, file, lnum, col in output:gmatch("thread '[^']+' panicked at '([^']+)', ([^:]+):(%d+):(%d+)") do
-      if vim.endswith(file_name, file) then
-        local diagnostic = {
-          lnum = tonumber(lnum) - 1,
-          col = tonumber(col) or 0,
-          message = message,
-          source = 'rustaceanvim',
-          severity = vim.diagnostic.severity.ERROR,
-        }
-        table.insert(diagnostics, diagnostic)
-      end
-    end
-  end
-  return diagnostics
-end
+---@class rustaceanvim.Diagnostic: vim.Diagnostic
+---@field test_id string
 
 M.execute_command = function(command, args, cwd, opts)
   ---@type RustaceanExecutorOpts
@@ -83,7 +39,7 @@ M.execute_command = function(command, args, cwd, opts)
       return
     end
     local output = (sc.stderr or '') .. '\n' .. (sc.stdout or '')
-    local diagnostics = M.parse_diagnostics(fname, output)
+    local diagnostics = require('rustaceanvim.test').parse_diagnostics(fname, output)
     local summary = get_test_summary(sc.stdout or '')
     vim.schedule(function()
       vim.diagnostic.set(diag_namespace, opts.bufnr, diagnostics)

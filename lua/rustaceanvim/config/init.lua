@@ -72,7 +72,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@class RustaceanExecutorOpts
 ---@field bufnr? integer The buffer from which the executor was invoked.
 
----@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux'
+---@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux' | 'neotest'
 
 ---@alias test_executor_alias executor_alias | 'background'
 

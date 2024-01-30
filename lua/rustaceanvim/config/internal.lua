@@ -29,6 +29,18 @@ local function is_lldb_adapter(adapter)
   return adapter.type == 'executable'
 end
 
+---@return RustaceanExecutor
+local function get_test_executor()
+  if package.loaded['rustaceanvim.neotest'] ~= nil then
+    -- neotest has been set up with rustaceanvim as an adapter
+    return executors.neotest
+  elseif vim.fn.has('nvim-0.10.0') == 1 then
+    return executors.background
+  else
+    return executors.termopen
+  end
+end
+
 ---@class RustaceanConfig
 local RustaceanDefaultConfig = {
   ---@class RustaceanToolsConfig
@@ -40,7 +52,7 @@ local RustaceanDefaultConfig = {
     executor = executors.termopen,
 
     ---@type RustaceanExecutor
-    test_executor = vim.fn.has('nvim-0.10.0') == 1 and executors.background or executors.termopen,
+    test_executor = get_test_executor(),
 
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"

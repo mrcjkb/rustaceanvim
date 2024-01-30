@@ -11,6 +11,32 @@ M.get_clients = vim.lsp.get_clients or vim.lsp.get_active_clients
 
 M.uv = vim.uv or vim.loop
 
+--- @enum vim.diagnostic.Severity
+M.severity = {
+  ERROR = 1,
+  WARN = 2,
+  INFO = 3,
+  HINT = 4,
+  [1] = 'ERROR',
+  [2] = 'WARN',
+  [3] = 'INFO',
+  [4] = 'HINT',
+}
+
+--- @class vim.Diagnostic
+--- @field bufnr? integer
+--- @field lnum integer 0-indexed
+--- @field end_lnum? integer 0-indexed
+--- @field col integer 0-indexed
+--- @field end_col? integer 0-indexed
+--- @field severity? vim.diagnostic.Severity
+--- @field message string
+--- @field source? string
+--- @field code? string
+--- @field _tags? { deprecated: boolean, unnecessary: boolean}
+--- @field user_data? any arbitrary data plugins can add
+--- @field namespace? integer
+
 --- @class vim.SystemCompleted
 --- @field code integer
 --- @field signal integer

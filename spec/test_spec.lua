@@ -1,5 +1,5 @@
 describe('Parse test results', function()
-  local test_executor = require('rustaceanvim.executors.background')
+  local test = require('rustaceanvim.test')
   it('New output', function()
     local fixture = [[
 running 1 test
@@ -18,7 +18,7 @@ Location:
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ]]
     local fname = 'rocks-lib/src/rocks/dependency.rs'
-    local diagnostics = test_executor.parse_diagnostics(fname, fixture)
+    local diagnostics = test.parse_diagnostics(fname, fixture)
     local expected = {
       {
         lnum = 85,
@@ -30,6 +30,7 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ]],
         severity = vim.diagnostic.severity.ERROR,
         source = 'rustaceanvim',
+        test_id = 'rocks::dependency::tests::parse_dependency',
       },
     }
     assert.are.same(expected, diagnostics)
@@ -46,7 +47,7 @@ thread 'tests::failed_math' panicked at 'assertion failed: `(left == right)`
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ]]
     local fname = 'src/main.rs'
-    local diagnostics = test_executor.parse_diagnostics(fname, fixture)
+    local diagnostics = test.parse_diagnostics(fname, fixture)
     local expected = {
       {
         lnum = 15,
@@ -54,6 +55,7 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
         message = 'assertion failed: `(left == right)`\n left: `2`,\n right: `3`',
         severity = vim.diagnostic.severity.ERROR,
         source = 'rustaceanvim',
+        test_id = 'tests::failed_math',
       },
     }
     assert.are.same(expected, diagnostics)

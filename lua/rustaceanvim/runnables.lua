@@ -13,6 +13,11 @@ end
 ---@class RARunnable
 ---@field args RARunnableArgs
 ---@field label string
+---@field location? RARunnableLocation
+
+---@class RARunnableLocation
+---@field targetRange lsp.Range
+---@field targetSelectionRange lsp.Range
 
 ---@class RARunnableArgs
 ---@field workspaceRoot string
@@ -35,13 +40,12 @@ end
 
 ---@alias CargoCmd 'cargo'
 
----@param choice integer
----@param runnables RARunnable[]
----@return CargoCmd command build command
+---@param runnable RARunnable
+---@return string executable
 ---@return string[] args
----@return string|nil dir
-local function getCommand(choice, runnables)
-  local args = runnables[choice].args
+---@return string | nil dir
+function M.get_command(runnable)
+  local args = runnable.args
 
   local dir = args.workspaceRoot
 
@@ -51,6 +55,15 @@ local function getCommand(choice, runnables)
   ret = vim.list_extend(ret, args.executableArgs or {})
 
   return 'cargo', ret, dir
+end
+
+---@param choice integer
+---@param runnables RARunnable[]
+---@return CargoCmd command build command
+---@return string[] args
+---@return string|nil dir
+local function getCommand(choice, runnables)
+  return M.get_command(runnables[choice])
 end
 
 ---@param choice integer
@@ -69,7 +82,10 @@ function M.run_command(choice, runnables)
   end
 
   if #args > 0 and vim.startswith(args[1], 'test') then
-    opts.test_executor.execute_command(command, args, cwd, { bufnr = vim.api.nvim_get_current_buf() })
+    opts.test_executor.execute_command(command, args, cwd, {
+      bufnr = vim.api.nvim_get_current_buf(),
+      runnable = runnables[choice],
+    })
   else
     opts.executor.execute_command(command, args, cwd)
   end
