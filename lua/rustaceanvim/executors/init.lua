@@ -5,6 +5,7 @@ local quickfix = require('rustaceanvim.executors.quickfix')
 local toggleterm = require('rustaceanvim.executors.toggleterm')
 local vimux = require('rustaceanvim.executors.vimux')
 local background = require('rustaceanvim.executors.background')
+local neotest = require('rustaceanvim.executors.neotest')
 
 ---@type { [test_executor_alias]: RustaceanExecutor }
 local M = {}
@@ -14,5 +15,6 @@ M.quickfix = quickfix
 M.toggleterm = toggleterm
 M.vimux = vimux
 M.background = background
+M.neotest = neotest
 
 return M
