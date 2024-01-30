@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   if nvim-dap is installed.
 - LSP: `nil` error if running `:RustLsp! testables` and there is no
   previous testable.
+- LSP: Update previous testables cache if executing a `rust-analyzer.runSingle`
+  command that is a test.
 
 ## [4.2.0] - 2024-01-30
 

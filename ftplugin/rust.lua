@@ -12,8 +12,15 @@ if not vim.g.did_rustaceanvim_initialize then
   vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
     local runnables = require('rustaceanvim.runnables')
     local cached_commands = require('rustaceanvim.cached_commands')
-    cached_commands.set_last_runnable(1, command.arguments)
-    runnables.run_command(1, command.arguments)
+    ---@type RARunnable[]
+    local ra_runnables = command.arguments
+    local runnable = ra_runnables[1]
+    local cargo_args = runnable.args.cargoArgs
+    if #cargo_args > 0 and vim.startswith(cargo_args[1], 'test') then
+      cached_commands.set_last_testable(1, ra_runnables)
+    end
+    cached_commands.set_last_runnable(1, ra_runnables)
+    runnables.run_command(1, ra_runnables)
   end
 
   vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
