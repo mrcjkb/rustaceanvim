@@ -80,7 +80,15 @@
                   runtime.version = "LuaJIT";
                   Lua = {
                     workspace = {
-                      library = rtp;
+                      library =
+                        rtp
+                        ++ (with pkgs.vimPlugins; [
+                          "${nvim-dap}/lua"
+                          "${toggleterm-nvim}/lua"
+                          "${neotest}/lua"
+                          "\${3rd}/busted/library"
+                          "\${3rd}/luassert/library"
+                        ]);
                       checkThirdParty = false;
                       ignoreDir = [
                         ".git"
@@ -89,7 +97,7 @@
                         "result"
                         "nix"
                         "doc"
-                        "spec" # FIXME: Add busted library
+                        "spec" # FIXME: busted library
                       ];
                     };
                     diagnostics = {
@@ -106,8 +114,6 @@
           rtp = [
             "${pkgs.neovim}/share/nvim/runtime/lua"
             "${pkgs.neodev-plugin}/types/stable"
-            "\${3rd}/busted/library"
-            "\${3rd}/luassert/library"
           ];
           disabled-diagnostics = [
             "undefined-doc-name"
@@ -120,8 +126,6 @@
           rtp = [
             "${pkgs.neovim-nightly}/share/nvim/runtime/lua"
             "${pkgs.neodev-plugin}/types/nightly"
-            "\${3rd}/busted/library"
-            "\${3rd}/luassert/library"
           ];
         };
 
