@@ -130,6 +130,10 @@ local function check_for_conflicts()
       return
     end
   end
+  if package.loaded['rustaceanvim.neotest'] ~= nil and package.loaded['neotest-rust'] ~= nil then
+    error('rustaceanvim.neotest and neotest-rust are both loaded. This is likely a conflict.')
+    return
+  end
   ok('No conflicting plugins detected.')
 end
 
