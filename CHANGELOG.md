@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   DAP strategy. No extra configuration needed!
 - `:RustLsp testables`: Prettier selection options.
 
+### Fixes
+
+- DAP(`codelldb`): Redirect `stdio` to a temp file.
+
 ## [4.3.0] - 2024-01-31
 
 ### Changed

@@ -3,7 +3,6 @@
 local lib = require('neotest.lib')
 local nio = require('nio')
 local trans = require('rustaceanvim.neotest.trans')
-local async = require('neotest.async')
 
 ---@type neotest.Adapter
 local NeotestAdapter = { name = 'rustaceanvim' }
@@ -176,14 +175,6 @@ function NeotestAdapter.build_spec(run_args)
       lib.notify(strategy, vim.log.levels.ERROR)
     end
     ---@cast strategy DapClientConfig
-    local types = require('rustaceanvim.types.internal')
-    local config = require('rustaceanvim.config.internal')
-    local adapter = types.evaluate(config.dap.adapter)
-    --- @cast adapter DapExecutableConfig | DapServerConfig
-    local is_codelldb = adapter.type == 'server'
-    if is_codelldb then
-      strategy['stdio'] = { nil, async.fn.tempname() }
-    end
     ---@type rustaceanvim.neotest.RunSpec
     local run_spec = {
       cwd = cwd,
