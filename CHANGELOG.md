@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   buffer to which the LSP client is attached.
   If you do so, `tools.test_executor` will default to a new `'neotest'`
   executor, which will use neotest to run `testables` or `runnables` that are tests.
+- `:RustLsp testables`: Prettier selection options.
 
 ## [4.3.0] - 2024-01-31
 
