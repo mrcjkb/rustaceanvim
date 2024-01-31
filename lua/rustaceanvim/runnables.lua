@@ -25,13 +25,33 @@ end
 ---@field cargoExtraArgs string[]
 ---@field executableArgs string[]
 
+---@param option string
+---@return string
+local function prettify_test_option(option)
+  for _, prefix in pairs { 'test-mod ', 'test ', 'cargo test -p ' } do
+    if vim.startswith(option, prefix) then
+      return option:sub(prefix:len() + 1, option:len()):gsub('%-%-all%-targets', '(all targets)') or option
+    end
+  end
+  return option:gsub('%-%-all%-targets', '(all targets)') or option
+end
+
 ---@param result RARunnable[]
 ---@param executableArgsOverride? string[]
-local function get_options(result, executableArgsOverride)
+---@param opts RunnablesOpts
+---@return string[]
+local function get_options(result, executableArgsOverride, opts)
   local option_strings = {}
 
   for _, runnable in ipairs(result) do
-    local str = runnable.label .. (executableArgsOverride and ' -- ' .. table.concat(executableArgsOverride, ' ') or '')
+    local str = runnable.label
+      .. (
+        executableArgsOverride and #executableArgsOverride > 0 and ' -- ' .. table.concat(executableArgsOverride, ' ')
+        or ''
+      )
+    if opts.tests_only then
+      str = prettify_test_option(str)
+    end
     table.insert(option_strings, str)
   end
 
@@ -117,7 +137,7 @@ local function mk_handler(executableArgsOverride, opts)
     end
 
     -- get the choice from the user
-    local options = get_options(runnables, executableArgsOverride)
+    local options = get_options(runnables, executableArgsOverride, opts)
     vim.ui.select(options, { prompt = 'Runnables', kind = 'rust-tools/runnables' }, function(_, choice)
       ---@cast choice integer
       M.run_command(choice, runnables)
