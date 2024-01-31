@@ -11,31 +11,47 @@ end
 local M = {}
 
 ---@package
+---@param file_name string
 ---@param output string
 ---@return vim.Diagnostic[]
 ---@diagnostic disable-next-line: inject-field
-M.parse_diagnostics = function(output)
+M.parse_diagnostics = function(file_name, output)
+  output = output:gsub('\r\n', '\n')
+  local lines = vim.split(output, '\n')
   ---@type vim.Diagnostic[]
   local diagnostics = {}
-  for line, col, message in output:gmatch("thread '[^']+' panicked at [^:]+:(%d+):(%d+):\n([^\n]*)") do
-    diagnostics[#diagnostics + 1] = {
-      lnum = tonumber(line) - 1,
-      col = tonumber(col) or 0,
-      message = message,
-      source = 'rustaceanvim',
-      severity = vim.diagnostic.severity.ERROR,
-    }
-  end
-  if #diagnostics == 0 then
-    --- Fall back to old format
-    for message, line, col in output:gmatch("thread '[^']+' panicked at '([^']+)', [^:]+:(%d+):(%d+)") do
-      diagnostics[#diagnostics + 1] = {
-        lnum = tonumber(line) - 1,
+  for i, line in ipairs(lines) do
+    local message = ''
+    local file, lnum, col = line:match("thread '[^']+' panicked at ([^:]+):(%d+):(%d+):")
+    if lnum and col and message and vim.endswith(file_name, file) then
+      local next_i = i + 1
+      while #lines >= next_i and lines[next_i] ~= '' do
+        message = message .. lines[next_i] .. '\n'
+        next_i = next_i + 1
+      end
+      local diagnostic = {
+        lnum = tonumber(lnum) - 1,
         col = tonumber(col) or 0,
         message = message,
         source = 'rustaceanvim',
         severity = vim.diagnostic.severity.ERROR,
       }
+      table.insert(diagnostics, diagnostic)
+    end
+  end
+  if #diagnostics == 0 then
+    --- Fall back to old format
+    for message, file, lnum, col in output:gmatch("thread '[^']+' panicked at '([^']+)', ([^:]+):(%d+):(%d+)") do
+      if vim.endswith(file_name, file) then
+        local diagnostic = {
+          lnum = tonumber(lnum) - 1,
+          col = tonumber(col) or 0,
+          message = message,
+          source = 'rustaceanvim',
+          severity = vim.diagnostic.severity.ERROR,
+        }
+        table.insert(diagnostics, diagnostic)
+      end
     end
   end
   return diagnostics
@@ -56,6 +72,7 @@ M.execute_command = function(command, args, cwd, opts)
   local notify_prefix = (is_single_test and 'test ' or 'tests ')
   local compat = require('rustaceanvim.compat')
   local cmd = vim.list_extend({ command }, args)
+  local fname = vim.api.nvim_buf_get_name(opts.bufnr)
   compat.system(cmd, { cwd = cwd }, function(sc)
     ---@cast sc vim.SystemCompleted
     if sc.code == 0 then
@@ -65,8 +82,8 @@ M.execute_command = function(command, args, cwd, opts)
       end)
       return
     end
-    local output = sc.stderr or ''
-    local diagnostics = M.parse_diagnostics(output)
+    local output = (sc.stderr or '') .. '\n' .. (sc.stdout or '')
+    local diagnostics = M.parse_diagnostics(fname, output)
     local summary = get_test_summary(sc.stdout or '')
     vim.schedule(function()
       vim.diagnostic.set(diag_namespace, opts.bufnr, diagnostics)
