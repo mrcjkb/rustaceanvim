@@ -329,6 +329,11 @@ function M.start(args, verbose, callback, on_error)
       local final_config = local_config ~= false and local_config or dap_config
       --- @cast final_config DapClientConfig
 
+      if is_codelldb then
+        -- https://github.com/vadimcn/codelldb/blob/v1.9.0/MANUAL.md#stdio-redirection
+        final_config['stdio'] = { nil, vim.fn.tempname() }
+      end
+
       if dap.adapters[final_config.type] == nil then
         on_error('No adapter exists named "' .. final_config.type .. '". See ":h dap-adapter" for more information')
         return
