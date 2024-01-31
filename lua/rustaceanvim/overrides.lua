@@ -15,6 +15,27 @@ function M.snippet_text_edits_to_text_edits(spe)
   end
 end
 
+---Transforms the args to cargo-nextest args if it is detected.
+---Mutates command!
+---@param args string[]
+function M.try_nextest_transform(args)
+  if vim.fn.executable('cargo-nextest') ~= 1 then
+    return args
+  end
+  if args[1] == 'test' then
+    args[1] = 'run'
+    table.insert(args, 1, 'nextest')
+  end
+  if args[#args] == '--nocapture' then
+    table.insert(args, 3, '--nocapture')
+    table.remove(args, #args)
+  end
+  if args[#args] == '--exact' then
+    table.remove(args, #args)
+  end
+  return args
+end
+
 -- sanitize_command_for_debugging substitutes the command arguments so it can be used to run a
 -- debugger.
 --

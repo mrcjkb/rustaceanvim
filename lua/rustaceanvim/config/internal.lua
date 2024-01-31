@@ -54,6 +54,9 @@ local RustaceanDefaultConfig = {
     ---@type RustaceanExecutor
     test_executor = get_test_executor(),
 
+    ---@type boolean
+    enable_nextest = vim.fn.executable('cargo-nextest') == 1,
+
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
     ---@type fun(health:RustAnalyzerInitializedStatus) | nil
@@ -201,7 +204,7 @@ local RustaceanDefaultConfig = {
       require('rustaceanvim.os').open_url(url)
     end,
     ---settings for rustc
-    ---@type table
+    ---@class RustaceanRustcConfig
     rustc = {
       ---@type string
       edition = '2021',
