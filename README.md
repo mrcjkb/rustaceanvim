@@ -242,6 +242,43 @@ vim.keymap.set(
 
 <details>
   <summary>
+	<b>Neotest integration</b>
+  </summary>
+
+  This plugin provides a [neotest](https://github.com/nvim-neotest/neotest) adapter,
+  which you can add to neotest as follows:
+  
+  ```lua
+  require('neotest').setup {
+      -- ...,
+      adapters = {
+        -- ...,
+        require('rustaceanvim.neotest')
+      },
+  }
+  ```
+
+  Note: If you use rustaceanvim's neotest adapter,
+  do not add [neotest-rust](https://github.com/rouge8/neotest-rust).
+
+  Here is a comparison between rustaceanvim's adapter and neotest-rust:
+
+  |  | rustaceanvim | neotest-rust |
+  |:--|:--|:--|
+  | Test discovery | rust-analyzer (LSP) | tree-sitter |
+  | Command construction | rust-analyzer (LSP) | tree-sitter |
+  | DAP strategy | Automatic DAP detection (reuses `debuggables`); overridable with `vim.g.rustaceanvim.dap` | Defaults to `codelldb`; manual configuration |
+  | Test runner | `cargo` or `cargo-nextest`, if detected | `cargo-nextest` |
+
+  If you configure rustaceanvim to use neotest, the `tools.test_executor`
+  will default to using neotest for `testables` and `runnables` that are tests.
+
+  ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/b734fdb6-3c8a-492b-9b39-bb238d7cd7b1)
+
+</details>
+
+<details>
+  <summary>
 	<b>Expand macros recursively</b>
   </summary>
   
