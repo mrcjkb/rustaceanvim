@@ -1,3 +1,30 @@
+---@mod rustaceanvim.neotest
+---
+---@brief [[
+---
+---A |neotest| adapter for rust, powered by rustaceanvim.
+---
+---If you add this to neotest:
+---
+--->
+---require('neotest').setup {
+---    -- ...,
+---    adapters = {
+---      -- ...,
+---      require('rustaceanvim.neotest')
+---    },
+---}
+---<
+---
+---this plugin will configure itself to use |neotest|
+---as a test executor, and |neotest| will use rust-analyzer
+---for test discovery and command construction.
+---
+---Note: If you use this adapter, do not add the neotest-rust adapter
+---(another plugin).
+---
+---@brief ]]
+
 ---@diagnostic disable: duplicate-set-field
 
 local lib = require('neotest.lib')
