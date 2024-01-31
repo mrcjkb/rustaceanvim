@@ -1,4 +1,5 @@
 local config = require('rustaceanvim.config.internal')
+local overrides = require('rustaceanvim.overrides')
 
 local M = {}
 
@@ -73,6 +74,7 @@ function M.get_command(runnable)
   ret = vim.list_extend(ret, args.cargoExtraArgs or {})
   table.insert(ret, '--')
   ret = vim.list_extend(ret, args.executableArgs or {})
+  ret = overrides.try_nextest_transform(ret)
 
   return 'cargo', ret, dir
 end

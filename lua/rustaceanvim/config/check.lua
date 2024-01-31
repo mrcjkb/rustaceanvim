@@ -74,6 +74,8 @@ function M.validate(cfg)
   end
   ok, err = validate('tools', {
     executor = { tools.executor, { 'table', 'string' } },
+    test_executor = { tools.test_executor, { 'table', 'string' } },
+    enable_nextest = { tools.enable_nextest, 'boolean' },
     on_initialized = { tools.on_initialized, 'function', true },
     reload_workspace_from_cargo_toml = { tools.reload_workspace_from_cargo_toml, 'boolean' },
     open_url = { tools.open_url, 'function' },
