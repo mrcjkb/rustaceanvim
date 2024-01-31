@@ -3,6 +3,7 @@
 local lib = require('neotest.lib')
 local nio = require('nio')
 local trans = require('rustaceanvim.neotest.trans')
+local async = require('neotest.async')
 
 ---@type neotest.Adapter
 local NeotestAdapter = { name = 'rustaceanvim' }
@@ -143,28 +144,60 @@ function NeotestAdapter.build_spec(run_args)
   if not tree then
     return
   end
-  local pos = run_args.tree
-  local data = pos:data()
-  ---@cast data rustaceanvim.neotest.Position
-  if not vim.tbl_contains(supported_types, data.type) then
+  local pos = tree:data()
+  ---@cast pos rustaceanvim.neotest.Position
+  if not vim.tbl_contains(supported_types, pos.type) then
     return
   end
-  local runnable = data.runnable
+  local runnable = pos.runnable
   if not runnable then
     return
   end
+  local context = {
+    file = pos.path,
+    pos_id = pos.id,
+    type = pos.type,
+    tree = tree,
+  }
   local exe, args, cwd = require('rustaceanvim.runnables').get_command(runnable)
+  if run_args.strategy == 'dap' then
+    local dap = require('rustaceanvim.dap')
+    local overrides = require('rustaceanvim.overrides')
+    overrides.sanitize_command_for_debugging(runnable.args.cargoArgs)
+    local future = nio.control.future()
+    dap.start(runnable.args, false, function(strategy)
+      future.set(strategy)
+    end, function(err)
+      future.set_error(err)
+    end)
+    local ok, strategy = pcall(future.wait)
+    if not ok then
+      ---@cast strategy string
+      lib.notify(strategy, vim.log.levels.ERROR)
+    end
+    ---@cast strategy DapClientConfig
+    local types = require('rustaceanvim.types.internal')
+    local config = require('rustaceanvim.config.internal')
+    local adapter = types.evaluate(config.dap.adapter)
+    --- @cast adapter DapExecutableConfig | DapServerConfig
+    local is_codelldb = adapter.type == 'server'
+    if is_codelldb then
+      strategy['stdio'] = { nil, async.fn.tempname() }
+    end
+    ---@type rustaceanvim.neotest.RunSpec
+    local run_spec = {
+      cwd = cwd,
+      context = context,
+      strategy = strategy,
+    }
+    return run_spec
+  end
   ---@type rustaceanvim.neotest.RunSpec
   ---@diagnostic disable-next-line: missing-fields
   local run_spec = {
     command = vim.list_extend({ exe }, args),
     cwd = cwd,
-    context = {
-      file = data.path,
-      pos_id = data.id,
-      type = data.type,
-      tree = pos,
-    },
+    context = context,
   }
   return run_spec
 end

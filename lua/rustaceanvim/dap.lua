@@ -3,6 +3,7 @@ local compat = require('rustaceanvim.compat')
 local shell = require('rustaceanvim.shell')
 local types = require('rustaceanvim.types.internal')
 
+---@param err string
 local function scheduled_error(err)
   vim.schedule(function()
     vim.notify(err, vim.log.levels.ERROR)
@@ -12,9 +13,10 @@ end
 local ok, _ = pcall(require, 'dap')
 if not ok then
   return {
-    ---@param _ RADebuggableArgs
-    start = function(_)
-      scheduled_error('nvim-dap not found.')
+    ---@param on_error fun(err:string)
+    start = function(_, _, _, on_error)
+      on_error = on_error or scheduled_error
+      on_error('nvim-dap not found.')
     end,
   }
 end
@@ -212,7 +214,7 @@ local function add_dynamic_library_paths(adapter, workspace_root)
 end
 
 ---@param adapter DapExecutableConfig | DapServerConfig
----@param args RADebuggableArgs
+---@param args RARunnableArgs
 local function handle_configured_options(adapter, args)
   local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
   ---@cast is_generate_source_map_enabled boolean
@@ -233,12 +235,15 @@ local function handle_configured_options(adapter, args)
   end
 end
 
----@param args RADebuggableArgs
+---@param args RARunnableArgs
 ---@param verbose? boolean
 ---@param callback? fun(config: DapClientConfig)
-function M.start(args, verbose, callback)
-  if verbose == nil then
-    verbose = true
+---@param on_error? fun(err: string)
+function M.start(args, verbose, callback, on_error)
+  if verbose then
+    on_error = on_error or scheduled_error
+  else
+    on_error = on_error or function() end
   end
   if type(callback) ~= 'function' then
     callback = dap.run
@@ -246,9 +251,7 @@ function M.start(args, verbose, callback)
   local adapter = types.evaluate(config.dap.adapter)
   --- @cast adapter DapExecutableConfig | DapServerConfig | disable
   if adapter == false then
-    if verbose then
-      vim.notify('Debug adapter is disabled.', vim.log.levels.ERROR)
-    end
+    on_error('Debug adapter is disabled.')
     return
   end
 
@@ -263,12 +266,10 @@ function M.start(args, verbose, callback)
     ---@cast sc vim.SystemCompleted
     local output = sc.stdout
     if sc.code ~= 0 or output == nil then
-      if verbose then
-        scheduled_error(
-          'An error occurred while compiling. Please fix all compilation issues and try again'
-            .. (sc.stderr and ': ' .. sc.stderr or '.')
-        )
-      end
+      on_error(
+        'An error occurred while compiling. Please fix all compilation issues and try again'
+          .. (sc.stderr and ': ' .. sc.stderr or '.')
+      )
       return
     end
     vim.schedule(function()
@@ -301,15 +302,11 @@ function M.start(args, verbose, callback)
       end
       -- only 1 executable is allowed for debugging - error out if zero or many were found
       if #executables <= 0 then
-        if verbose then
-          scheduled_error('No compilation artifacts found.')
-        end
+        on_error('No compilation artifacts found.')
         return
       end
       if #executables > 1 then
-        if verbose then
-          scheduled_error('Multiple compilation artifacts are not supported.')
-        end
+        on_error('Multiple compilation artifacts are not supported.')
         return
       end
 
@@ -333,11 +330,7 @@ function M.start(args, verbose, callback)
       --- @cast final_config DapClientConfig
 
       if dap.adapters[final_config.type] == nil then
-        if verbose then
-          scheduled_error(
-            'No adapter exists named "' .. final_config.type .. '". See ":h dap-adapter" for more information'
-          )
-        end
+        on_error('No adapter exists named "' .. final_config.type .. '". See ":h dap-adapter" for more information')
         return
       end
 

@@ -11,13 +11,7 @@ end
 ---@type { [string]: boolean? } Used to prevent this plugin from adding the same configuration twice
 local _dap_configuration_added = {}
 
----@class RADebuggableArgs
----@field cargoArgs string[]
----@field cargoExtraArgs string[]
----@field executableArgs string[]
----@field workspaceRoot string | nil
-
----@param args RADebuggableArgs
+---@param args RARunnableArgs
 ---@return string
 local function build_label(args)
   local ret = ''
@@ -38,10 +32,7 @@ local function build_label(args)
   return ret
 end
 
----@class RADebuggable
----@field args RADebuggableArgs
-
----@param result RADebuggable[]
+---@param result RARunnable[]
 ---@return string[] option_strings
 local function get_options(result)
   ---@type string[]
@@ -56,7 +47,7 @@ local function get_options(result)
   return option_strings
 end
 
----@param args RADebuggableArgs
+---@param args RARunnableArgs
 ---@return boolean
 local function is_valid_test(args)
   local is_not_cargo_check = args.cargoArgs[1] ~= 'check'
@@ -69,11 +60,11 @@ end
 -- This function also makes it so that the debuggable commands are more
 -- debugging friendly. For example, we move cargo run to cargo build, and cargo
 -- test to cargo test --no-run.
----@param result RADebuggable[]
+---@param result RARunnable[]
 local function sanitize_results_for_debugging(result)
-  ---@type RADebuggable[]
+  ---@type RARunnable[]
   local ret = vim.tbl_filter(function(value)
-    ---@cast value RADebuggable
+    ---@cast value RARunnable
     return is_valid_test(value.args)
   end, result or {})
 
@@ -85,7 +76,7 @@ local function sanitize_results_for_debugging(result)
   return ret
 end
 
----@param debuggables RADebuggable[]
+---@param debuggables RARunnable[]
 ---@param executableArgsOverride? string[]
 local function ui_select_debuggable(debuggables, executableArgsOverride)
   if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
@@ -116,7 +107,7 @@ local function ui_select_debuggable(debuggables, executableArgsOverride)
   end)
 end
 
----@param debuggables RADebuggable[]
+---@param debuggables RARunnable[]
 local function add_debuggables_to_nvim_dap(debuggables)
   local ok, dap = pcall(require, 'dap')
   if not ok then
@@ -136,10 +127,10 @@ local function add_debuggables_to_nvim_dap(debuggables)
   end
 end
 
----@param callback fun(result:RADebuggable[])
+---@param callback fun(result:RARunnable[])
 local function mk_handler(callback)
   return function(_, result, _, _)
-    ---@cast result RADebuggable[]
+    ---@cast result RARunnable[]
     if result == nil then
       return
     end

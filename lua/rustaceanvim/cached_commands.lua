@@ -2,7 +2,7 @@ local M = {}
 
 ---@class CommandCache
 local cache = {
-  ---@type RADebuggableArgs | nil
+  ---@type RARunnableArgs | nil
   last_debuggable = nil,
   ---@type { choice: integer, runnables: RARunnable[] }
   last_runnable = nil,
@@ -28,7 +28,7 @@ M.set_last_testable = function(choice, runnables)
   }
 end
 
----@param args RADebuggableArgs
+---@param args RARunnableArgs
 M.set_last_debuggable = function(args)
   cache.last_debuggable = args
 end
