@@ -176,12 +176,19 @@ vim.keymap.set(
   vim.cmd.RustLsp {'debuggables', 'arg1', 'arg2' }
   ```
 
+  Requires:
+
+  - [`nvim-dap`](https://github.com/mfussenegger/nvim-dap)
+    (Please read the plugin's documentation).
+  - A debug adapter (e.g. [`lldb`](https://lldb.llvm.org/)
+    or [`codelldb`](https://github.com/vadimcn/codelldb)
+
   By default, this plugin will silently attempt to autoload `nvim-dap`
   configurations when the LSP client attaches.
   You can call them with `require('dap').continue()` once
   they have been loaded. The feature can be disabled by setting
   `vim.g.rustaceanvim.dap.autoload_configurations = false`.
-  
+
   - `:RustLsp debuggables` will only load debug configurations
     created by `rust-analyzer`.
   - `require('dap').continue()` will load all Rust debug configurations,
@@ -495,6 +502,11 @@ vim.keymap.set(
   ```lua
   vim.cmd.RustLsp { 'crateGraph', '[backend]', '[output]' }
   ```
+
+  Requires:
+
+  - [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html)
+    
 </details>
 
 <details>
@@ -580,6 +592,12 @@ vim.keymap.set(
   vim.cmd.Rustc { 'unpretty', 'mir' }
   -- ...
   ```
+
+  Requires:
+
+  - A tree-sitter parser for Rust (required for the `:Rustc unpretty` command).
+    Can be installed using [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter).
+
 </details>
 
 <!-- markdownlint-restore -->
