@@ -95,14 +95,14 @@ NeotestAdapter.discover_positions = function(file_path)
   -- We need a runnable for the 'file' position, so we pick the first 'namespace' one
   -- Typically, a file only has one test module
   ---@type RARunnable
-  local file_runnable = nil
+  local crate_runnable = nil
   local max_end_row = 0
   for _, runnable in pairs(runnables) do
     local pos = trans.runnable_to_position(file_path, runnable)
     if pos then
       max_end_row = math.max(max_end_row, pos.range[3])
       if pos.type == 'dir' then
-        file_runnable = runnable
+        crate_runnable = runnable
       else
         table.insert(positions, pos)
       end
@@ -145,9 +145,18 @@ NeotestAdapter.discover_positions = function(file_path)
     type = 'file',
     path = file_path,
     range = { 0, 0, max_end_row, 0 },
-    runnable = namespace_count > 1 and file_runnable or namespace_runnable,
+    runnable = namespace_count > 1 and crate_runnable or namespace_runnable,
   }
   table.insert(sorted_positions, 1, file_pos)
+  local crate_pos = {
+    id = 'rustaceanvim:' .. crate_runnable.args.workspaceRoot,
+    name = 'suite',
+    type = 'dir',
+    path = crate_runnable.args.workspaceRoot,
+    range = { 0, 0, 0, 0 },
+    runnable = crate_runnable,
+  }
+  table.insert(sorted_positions, 1, crate_pos)
   ---@diagnostic disable-next-line: missing-parameter
   return lib.positions.parse_tree(sorted_positions)
 end
@@ -165,7 +174,7 @@ end
 ---@return neotest.RunSpec|nil
 ---@private
 function NeotestAdapter.build_spec(run_args)
-  local supported_types = { 'test', 'namespace', 'file' }
+  local supported_types = { 'test', 'namespace', 'file', 'dir' }
   local tree = run_args and run_args.tree
   if not tree then
     return
@@ -254,7 +263,6 @@ function NeotestAdapter.results(spec, strategy_result)
   ---@type table<string,neotest.Error[]>
   local errors_by_test_id = {}
   output_content = output_content:gsub('\r\n', '\n')
-  -- TODO: Move this to a shared location
   local diagostics = require('rustaceanvim.test').parse_diagnostics(context.file, output_content)
   for _, diagnostic in pairs(diagostics) do
     ---@type neotest.Error
@@ -264,6 +272,9 @@ function NeotestAdapter.results(spec, strategy_result)
     }
     errors_by_test_id[diagnostic.test_id] = errors_by_test_id[diagnostic.test_id] or {}
     table.insert(errors_by_test_id[diagnostic.test_id], err)
+  end
+  if not vim.tbl_contains({ 'file', 'test', 'namespace' }, context.type) then
+    return results
   end
   results[ctx_pos_id] = {
     status = 'failed',
