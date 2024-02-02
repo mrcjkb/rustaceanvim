@@ -37,6 +37,20 @@ M.severity = {
 --- @field user_data? any arbitrary data plugins can add
 --- @field namespace? integer
 
+--- @class vim.api.keyset.user_command
+--- @field addr? any
+--- @field bang? boolean
+--- @field bar? boolean
+--- @field complete? any
+--- @field count? any
+--- @field desc? any
+--- @field force? boolean
+--- @field keepscript? boolean
+--- @field nargs? any
+--- @field preview? any
+--- @field range? any
+--- @field register? boolean
+
 --- @class vim.SystemCompleted
 --- @field code integer
 --- @field signal integer

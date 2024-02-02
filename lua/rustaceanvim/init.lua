@@ -36,6 +36,12 @@
 ---                      as displayed during `cargo build`.
 --- `openCargo` - Open the Cargo.toml file for the current package.
 --- `parentModule` - Open the current module's parent module.
+--- `workspaceSymbol [onlyTypes?|allSymbols?] [query?]`
+---                  Filtered workspace symbol search.
+---                  When run with a bang (`:RustLsp! workspaceSymbol ...`),
+---                  rust-analyzer will include dependencies in the search.
+---                  Note that |vim.lsp.buf.workspace_symbol| does not support filtering
+---                  or searching dependencies.
 --- `joinLines` - Join adjacent lines.
 --- `ssr [query]` - Structural search and replace.
 --- `crateGraph [backend]` - Create and view a crate graph with graphviz.

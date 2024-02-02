@@ -6,10 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.5.0] - 2024-02-02
 
 ### Added
 
+- Filtered workspace symbol searches with
+  `:RustLsp[!] workspaceSymbol [onlyTypes?|allSymbols?] [query?]`.
+  Will include dependencies if called with a bang `!`.
 - Neotest: Basic support for `require('neotest').run.run { suite = true }`.
   This will run the current crate's test suite, if detected.
   Note that positions are still only discovered for buffers with an attached

@@ -31,6 +31,7 @@ local rustlsp_command_tbl = {
     end,
   },
   debuggables = {
+    ---@param opts vim.api.keyset.user_command
     impl = function(args, opts)
       if opts.bang then
         require('rustaceanvim.cached_commands').execute_last_debuggable()
@@ -85,6 +86,7 @@ local rustlsp_command_tbl = {
     end,
   },
   runnables = {
+    ---@param opts vim.api.keyset.user_command
     impl = function(args, opts)
       if opts.bang then
         require('rustaceanvim.cached_commands').execute_last_runnable()
@@ -95,6 +97,7 @@ local rustlsp_command_tbl = {
     bang = true,
   },
   testables = {
+    ---@param opts vim.api.keyset.user_command
     impl = function(args, opts)
       if opts.bang then
         require('rustaceanvim.cached_commands').execute_last_testable()
@@ -150,6 +153,24 @@ local rustlsp_command_tbl = {
     impl = function()
       require('rustaceanvim.commands.workspace_refresh')()
     end,
+  },
+  workspaceSymbol = {
+    ---@param opts vim.api.keyset.user_command
+    impl = function(args, opts)
+      local c = require('rustaceanvim.commands.workspace_symbol')
+      ---@type WorkspaceSymbolSearchScope
+      local searchScope = opts.bang and c.WorkspaceSymbolSearchScope.workspaceAndDependencies
+        or c.WorkspaceSymbolSearchScope.workspace
+      c.workspace_symbol(searchScope, args)
+    end,
+    complete = function(subcmd_arg_lead)
+      local c = require('rustaceanvim.commands.workspace_symbol')
+      return vim.tbl_filter(function(arg)
+        return arg:find(subcmd_arg_lead) ~= nil
+      end, vim.tbl_values(c.WorkspaceSymbolSearchKind))
+      --
+    end,
+    bang = true,
   },
   syntaxTree = {
     impl = function()

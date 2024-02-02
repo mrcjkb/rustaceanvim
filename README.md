@@ -176,6 +176,8 @@ vim.keymap.set(
   vim.cmd.RustLsp {'debuggables', 'arg1', 'arg2' }
   ```
 
+  Calling the command with a bang `!` will rerun the last debuggable.
+
   Requires:
 
   - [`nvim-dap`](https://github.com/mfussenegger/nvim-dap)
@@ -215,6 +217,8 @@ vim.keymap.set(
   vim.cmd.RustLsp {'runnables', 'arg1', 'arg2' }
   ```
 
+  Calling the command with a bang `!` will rerun the last runnable.
+
   ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/95183192-5669-4a07-804b-83f67831be57)
 
 
@@ -242,6 +246,8 @@ vim.keymap.set(
   -- or, to override the executable's args:
   vim.cmd.RustLsp {'testables', 'arg1', 'arg2' }
   ```
+
+  Calling the command with a bang `!` will rerun the last testable.
 
   ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/b3639b7a-105e-49de-9bdc-9c88e8e508a2)
 
@@ -453,6 +459,33 @@ vim.keymap.set(
   ```lua
   vim.cmd.RustLsp('parentModule')
   ```
+</details>
+
+<details>
+  <summary>
+	<b>Filtered workspace symbol searches</b>
+  </summary>
+
+  rust-analyzer supports filtering workspace symbol searches.
+  
+  ```vimscript
+  :RustLsp[!] workspaceSymbol [onlyTypes?|allSymbols?] [query?]
+  ```
+  ```lua
+  vim.cmd.RustLsp('workspaceSymbol')
+  -- or
+  vim.cmd.RustLsp { 
+    'workspaceSymbol', 
+    '<onlyTypes|allSymbols>' --[[ optional ]], 
+    '<query>' --[[ optional ]], 
+    bang = true --[[ optional ]]
+  }
+  ```
+
+  - Calling the command with a bang `!` will include dependencies in the search.
+  - Running `:RustLsp workspaceSymbol allSymbols` (without a bang) is equivalent
+    to running [`vim.lsp.buf.workspace_symbol()`]https://neovim.io/doc/user/lsp.html#vim.lsp.buf.workspace_symbol()).
+
 </details>
 
 <details>
