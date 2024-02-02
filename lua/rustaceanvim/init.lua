@@ -40,8 +40,8 @@
 ---                  Filtered workspace symbol search.
 ---                  When run with a bang (`:RustLsp! workspaceSymbol ...`),
 ---                  rust-analyzer will include dependencies in the search.
----                  Note that |vim.lsp.buf.workspace_symbol| does not support filtering
----                  or searching dependencies.
+---                  You can also configure rust-analyzer so that |vim.lsp.buf.workspace_symbol|
+---                  supports filtering (with a # suffix to the query) or searching dependencies.
 --- `joinLines` - Join adjacent lines.
 --- `ssr [query]` - Structural search and replace.
 --- `crateGraph [backend]` - Create and view a crate graph with graphviz.
