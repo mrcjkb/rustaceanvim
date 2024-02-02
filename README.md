@@ -483,8 +483,9 @@ vim.keymap.set(
   ```
 
   - Calling the command with a bang `!` will include dependencies in the search.
-  - Running `:RustLsp workspaceSymbol allSymbols` (without a bang) is equivalent
-    to running [`vim.lsp.buf.workspace_symbol()`]https://neovim.io/doc/user/lsp.html#vim.lsp.buf.workspace_symbol()).
+  - You can also influence the behaviour of [`vim.lsp.buf.workspace_symbol()`](https://neovim.io/doc/user/lsp.html#vim.lsp.buf.workspace_symbol())
+by setting the rust-analyzer
+`workspace.symbol.search` server option.
 
 </details>
 
