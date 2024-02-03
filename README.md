@@ -88,7 +88,7 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 }
 ```
 
->[!NOTE]
+>[!TIP]
 >
 >It is suggested to pin to tagged releases if you would like to avoid breaking changes.
 
@@ -140,7 +140,7 @@ vim.keymap.set(
 )
 ```
 
->[!NOTE]
+>[!TIP]
 >
 > - For more LSP related keymaps, [see the `nvim-lspconfig` suggestions](https://github.com/neovim/nvim-lspconfig#suggested-configuration).
 > - If you want to share keymaps with `nvim-lspconfig`,
@@ -676,7 +676,7 @@ vim.g.rustaceanvim = {
 }
 ```
 
-> [!NOTE]
+> [!TIP]
 >
 > `vim.g.rustaceanvim` can also be a function that returns
 > a table.
