@@ -5,10 +5,14 @@ local compat = require('rustaceanvim.compat')
 ---@class RustAnalyzerClientAdapter
 local M = {}
 
----@param bufnr? number
+---@param bufnr? number 0 for the current buffer
+---@param filter? vim.lsp.get_clients.filter
 ---@return lsp.Client[]
-M.get_active_rustaceanvim_clients = function(bufnr)
-  local filter = { name = 'rust-analyzer' }
+M.get_active_rustaceanvim_clients = function(bufnr, filter)
+  ---@type vim.lsp.get_clients.filter
+  filter = vim.tbl_deep_extend('force', filter or {}, {
+    name = 'rust-analyzer',
+  })
   if bufnr then
     filter.bufnr = bufnr
   end
@@ -25,11 +29,9 @@ M.buf_request = function(bufnr, method, params, handler)
     bufnr = vim.api.nvim_get_current_buf()
   end
   local client_found = false
-  for _, client in ipairs(M.get_active_rustaceanvim_clients()) do
-    if client.supports_method(method, { bufnr = bufnr }) then
-      client.request(method, params, handler, bufnr)
-      client_found = true
-    end
+  for _, client in ipairs(M.get_active_rustaceanvim_clients(bufnr, { method = method })) do
+    client.request(method, params, handler, bufnr)
+    client_found = true
   end
   if not client_found then
     local error_msg = 'No rust-analyzer client for ' .. method .. ' attched to buffer ' .. bufnr
@@ -51,11 +53,9 @@ end
 ---@param params table|nil Parameters to send to the server
 M.notify = function(method, params)
   local client_found = false
-  for _, client in ipairs(M.get_active_rustaceanvim_clients()) do
-    if client.supports_method(method) then
-      client.notify(method, params)
-      client_found = true
-    end
+  for _, client in ipairs(M.get_active_rustaceanvim_clients(0, { method = method })) do
+    client.notify(method, params)
+    client_found = true
   end
   if not client_found then
     vim.notify('No rust-analyzer client found for method: ' .. method, vim.log.levels.ERROR)
