@@ -82,7 +82,7 @@ NeotestAdapter.discover_positions = function(file_path)
     position = nil, -- get em all
   }
   local future = nio.control.future()
-  rust_analyzer.buf_request(0, 'experimental/runnables', params, function(_, runnables)
+  rust_analyzer.buf_request(bufnr, 'experimental/runnables', params, function(_, runnables)
     future.set(runnables)
   end)
   local runnables = future:wait()
