@@ -69,6 +69,10 @@ function M.get_command(runnable)
   local args = runnable.args
 
   local dir = args.workspaceRoot
+  -- Project fails to run if the workspaceRoot contains any spaces
+  -- if your dir is projects/test my project it will change it to "projects/test my projects"
+  -- Therefore it will run successfully
+  dir = '"' .. dir .. '"'
 
   local ret = vim.list_extend({}, args.cargoArgs or {})
   ret = vim.list_extend(ret, args.cargoExtraArgs or {})
