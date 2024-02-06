@@ -118,24 +118,29 @@ NeotestAdapter.discover_positions = function(file_path)
       end
     end
   end
-  local file_pos = {
-    id = file_path,
-    name = file_path,
-    type = 'file',
-    path = file_path,
-    range = { 0, 0, max_end_row, 0 },
-    runnable = namespace_count > 1 and crate_runnable or namespace_runnable,
-  }
-  table.insert(sorted_positions, 1, file_pos)
-  local crate_pos = {
-    id = 'rustaceanvim:' .. crate_runnable.args.workspaceRoot,
-    name = 'suite',
-    type = 'dir',
-    path = crate_runnable.args.workspaceRoot,
-    range = { 0, 0, 0, 0 },
-    runnable = crate_runnable,
-  }
-  table.insert(sorted_positions, 1, crate_pos)
+  if namespace_runnable then
+    local file_pos = {
+      id = file_path,
+      name = file_path,
+      type = 'file',
+      path = file_path,
+      range = { 0, 0, max_end_row, 0 },
+      runnable = namespace_runnable,
+    }
+    table.insert(sorted_positions, 1, file_pos)
+  end
+  if crate_runnable and #sorted_positions > 0 then
+    -- Only insert a crate runnable position if there exist positions
+    local crate_pos = {
+      id = 'rustaceanvim:' .. crate_runnable.args.workspaceRoot,
+      name = 'suite',
+      type = 'dir',
+      path = crate_runnable.args.workspaceRoot,
+      range = { 0, 0, 0, 0 },
+      runnable = crate_runnable,
+    }
+    table.insert(sorted_positions, 1, crate_pos)
+  end
   ---@diagnostic disable-next-line: missing-parameter
   return lib.positions.parse_tree(sorted_positions)
 end

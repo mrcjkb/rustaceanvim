@@ -58,7 +58,7 @@ local function find_buffer_by_name(name)
       return bufnr
     end
   end
-  return -1
+  return 0
 end
 
 ---@param file_path string Search for clients with a root_dir matching this file path
