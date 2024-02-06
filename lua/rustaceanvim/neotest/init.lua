@@ -30,6 +30,7 @@
 local lib = require('neotest.lib')
 local nio = require('nio')
 local trans = require('rustaceanvim.neotest.trans')
+local cargo = require('rustaceanvim.cargo')
 
 ---@type neotest.Adapter
 local NeotestAdapter = { name = 'rustaceanvim' }
@@ -37,20 +38,7 @@ local NeotestAdapter = { name = 'rustaceanvim' }
 ---@param file_name string
 ---@return string | nil
 NeotestAdapter.root = function(file_name)
-  local cargo = require('rustaceanvim.cargo')
   return cargo.get_root_dir(file_name)
-end
-
----@param name string
----@return integer
-local function find_buffer_by_name(name)
-  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    local buf_name = vim.api.nvim_buf_get_name(bufnr)
-    if buf_name == name then
-      return bufnr
-    end
-  end
-  return -1
 end
 
 ---@param file_path string
@@ -67,26 +55,17 @@ end
 NeotestAdapter.discover_positions = function(file_path)
   ---@type rustaceanvim.neotest.Position[]
   local positions = {}
-  local bufnr = find_buffer_by_name(file_path)
-  if bufnr == -1 then
-    ---@diagnostic disable-next-line: missing-parameter
-    return lib.positions.parse_tree(positions)
-  end
   local rust_analyzer = require('rustaceanvim.rust_analyzer')
-  if #rust_analyzer.get_active_rustaceanvim_clients(bufnr) == 0 then
-    ---@diagnostic disable-next-line: missing-parameter
-    return lib.positions.parse_tree(positions)
-  end
-  local params = {
-    textDocument = vim.lsp.util.make_text_document_params(bufnr),
-    position = nil, -- get em all
-  }
   local future = nio.control.future()
-  rust_analyzer.buf_request(bufnr, 'experimental/runnables', params, function(_, runnables)
-    future.set(runnables)
+  rust_analyzer.file_request(file_path, 'experimental/runnables', nil, function(err, runnables)
+    if err then
+      future.set_error(err)
+    else
+      future.set(runnables)
+    end
   end)
-  local runnables = future:wait()
-  if type(runnables) ~= 'table' or #runnables == 0 then
+  local ok, runnables = pcall(future.wait)
+  if not ok or type(runnables) ~= 'table' or #runnables == 0 then
     ---@diagnostic disable-next-line: missing-parameter
     return lib.positions.parse_tree(positions)
   end
@@ -139,24 +118,29 @@ NeotestAdapter.discover_positions = function(file_path)
       end
     end
   end
-  local file_pos = {
-    id = file_path,
-    name = file_path,
-    type = 'file',
-    path = file_path,
-    range = { 0, 0, max_end_row, 0 },
-    runnable = namespace_count > 1 and crate_runnable or namespace_runnable,
-  }
-  table.insert(sorted_positions, 1, file_pos)
-  local crate_pos = {
-    id = 'rustaceanvim:' .. crate_runnable.args.workspaceRoot,
-    name = 'suite',
-    type = 'dir',
-    path = crate_runnable.args.workspaceRoot,
-    range = { 0, 0, 0, 0 },
-    runnable = crate_runnable,
-  }
-  table.insert(sorted_positions, 1, crate_pos)
+  if namespace_runnable then
+    local file_pos = {
+      id = file_path,
+      name = file_path,
+      type = 'file',
+      path = file_path,
+      range = { 0, 0, max_end_row, 0 },
+      runnable = namespace_runnable,
+    }
+    table.insert(sorted_positions, 1, file_pos)
+  end
+  if crate_runnable and #sorted_positions > 0 then
+    -- Only insert a crate runnable position if there exist positions
+    local crate_pos = {
+      id = 'rustaceanvim:' .. crate_runnable.args.workspaceRoot,
+      name = 'suite',
+      type = 'dir',
+      path = crate_runnable.args.workspaceRoot,
+      range = { 0, 0, 0, 0 },
+      runnable = crate_runnable,
+    }
+    table.insert(sorted_positions, 1, crate_pos)
+  end
   ---@diagnostic disable-next-line: missing-parameter
   return lib.positions.parse_tree(sorted_positions)
 end

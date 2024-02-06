@@ -5,6 +5,10 @@ on:
   pull_request_target:
     types: [opened, review_requested]
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   review-checklist:
     name: Review Checklist
