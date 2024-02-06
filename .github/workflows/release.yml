@@ -20,6 +20,7 @@ jobs:
         env:
           LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
         with:
+          test_interpreters: ""
           detailed_description: |
             This plugin automatically configures the rust-analyzer builtin LSP client
             and integrates with other Rust tools. See the README's #features section

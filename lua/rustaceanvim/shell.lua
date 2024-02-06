@@ -42,6 +42,13 @@ function M.chain_commands(commands)
   return ret
 end
 
+---Create a `cd` command for the path
+---@param path string
+---@return string
+function M.make_cd_command(path)
+  return ('cd "%s"'):format(path)
+end
+
 ---@param command string
 ---@param args string[]
 ---@return string command
