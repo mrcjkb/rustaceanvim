@@ -664,7 +664,7 @@ vim.g.rustaceanvim = {
     on_attach = function(client, bufnr)
       -- you can also put keymaps in here
     end,
-    settings = {
+    default_settings = {
       -- rust-analyzer language server configuration
       ['rust-analyzer'] = {
       },
@@ -735,7 +735,7 @@ end
 By default, this plugin will look for a `rust-analyzer.json`[^2]
 file in the project root directory, and attempt to load it.
 If the file does not exist, or it can't be decoded,
-the default settings will be used.
+the `server.default_settings` will be used.
 
 [^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
       and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/manual.html#configuration).

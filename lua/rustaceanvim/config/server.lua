@@ -38,15 +38,16 @@ function server.load_rust_analyzer_settings(project_root, opts)
   if #results == 0 then
     return default_settings
   end
-  local settings_json = results[1]
-  local content = read_file(settings_json)
-  local success, settings = pcall(vim.json.decode, content)
+  local config_json = results[1]
+  local content = read_file(config_json)
+  local success, rust_analyzer_settings = pcall(vim.json.decode, content)
   if not success then
-    local msg = 'Could not decode ' .. settings_json .. '. Falling back to default settings.'
+    local msg = 'Could not decode ' .. config_json .. '. Falling back to default settings.'
     vim.notify('rustaceanvim: ' .. msg, vim.log.levels.ERROR)
     return default_settings
   end
-  return settings or default_settings
+  default_settings['rust-analyzer'] = rust_analyzer_settings
+  return default_settings
 end
 
 return server
