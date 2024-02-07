@@ -58,6 +58,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field executor? RustaceanExecutor | executor_alias The executor to use for runnables/debuggables
 ---@field test_executor? RustaceanExecutor | test_executor_alias The executor to use for runnables that are tests / testables
 ---@field enable_nextest? boolean Whether to enable nextest. If enabled, `cargo test` commands will be transformed to `cargo nextest run` commands. Defaults to `true` if cargo-nextest is detected.
+---@field enable_clippy? boolean Whether to enable clippy checks on save if a clippy installation is detected. Default: `true`
 ---@field on_initialized? fun(health:RustAnalyzerInitializedStatus) Function that is invoked when the LSP server has finished initializing
 ---@field reload_workspace_from_cargo_toml? boolean Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
 ---@field hover_actions? RustaceanHoverActionsOpts Options for hover actions

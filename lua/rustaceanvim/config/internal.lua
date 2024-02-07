@@ -57,6 +57,9 @@ local RustaceanDefaultConfig = {
     ---@type boolean
     enable_nextest = true,
 
+    ---@type boolean
+    enable_clippy = true,
+
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
     ---@type fun(health:RustAnalyzerInitializedStatus) | nil
