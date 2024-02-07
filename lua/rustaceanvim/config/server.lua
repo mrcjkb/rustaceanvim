@@ -29,6 +29,16 @@ function server.load_rust_analyzer_settings(project_root, opts)
   local compat = require('rustaceanvim.compat')
 
   local default_settings = config.server.default_settings
+  local use_clippy = config.tools.enable_clippy and vim.fn.executable('cargo-clippy') == 1
+  ---@diagnostic disable-next-line: undefined-field
+  if not default_settings['rust-analyzer'].checkOnSave and use_clippy then
+    ---@diagnostic disable-next-line: inject-field
+    default_settings['rust-analyzer'].checkOnSave = {
+      allFeatures = true,
+      command = 'clippy',
+      extraArgs = { '--no-deps' },
+    }
+  end
   if not project_root then
     return default_settings
   end

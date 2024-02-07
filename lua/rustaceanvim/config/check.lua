@@ -76,6 +76,7 @@ function M.validate(cfg)
     executor = { tools.executor, { 'table', 'string' } },
     test_executor = { tools.test_executor, { 'table', 'string' } },
     enable_nextest = { tools.enable_nextest, 'boolean' },
+    enable_clippy = { tools.enable_clippy, 'boolean' },
     on_initialized = { tools.on_initialized, 'function', true },
     reload_workspace_from_cargo_toml = { tools.reload_workspace_from_cargo_toml, 'boolean' },
     open_url = { tools.open_url, 'function' },
