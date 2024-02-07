@@ -55,7 +55,7 @@ local RustaceanDefaultConfig = {
     test_executor = get_test_executor(),
 
     ---@type boolean
-    enable_nextest = vim.fn.executable('cargo-nextest') == 1,
+    enable_nextest = true,
 
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"

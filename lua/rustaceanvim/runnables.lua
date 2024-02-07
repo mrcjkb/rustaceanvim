@@ -74,7 +74,9 @@ function M.get_command(runnable)
   ret = vim.list_extend(ret, args.cargoExtraArgs or {})
   table.insert(ret, '--')
   ret = vim.list_extend(ret, args.executableArgs or {})
-  ret = overrides.try_nextest_transform(ret)
+  if config.tools.enable_nextest then
+    ret = overrides.try_nextest_transform(ret)
+  end
 
   return 'cargo', ret, dir
 end
