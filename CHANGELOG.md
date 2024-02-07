@@ -8,9 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.6.0] - 2024-02-07
 
+### Added
+
+- LSP: New `tools.enable_clippy` option (defaults to `true`).
+  Enable clippy lints on save if a `cargo-clippy` installation
+  is detected.
+
 ### Fixed
 
 - testables/neotest: Don't use nextest if disabled in the config.
+- LSP: load project-local rust-analyzer.json configs into
+ `server['rust-analyzer']`, instead of replacing the `server` config.
 
 ## [4.5.2] - 2024-02-06
 
