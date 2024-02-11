@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.7.0] - 2024-02-11
 
 ### Added
 
@@ -15,9 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rustc: Do not require a main function,
   and support the 2024 edition
   via `unstable-options`.
+  Thanks [saying121](https://github.com/saying121)!
 
 ### Fixed
 
+- Neotest: Nested modules + position updates when switching buffers [[#223](https://github.com/mrcjkb/rustaceanvim/pull/223)].
+  Thanks [@jameshurst](https://github.com/jameshurst)!
 - Testables: Support `neotest` executor when using `nextest`.
 - Testables: Support aliases for `test_executor` and `crate_test_executor`.
 
