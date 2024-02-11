@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and support the 2024 edition
   via `unstable-options`.
 
+### Fixed
+
+- Testables: Support `neotest` executor when using `nextest`.
+
 ## [4.6.0] - 2024-02-07
 
 ### Added
