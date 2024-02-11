@@ -41,10 +41,19 @@ NeotestAdapter.root = function(file_name)
   return cargo.get_root_dir(file_name)
 end
 
+---@param name string Name of directory
+---@param rel_path string Path to directory, relative to root
+---@param root string Root directory of project
+---@return boolean
+---@diagnostic disable-next-line: unused-local
+NeotestAdapter.filter_dir = function(name, rel_path, root)
+  return rel_path ~= 'target'
+end
+
 ---@param file_path string
 ---@return boolean
 NeotestAdapter.is_test_file = function(file_path)
-  if file_path:find('target/%a+/build') or not vim.endswith(file_path, '.rs') then
+  if not vim.endswith(file_path, '.rs') then
     return false
   end
 
