@@ -41,6 +41,13 @@ function M.runnable_to_position(file_path, runnable)
       end_col = location.targetRange['end'].character
     end
     local test_path = get_test_path(runnable)
+    -- strip the file module prefix from the name
+    if test_path then
+      local mod_name = vim.fn.fnamemodify(file_path, ':t:r')
+      if vim.startswith(test_path, mod_name .. '::') then
+        test_path = test_path:sub(#mod_name + 3, #test_path)
+      end
+    end
     ---@type rustaceanvim.neotest.Position
     local pos = {
       id = M.get_position_id(file_path, runnable),
