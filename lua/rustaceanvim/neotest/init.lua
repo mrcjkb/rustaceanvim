@@ -50,12 +50,12 @@ NeotestAdapter.is_test_file = function(file_path)
 
   local content = lib.files.read(file_path)
   local test_attributes = {
-    'test',
-    'rstest',
-    'rstest::rstest',
+    ['test'] = true,
+    ['rstest'] = true,
+    ['rstest::rstest'] = true,
   }
-  for _, attr in ipairs(test_attributes) do
-    if content:find('#%[' .. attr .. '%]') then
+  for attr in content:gmatch('#%[([%w_:]+)%]') do
+    if test_attributes[attr] then
       return true
     end
   end
