@@ -53,23 +53,7 @@ end
 ---@param file_path string
 ---@return boolean
 NeotestAdapter.is_test_file = function(file_path)
-  if not vim.endswith(file_path, '.rs') then
-    return false
-  end
-
-  local content = lib.files.read(file_path)
-  local test_attributes = {
-    ['test'] = true,
-    ['rstest'] = true,
-    ['rstest::rstest'] = true,
-  }
-  for attr in content:gmatch('#%[([%w_:]+)%]') do
-    if test_attributes[attr] then
-      return true
-    end
-  end
-
-  return false
+  return vim.endswith(file_path, '.rs')
 end
 
 ---@class rustaceanvim.neotest.Position: neotest.Position
