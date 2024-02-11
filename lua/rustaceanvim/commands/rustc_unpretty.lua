@@ -110,7 +110,7 @@ function M.rustc_unpretty(level)
   local pos = { math.max(cursor[1] - 1, 0), cursor[2] }
 
   local cline = api.nvim_get_current_line()
-  if not string.find(cline, 'fn%s*') then
+  if not string.find(cline, 'fn%s+') then
     local temp = vim.fn.searchpos('fn ', 'bcn', vim.fn.line('w0'))
     pos = { math.max(temp[1] - 1, 0), temp[2] }
   end
@@ -129,13 +129,19 @@ function M.rustc_unpretty(level)
   end
   text = table.concat(b, '\n')
 
-  -- rustc need a main function for `-Z unpretty`
-  if not string.find(text, 'fn%s*main') then
-    text = text .. 'fn main() {}'
-  end
-
   compat.system(
-    { rustc, '--edition', config.tools.rustc.edition, '-Z', 'unpretty=' .. level, '-' },
+    {
+      rustc,
+      '--crate-type',
+      'lib',
+      '--edition',
+      config.tools.rustc.edition,
+      '-Z',
+      'unstable-options',
+      '-Z',
+      'unpretty=' .. level,
+      '-',
+    },
     { stdin = text },
     vim.schedule_wrap(handler)
   )
