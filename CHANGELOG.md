@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Testables: Support `neotest` executor when using `nextest`.
+- Testables: Support aliases for `test_executor` and `crate_test_executor`.
 
 ## [4.6.0] - 2024-02-07
 

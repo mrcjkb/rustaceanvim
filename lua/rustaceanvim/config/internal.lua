@@ -378,8 +378,10 @@ local RustaceanDefaultConfig = {
 }
 local rustaceanvim = vim.g.rustaceanvim or {}
 local opts = type(rustaceanvim) == 'function' and rustaceanvim() or rustaceanvim
-if opts.tools and opts.tools.executor and type(opts.tools.executor) == 'string' then
-  opts.tools.executor = assert(executors[opts.tools.executor], 'Unknown RustaceanExecutor')
+for _, executor in pairs { 'executor', 'test_executor', 'crate_test_executor' } do
+  if opts.tools and opts.tools[executor] and type(opts.tools[executor]) == 'string' then
+    opts.tools[executor] = assert(executors[opts.tools[executor]], 'Unknown RustaceanExecutor')
+  end
 end
 
 ---@type RustaceanConfig
