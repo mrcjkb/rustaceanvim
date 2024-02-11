@@ -32,32 +32,36 @@ local nio = require('nio')
 local trans = require('rustaceanvim.neotest.trans')
 local cargo = require('rustaceanvim.cargo')
 
+---@package
 ---@type neotest.Adapter
 local NeotestAdapter = { name = 'rustaceanvim' }
 
+---@package
 ---@param file_name string
 ---@return string | nil
 NeotestAdapter.root = function(file_name)
   return cargo.get_root_dir(file_name)
 end
 
--- ---@param name string Name of directory
+---@package
 ---@param rel_path string Path to directory, relative to root
--- ---@param root string Root directory of project
 ---@return boolean
 NeotestAdapter.filter_dir = function(_, rel_path, _)
   return rel_path ~= 'target'
 end
 
+---@package
 ---@param file_path string
 ---@return boolean
 NeotestAdapter.is_test_file = function(file_path)
   return vim.endswith(file_path, '.rs')
 end
 
+---@package
 ---@class rustaceanvim.neotest.Position: neotest.Position
 ---@field runnable? RARunnable
 
+---@package
 ---@param file_path string
 ---@return neotest.Tree
 NeotestAdapter.discover_positions = function(file_path)
@@ -198,15 +202,18 @@ NeotestAdapter.discover_positions = function(file_path)
   end)
 end
 
+---@package
 ---@class rustaceanvim.neotest.RunSpec: neotest.RunSpec
 ---@field context rustaceanvim.neotest.RunContext
 
+---@package
 ---@class rustaceanvim.neotest.RunContext
 ---@field file string
 ---@field pos_id string
 ---@field type neotest.PositionType
 ---@field tree neotest.Tree
 
+---@package
 ---@param run_args neotest.RunArgs
 ---@return neotest.RunSpec|nil
 ---@private
@@ -266,6 +273,7 @@ function NeotestAdapter.build_spec(run_args)
   return run_spec
 end
 
+---@package
 ---Get the file root from a test tree.
 ---@param tree neotest.Tree The test tree.
 ---@return neotest.Tree file_root The file root position.
@@ -279,6 +287,7 @@ local function get_file_root(tree)
   return tree
 end
 
+---@package
 ---@param spec neotest.RunSpec
 ---@param strategy_result neotest.StrategyResult
 ---@return table<string, neotest.Result> results
