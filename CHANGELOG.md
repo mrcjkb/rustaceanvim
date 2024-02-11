@@ -8,10 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+### Added
 
-- Rustc: Do not need a main function, and make it can use 2024 edition
-  by unstable-options.
+- Rustc: Do not require a main function,
+  and support the 2024 edition
+  via `unstable-options`.
 
 ## [4.6.0] - 2024-02-07
 
