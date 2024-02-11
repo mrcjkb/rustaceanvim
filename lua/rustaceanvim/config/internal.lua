@@ -30,15 +30,21 @@ local function is_lldb_adapter(adapter)
 end
 
 ---@return RustaceanExecutor
-local function get_test_executor()
-  if package.loaded['rustaceanvim.neotest'] ~= nil then
-    -- neotest has been set up with rustaceanvim as an adapter
-    return executors.neotest
-  elseif vim.fn.has('nvim-0.10.0') == 1 then
+local function get_crate_test_executor()
+  if vim.fn.has('nvim-0.10.0') == 1 then
     return executors.background
   else
     return executors.termopen
   end
+end
+
+---@return RustaceanExecutor
+local function get_test_executor()
+  if package.loaded['rustaceanvim.neotest'] ~= nil then
+    -- neotest has been set up with rustaceanvim as an adapter
+    return executors.neotest
+  end
+  return get_crate_test_executor()
 end
 
 ---@class RustaceanConfig
@@ -53,6 +59,9 @@ local RustaceanDefaultConfig = {
 
     ---@type RustaceanExecutor
     test_executor = get_test_executor(),
+
+    ---@type RustaceanExecutor
+    crate_test_executor = get_crate_test_executor(),
 
     ---@type boolean
     enable_nextest = true,

@@ -106,7 +106,8 @@ function M.run_command(choice, runnables)
   end
 
   if #args > 0 and (vim.startswith(args[1], 'test') or vim.startswith(args[1], 'nextest')) then
-    opts.test_executor.execute_command(command, args, cwd, {
+    local test_executor = vim.tbl_contains(args, '--all-targets') and opts.crate_test_executor or opts.test_executor
+    test_executor.execute_command(command, args, cwd, {
       bufnr = vim.api.nvim_get_current_buf(),
       runnable = runnables[choice],
     })

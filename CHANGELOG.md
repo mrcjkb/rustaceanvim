@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Testables: Add `tools.crate_test_executor` option for running
+  crate test suites (`--all-targets`).
 - Rustc: Do not require a main function,
   and support the 2024 edition
   via `unstable-options`.
