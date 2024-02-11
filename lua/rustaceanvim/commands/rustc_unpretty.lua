@@ -129,22 +129,18 @@ function M.rustc_unpretty(level)
   end
   text = table.concat(b, '\n')
 
-  compat.system(
-    {
-      rustc,
-      '--crate-type',
-      'lib',
-      '--edition',
-      config.tools.rustc.edition,
-      '-Z',
-      'unstable-options',
-      '-Z',
-      'unpretty=' .. level,
-      '-',
-    },
-    { stdin = text },
-    vim.schedule_wrap(handler)
-  )
+  compat.system({
+    rustc,
+    '--crate-type',
+    'lib',
+    '--edition',
+    config.tools.rustc.edition,
+    '-Z',
+    'unstable-options',
+    '-Z',
+    'unpretty=' .. level,
+    '-',
+  }, { stdin = text }, vim.schedule_wrap(handler))
 end
 
 return M
