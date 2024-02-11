@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Rustc: Do not require a main function,
+  and support the 2024 edition
+  via `unstable-options`.
+
 ## [4.6.0] - 2024-02-07
 
 ### Added
@@ -93,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Used by default in Neovim >= 0.10.
 - LSP: `:RustLsp testables` command, which is equivalent
   to `:RustLsp runnables`, but filters the runnables for tests only,
-  
+
 > [!IMPORTANT]
 >
 > In Neovim < 0.10, `'background'` executor blocks the UI while running tests.
@@ -107,7 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and achieve an experience similar to Rust Playground.
   (currently requires a nightly compiler).
   Thanks [saying121](https://github.com/saying121)!
-- Config: `tools.rustc_unpretty` arguments for `rustc`.
+- Config: `tools.rustc` arguments for `rustc`.
 
 ### Changed
 
