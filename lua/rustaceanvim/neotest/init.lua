@@ -41,12 +41,11 @@ NeotestAdapter.root = function(file_name)
   return cargo.get_root_dir(file_name)
 end
 
----@param name string Name of directory
+-- ---@param name string Name of directory
 ---@param rel_path string Path to directory, relative to root
----@param root string Root directory of project
+-- ---@param root string Root directory of project
 ---@return boolean
----@diagnostic disable-next-line: unused-local
-NeotestAdapter.filter_dir = function(name, rel_path, root)
+NeotestAdapter.filter_dir = function(_, rel_path, _)
   return rel_path ~= 'target'
 end
 
