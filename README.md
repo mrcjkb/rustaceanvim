@@ -649,9 +649,8 @@ To modify the default configuration, set `vim.g.rustaceanvim`.
 - For detailed descriptions of the language server configs,
   see the [`rust-analyzer` documentation](https://rust-analyzer.github.io/manual.html#configuration).
 
-The options shown below are the defaults.
-You only need to pass the keys to the setup function
-that you want to be changed, because the defaults
+You only need to specify the keys
+that you want to be changed, because defaults
 are applied for keys that are not provided.
 
 Example config:
