@@ -12,7 +12,7 @@ local rl = require('rustaceanvim.rust_analyzer')
 
 --- Sends the request to rust-analyzer rebuild proc macros
 function M.rebuild_macros()
-  rl.buf_request(0, 'rust-analyzer/rebuildProcMacros', nil, handler)
+  rl.any_buf_request('rust-analyzer/rebuildProcMacros', nil, handler)
 end
 
 return M.rebuild_macros
