@@ -57,7 +57,7 @@ function M.workspace_symbol(searchScope, args)
   else
     query = args[1]
   end
-  rl.buf_request(0, 'workspace/symbol', get_params(searchScope, searchKind, query))
+  rl.any_buf_request('workspace/symbol', get_params(searchScope, searchKind, query))
 end
 
 return M

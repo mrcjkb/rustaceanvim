@@ -19,6 +19,26 @@ M.get_active_rustaceanvim_clients = function(bufnr, filter)
   return compat.get_clients(filter)
 end
 
+---@param method string LSP method name
+---@param params table|nil Parameters to send to the server
+---@param handler? lsp.Handler See |lsp-handler|
+---       If nil, follows resolution strategy defined in |lsp-handler-configuration|
+M.any_buf_request = function(method, params, handler)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local client_found = false
+  for _, client in ipairs(M.get_active_rustaceanvim_clients(bufnr, { method = method })) do
+    client.request(method, params, handler, 0)
+    client_found = true
+  end
+  if client_found then
+    return
+  end
+  -- No buffer found. Try any client.
+  for _, client in ipairs(M.get_active_rustaceanvim_clients(nil, { method = method })) do
+    client.request(method, params, handler, 0)
+  end
+end
+
 ---@param bufnr integer Buffer handle, or 0 for current.
 ---@param method string LSP method name
 ---@param params table|nil Parameters to send to the server

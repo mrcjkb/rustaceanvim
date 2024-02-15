@@ -12,7 +12,7 @@ local rl = require('rustaceanvim.rust_analyzer')
 
 function M.reload_workspace()
   vim.notify('Reloading Cargo Workspace')
-  rl.buf_request(0, 'rust-analyzer/reloadWorkspace', nil, handler)
+  rl.any_buf_request('rust-analyzer/reloadWorkspace', nil, handler)
 end
 
 return M.reload_workspace
