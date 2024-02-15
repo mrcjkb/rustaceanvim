@@ -25,11 +25,7 @@ end
 ---       If nil, follows resolution strategy defined in |lsp-handler-configuration|
 M.any_buf_request = function(method, params, handler)
   local bufnr = vim.api.nvim_get_current_buf()
-  local client_found = false
-  for _, client in ipairs(M.get_active_rustaceanvim_clients(bufnr, { method = method })) do
-    client.request(method, params, handler, 0)
-    client_found = true
-  end
+  local client_found = M.buf_request(bufnr, method, params, handler)
   if client_found then
     return
   end
@@ -44,6 +40,7 @@ end
 ---@param params table|nil Parameters to send to the server
 ---@param handler? lsp.Handler See |lsp-handler|
 ---       If nil, follows resolution strategy defined in |lsp-handler-configuration|
+---@return boolean client_found
 M.buf_request = function(bufnr, method, params, handler)
   if bufnr == nil or bufnr == 0 then
     bufnr = vim.api.nvim_get_current_buf()
@@ -53,20 +50,7 @@ M.buf_request = function(bufnr, method, params, handler)
     client.request(method, params, handler, bufnr)
     client_found = true
   end
-  if not client_found then
-    local error_msg = 'No rust-analyzer client for ' .. method .. ' attched to buffer ' .. bufnr
-    if handler then
-      ---@type lsp.HandlerContext
-      local ctx = {
-        bufnr = bufnr,
-        client_id = -1,
-        method = method,
-      }
-      handler({ code = -1, message = error_msg }, nil, ctx)
-    else
-      vim.notify(error_msg, vim.log.levels.ERROR)
-    end
-  end
+  return client_found
 end
 
 ----@param name string

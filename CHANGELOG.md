@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - LSP: Error when running `reloadWorkspace`,
   `rebuildMacros` or `workspaceSymbol` from a non-rust buffer [[#234](https://github.com/mrcjkb/rustaceanvim/issues/234)].
+- Internal: Don't pass client not found error to handler.
 
 ## [4.7.2] - 2024-02-13
 
