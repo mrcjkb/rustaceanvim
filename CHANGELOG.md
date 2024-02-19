@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.4] - 2024-02-19
+
+### Fixed
+
+- LSP: Support both top-level rust-analyzer object and object with
+  `"rust-analyzer":` key when importing settings from `rust-analyzer.json`.
+  The fix introduced in version 4.6.0 had accidentally broken
+  backward compatibility. The new implementation is backward compatible again.
+
 ## [4.7.3] - 2024-02-15
 
 ### Fixed
