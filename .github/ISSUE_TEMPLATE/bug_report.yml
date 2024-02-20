@@ -49,7 +49,7 @@ body:
         NVIM_DATA_MINIMAL=/tmp/minimal NVIM_APP_NAME="nvim-minimal" -u minimal.lua
         :edit foo.rs
         4j
-        :RustHoverActions
+        :RustLsp runnables
       render: "console"
     validations:
       required: true
