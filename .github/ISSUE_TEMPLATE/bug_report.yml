@@ -34,6 +34,10 @@ body:
       label: "How to reproduce the issue"
       description: |
         Steps to reproduce using a [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
+        
+        > [!IMPORTANT]
+        >
+        > Please refer to the readme's [troubleshooting guide](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting).
       placeholder: |
         mkdir -p /tmp/minimal
         NVIM_DATA_MINIMAL=/tmp/minimal NVIM_APP_NAME="nvim-minimal" -u minimal.lua
