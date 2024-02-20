@@ -33,4 +33,14 @@ function os.open_url(url)
   end
 end
 
+---Normalize path for Windows, which is case insensitive
+---@param path string
+---@return string normalize_path
+function os.normalize_path(path)
+  if require('rustaceanvim.shell').is_windows() then
+    return path:lower()
+  end
+  return path
+end
+
 return os
