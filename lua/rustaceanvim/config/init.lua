@@ -145,9 +145,11 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field cwd? string Current working directory
 ---@field program? string Path to executable for most DAP clients
 ---@field args? string[] Optional args to DAP client, not valid for all client types
----@field env? string  Environmental variables
+---@field env? EnvironmentMap Environmental variables
 ---@field initCommands? string[] Initial commands to run, `lldb` clients only
 ---@field coreConfigs? table Essential config values for `probe-rs` client, see https://probe.rs/docs/tools/debugger/
+
+---@alias EnvironmentMap table<string, string[]>
 
 ---@alias dap_config_request_launch "launch"
 ---@alias dap_config_request_attach "attach"

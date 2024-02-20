@@ -178,8 +178,6 @@ local function format_environment_variable(adapter, key, segments, sep)
   return adapter.type == 'server' and { [key] = value } or { key .. '=' .. value }
 end
 
----@alias EnvironmentMap {[string]: string[]}
-
 ---@type {[string]: EnvironmentMap}
 local environments = {}
 

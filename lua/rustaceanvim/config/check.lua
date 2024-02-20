@@ -146,7 +146,7 @@ function M.validate(cfg)
       cwd = { configuration.cwd, 'string', true },
       program = { configuration.program, 'string', true },
       args = { configuration.args, 'table', true },
-      env = { configuration.env, 'string', true },
+      env = { configuration.env, 'table', true },
       initCommands = { configuration.initCommands, 'string', true },
       coreConfigs = { configuration.coreConfigs, 'table', true },
     })
