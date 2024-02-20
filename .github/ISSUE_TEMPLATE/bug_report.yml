@@ -6,8 +6,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        _Before reporting:_ search [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
-        See also: [Troubleshooting section of README.md](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#minimal-config).
+        > [!IMPORTANT]
+        >
+        > _Before reporting:_ search [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
+        > and [discussions](https://github.com/mrcjkb/rustaceanvim/discussions).
+        > See also: [Troubleshooting section of README.md](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#minimal-config).
 
   - type: input
     attributes:
