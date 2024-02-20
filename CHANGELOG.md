@@ -6,16 +6,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.8.0] - 2024-02-20
 
 ### Added
 
-- Neotest: Expose doctests in `:Neotest summary` window
+- Neotest: Expose doctests in `:Neotest summary` window [[#247](https://github.com/mrcjkb/rustaceanvim/pull/247)].
+  Thanks [@bltavares](https://github.com/bltavares)!
 
 ### Fixed
 
-- Testables: Run doctests when cargo-nextest is present
-- Windows: Normalize file actions when comparing to root dir [#245]
+- Testables: Run doctests when cargo-nextest is present [[#246](https://github.com/mrcjkb/rustaceanvim/pull/246)]
+  Thanks [@bltavares](https://github.com/bltavares)!
+- Windows: Normalize file actions when comparing to root dir [[#245](https://github.com/mrcjkb/rustaceanvim/pull/245)].
+  Thanks [@bltavares](https://github.com/bltavares)!
 
 ## [4.7.5] - 2024-02-20
 
