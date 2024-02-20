@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - DAP: Use deep copies of dap configs.
+- DAP: Bad config validation: `dap.configuration.env` should be
+  a `table`, not a `string`.
 
 ## [4.7.4] - 2024-02-19
 
