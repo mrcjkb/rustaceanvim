@@ -191,7 +191,7 @@ NeotestAdapter.discover_positions = function(file_path)
     path = file_path,
     range = { 0, 0, max_end_row, 0 },
     -- use the shortest namespace for the file runnable
-    runnable =   #namespaces > 0 and namespaces[#namespaces].runnable or nil,
+    runnable = #namespaces > 0 and namespaces[#namespaces].runnable or nil,
   }
   table.insert(sorted_positions, 1, file_pos)
 
