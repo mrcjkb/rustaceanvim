@@ -1,6 +1,7 @@
 ---@mod rustaceanvim.rust_analyzer Functions for interacting with rust-analyzer
 
 local compat = require('rustaceanvim.compat')
+local os = require('rustaceanvim.os')
 
 ---@class RustAnalyzerClientAdapter
 local M = {}
@@ -74,7 +75,7 @@ M.file_request = function(file_path, method, params, handler)
   local client_found = false
   for _, client in ipairs(M.get_active_rustaceanvim_clients(nil, { method = method })) do
     local root_dir = client.config.root_dir
-    if root_dir and vim.startswith(file_path, root_dir) then
+    if root_dir and vim.startswith(os.normalize_path(file_path), root_dir) then
       local bufnr = find_buffer_by_name(file_path)
       if not params then
         params = {
