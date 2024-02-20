@@ -248,7 +248,7 @@ function M.start(args, verbose, callback, on_error)
   if type(callback) ~= 'function' then
     callback = dap.run
   end
-  local adapter = types.evaluate(config.dap.adapter)
+  local adapter = vim.deepcopy(types.evaluate(config.dap.adapter))
   --- @cast adapter DapExecutableConfig | DapServerConfig | disable
   if adapter == false then
     on_error('Debug adapter is disabled.')
@@ -326,7 +326,7 @@ function M.start(args, verbose, callback, on_error)
       local local_config = types.evaluate(config.dap.configuration)
       --- @cast local_config DapClientConfig | boolean
 
-      local final_config = local_config ~= false and local_config or dap_config
+      local final_config = local_config ~= false and vim.deepcopy(local_config) or vim.deepcopy(dap_config)
       --- @cast final_config DapClientConfig
 
       if dap.adapters[final_config.type] == nil then
