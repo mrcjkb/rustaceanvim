@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Neotest: Expose doctests in `:Neotest summary` window
+
 ### Fixed
 
 - Testables: Run doctests when cargo-nextest is present

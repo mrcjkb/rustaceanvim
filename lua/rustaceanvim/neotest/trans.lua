@@ -27,7 +27,7 @@ function M.runnable_to_position(file_path, runnable)
       type = 'dir'
     elseif vim.startswith(runnable.label, 'test-mod') then
       type = 'namespace'
-    elseif vim.startswith(runnable.label, 'test') then
+    elseif vim.startswith(runnable.label, 'test') or vim.startswith(runnable.label, 'doctest') then
       type = 'test'
     else
       return
