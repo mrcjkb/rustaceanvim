@@ -62,7 +62,7 @@ body:
     attributes:
       label: "The minimal config used to reproduce this issue."
       description: |
-        See [this example](https://github.com/mrcjkb/rustaceanvim/blob/master/tests/minimal.lua).
+        See [this example](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
       placeholder: |
         -- Paste your minimal config here. Please base it on the example provided by this plugin,
         -- including any additional plugins that must be installed for the issue to be reproducible.
