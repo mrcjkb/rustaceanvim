@@ -696,6 +696,7 @@ itself to use it as a debug adapter.
 Some examples:
 
 - NixOS: [`vscode-extensions.vadimcn.vscode-lldb.adapter`](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/extensions/vadimcn.vscode-lldb/default.nix#L134)
+- This repository's Nix flake provides a `codelldb` package.
 - Arch Linux: [`codelldb-bin` (AUR)](https://aur.archlinux.org/packages/codelldb-bin)
 - Using [`mason.nvim`](https://github.com/williamboman/mason.nvim):
   `:MasonInstall codelldb`

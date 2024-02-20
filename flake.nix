@@ -168,6 +168,7 @@
           inherit
             (pkgs)
             rustaceanvim
+            codelldb
             nvim-minimal-stable
             nvim-minimal-nightly
             ;
