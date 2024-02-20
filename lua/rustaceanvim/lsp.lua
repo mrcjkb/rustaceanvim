@@ -35,7 +35,6 @@ local function is_in_workspace(client, root_dir)
   return false
 end
 
-
 ---@class LspStartConfig: RustaceanLspClientConfig
 ---@field root_dir string | nil
 ---@field init_options? table
