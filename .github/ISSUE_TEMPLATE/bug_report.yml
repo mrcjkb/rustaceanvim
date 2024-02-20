@@ -38,11 +38,12 @@ body:
     attributes:
       label: "How to reproduce the issue"
       description: |
-        Steps to reproduce using a [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
+        Steps to reproduce.
         
         > [!IMPORTANT]
         >
-        > Please refer to the readme's [troubleshooting guide](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#troubleshooting).
+        > - To rule out another plugin causing the issue, please start with a [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
+        > - Please refer to the readme's [troubleshooting guide](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#troubleshooting).
       placeholder: |
         mkdir -p /tmp/minimal
         NVIM_DATA_MINIMAL=/tmp/minimal NVIM_APP_NAME="nvim-minimal" -u minimal.lua
