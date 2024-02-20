@@ -74,7 +74,7 @@ function M.get_command(runnable)
   ret = vim.list_extend(ret, args.cargoExtraArgs or {})
   table.insert(ret, '--')
   ret = vim.list_extend(ret, args.executableArgs or {})
-  if config.tools.enable_nextest then
+  if config.tools.enable_nextest and not vim.startswith(runnable.label, "doctest") then
     ret = overrides.try_nextest_transform(ret)
   end
 
