@@ -6,6 +6,7 @@ local types = require('rustaceanvim.types.internal')
 local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
+local os = require('rustaceanvim.os')
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -34,18 +35,6 @@ local function is_in_workspace(client, root_dir)
   return false
 end
 
----Normalize path for Windows, which is case insensitive
----@param path string
----@return string normalize_path
-local function normalize_path(path)
-  if require('rustaceanvim.shell').is_windows() then
-    local has_windows_drive_letter = path:match('^%a:')
-    if has_windows_drive_letter then
-      return path:sub(1, 1):lower() .. path:sub(2)
-    end
-  end
-  return path
-end
 
 ---@class LspStartConfig: RustaceanLspClientConfig
 ---@field root_dir string | nil
@@ -69,7 +58,7 @@ M.start = function(bufnr)
   ---@type LspStartConfig
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = cargo.get_root_dir(vim.api.nvim_buf_get_name(bufnr))
-  root_dir = root_dir and normalize_path(root_dir)
+  root_dir = root_dir and os.normalize_path(root_dir)
   lsp_start_config.root_dir = root_dir
   if not root_dir then
     --- No project root found. Start in detached/standalone mode.
