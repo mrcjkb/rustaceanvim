@@ -184,18 +184,16 @@ NeotestAdapter.discover_positions = function(file_path)
   end
   sort_positions(sorted_positions)
 
-  if #namespaces > 0 then
-    local file_pos = {
-      id = file_path,
-      name = vim.fn.fnamemodify(file_path, ':t'),
-      type = 'file',
-      path = file_path,
-      range = { 0, 0, max_end_row, 0 },
-      -- use the shortest namespace for the file runnable
-      runnable = namespaces[#namespaces].runnable,
-    }
-    table.insert(sorted_positions, 1, file_pos)
-  end
+  local file_pos = {
+    id = file_path,
+    name = vim.fn.fnamemodify(file_path, ':t'),
+    type = 'file',
+    path = file_path,
+    range = { 0, 0, max_end_row, 0 },
+    -- use the shortest namespace for the file runnable
+    runnable =   #namespaces > 0 and namespaces[#namespaces].runnable or nil,
+  }
+  table.insert(sorted_positions, 1, file_pos)
 
   return require('neotest.types.tree').from_list(sorted_positions, function(x)
     return x.name
