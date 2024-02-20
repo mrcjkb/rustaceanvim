@@ -225,7 +225,8 @@ local RustaceanDefaultConfig = {
 
   --- all the opts to send to the LSP client
   --- these override the defaults set by rust-tools.nvim
-  ---@class RustaceanLspClientConfig
+  ---@diagnostic disable-next-line: undefined-doc-class
+  ---@class RustaceanLspClientConfig: lsp.ClientConfig
   server = {
     ---@type boolean | fun():boolean Whether to automatically attach the LSP client.
     ---Defaults to `true` if the `rust-analyzer` executable is found.
