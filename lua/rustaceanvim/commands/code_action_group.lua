@@ -191,9 +191,10 @@ local function on_code_action_results(results, ctx)
 
   vim.api.nvim_buf_set_lines(M.state.primary.bufnr, 0, 1, false, {})
 
-  vim.keymap.set('n', '<CR>', on_primary_enter_press, { buffer = M.state.primary.bufnr })
+  vim.keymap.set('n', '<CR>', on_primary_enter_press, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
 
-  vim.keymap.set('n', 'q', on_primary_quit, { buffer = M.state.primary.bufnr })
+  vim.keymap.set('n', 'q', on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+  vim.keymap.set('n', '<Esc>', on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
 
   M.codeactionify_window_buffer(M.state.primary.winnr, M.state.primary.bufnr)
 
