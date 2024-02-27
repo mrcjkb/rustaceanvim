@@ -165,7 +165,7 @@ local function on_code_action_results(results, ctx)
   end
 
   M.state.primary.bufnr = vim.api.nvim_create_buf(false, true)
-  M.state.primary.winnr = vim.api.nvim_open_win(M.state.primary.bufnr, true, {
+  local primary_winnr = vim.api.nvim_open_win(M.state.primary.bufnr, true, {
     relative = 'cursor',
     width = M.state.primary.geometry.width,
     height = vim.tbl_count(M.state.actions.grouped) + vim.tbl_count(M.state.actions.ungrouped),
@@ -174,6 +174,8 @@ local function on_code_action_results(results, ctx)
     row = 1,
     col = 0,
   })
+  vim.wo[primary_winnr].signcolumn = 'no'
+  M.state.primary.winnr = primary_winnr
 
   local idx = 1
   for key, value in pairs(M.state.actions.grouped) do
@@ -291,7 +293,7 @@ function M.on_cursor_move()
       M.state.secondary.geometry = compute_width(value.actions, false)
 
       M.state.secondary.bufnr = vim.api.nvim_create_buf(false, true)
-      M.state.secondary.winnr = vim.api.nvim_open_win(M.state.secondary.bufnr, false, {
+      local secondary_winnr = vim.api.nvim_open_win(M.state.secondary.bufnr, false, {
         relative = 'win',
         win = M.state.primary.winnr,
         width = M.state.secondary.geometry.width,
@@ -301,6 +303,8 @@ function M.on_cursor_move()
         row = line - 2,
         col = M.state.primary.geometry.width + 1,
       })
+      M.state.secondary.winnr = secondary_winnr
+      vim.wo[secondary_winnr].signcolumn = 'no'
 
       local idx = 1
       for _, inner_value in pairs(value.actions) do

@@ -127,6 +127,9 @@ function M.handler(_, result, ctx)
   -- makes more sense in a dropdown-ish ui
   vim.wo[winnr].cursorline = true
 
+  -- explicitly disable signcolumn
+  vim.wo[winnr].signcolumn = 'no'
+
   -- run the command under the cursor
   vim.keymap.set('n', '<CR>', function()
     run_command(ctx)
