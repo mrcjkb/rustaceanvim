@@ -1,15 +1,9 @@
 # Add flake.nix test inputs as arguments here
 {
   self,
-  neodev-nvim,
   plugin-name,
 }: final: prev: let
   nvim-nightly = final.neovim-nightly;
-
-  neodev-plugin = final.pkgs.vimUtils.buildVimPlugin {
-    name = "neodev.nvim";
-    src = neodev-nvim;
-  };
 
   lib = final.lib;
 
@@ -94,7 +88,4 @@ in {
   };
   nvim-minimal-stable = mkNvimMinimal final.neovim-unwrapped;
   nvim-minimal-nightly = mkNvimMinimal nvim-nightly;
-  inherit
-    neodev-plugin
-    ;
 }
