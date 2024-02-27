@@ -6,18 +6,11 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
-    pre-commit-hooks = {
-      url = "github:cachix/pre-commit-hooks.nix";
-    };
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
 
-    neorocks = {
-      url = "github:nvim-neorocks/neorocks";
-    };
+    neorocks.url = "github:nvim-neorocks/neorocks";
 
-    neodev-nvim = {
-      url = "github:folke/neodev.nvim";
-      flake = false;
-    };
+    gen-luarc.url = "github:mrcjkb/nix-gen-luarc-json";
   };
 
   outputs = inputs @ {
@@ -26,7 +19,7 @@
     flake-parts,
     pre-commit-hooks,
     neorocks,
-    neodev-nvim,
+    gen-luarc,
     ...
   }: let
     name = "rustaceanvim";
@@ -51,7 +44,6 @@
         ci-overlay = import ./nix/ci-overlay.nix {
           inherit
             self
-            neodev-nvim
             ;
           plugin-name = name;
         };
@@ -61,60 +53,30 @@
           overlays = [
             ci-overlay
             neorocks.overlays.default
+            gen-luarc.overlays.default
             plugin-overlay
           ];
         };
 
-        mkTypeCheck = {
-          rtp ? [],
-          disabled-diagnostics ? [],
-        }:
-          pre-commit-hooks.lib.${system}.run {
-            src = self;
-            hooks = {
-              lua-ls.enable = true;
-            };
-            settings = {
-              lua-ls = {
-                config = {
-                  runtime.version = "LuaJIT";
-                  Lua = {
-                    workspace = {
-                      library =
-                        rtp
-                        ++ (with pkgs.vimPlugins; [
-                          "${nvim-dap}/lua"
-                          "${toggleterm-nvim}/lua"
-                          "${neotest}/lua"
-                          "\${3rd}/busted/library"
-                          "\${3rd}/luassert/library"
-                        ]);
-                      checkThirdParty = false;
-                      ignoreDir = [
-                        ".git"
-                        ".github"
-                        ".direnv"
-                        "result"
-                        "nix"
-                        "doc"
-                        "spec" # FIXME: busted library
-                      ];
-                    };
-                    diagnostics = {
-                      libraryFiles = "Disable";
-                      disable = disabled-diagnostics;
-                    };
-                  };
-                };
-              };
-            };
-          };
+        luarc-plugins = with pkgs.lua51Packages;
+          [
+            nvim-nio
+          ]
+          ++ (with pkgs.vimPlugins; [
+            neotest
+            nvim-dap
+          ]);
 
-        type-check-stable = mkTypeCheck {
-          rtp = [
-            "${pkgs.neovim}/share/nvim/runtime/lua"
-            "${pkgs.neodev-plugin}/types/stable"
-          ];
+        luarc-nightly = pkgs.mk-luarc {
+          nvim = pkgs.neovim-nightly;
+          neodev-types = "nightly";
+          plugins = luarc-plugins;
+        };
+
+        luarc-stable = pkgs.mk-luarc {
+          nvim = pkgs.neovim-unwrapped;
+          neodev-types = "stable";
+          plugins = luarc-plugins;
           disabled-diagnostics = [
             "undefined-doc-name"
             "redundant-parameter"
@@ -122,11 +84,24 @@
           ];
         };
 
-        type-check-nightly = mkTypeCheck {
-          rtp = [
-            "${pkgs.neovim-nightly}/share/nvim/runtime/lua"
-            "${pkgs.neodev-plugin}/types/nightly"
-          ];
+        type-check-nightly = pre-commit-hooks.lib.${system}.run {
+          src = self;
+          hooks = {
+            lua-ls.enable = true;
+          };
+          settings = {
+            lua-ls.config = luarc-nightly;
+          };
+        };
+
+        type-check-stable = pre-commit-hooks.lib.${system}.run {
+          src = self;
+          hooks = {
+            lua-ls.enable = true;
+          };
+          settings = {
+            lua-ls.config = luarc-stable;
+          };
         };
 
         pre-commit-check = pre-commit-hooks.lib.${system}.run {
@@ -142,7 +117,10 @@
 
         devShell = pkgs.nvim-nightly-tests.overrideAttrs (oa: {
           name = "rustaceanvim devShell";
-          inherit (pre-commit-check) shellHook;
+          shellHook = ''
+            ${pre-commit-check.shellHook}
+            ln -fs ${pkgs.luarc-to-json luarc-nightly} .luarc.json
+          '';
           buildInputs = with pre-commit-hooks.packages.${system};
             [
               alejandra

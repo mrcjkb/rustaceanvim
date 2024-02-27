@@ -16,9 +16,9 @@ describe('LSP client API', function()
       vim.bo[bufnr].filetype = 'rust'
       vim.api.nvim_set_current_buf(bufnr)
       vim.cmd.RustAnalyzer('start')
-      assert.stub(lsp_start).was_called()
-      assert.stub(notify_once).was_not_called()
-      assert.stub(notify).was_not_called()
+      assert.stub(lsp_start).called(1)
+      assert.stub(notify_once).called(0)
+      assert.stub(notify).called(0)
       -- FIXME: This might not work in a sandboxed nix build
       -- local ra = require('rustaceanvim.rust_analyzer')
       -- assert(
