@@ -321,7 +321,7 @@ end
 --- Delete the `:RustLsp` command
 function M.delete_rust_lsp_command()
   if vim.cmd[rust_lsp_cmd_name] then
-    vim.api.nvim_del_user_command(rust_lsp_cmd_name)
+    pcall(vim.api.nvim_del_user_command, rust_lsp_cmd_name)
   end
 end
 

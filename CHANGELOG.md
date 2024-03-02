@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - LSP: Don't try to delete `RustLsp` command on client exit
-  if it doesn't exist.
+  if it doesn't exist, and fail silently.
 
 ## [4.10.2] - 2024-03-01
 
