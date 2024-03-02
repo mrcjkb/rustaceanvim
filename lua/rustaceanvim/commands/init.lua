@@ -320,7 +320,9 @@ end
 
 --- Delete the `:RustLsp` command
 function M.delete_rust_lsp_command()
-  vim.api.nvim_del_user_command(rust_lsp_cmd_name)
+  if vim.cmd[rust_lsp_cmd_name] then
+    vim.api.nvim_del_user_command(rust_lsp_cmd_name)
+  end
 end
 
 ---Create the `:Rustc` command
