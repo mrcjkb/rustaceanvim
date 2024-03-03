@@ -7,10 +7,10 @@ local os = require('rustaceanvim.os')
 local M = {}
 
 ---@param bufnr number | nil 0 for the current buffer, `nil` for no buffer filter
----@param filter? vim.lsp.get_clients.filter
+---@param filter? vim.lsp.get_clients.Filter
 ---@return lsp.Client[]
 M.get_active_rustaceanvim_clients = function(bufnr, filter)
-  ---@type vim.lsp.get_clients.filter
+  ---@type vim.lsp.get_clients.Filter
   filter = vim.tbl_deep_extend('force', filter or {}, {
     name = 'rust-analyzer',
   })

@@ -9,13 +9,15 @@ M.joinpath = vim.fs.joinpath or function(...)
   return (table.concat({ ... }, '/'):gsub('//+', '/'))
 end
 
----@class vim.lsp.get_clients.filter
+---@class vim.lsp.get_clients.Filter
 ---@field id integer|nil Match clients by id
 ---@field bufnr integer|nil match clients attached to the given buffer
 ---@field name string|nil match clients by name
 ---@field method string|nil match client by supported method name
 
----@alias vim.lsp.get_active_clients.filter vim.lsp.get_clients.filter
+---@alias vim.lsp.get_active_clients.filter vim.lsp.get_clients.Filter
+---@alias lsp.Client vim.lsp.Client
+---@alias lsp.ClientConfig vim.lsp.ClientConfig
 
 M.get_clients = vim.lsp.get_clients or vim.lsp.get_active_clients
 
