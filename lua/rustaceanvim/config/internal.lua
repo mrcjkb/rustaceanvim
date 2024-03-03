@@ -2,6 +2,7 @@ local types = require('rustaceanvim.types.internal')
 local compat = require('rustaceanvim.compat')
 local config = require('rustaceanvim.config')
 local executors = require('rustaceanvim.executors')
+local os = require('rustaceanvim.os')
 
 local RustaceanConfig
 
@@ -228,9 +229,16 @@ local RustaceanDefaultConfig = {
   ---@diagnostic disable-next-line: undefined-doc-class
   ---@class RustaceanLspClientConfig: vim.lsp.ClientConfig
   server = {
-    ---@type boolean | fun():boolean Whether to automatically attach the LSP client.
+    ---@type boolean | fun(bufnr: integer):boolean Whether to automatically attach the LSP client.
     ---Defaults to `true` if the `rust-analyzer` executable is found.
-    auto_attach = function()
+    auto_attach = function(bufnr)
+      if #vim.bo[bufnr].buftype > 0 then
+        return false
+      end
+      local path = vim.api.nvim_buf_get_name(bufnr)
+      if not os.is_valid_file_path(path) then
+        return false
+      end
       local cmd = types.evaluate(RustaceanConfig.server.cmd)
       ---@cast cmd string[]
       local rs_bin = cmd[1]

@@ -1,7 +1,5 @@
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
-local types = require('rustaceanvim.types.internal')
-local lsp = require('rustaceanvim.lsp')
 
 if not vim.g.did_rustaceanvim_initialize then
   vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
@@ -45,10 +43,12 @@ end
 
 vim.g.did_rustaceanvim_initialize = true
 
-local auto_attach = types.evaluate(config.server.auto_attach)
-
-if not auto_attach then
-  return
+local auto_attach = config.server.auto_attach
+if type(auto_attach) == 'function' then
+  local bufnr = vim.api.nvim_get_current_buf()
+  auto_attach = auto_attach(bufnr)
 end
 
-lsp.start()
+if auto_attach then
+  require('rustaceanvim.lsp').start()
+end
