@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- LSP: Bug preventing reload workspace on save Cargo.toml
+  when opening another Rust buffer [[#270](https://github.com/mrcjkb/rustaceanvim/issues/270)].
 - LSP: Don't try to delete `RustLsp` command on client exit
   if it doesn't exist, and fail silently.
 
