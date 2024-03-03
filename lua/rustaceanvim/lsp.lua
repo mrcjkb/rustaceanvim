@@ -144,22 +144,11 @@ M.start = function(bufnr)
 
   lsp_start_config.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_config.handlers or {})
 
-  local augroup = vim.api.nvim_create_augroup('RustaceanAutoCmds', { clear = true })
-
   local commands = require('rustaceanvim.commands')
   local old_on_init = lsp_start_config.on_init
   lsp_start_config.on_init = function(...)
     override_apply_text_edits()
     commands.create_rust_lsp_command()
-    if config.tools.reload_workspace_from_cargo_toml then
-      vim.api.nvim_create_autocmd('BufWritePost', {
-        pattern = '*/Cargo.toml',
-        callback = function()
-          vim.cmd.RustLsp { 'reloadWorkspace', mods = { silent = true } }
-        end,
-        group = augroup,
-      })
-    end
     if type(old_on_init) == 'function' then
       old_on_init(...)
     end
@@ -181,7 +170,6 @@ M.start = function(bufnr)
     -- on_exit runs in_fast_event
     vim.schedule(function()
       commands.delete_rust_lsp_command()
-      vim.api.nvim_del_augroup_by_id(augroup)
     end)
     if type(old_on_exit) == 'function' then
       old_on_exit(...)
