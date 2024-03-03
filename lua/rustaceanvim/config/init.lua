@@ -100,7 +100,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field edition string The edition to use. See https://rustc-dev-guide.rust-lang.org/guides/editions.html. Default '2021'.
 
 ---@class RustaceanLspClientOpts
----@field auto_attach? boolean | fun():boolean Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
+---@field auto_attach? boolean | fun(bufnr: integer):boolean Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
 ---@field cmd? string[] | fun():string[] Command and arguments for starting rust-analyzer
 ---@field settings? table | fun(project_root:string|nil):table Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
 ---@field standalone? boolean Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.

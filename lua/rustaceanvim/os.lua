@@ -3,6 +3,7 @@
 local os = {}
 
 local compat = require('rustaceanvim.compat')
+local shell = require('rustaceanvim.shell')
 
 ---@param url string
 function os.open_url(url)
@@ -35,12 +36,23 @@ end
 
 ---Normalize path for Windows, which is case insensitive
 ---@param path string
----@return string normalize_path
-function os.normalize_path(path)
-  if require('rustaceanvim.shell').is_windows() then
+---@return string normalized_path
+function os.normalize_path_on_windows(path)
+  if shell.is_windows() then
     return path:lower()
   end
   return path
+end
+
+---@param path string
+---@return boolean
+function os.is_valid_file_path(path)
+  local normalized_path = vim.fs.normalize(path, { expand_env = false })
+  if shell.is_windows() then
+    local starts_with_drive_letter = normalized_path:match('^%a:') ~= nil
+    return starts_with_drive_letter
+  end
+  return vim.startswith(normalized_path, '/')
 end
 
 return os
