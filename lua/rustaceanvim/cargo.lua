@@ -31,9 +31,14 @@ function cargo.get_root_dir(file_name)
   if reuse_active then
     return reuse_active
   end
+  local path = vim.fs.dirname(file_name)
+  if not path then
+    return nil
+  end
+  ---@diagnostic disable-next-line: missing-fields
   local cargo_crate_dir = vim.fs.dirname(vim.fs.find({ 'Cargo.toml' }, {
     upward = true,
-    path = vim.fs.dirname(file_name),
+    path = path,
   })[1])
   local cargo_workspace_dir = nil
   if vim.fn.executable('cargo') == 1 then
@@ -61,9 +66,10 @@ function cargo.get_root_dir(file_name)
   end
   return cargo_workspace_dir
     or cargo_crate_dir
+    ---@diagnostic disable-next-line: missing-fields
     or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
       upward = true,
-      path = vim.fs.dirname(file_name),
+      path = path,
     })[1])
 end
 
