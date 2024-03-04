@@ -34,12 +34,18 @@ function os.open_url(url)
   end
 end
 
+---@param path string
+---@return boolean
+local function starts_with_windows_drive_letter(path)
+  return path:match('^%a:') ~= nil
+end
+
 ---Normalize path for Windows, which is case insensitive
 ---@param path string
 ---@return string normalized_path
 function os.normalize_path_on_windows(path)
-  if shell.is_windows() then
-    return path:lower()
+  if shell.is_windows() and starts_with_windows_drive_letter(path) then
+    return path:sub(1, 1):lower() .. path:sub(2)
   end
   return path
 end
@@ -49,8 +55,7 @@ end
 function os.is_valid_file_path(path)
   local normalized_path = vim.fs.normalize(path, { expand_env = false })
   if shell.is_windows() then
-    local starts_with_drive_letter = normalized_path:match('^%a:') ~= nil
-    return starts_with_drive_letter
+    return starts_with_windows_drive_letter(normalized_path)
   end
   return vim.startswith(normalized_path, '/')
 end
