@@ -779,7 +779,7 @@ you can try [minimal.lua](./troubleshooting/minimal.lua).
 
 ```console
 mkdir -p /tmp/minimal/
-NVIM_DATA_MINIMAL="/tmp/minimal" NVIM_APP_NAME="nvim-minimal" nvim -u minimal.lua
+NVIM_DATA_MINIMAL="/tmp/minimal" NVIM_APP_NAME="nvim-minimal" nvim -u NORC -u minimal.lua
 ```
 
 > [!NOTE]
