@@ -31,10 +31,11 @@ local rustlsp_command_tbl = {
     end,
   },
   debuggables = {
+    ---@param args string[]
     ---@param opts vim.api.keyset.user_command
     impl = function(args, opts)
       if opts.bang then
-        require('rustaceanvim.cached_commands').execute_last_debuggable()
+        require('rustaceanvim.cached_commands').execute_last_debuggable(args)
       else
         require('rustaceanvim.commands.debuggables').debuggables(args)
       end
@@ -89,7 +90,7 @@ local rustlsp_command_tbl = {
     ---@param opts vim.api.keyset.user_command
     impl = function(args, opts)
       if opts.bang then
-        require('rustaceanvim.cached_commands').execute_last_runnable()
+        require('rustaceanvim.cached_commands').execute_last_runnable(args)
       else
         require('rustaceanvim.runnables').runnables(args)
       end
