@@ -1,12 +1,14 @@
 local M = {}
 
+---@alias RARunnablesChoice { choice: integer, runnables: RARunnable[] }
+
 ---@class CommandCache
 local cache = {
   ---@type RARunnableArgs | nil
   last_debuggable = nil,
-  ---@type { choice: integer, runnables: RARunnable[] }
+  ---@type RARunnablesChoice
   last_runnable = nil,
-  ---@type { choice: integer, runnables: RARunnable[] }
+  ---@type RARunnablesChoice
   last_testable = nil,
 }
 
@@ -33,34 +35,49 @@ M.set_last_debuggable = function(args)
   cache.last_debuggable = args
 end
 
-M.execute_last_debuggable = function()
+---@param executableArgsOverride? string[]
+M.execute_last_debuggable = function(executableArgsOverride)
   local args = cache.last_debuggable
   if args then
+    if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
+      args.executableArgs = executableArgsOverride
+    end
     local rt_dap = require('rustaceanvim.dap')
     rt_dap.start(args)
   else
     local debuggables = require('rustaceanvim.commands.debuggables')
-    debuggables()
+    debuggables.debuggables(executableArgsOverride)
   end
 end
 
-M.execute_last_testable = function()
+---@param choice RARunnablesChoice
+---@param executableArgsOverride? string[]
+local function override_executable_args_if_set(choice, executableArgsOverride)
+  if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
+    choice.runnables[choice.choice].args.executableArgs = executableArgsOverride
+  end
+end
+
+M.execute_last_testable = function(executableArgsOverride)
   local action = cache.last_testable
   local runnables = require('rustaceanvim.runnables')
   if action then
+    override_executable_args_if_set(action, executableArgsOverride)
     runnables.run_command(action.choice, action.runnables)
   else
-    runnables.runnables { tests_only = true }
+    runnables.runnables(executableArgsOverride, { tests_only = true })
   end
 end
 
-M.execute_last_runnable = function()
+---@param executableArgsOverride? string[]
+M.execute_last_runnable = function(executableArgsOverride)
   local action = cache.last_runnable
   local runnables = require('rustaceanvim.runnables')
   if action then
+    override_executable_args_if_set(action, executableArgsOverride)
     runnables.run_command(action.choice, action.runnables)
   else
-    runnables.runnables()
+    runnables.runnables(executableArgsOverride)
   end
 end
 
