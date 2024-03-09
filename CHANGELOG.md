@@ -6,10 +6,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.12.1] - 2024-03-09
 
 ### Fixed
 
+- UI: Buggy concealing of elements in rendered diagnostics [[#280](https://github.com/mrcjkb/rustaceanvim/issues/280)].
 - LSP: Use file directory name as cwd when getting cargo metadata.
   This prevents rustaceanvim from detecting the wrong project root
   in standalone files if the current cwd is a cargo project.
