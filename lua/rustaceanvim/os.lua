@@ -45,7 +45,7 @@ end
 ---@return string normalized_path
 function os.normalize_path_on_windows(path)
   if shell.is_windows() and starts_with_windows_drive_letter(path) then
-    return path:sub(1, 1):lower() .. path:sub(2)
+    return path:sub(1, 1):lower() .. path:sub(2):gsub('/+', '\\')
   end
   return path
 end

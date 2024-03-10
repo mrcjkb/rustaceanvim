@@ -1,5 +1,6 @@
 local compat = require('rustaceanvim.compat')
 local rust_analyzer = require('rustaceanvim.rust_analyzer')
+local os = require('rustaceanvim.os')
 local joinpath = compat.joinpath
 
 local cargo = {}
@@ -17,6 +18,7 @@ local function get_mb_active_client_root(file_name)
   local toolchains = joinpath(rustup_home, 'toolchains')
 
   for _, item in ipairs { toolchains, registry } do
+    item = os.normalize_path_on_windows(item)
     if file_name:sub(1, #item) == item then
       local clients = rust_analyzer.get_active_rustaceanvim_clients()
       return clients and #clients > 0 and clients[#clients].config.root_dir or nil
