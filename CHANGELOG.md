@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The `server.settings` function can now take a `default_settings` tabe
   to be merged.
 
+### Fixed
+
+- Loading settings from `rust-analyzer.json`:
+  Potential for duplicate lua config keys if json keys are of the format:
+  `"rust-analyzer.foo.bar"`
+
 ## [4.12.2] - 2024-03-11
 
 ### Fixed

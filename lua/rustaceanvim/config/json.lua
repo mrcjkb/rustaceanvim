@@ -30,10 +30,10 @@ end
 
 ---@param tbl table
 ---@param json_tbl { [string]: unknown }
----@param key_predicate fun(string): boolean
+---@param key_predicate? fun(string): boolean
 function M.override_with_json_keys(tbl, json_tbl, key_predicate)
   for json_key, value in pairs(json_tbl) do
-    if key_predicate(json_key) then
+    if not key_predicate or key_predicate(json_key) then
       override_tbl_values(tbl, json_key, value)
     end
   end
