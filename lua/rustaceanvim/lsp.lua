@@ -65,7 +65,8 @@ M.start = function(bufnr)
   end
 
   local settings = client_config.settings
-  local evaluated_settings = type(settings) == 'function' and settings(root_dir) or settings
+  local evaluated_settings = type(settings) == 'function' and settings(root_dir, client_config.default_settings)
+    or settings
   ---@cast evaluated_settings table
   lsp_start_config.settings = evaluated_settings
 
