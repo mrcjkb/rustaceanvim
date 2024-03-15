@@ -60,4 +60,17 @@ function os.is_valid_file_path(path)
   return vim.startswith(normalized_path, '/')
 end
 
+---Read the content of a file
+---@param filename string
+---@return string|nil content
+function os.read_file(filename)
+  local content
+  local f = io.open(filename, 'r')
+  if f then
+    content = f:read('*a')
+    f:close()
+  end
+  return content
+end
+
 return os

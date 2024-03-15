@@ -35,6 +35,25 @@ local function is_in_workspace(client, root_dir)
   return false
 end
 
+---@Searches upward for a .vscode/settings.json that contains rust-analyzer
+--- settings and applies them.
+---@param bufname string
+---@return table server_settings or an empty table if no settings were found
+local function find_vscode_settings(bufname)
+  local settings = {}
+  local found_dirs = vim.fs.find({ '.vscode' }, { upward = true, path = vim.fs.dirname(bufname), type = 'directory' })
+  if vim.tbl_isempty(found_dirs) then
+    return settings
+  end
+  local vscode_dir = found_dirs[1]
+  local results = vim.fn.glob(compat.joinpath(vscode_dir, 'settings.json'), true, true)
+  if vim.tbl_isempty(results) then
+    return settings
+  end
+  local content = os.read_file(results[1])
+  return content and require('rustaceanvim.config.json').silent_decode(content) or {}
+end
+
 ---@class LspStartConfig: RustaceanLspClientConfig
 ---@field root_dir string | nil
 ---@field init_options? table
@@ -53,22 +72,29 @@ end
 ---@return integer|nil client_id The LSP client ID
 M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
   local client_config = config.server
   ---@type LspStartConfig
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
-  local root_dir = cargo.get_root_dir(vim.api.nvim_buf_get_name(bufnr))
+  local root_dir = cargo.get_root_dir(bufname)
   root_dir = root_dir and os.normalize_path_on_windows(root_dir)
   lsp_start_config.root_dir = root_dir
   if not root_dir then
     --- No project root found. Start in detached/standalone mode.
-    lsp_start_config.init_options = { detachedFiles = { vim.api.nvim_buf_get_name(bufnr) } }
+    lsp_start_config.init_options = { detachedFiles = { bufname } }
   end
 
   local settings = client_config.settings
   local evaluated_settings = type(settings) == 'function' and settings(root_dir, client_config.default_settings)
     or settings
+
   ---@cast evaluated_settings table
   lsp_start_config.settings = evaluated_settings
+
+  if config.server.load_vscode_settings then
+    local json_settings = find_vscode_settings(bufname)
+    require('rustaceanvim.config.json').override_with_rust_analyzer_json_keys(lsp_start_config.settings, json_settings)
+  end
 
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do

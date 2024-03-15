@@ -105,6 +105,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field settings? table | fun(project_root:string|nil, default_settings: table):table Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
 ---@field standalone? boolean Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
 ---@field logfile? string The path to the rust-analyzer log file.
+---@field load_vscode_settings? boolean Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json. If found, loaded settings will override configured options. Default: false
 
 ---@class RustaceanDapOpts
 --- @field autoload_configurations boolean Whether to autoload nvim-dap configurations when rust-analyzer has attached? Default: `true`.
