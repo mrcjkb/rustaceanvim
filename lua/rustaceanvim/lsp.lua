@@ -187,7 +187,7 @@ M.start = function(bufnr)
       old_on_attach(...)
     end
     if config.dap.autoload_configurations then
-      require('rustaceanvim.commands.debuggables').add_dap_debuggables()
+      pcall(require('rustaceanvim.commands.debuggables').add_dap_debuggables)
     end
   end
 
