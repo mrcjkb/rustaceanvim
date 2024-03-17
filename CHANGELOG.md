@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Can be enabled by setting `vim.g.rustaceanvim.server.load_vscode_settings`
   to `true` [[#286](https://github.com/mrcjkb/rustaceanvim/issues/286)].
 
+### Fixed
+
+- Config: Don't validate configs whose types are defined in external APIs
+  such as nvim-dap [[#294](https://github.com/mrcjkb/rustaceanvim/issues/294)].
+
 ## [4.13.0] - 2024-03-15
 
 ### Added
