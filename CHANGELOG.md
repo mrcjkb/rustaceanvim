@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Experimental] Load rust-analyzer settings from `.vscode/settings.json`.
   Can be enabled by setting `vim.g.rustaceanvim.server.load_vscode_settings`
   to `true` [[#286](https://github.com/mrcjkb/rustaceanvim/issues/286)].
+- Health: Detect rust-analyzer wrapper without rust-analyzer (Neovim >= 0.10).
 
 ### Fixed
 
