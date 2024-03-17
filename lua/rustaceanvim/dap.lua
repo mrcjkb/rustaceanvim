@@ -211,25 +211,43 @@ local function add_dynamic_library_paths(adapter, workspace_root)
   end)
 end
 
+---@param action fun() Action to perform
+---@param desc? string Description of the action or nil to suppress warning
+local function pall_with_warn(action, desc)
+  local success, err = pcall(action)
+  if not success and desc then
+    vim.schedule(function()
+      vim.notify(desc .. ' failed: ' .. err, vim.log.levels.WARN)
+    end)
+  end
+end
+
 ---@param adapter DapExecutableConfig | DapServerConfig
 ---@param args RARunnableArgs
-local function handle_configured_options(adapter, args)
+---@param verbose boolean
+local function handle_configured_options(adapter, args, verbose)
   local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
   ---@cast is_generate_source_map_enabled boolean
   if is_generate_source_map_enabled then
-    generate_source_map(args.workspaceRoot)
+    pall_with_warn(function()
+      generate_source_map(args.workspaceRoot)
+    end, verbose and 'Generating source map' or nil)
   end
 
   local is_load_rust_types_enabled = types.evaluate(config.dap.load_rust_types)
   ---@cast is_load_rust_types_enabled boolean
   if is_load_rust_types_enabled then
-    get_lldb_commands(args.workspaceRoot)
+    pall_with_warn(function()
+      get_lldb_commands(args.workspaceRoot)
+    end, verbose and 'Getting LLDB commands' or nil)
   end
 
   local is_add_dynamic_library_paths_enabled = types.evaluate(config.dap.add_dynamic_library_paths)
   ---@cast is_add_dynamic_library_paths_enabled boolean
   if is_add_dynamic_library_paths_enabled then
-    add_dynamic_library_paths(adapter, args.workspaceRoot)
+    pall_with_warn(function()
+      add_dynamic_library_paths(adapter, args.workspaceRoot)
+    end, verbose and 'Adding library paths' or nil)
   end
 end
 
@@ -253,7 +271,7 @@ function M.start(args, verbose, callback, on_error)
     return
   end
 
-  handle_configured_options(adapter, args)
+  handle_configured_options(adapter, args, verbose)
 
   local cargo_args = get_cargo_args_from_runnables_args(args)
   local cmd = vim.list_extend({ 'cargo' }, cargo_args)
