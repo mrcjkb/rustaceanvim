@@ -32,11 +32,13 @@ local lua_dependencies = {
 
 ---@class ExternalDependency
 ---@field name string Name of the dependency
----@field get_binaries fun():string[]Function that returns the binaries to check for
+---@field get_binaries fun():string[] Function that returns the binaries to check for
+---@field is_installed? fun(bin: string):boolean Default: `vim.fn.executable(bin) == 1`
 ---@field optional fun():boolean Function that returns whether the dependency is optional
 ---@field url string URL (markdown)
 ---@field info string Additional information
----@field extra_checks function|nil Optional extra checks to perform if the dependency is installed
+---@field extra_checks_if_installed? fun(bin: string) Optional extra checks to perform if the dependency is installed
+---@field extra_checks_if_not_installed? fun() Optional extra checks to perform if the dependency is not installed
 
 ---@param dep LuaDependency
 local function check_lua_dependency(dep)
@@ -52,37 +54,40 @@ local function check_lua_dependency(dep)
 end
 
 ---@param dep ExternalDependency
----@return boolean is_installed
+---@return string|nil binary
 ---@return string|nil version
 local check_installed = function(dep)
   local binaries = dep.get_binaries()
   for _, binary in ipairs(binaries) do
-    if vim.fn.executable(binary) == 1 then
+    local is_installed = dep.is_installed or function(bin)
+      return vim.fn.executable(bin) == 1
+    end
+    if is_installed(binary) then
       local handle = io.popen(binary .. ' --version')
       if handle then
         local binary_version, error_msg = handle:read('*a')
         handle:close()
         if error_msg then
-          return true
+          return binary
         end
-        return true, binary_version
+        return binary, binary_version
       end
-      return true
+      return binary
     end
   end
-  return false
 end
 
 ---@param dep ExternalDependency
 local function check_external_dependency(dep)
-  local installed, mb_version = check_installed(dep)
-  if installed then
-    local mb_version_newline_idx = mb_version and mb_version:find('\n')
-    local mb_version_len = mb_version and (mb_version_newline_idx and mb_version_newline_idx - 1 or mb_version:len())
-    local version = mb_version and mb_version:sub(0, mb_version_len) or '(unknown version)'
+  local binary, version = check_installed(dep)
+  if binary then
+    ---@cast binary string
+    local mb_version_newline_idx = version and version:find('\n')
+    local mb_version_len = version and (mb_version_newline_idx and mb_version_newline_idx - 1 or version:len())
+    version = version and version:sub(0, mb_version_len) or '(unknown version)'
     ok(('%s: found %s'):format(dep.name, version))
-    if dep.extra_checks then
-      dep.extra_checks()
+    if dep.extra_checks_if_installed then
+      dep.extra_checks_if_installed(binary)
     end
     return
   end
@@ -98,6 +103,9 @@ local function check_external_dependency(dep)
       rustaceanvim requires %s.
       %s
       ]]):format(dep.name, dep.url, dep.info))
+  end
+  if dep.extra_checks_if_not_installed then
+    dep.extra_checks_if_not_installed()
   end
 end
 
@@ -161,26 +169,46 @@ function health.check()
   local adapter = types.evaluate(config.dap.adapter)
   ---@cast adapter DapExecutableConfig | DapServerConfig | boolean
 
+  ---@return string
+  local function get_rust_analyzer_binary()
+    local default = 'rust-analyzer'
+    if not config then
+      return default
+    end
+    local cmd = types.evaluate(config.server.cmd)
+    if not cmd or #cmd == 0 then
+      return default
+    end
+    return cmd[1]
+  end
+
   ---@type ExternalDependency[]
   local external_dependencies = {
     {
       name = 'rust-analyzer',
       get_binaries = function()
-        local default = { 'rust-analyzer' }
-        if not config then
-          return default
+        return { get_rust_analyzer_binary() }
+      end,
+      is_installed = function(bin)
+        if vim.fn.has('nvim-0.10') then
+          local success = pcall(function()
+            vim.system { bin, '--version' }
+          end)
+          return success
         end
-        local cmd = types.evaluate(config.server.cmd)
-        if not cmd or #cmd == 0 then
-          return default
-        end
-        return { cmd[1] }
+        return vim.fn.executable(bin) == 1
       end,
       optional = function()
         return false
       end,
       url = '[rust-analyzer](https://rust-analyzer.github.io/)',
       info = 'Required by the LSP client.',
+      extra_checks_if_not_installed = function()
+        local bin = get_rust_analyzer_binary()
+        if vim.fn.executable(bin) == 1 then
+          warn("rust-analyzer wrapper detected. Run 'rustup component add rust-analyzer' to install rust-analyzer.")
+        end
+      end,
     },
     {
       name = 'Cargo',
