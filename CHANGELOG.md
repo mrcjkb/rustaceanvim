@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Config: Don't validate configs whose types are defined in external APIs
   such as nvim-dap [[#294](https://github.com/mrcjkb/rustaceanvim/issues/294)].
 - DAP: Don't error if adding source/library information fails (warn instead).
+- LSP/DAP: Fail silently if adding DAP configurations
+  on LSP client attach fails [[#295](https://github.com/mrcjkb/rustaceanvim/issues/295)].
 
 ## [4.13.0] - 2024-03-15
 
