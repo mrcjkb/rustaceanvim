@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- [Experimental] Load rust-analyzer settings from `.vscode/settings.json`.
+  Can be enabled by setting `vim.g.rustaceanvim.server.load_vscode_settings`
+  to `true` [[#286](https://github.com/mrcjkb/rustaceanvim/issues/286)].
+
 ## [4.13.0] - 2024-03-15
 
 ### Added
@@ -13,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LSP: More flexibility when overriding default rust-analyzer settings.
   The `server.settings` function can now take a `default_settings` tabe
   to be merged.
+
+### Fixed
+
+- Loading settings from `rust-analyzer.json`:
+  Potential for duplicate lua config keys if json keys are of the format:
+  `"rust-analyzer.foo.bar"`
 
 ## [4.12.2] - 2024-03-11
 
