@@ -3,27 +3,31 @@ description: Report a problem with rustaceanvim
 labels: [bug]
 body:
 
-  - type: markdown
+  - type: checkboxes
     attributes:
-      value: |
-        > [!IMPORTANT]
-        >
-        > _Before reporting:_
-        >
-        > - Search [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
-        >   and [discussions](https://github.com/mrcjkb/rustaceanvim/discussions).
-        > - See also: [The README's troubleshooting guide](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#troubleshooting).
-
+      label: Have you read the docs and searched existing issues?
+      description: Please check all of the below before submitting an issue
+      options:
+        - label: I have read [the README's troubleshooting guide](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#troubleshooting).
+          required: true
+        - label: I have searched [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
+          required: true
+        - label: I have searched [existing discussions](https://github.com/mrcjkb/rustaceanvim/discussions).
+          required: true
+        - label: I have searched the existing issues of other plugins related to this issue.
+          required: true
+        - label: I can reproduce the issue with stable Neovim (not a distribution or nightly) and the [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
+          required: true
   - type: input
     attributes:
       label: "Neovim version (nvim -v)"
-      placeholder: "v0.9.0"
+      placeholder: "v0.9.5"
     validations:
       required: true
   - type: input
     attributes:
       label: "Operating system/version"
-      placeholder: "NixOS 22.05"
+      placeholder: "NixOS 23.11"
     validations:
       required: true
   - type: textarea
@@ -44,6 +48,7 @@ body:
         >
         > - To rule out another plugin causing the issue, please start with a [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
         > - Please refer to the readme's [troubleshooting guide](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#troubleshooting).
+        > - Please provide exact (repeatable) steps, including project initialization (if applicable).
       placeholder: |
         mkdir -p /tmp/minimal
         NVIM_DATA_MINIMAL=/tmp/minimal NVIM_APP_NAME="nvim-minimal" -u minimal.lua
