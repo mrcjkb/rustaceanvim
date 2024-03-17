@@ -224,7 +224,7 @@ end
 
 ---@param adapter DapExecutableConfig | DapServerConfig
 ---@param args RARunnableArgs
----@param verbose boolean
+---@param verbose? boolean
 local function handle_configured_options(adapter, args, verbose)
   local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
   ---@cast is_generate_source_map_enabled boolean
