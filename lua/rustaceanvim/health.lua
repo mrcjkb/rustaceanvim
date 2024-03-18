@@ -190,7 +190,7 @@ function health.check()
         return { get_rust_analyzer_binary() }
       end,
       is_installed = function(bin)
-        if vim.fn.has('nvim-0.10') then
+        if type(vim.system) == 'function' then
           local success = pcall(function()
             vim.system { bin, '--version' }
           end)
