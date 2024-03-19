@@ -14,8 +14,10 @@ body:
           required: true
         - label: I have searched [existing discussions](https://github.com/mrcjkb/rustaceanvim/discussions).
           required: true
-        - label: I have searched the existing issues of other plugins related to this issue.
-          required: true
+        - label: I have searched the existing issues of other plugins related to this issue (if applicable).
+          required: false
+        - label: I have searched the [existing rust-analyzer issues](https://github.com/rust-lang/rust-analyzer/issues?q=is%3Aissue+) (if applicable).
+          required: false
         - label: I can reproduce the issue with stable Neovim (not a distribution or nightly) and the [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
           required: true
   - type: input
