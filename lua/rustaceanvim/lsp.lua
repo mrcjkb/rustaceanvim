@@ -186,9 +186,6 @@ M.start = function(bufnr)
     if type(old_on_attach) == 'function' then
       old_on_attach(...)
     end
-    if config.dap.autoload_configurations then
-      pcall(require('rustaceanvim.commands.debuggables').add_dap_debuggables)
-    end
   end
 
   local old_on_exit = lsp_start_config.on_exit

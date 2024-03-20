@@ -1,5 +1,7 @@
 local M = {}
 
+local compat = require('rustaceanvim.compat')
+
 ---@return { textDocument: lsp_text_document, position: nil }
 local function get_params()
   return {
@@ -157,7 +159,16 @@ end
 --- Sends the request to rust-analyzer to get the debuggables and adds them to nvim-dap's
 --- configurations
 function M.add_dap_debuggables()
+  -- Defer, because rust-analyzer may not be ready yet
   runnables_request(mk_handler(add_debuggables_to_nvim_dap))
+  local timer = compat.uv.new_timer()
+  timer:start(
+    2000,
+    0,
+    vim.schedule_wrap(function()
+      runnables_request(mk_handler(add_debuggables_to_nvim_dap))
+    end)
+  )
 end
 
 return M
