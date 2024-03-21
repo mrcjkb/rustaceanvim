@@ -35,8 +35,8 @@ local function is_in_workspace(client, root_dir)
   return false
 end
 
----@Searches upward for a .vscode/settings.json that contains rust-analyzer
---- settings and applies them.
+---Searches upward for a .vscode/settings.json that contains rust-analyzer
+---settings and returns them.
 ---@param bufname string
 ---@return table server_settings or an empty table if no settings were found
 local function find_vscode_settings(bufname)
@@ -52,6 +52,25 @@ local function find_vscode_settings(bufname)
   end
   local content = os.read_file(results[1])
   return content and require('rustaceanvim.config.json').silent_decode(content) or {}
+end
+
+---Generate the settings from config and vscode settings if found.
+---settings and returns them.
+---@param bufname string
+---@param root_dir string | nil
+---@param client_config table
+---@return table server_settings or an empty table if no settings were found
+local function get_start_settings(bufname, root_dir, client_config)
+  local settings = client_config.settings
+  local evaluated_settings = type(settings) == 'function' and settings(root_dir, client_config.default_settings)
+    or settings
+
+  if config.server.load_vscode_settings then
+    local json_settings = find_vscode_settings(bufname)
+    require('rustaceanvim.config.json').override_with_rust_analyzer_json_keys(evaluated_settings, json_settings)
+  end
+
+  return evaluated_settings
 end
 
 ---@class LspStartConfig: RustaceanLspClientConfig
@@ -84,17 +103,7 @@ M.start = function(bufnr)
     lsp_start_config.init_options = { detachedFiles = { bufname } }
   end
 
-  local settings = client_config.settings
-  local evaluated_settings = type(settings) == 'function' and settings(root_dir, client_config.default_settings)
-    or settings
-
-  ---@cast evaluated_settings table
-  lsp_start_config.settings = evaluated_settings
-
-  if config.server.load_vscode_settings then
-    local json_settings = find_vscode_settings(bufname)
-    require('rustaceanvim.config.json').override_with_rust_analyzer_json_keys(lsp_start_config.settings, json_settings)
-  end
+  lsp_start_config.settings = get_start_settings(bufname, root_dir, client_config)
 
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
@@ -222,6 +231,23 @@ M.stop = function(bufnr)
   return clients
 end
 
+---Reload settings for the LSP client.
+---@param bufnr? number The buffer number, defaults to the current buffer
+---@return table[] clients A list of clients that will be have their settings reloaded
+M.reload_settings = function(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
+  ---@cast clients lsp.Client[]
+  for _, client in ipairs(clients) do
+    local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.root_dir, config.server)
+    client.settings = settings
+    client.notify('workspace/didChangeConfiguration', {
+      settings = client.settings,
+    })
+  end
+  return clients
+end
+
 ---Restart the LSP client.
 ---Fails silently if the buffer's filetype is not one of the filetypes specified in the config.
 ---@param bufnr? number The buffer number (optional), defaults to the current buffer
@@ -262,6 +288,7 @@ local RustAnalyzerCmd = {
   start = 'start',
   stop = 'stop',
   restart = 'restart',
+  reload_settings = 'reloadSettings',
 }
 
 local function rust_analyzer_cmd(opts)
@@ -274,6 +301,8 @@ local function rust_analyzer_cmd(opts)
     M.stop()
   elseif cmd == RustAnalyzerCmd.restart then
     M.restart()
+  elseif cmd == RustAnalyzerCmd.reload_settings then
+    M.reload_settings()
   end
 end
 
@@ -283,7 +312,7 @@ vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
   complete = function(arg_lead, cmdline, _)
     local clients = rust_analyzer.get_active_rustaceanvim_clients()
     ---@type RustAnalyzerCmd[]
-    local commands = #clients == 0 and { 'start' } or { 'stop', 'restart' }
+    local commands = #clients == 0 and { 'start' } or { 'stop', 'restart', 'reloadSettings' }
     if cmdline:match('^RustAnalyzer%s+%w*$') then
       return vim.tbl_filter(function(command)
         return command:find(arg_lead) ~= nil

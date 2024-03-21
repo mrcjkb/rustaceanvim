@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- LSP: `RustAnalyzer reloadSettings` command to reload settings without restarting.
+
 ### Fixed
 
 - DAP: Defer automatic registration of nvim-dap configurations on LSP client init,
