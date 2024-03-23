@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- LSP: `RustAnalyzer reloadSettings` command to reload settings without restarting.
+- LSP: `RustAnalyzer reloadSettings` command to reload settings without restarting
+  [[#309](https://github.com/mrcjkb/rustaceanvim/pull/309)].
+  Thanks [@GuillaumeLagrange](https://github.com/GuillaumeLagrange)!
 
 ### Fixed
 
