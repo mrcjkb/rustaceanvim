@@ -240,6 +240,7 @@ M.reload_settings = function(bufnr)
   ---@cast clients lsp.Client[]
   for _, client in ipairs(clients) do
     local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.config.root_dir, config.server)
+    ---@diagnostic disable-next-line: inject-field
     client.settings = settings
     client.notify('workspace/didChangeConfiguration', {
       settings = client.settings,
