@@ -239,7 +239,7 @@ M.reload_settings = function(bufnr)
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   ---@cast clients lsp.Client[]
   for _, client in ipairs(clients) do
-    local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.root_dir, config.server)
+    local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.config.root_dir, config.server)
     client.settings = settings
     client.notify('workspace/didChangeConfiguration', {
       settings = client.settings,
