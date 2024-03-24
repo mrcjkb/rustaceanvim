@@ -2,6 +2,9 @@
 local config = require('rustaceanvim.config.internal')
 
 if not vim.g.did_rustaceanvim_initialize then
+  require('rustaceanvim.config.check').check_for_lspconfig_conflict(vim.schedule_wrap(function(warn)
+    vim.notify_once(warn, vim.log.levels.WARN)
+  end))
   vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
     local runnables = require('rustaceanvim.runnables')
     local cached_commands = require('rustaceanvim.cached_commands')

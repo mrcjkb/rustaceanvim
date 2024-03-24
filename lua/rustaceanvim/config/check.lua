@@ -137,4 +137,23 @@ function M.validate(cfg)
   return true
 end
 
+---@param callback fun(msg: string)
+function M.check_for_lspconfig_conflict(callback)
+  for _, autocmd in ipairs(vim.api.nvim_get_autocmds { event = 'FileType', pattern = 'rust' }) do
+    if
+      autocmd.group_name
+      and autocmd.group_name == 'lspconfig'
+      and autocmd.desc
+      and autocmd.desc:match('rust_analyzer')
+    then
+      callback([[
+nvim-lspconfig.rust_analyzer has been setup.
+This will likely lead to conflicts with the rustaceanvim LSP client.
+See ':h rustaceanvim.mason'
+]])
+      return
+    end
+  end
+end
+
 return M
