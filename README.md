@@ -801,14 +801,19 @@ For issues related to rust-analyzer
 (e.g. LSP features not working), see also
 [the rust-analyzer troubleshooting guide](https://rust-analyzer.github.io/manual.html#troubleshooting).
 
-## FAQ
+### FAQ
 
-### Where are inlay hints?
+#### Where are inlay hints?
 
 As Neovim >= 0.10 supports inlay hints natively, I have removed the
 code from this plugin.
 
 To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com/mrcjkb/rustaceanvim/discussions/46#discussioncomment-7620822).
+
+#### mason.nvim and nvim-lspconfig
+
+See [`:h rustaceanvim.mason`](./doc/mason.txt) for details about troubleshooting
+mason.nvim and nvim-lspconfig issues.
 
 ## Related Projects
 

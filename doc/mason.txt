@@ -1,0 +1,39 @@
+==============================================================================
+mason-lspconfig troubleshooting                          *rustaceanvim.mason*
+
+This plugin supports automatically detecting mason.nvim codelldb installations,
+but not rust-analyzer.
+The main reason for this choice is that it mason.nvim installations of rust-analyzer
+will most likely have been built with a different toolchain than your project,
+leading to inconsistencies and possibly subtle bugs.
+If you want to use a mason.nvim installation anyway, you can do so by specifying
+the `server.cmd` setting (see |rustaceanvim.config| and |RustaceanLspClientOpts|).
+
+Note that mason-lspconfig.nvim, when configured to ensure rust-analyzer is installed,
+assumes you are using the `nvim-lspconfig.rust_analyzer` client,
+and will set it up for you, leading to conflicts with this plugin.
+You can prevent this by telling mason.nvim not to do so.
+
+General approach:
+
+>lua
+  require('mason-lspconfig').setup_handlers {
+    ['rust_analyzer'] = function() end,
+  }
+<
+
+Using LazyVim:
+
+>lua
+  {
+    'neovim/nvim-lspconfig',
+    opts = {
+      setup = {
+        rust_analyzer = function()
+          return true 
+        end,
+      },
+    },
+  }
+<
+vim:tw=78:ts=8:noet:ft=help:norl:
