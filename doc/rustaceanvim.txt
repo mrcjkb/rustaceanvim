@@ -38,7 +38,7 @@ It accepts the following subcommands:
                          `args[]` allows you to override the executable's arguments.
  `expandMacro` - Expand macros recursively.
  `moveItem [up|down]` - Move items up or down.
- `hover [action|range]` - Hover actions, or hover over visually selected range.
+ `hover [actions|range]` - Hover actions, or hover over visually selected range.
  `explainError` - Display a hover window with explanations form the Rust error index.
  `renderDiagnostic` - Display a hover window with the rendered diagnostic,
                       as displayed during `cargo build`.
