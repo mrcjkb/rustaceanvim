@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- LSP: Automatically detect and register client capabilities for the following plugins,
+  if installed:
+  - [cmp-nvim-lsp](https://github.com/hrsh7th/cmp-nvim-lsp)
+  - [nvim-lsp-selection-range](https://github.com/camilledejoye/nvim-lsp-selection-range)
+  - [nvim-ufo](https://github.com/kevinhwang91/nvim-ufo)
+
 ### Fixed
 
 - Neotest: Correctly mark passed and skipped tests when running a

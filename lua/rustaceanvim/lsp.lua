@@ -135,42 +135,6 @@ M.start = function(bufnr)
   lsp_start_config.cmd = rust_analyzer_cmd
   lsp_start_config.name = 'rust-analyzer'
   lsp_start_config.filetypes = { 'rust' }
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-
-  -- snippets
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-  -- send actions with hover request
-  capabilities.experimental = {
-    hoverActions = true,
-    hoverRange = true,
-    serverStatusNotification = true,
-    snippetTextEdit = true,
-    codeActionGroup = true,
-    ssr = true,
-  }
-
-  -- enable auto-import
-  capabilities.textDocument.completion.completionItem.resolveSupport = {
-    properties = { 'documentation', 'detail', 'additionalTextEdits' },
-  }
-
-  -- rust analyzer goodies
-  local experimental_commands = {
-    'rust-analyzer.runSingle',
-    'rust-analyzer.showReferences',
-    'rust-analyzer.gotoLocation',
-    'editor.action.triggerParameterHints',
-  }
-  if package.loaded['dap'] ~= nil then
-    table.insert(experimental_commands, 'rust-analyzer.debugSingle')
-  end
-
-  capabilities.experimental.commands = {
-    commands = experimental_commands,
-  }
-
-  lsp_start_config.capabilities = vim.tbl_deep_extend('force', capabilities, lsp_start_config.capabilities or {})
 
   local custom_handlers = {}
   custom_handlers['experimental/serverStatus'] = server_status.handler

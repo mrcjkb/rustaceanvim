@@ -3,6 +3,7 @@ local compat = require('rustaceanvim.compat')
 local config = require('rustaceanvim.config')
 local executors = require('rustaceanvim.executors')
 local os = require('rustaceanvim.os')
+local server_config = require('rustaceanvim.config.server')
 
 local RustaceanConfig
 
@@ -263,6 +264,8 @@ local RustaceanDefaultConfig = {
   ---@diagnostic disable-next-line: undefined-doc-class
   ---@class RustaceanLspClientConfig: vim.lsp.ClientConfig
   server = {
+    ---@type rustaceanvim.ClientCapabilities
+    capabilities = server_config.create_client_capabilities(),
     ---@type boolean | fun(bufnr: integer):boolean Whether to automatically attach the LSP client.
     ---Defaults to `true` if the `rust-analyzer` executable is found.
     auto_attach = function(bufnr)
@@ -292,10 +295,7 @@ local RustaceanDefaultConfig = {
 
     ---@type table | (fun(project_root:string|nil, default_settings: table|nil):table) -- The rust-analyzer settings or a function that creates them.
     settings = function(project_root, default_settings)
-      return require('rustaceanvim.config.server').load_rust_analyzer_settings(
-        project_root,
-        { default_settings = default_settings }
-      )
+      return server_config.load_rust_analyzer_settings(project_root, { default_settings = default_settings })
     end,
 
     --- @type table

@@ -63,4 +63,89 @@ function server.load_rust_analyzer_settings(project_root, opts)
   return default_settings
 end
 
+---@return rustaceanvim.ClientCapabilities
+local function make_rustaceanvim_capabilities()
+  ---@class rustaceanvim.ClientCapabilities: lsp.ClientCapabilities
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+  -- snippets
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+  -- send actions with hover request
+  ---@class rustaceanvim.ExperimentalCapabilities
+  capabilities.experimental = {
+    hoverActions = true,
+    hoverRange = true,
+    serverStatusNotification = true,
+    snippetTextEdit = true,
+    codeActionGroup = true,
+    ssr = true,
+  }
+
+  -- enable auto-import
+  capabilities.textDocument.completion.completionItem.resolveSupport = {
+    properties = { 'documentation', 'detail', 'additionalTextEdits' },
+  }
+
+  -- rust analyzer goodies
+  local experimental_commands = {
+    'rust-analyzer.runSingle',
+    'rust-analyzer.showReferences',
+    'rust-analyzer.gotoLocation',
+    'editor.action.triggerParameterHints',
+  }
+  if package.loaded['dap'] ~= nil then
+    table.insert(experimental_commands, 'rust-analyzer.debugSingle')
+  end
+
+  ---@class rustaceanvim.ExperimentalCommandCapabilities
+  capabilities.experimental.commands = {
+    commands = experimental_commands,
+  }
+
+  return capabilities
+end
+
+---@param mod_name string
+---@param callback fun(mod: table): lsp.ClientCapabilities
+---@return lsp.ClientCapabilities
+local function mk_capabilities_if_available(mod_name, callback)
+  local available, mod = pcall(require, mod_name)
+  if available and type(mod) == 'table' then
+    local ok, capabilities = pcall(callback, mod)
+    if ok then
+      return capabilities
+    end
+  end
+  return {}
+end
+
+---@return rustaceanvim.ClientCapabilities
+function server.create_client_capabilities()
+  local rs_capabilities = make_rustaceanvim_capabilities()
+  local cmp_capabilities = mk_capabilities_if_available('cmp_nvim_lsp', function(cmp_nvim_lsp)
+    return cmp_nvim_lsp.default_capabilities()
+  end)
+  local selection_range_capabilities = mk_capabilities_if_available('lsp-selection-range', function(lsp_selection_range)
+    return lsp_selection_range.update_capabilities {}
+  end)
+  local folding_range_capabilities = mk_capabilities_if_available('ufo', function(_)
+    return {
+      textDocument = {
+        foldingRange = {
+          dynamicRegistration = false,
+          lineFoldingOnly = true,
+        },
+      },
+    }
+  end)
+  return vim.tbl_deep_extend(
+    'keep',
+    rs_capabilities,
+    cmp_capabilities,
+    selection_range_capabilities,
+    folding_range_capabilities
+  )
+end
+
 return server
