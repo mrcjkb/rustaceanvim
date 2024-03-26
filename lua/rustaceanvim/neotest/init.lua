@@ -307,8 +307,8 @@ function NeotestAdapter.results(spec, strategy_result)
   ---@type table<string,neotest.Error[]>
   local errors_by_test_id = {}
   output_content = output_content:gsub('\r\n', '\n')
-  local diagostics = require('rustaceanvim.test').parse_diagnostics(context.file, output_content)
-  for _, diagnostic in pairs(diagostics) do
+  local diagnostics = require('rustaceanvim.test').parse_diagnostics(context.file, output_content)
+  for _, diagnostic in pairs(diagnostics) do
     ---@type neotest.Error
     local err = {
       line = diagnostic.lnum,
@@ -324,6 +324,7 @@ function NeotestAdapter.results(spec, strategy_result)
     status = 'failed',
     output = strategy_result.output,
   }
+  local has_failures = not vim.tbl_isempty(diagnostics)
   for _, node in get_file_root(context.tree):iter_nodes() do
     local data = node:data()
     for test_id, errors in pairs(errors_by_test_id) do
@@ -333,7 +334,20 @@ function NeotestAdapter.results(spec, strategy_result)
           errors = errors,
           short = output_content,
         }
+      elseif has_failures and data.type == 'test' then
+        -- Initialise as skipped. Passed positions will be parsed and set later.
+        results[data.id] = {
+          status = 'skipped',
+        }
       end
+    end
+  end
+  if has_failures then
+    local pass_positions = output_content:gmatch('test%s(%S+)%s...%sok')
+    for pos in pass_positions do
+      results[trans.get_position_id(context.file, pos)] = {
+        status = 'passed',
+      }
     end
   end
   return results
