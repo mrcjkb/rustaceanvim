@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Neotest: Correctly mark passed and skipped tests when running a
   whole test file or module [[#321](https://github.com/mrcjkb/rustaceanvim/issues/321)].
+- DAP: Only load `.vscode/launch.json` configurations that don't conflict
+  with the configured adapter type.
 
 ## [4.16.0] - 2024-03-24
 
