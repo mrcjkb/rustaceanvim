@@ -350,6 +350,12 @@ server.load_rust_analyzer_settings({project_root}, {opts})
         |https://rust-analyzer.github.io/manual.html#configuration|
 
 
+server.create_client_capabilities()          *server.create_client_capabilities*
+
+    Returns: ~
+        (lsp.ClientCapabilities)
+
+
 ==============================================================================
                                                           *rustaceanvim.neotest*
 

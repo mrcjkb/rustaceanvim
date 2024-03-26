@@ -63,16 +63,14 @@ function server.load_rust_analyzer_settings(project_root, opts)
   return default_settings
 end
 
----@return rustaceanvim.ClientCapabilities
+---@return lsp.ClientCapabilities
 local function make_rustaceanvim_capabilities()
-  ---@class rustaceanvim.ClientCapabilities: lsp.ClientCapabilities
   local capabilities = vim.lsp.protocol.make_client_capabilities()
 
   -- snippets
   capabilities.textDocument.completion.completionItem.snippetSupport = true
 
   -- send actions with hover request
-  ---@class rustaceanvim.ExperimentalCapabilities
   capabilities.experimental = {
     hoverActions = true,
     hoverRange = true,
@@ -98,7 +96,6 @@ local function make_rustaceanvim_capabilities()
     table.insert(experimental_commands, 'rust-analyzer.debugSingle')
   end
 
-  ---@class rustaceanvim.ExperimentalCommandCapabilities
   capabilities.experimental.commands = {
     commands = experimental_commands,
   }
@@ -120,7 +117,7 @@ local function mk_capabilities_if_available(mod_name, callback)
   return {}
 end
 
----@return rustaceanvim.ClientCapabilities
+---@return lsp.ClientCapabilities
 function server.create_client_capabilities()
   local rs_capabilities = make_rustaceanvim_capabilities()
   local cmp_capabilities = mk_capabilities_if_available('cmp_nvim_lsp', function(cmp_nvim_lsp)

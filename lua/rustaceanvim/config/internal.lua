@@ -264,7 +264,7 @@ local RustaceanDefaultConfig = {
   ---@diagnostic disable-next-line: undefined-doc-class
   ---@class RustaceanLspClientConfig: vim.lsp.ClientConfig
   server = {
-    ---@type rustaceanvim.ClientCapabilities
+    ---@type lsp.ClientCapabilities
     capabilities = server_config.create_client_capabilities(),
     ---@type boolean | fun(bufnr: integer):boolean Whether to automatically attach the LSP client.
     ---Defaults to `true` if the `rust-analyzer` executable is found.
