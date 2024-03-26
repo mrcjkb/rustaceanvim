@@ -7,11 +7,15 @@ local function get_test_path(runnable)
   return #executableArgs > 0 and executableArgs[1] or nil
 end
 
----@param file_path string
----@param runnable RARunnable
+---@overload fun(file_path: string, test_path: string | nil)
+---@overload fun(file_path: string, runnable: RARunnable)
 ---@return string
 function M.get_position_id(file_path, runnable)
-  local test_path = get_test_path(runnable)
+  local test_path = runnable
+  if type(runnable) == 'table' then
+    test_path = get_test_path(runnable)
+  end
+  ---@cast test_path string | nil
   return test_path and table.concat(vim.list_extend({ file_path }, { test_path }), '::') or file_path
 end
 

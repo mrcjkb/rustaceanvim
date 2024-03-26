@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- Neotest: Correctly mark passed and skipped tests when running a
+  whole test file or module [[#321](https://github.com/mrcjkb/rustaceanvim/issues/321)].
+
 ## [4.16.0] - 2024-03-24
 
 ### Added
