@@ -166,7 +166,7 @@ vim.keymap.set(
   </summary>
   
   ```vimscript
-  :RustLsp[!] debuggables [args[]]?
+  :RustLsp[!] debuggables {args[]}?
   ```
   ```lua
   vim.cmd.RustLsp('debuggables')
@@ -212,7 +212,7 @@ vim.keymap.set(
   </summary>
   
   ```vimscript
-  :RustLsp[!] runnables [args[]]?
+  :RustLsp[!] runnables {args[]}?
   ```
   ```lua
   vim.cmd.RustLsp('runnables')
@@ -242,7 +242,7 @@ vim.keymap.set(
   and will block the UI.
   
   ```vimscript
-  :RustLsp[!] testables [args[]]?
+  :RustLsp[!] testables {args[]}?
   ```
   ```lua
   vim.cmd.RustLsp('testables')
@@ -329,8 +329,7 @@ vim.keymap.set(
   </summary>
   
   ```vimscript
-  :RustLsp moveItem up
-  :RustLsp moveItem down
+  :RustLsp moveItem {up|down}
   ```
   ```lua
   vim.cmd.RustLsp { 'moveItem',  'up' }
@@ -474,7 +473,7 @@ vim.keymap.set(
   rust-analyzer supports filtering workspace symbol searches.
   
   ```vimscript
-  :RustLsp[!] workspaceSymbol [onlyTypes?|allSymbols?] [query?]
+  :RustLsp[!] workspaceSymbol {onlyTypes?|allSymbols?} {query?}
   ```
   ```lua
   vim.cmd.RustLsp('workspaceSymbol')
@@ -520,7 +519,7 @@ by setting the rust-analyzer
   </summary>
   
   ```vimscript
-  :RustLsp ssr [query]
+  :RustLsp ssr {query}
   ```
   ```lua
   vim.cmd.RustLsp { 'ssr', '<query>' --[[ optional ]] }
@@ -536,7 +535,7 @@ by setting the rust-analyzer
   </summary>
   
   ```vimscript
-  :RustLsp crateGraph [backend [output]]
+  :RustLsp crateGraph {backend {output}}
   ```
   ```lua
   vim.cmd.RustLsp { 'crateGraph', '[backend]', '[output]' }
@@ -577,7 +576,7 @@ by setting the rust-analyzer
   can be costly.
   
   ```vimscript
-  :RustLsp flyCheck [run?|clear?|cancel?]
+  :RustLsp flyCheck {run?|clear?|cancel?}
   ```
   ```lua
   vim.cmd.RustLsp('flyCheck') -- defaults to 'run'
@@ -603,7 +602,7 @@ by setting the rust-analyzer
   Useful for debugging or when working on rust-analyzer itself.
   
   ```vimscript
-  :RustLsp view [hir|mir]
+  :RustLsp view {hir|mir}
   ```
   ```lua
   vim.cmd.RustLsp { 'view', 'hir' }
@@ -624,7 +623,7 @@ by setting the rust-analyzer
   and a nightly compiler toolchain.
 
   ```vimscript
-  :Rustc unpretty [hir|mir|...]
+  :Rustc unpretty {hir|mir|...}
   ```
   ```lua
   vim.cmd.Rustc { 'unpretty', 'hir' }
