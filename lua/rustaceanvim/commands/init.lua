@@ -139,6 +139,11 @@ local rustlsp_command_tbl = {
       require('rustaceanvim.commands.open_cargo_toml')()
     end,
   },
+  openDocs = {
+    impl = function(_)
+      require('rustaceanvim.commands.external_docs')()
+    end,
+  },
   parentModule = {
     impl = function(_)
       require('rustaceanvim.commands.parent_module')()
