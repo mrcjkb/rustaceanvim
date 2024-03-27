@@ -36,6 +36,7 @@
 --- 'renderDiagnostic' - Display a hover window with the rendered diagnostic,
 ---                      as displayed during `cargo build`.
 --- 'openCargo' - Open the Cargo.toml file for the current package.
+--- 'openDocs' - Open docs.rs documentation for the symbol under the cursor.
 --- 'parentModule' - Open the current module's parent module.
 --- 'workspaceSymbol {onlyTypes?|allSymbols?} {query?}'
 ---                  Filtered workspace symbol search.

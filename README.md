@@ -454,6 +454,21 @@ vim.keymap.set(
 
 <details>
   <summary>
+	<b>Open docs.rs documentation</b>
+  </summary>
+
+  Open docs.rs documentation for the symbol under the cursor.
+  
+  ```vimscript
+  :RustLsp openDocs
+  ```
+  ```lua
+  vim.cmd.RustLsp('openDocs')
+  ```
+</details>
+
+<details>
+  <summary>
 	<b>Parent Module</b>
   </summary>
   
