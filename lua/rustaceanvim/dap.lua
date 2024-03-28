@@ -283,7 +283,9 @@ function M.start(args, verbose, callback, on_error)
     local output = sc.stdout
     if sc.code ~= 0 or output == nil then
       on_error(
-        'An error occurred while compiling. Please fix all compilation issues and try again'
+        'An error occurred while compiling. Please fix all compilation issues and try again.'
+          .. '\nCommand: '
+          .. table.concat(cmd, ' ')
           .. (sc.stderr and '\nstderr: \n' .. sc.stderr or '')
           .. (output and '\nstdout: ' .. output or '')
       )
