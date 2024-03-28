@@ -61,7 +61,7 @@
 ### Optional
 
 - [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html),
-  for crate graphs.
+  for creating graphs.
 - [`cargo`](https://doc.rust-lang.org/cargo/),
   required for Cargo projects.
 - A debug adapter (e.g. [`lldb`](https://lldb.llvm.org/)
