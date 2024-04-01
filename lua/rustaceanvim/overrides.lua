@@ -1,5 +1,26 @@
 local M = {}
 
+---@param input string unparsed snippet
+---@return string parsed snippet
+local function parse_snippet_fallback(input)
+  local output = input
+    -- $0 -> Nothing
+    :gsub('%$%d', '')
+    -- ${0:_} -> _
+    :gsub('%${%d:(.-)}', '%1')
+    :gsub([[\}]], '}')
+  return output
+end
+
+---@param input string unparsed snippet
+---@return string parsed snippet
+local function parse_snippet(input)
+  local ok, parsed = pcall(function()
+    return vim.lsp._snippet_grammar.parse(input)
+  end)
+  return ok and tostring(parsed) or parse_snippet_fallback(input)
+end
+
 ---@param spe? table
 function M.snippet_text_edits_to_text_edits(spe)
   if type(spe) ~= 'table' then
@@ -7,10 +28,7 @@ function M.snippet_text_edits_to_text_edits(spe)
   end
   for _, value in ipairs(spe) do
     if value.newText and value.insertTextFormat then
-      -- $0 -> Nothing
-      value.newText = string.gsub(value.newText, '%$%d', '')
-      -- ${0:_} -> _
-      value.newText = string.gsub(value.newText, '%${%d:(.-)}', '%1')
+      value.newText = parse_snippet(value.newText)
     end
   end
 end
