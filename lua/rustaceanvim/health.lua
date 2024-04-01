@@ -229,6 +229,22 @@ function health.check()
     },
   }
 
+  if config.tools.cargo_override then
+    table.insert(external_dependencies, {
+      name = 'Cargo override: ' .. config.tools.cargo_override,
+      get_binaries = function()
+        return { config.tools.cargo_override }
+      end,
+      optional = function()
+        return true
+      end,
+      url = '',
+      info = [[
+      Set in the config to override the 'cargo' command for debugging and testing.
+    ]],
+    })
+  end
+
   if adapter ~= false then
     table.insert(external_dependencies, {
       name = adapter.name or 'debug adapter',

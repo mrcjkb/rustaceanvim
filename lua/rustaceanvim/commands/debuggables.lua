@@ -2,6 +2,7 @@ local M = {}
 
 local compat = require('rustaceanvim.compat')
 local ra_runnables = require('rustaceanvim.runnables')
+local config = require('rustaceanvim.config.internal')
 
 ---@return { textDocument: lsp_text_document, position: nil }
 local function get_params()
@@ -44,6 +45,9 @@ local function get_options(result)
   for _, debuggable in ipairs(result) do
     local label = build_label(debuggable.args)
     local str = label
+    if config.tools.cargo_override then
+      str = str:gsub('^cargo', config.tools.cargo_override)
+    end
     table.insert(option_strings, str)
   end
 
