@@ -23,9 +23,11 @@
 --- 'runnables {args[]}?' - Run tests, executables, etc.
 ---                         ':RustLsp!' means run the last runnable (ignores any args).
 ---                         `args[]` allows you to override the executable's arguments.
+--- 'run {args[]}?'       - Like 'runnables', but runs the target at the current cursor position.
 --- 'debuggables {args[]}?' - Debug tests, executables, etc. (requires |nvim-dap|).
 ---                           ':RustLsp!' means run the last debuggable (ignores any args).
 ---                           `args[]` allows you to override the executable's arguments.
+--- 'debug {args[]}?'       - Like 'debuggables', but debugs the target at the current cursor position.
 --- 'testables {args[]}?' - Run tests
 ---                         ':RustLsp!' means run the last testable (ignores any args).
 ---                         `args[]` allows you to override the executable's arguments.

@@ -1,6 +1,7 @@
 local M = {}
 
 local compat = require('rustaceanvim.compat')
+local ra_runnables = require('rustaceanvim.runnables')
 
 ---@return { textDocument: lsp_text_document, position: nil }
 local function get_params()
@@ -78,17 +79,23 @@ local function sanitize_results_for_debugging(result)
   return ret
 end
 
+local function dap_run(args)
+  local rt_dap = require('rustaceanvim.dap')
+  local ok, dap = pcall(require, 'dap')
+  if ok then
+    rt_dap.start(args, true, dap.run)
+    local cached_commands = require('rustaceanvim.cached_commands')
+    cached_commands.set_last_debuggable(args)
+  else
+    vim.notify('nvim-dap is required for debugging', vim.log.levels.ERROR)
+    return
+  end
+end
+
 ---@param debuggables RARunnable[]
 ---@param executableArgsOverride? string[]
 local function ui_select_debuggable(debuggables, executableArgsOverride)
-  if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
-    local unique_debuggables = {}
-    for _, debuggable in pairs(debuggables) do
-      debuggable.args.executableArgs = executableArgsOverride
-      unique_debuggables[vim.inspect(debuggable)] = debuggable
-    end
-    debuggables = vim.tbl_values(unique_debuggables)
-  end
+  debuggables = ra_runnables.apply_exec_args_override(executableArgsOverride, debuggables)
   local options = get_options(debuggables)
   if #options == 0 then
     return
@@ -97,15 +104,8 @@ local function ui_select_debuggable(debuggables, executableArgsOverride)
     if choice == nil then
       return
     end
-
     local args = debuggables[choice].args
-    local rt_dap = require('rustaceanvim.dap')
-    local ok, dap = pcall(require, 'dap')
-    if ok then
-      rt_dap.start(args, true, dap.run)
-    end
-    local cached_commands = require('rustaceanvim.cached_commands')
-    cached_commands.set_last_debuggable(args)
+    dap_run(args)
   end)
 end
 
@@ -127,6 +127,22 @@ local function add_debuggables_to_nvim_dap(debuggables)
       end
     end)
   end
+end
+
+---@param debuggables RARunnable[]
+---@param executableArgsOverride? string[]
+local function debug_at_cursor_position(debuggables, executableArgsOverride)
+  if debuggables == nil then
+    return
+  end
+  debuggables = ra_runnables.apply_exec_args_override(executableArgsOverride, debuggables)
+  local choice = ra_runnables.get_runnable_at_cursor_position(debuggables)
+  if not choice then
+    vim.notify('No debuggable targets found for the current position.', vim.log.levels.ERROR)
+    return
+  end
+  local args = debuggables[choice].args
+  dap_run(args)
 end
 
 ---@param callback fun(result:RARunnable[])
@@ -153,6 +169,14 @@ end
 function M.debuggables(executableArgsOverride)
   runnables_request(mk_handler(function(debuggables)
     ui_select_debuggable(debuggables, executableArgsOverride)
+  end))
+end
+
+---Runs the debuggable under the cursor, if present
+---@param executableArgsOverride? string[]
+function M.debug(executableArgsOverride)
+  runnables_request(mk_handler(function(debuggables)
+    debug_at_cursor_position(debuggables, executableArgsOverride)
   end))
 end
 

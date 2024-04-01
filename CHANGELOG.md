@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- DAP/LSP: `RustLsp [run|debug]` commands for running/debugging targets
+  at the current cursor position.
 - LSP: Join multiple visually selected lines with `:RustLsp joinLines`.
 
 ### Fixed
