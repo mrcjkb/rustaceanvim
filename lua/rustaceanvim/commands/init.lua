@@ -109,8 +109,9 @@ local rustlsp_command_tbl = {
     bang = true,
   },
   joinLines = {
-    impl = function(_)
-      require('rustaceanvim.commands.join_lines')()
+    impl = function(_, opts)
+      local visual_mode = opts.range ~= 0
+      require('rustaceanvim.commands.join_lines')(visual_mode)
     end,
   },
   moveItem = {

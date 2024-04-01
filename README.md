@@ -513,9 +513,8 @@ by setting the rust-analyzer
 	<b>Join lines</b>
   </summary>
 
-  Join selected lines into one, 
-  smartly fixing up whitespace, 
-  trailing commas, and braces.
+  Join selected lines into one, smartly fixing up whitespace, trailing commas, and braces.
+  Works with individual lines in normal mode and multiple lines in visual mode.
   
   ```vimscript
   :RustLsp joinLines
