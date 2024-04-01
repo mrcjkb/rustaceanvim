@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- LSP: Join multiple visually selected lines with `:RustLsp joinLines`.
+
 ### Fixed
 
-- Escape character inserted before `}` when applying code action
+- LSP: Escape character inserted before `}` when applying code action
   with `SnippetTextEdit` [[#303](https://github.com/mrcjkb/rustaceanvim/issues/303)].
 
 ## [4.18.2] - 2024-03-28
