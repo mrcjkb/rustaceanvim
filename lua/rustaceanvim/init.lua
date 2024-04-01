@@ -48,6 +48,8 @@
 ---                  supports filtering (with a # suffix to the query) or searching dependencies.
 --- 'joinLines' - Join adjacent lines.
 --- 'ssr {query}' - Structural search and replace.
+---                 Searches the entire buffer in normal mode.
+---                 Searches the selected region in visual mode.
 --- 'crateGraph {backend}' - Create and view a crate graph with graphviz.
 --- 'syntaxTree' - View the syntax tree.
 --- 'view {mir|hir}' - View MIR or HIR.

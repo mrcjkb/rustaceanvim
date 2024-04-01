@@ -133,7 +133,8 @@ local rustlsp_command_tbl = {
   },
   joinLines = {
     impl = function(_, opts)
-      local visual_mode = opts.range ~= 0
+      ---@cast opts vim.api.keyset.user_command
+      local visual_mode = opts.range and opts.range ~= 0 or false
       require('rustaceanvim.commands.join_lines')(visual_mode)
     end,
   },
@@ -174,9 +175,11 @@ local rustlsp_command_tbl = {
     end,
   },
   ssr = {
-    impl = function(args)
+    impl = function(args, opts)
+      ---@cast opts vim.api.keyset.user_command
+      local visual_mode = opts.range and opts.range > 0 or false
       local query = args and #args > 0 and table.concat(args, ' ') or nil
-      require('rustaceanvim.commands.ssr')(query)
+      require('rustaceanvim.commands.ssr')(query, visual_mode)
     end,
   },
   reloadWorkspace = {

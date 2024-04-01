@@ -542,6 +542,9 @@ by setting the rust-analyzer
   <summary>
 	<b>Structural search replace</b>
   </summary>
+
+  - Searches the entire buffer in normal mode.
+  - Searches the selection in visual mode.
   
   ```vim
   :RustLsp ssr {query}
