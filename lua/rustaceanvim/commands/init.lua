@@ -42,6 +42,18 @@ local rustlsp_command_tbl = {
     end,
     bang = true,
   },
+  debug = {
+    ---@param args string[]
+    ---@param opts vim.api.keyset.user_command
+    impl = function(args, opts)
+      if opts.bang then
+        require('rustaceanvim.cached_commands').execute_last_debuggable(args)
+      else
+        require('rustaceanvim.commands.debuggables').debug(args)
+      end
+    end,
+    bang = true,
+  },
   expandMacro = {
     impl = function(_)
       require('rustaceanvim.commands.expand_macro')()
@@ -93,6 +105,17 @@ local rustlsp_command_tbl = {
         require('rustaceanvim.cached_commands').execute_last_runnable(args)
       else
         require('rustaceanvim.runnables').runnables(args)
+      end
+    end,
+    bang = true,
+  },
+  run = {
+    ---@param opts vim.api.keyset.user_command
+    impl = function(args, opts)
+      if opts.bang then
+        require('rustaceanvim.cached_commands').execute_last_runnable(args)
+      else
+        require('rustaceanvim.runnables').run(args)
       end
     end,
     bang = true,

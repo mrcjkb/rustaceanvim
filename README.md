@@ -164,11 +164,17 @@ vim.keymap.set(
   <summary>
 	<b>Debugging</b>
   </summary>
+
+  - `debuggables` opens a prompt to select from available targets.
+  - `debug` searches for a target at the current cursor position.
   
-  ```vimscript
+  
+  ```vim
   :RustLsp[!] debuggables {args[]}?
+  :RustLsp[!] debug {args[]}?
   ```
   ```lua
+  vim.cmd.RustLsp('debug')
   vim.cmd.RustLsp('debuggables')
   -- or, to run the previous debuggable:
   vim.cmd.RustLsp { 'debuggables', bang = true }
@@ -210,11 +216,16 @@ vim.keymap.set(
   <summary>
 	<b>Runnables</b>
   </summary>
+
+  - `runnables` opens a prompt to select from available targets.
+  - `run` searches for a target at the current cursor position.
   
-  ```vimscript
+  ```vim
   :RustLsp[!] runnables {args[]}?
+  :RustLsp[!] run {args[]}?
   ```
   ```lua
+  vim.cmd.RustLsp('run') 
   vim.cmd.RustLsp('runnables')
   -- or, to run the previous runnable:
   vim.cmd.RustLsp { 'runnables', bang = true }
@@ -241,7 +252,7 @@ vim.keymap.set(
   This is also possible in Neovim 0.9, but tests won't be run in the background,
   and will block the UI.
   
-  ```vimscript
+  ```vim
   :RustLsp[!] testables {args[]}?
   ```
   ```lua
@@ -300,7 +311,7 @@ vim.keymap.set(
 	<b>Expand macros recursively</b>
   </summary>
   
-  ```vimscript
+  ```vim
   :RustLsp expandMacro
   ```
   ```lua
@@ -314,7 +325,7 @@ vim.keymap.set(
 	<b>Rebuild proc macros</b>
   </summary>
   
-  ```vimscript
+  ```vim
   :RustLsp rebuildProcMacros
   ```
   ```lua
@@ -328,7 +339,7 @@ vim.keymap.set(
 	<b>Move item up/down</b>
   </summary>
   
-  ```vimscript
+  ```vim
   :RustLsp moveItem {up|down}
   ```
   ```lua
@@ -346,7 +357,7 @@ vim.keymap.set(
  which is not supported by Neovim's built-in `vim.lsp.buf.codeAction`.
  This plugin provides a command with a UI that does:
 
- ```vimscript
+ ```vim
  :RustLsp codeAction
  ```
  ```lua
@@ -371,7 +382,7 @@ vim.keymap.set(
  Alternatively, you can set `auto_focus` to `true` in your config and you will 
  automatically enter the hover actions window.
 
- ```vimscript
+ ```vim
  :RustLsp hover actions
  ```
  ```lua
@@ -390,7 +401,7 @@ vim.keymap.set(
 	<b>Hover range</b>
   </summary>
 
-  ```vimscript
+  ```vim
   :RustLsp hover range
   ```
   ```lua
@@ -406,7 +417,7 @@ vim.keymap.set(
   Display a hover window with explanations from the [rust error codes index](https://doc.rust-lang.org/error_codes/error-index.html)
   over error diagnostics (if they have an error code).
   
-  ```vimscript
+  ```vim
   :RustLsp explainError
   ```
   ```lua
@@ -428,7 +439,7 @@ vim.keymap.set(
   as it consolidates the important bits (sometimes across files)
   together.
   
-  ```vimscript
+  ```vim
   :RustLsp renderDiagnostic
   ```
   ```lua
@@ -444,7 +455,7 @@ vim.keymap.set(
 	<b>Open Cargo.toml</b>
   </summary>
   
-  ```vimscript
+  ```vim
   :RustLsp openCargo
   ```
   ```lua
@@ -459,7 +470,7 @@ vim.keymap.set(
 
   Open docs.rs documentation for the symbol under the cursor.
   
-  ```vimscript
+  ```vim
   :RustLsp openDocs
   ```
   ```lua
@@ -472,7 +483,7 @@ vim.keymap.set(
 	<b>Parent Module</b>
   </summary>
   
-  ```vimscript
+  ```vim
   :RustLsp parentModule
   ```
   ```lua
@@ -487,7 +498,7 @@ vim.keymap.set(
 
   rust-analyzer supports filtering workspace symbol searches.
   
-  ```vimscript
+  ```vim
   :RustLsp[!] workspaceSymbol {onlyTypes?|allSymbols?} {query?}
   ```
   ```lua
@@ -516,7 +527,7 @@ by setting the rust-analyzer
   Join selected lines into one, smartly fixing up whitespace, trailing commas, and braces.
   Works with individual lines in normal mode and multiple lines in visual mode.
   
-  ```vimscript
+  ```vim
   :RustLsp joinLines
   ```
   ```lua
@@ -532,7 +543,7 @@ by setting the rust-analyzer
 	<b>Structural search replace</b>
   </summary>
   
-  ```vimscript
+  ```vim
   :RustLsp ssr {query}
   ```
   ```lua
@@ -548,7 +559,7 @@ by setting the rust-analyzer
 	<b>View crate graph</b>
   </summary>
   
-  ```vimscript
+  ```vim
   :RustLsp crateGraph {backend {output}}
   ```
   ```lua
@@ -566,7 +577,7 @@ by setting the rust-analyzer
 	<b>View syntax tree</b>
   </summary>
   
-  ```vimscript
+  ```vim
   :RustLsp syntaxTree
   ```
   ```lua
@@ -589,7 +600,7 @@ by setting the rust-analyzer
   Useful in large projects where running `cargo check` on each save
   can be costly.
   
-  ```vimscript
+  ```vim
   :RustLsp flyCheck {run?|clear?|cancel?}
   ```
   ```lua
@@ -615,7 +626,7 @@ by setting the rust-analyzer
   of the function containing the cursor.
   Useful for debugging or when working on rust-analyzer itself.
   
-  ```vimscript
+  ```vim
   :RustLsp view {hir|mir}
   ```
   ```lua
@@ -636,7 +647,7 @@ by setting the rust-analyzer
   NOTE: This currently requires a tree-sitter parser for Rust,
   and a nightly compiler toolchain.
 
-  ```vimscript
+  ```vim
   :Rustc unpretty {hir|mir|...}
   ```
   ```lua
