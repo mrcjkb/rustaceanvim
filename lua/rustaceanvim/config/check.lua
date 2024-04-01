@@ -76,6 +76,7 @@ function M.validate(cfg)
     executor = { tools.executor, { 'table', 'string' } },
     test_executor = { tools.test_executor, { 'table', 'string' } },
     crate_test_executor = { tools.crate_test_executor, { 'table', 'string' } },
+    cargo_override = { tools.cargo_override, 'string', true },
     enable_nextest = { tools.enable_nextest, 'boolean' },
     enable_clippy = { tools.enable_clippy, 'boolean' },
     on_initialized = { tools.on_initialized, 'function', true },

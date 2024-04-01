@@ -99,6 +99,9 @@ local RustaceanDefaultConfig = {
     ---@type RustaceanExecutor
     crate_test_executor = get_crate_test_executor(),
 
+    ---@type string | nil
+    cargo_override = nil,
+
     ---@type boolean
     enable_nextest = true,
 

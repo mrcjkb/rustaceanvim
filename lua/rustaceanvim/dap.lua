@@ -274,7 +274,7 @@ function M.start(args, verbose, callback, on_error)
   handle_configured_options(adapter, args, verbose)
 
   local cargo_args = get_cargo_args_from_runnables_args(args)
-  local cmd = vim.list_extend({ 'cargo' }, cargo_args)
+  local cmd = vim.list_extend({ config.tools.cargo_override or 'cargo' }, cargo_args)
   if verbose then
     vim.notify('Compiling a debug build for debugging. This might take some time...')
   end

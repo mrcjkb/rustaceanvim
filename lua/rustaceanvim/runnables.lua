@@ -53,6 +53,9 @@ local function get_options(result, executableArgsOverride, opts)
     if opts.tests_only then
       str = prettify_test_option(str)
     end
+    if config.tools.cargo_override then
+      str = str:gsub('^cargo', config.tools.cargo_override)
+    end
     table.insert(option_strings, str)
   end
 
@@ -74,11 +77,15 @@ function M.get_command(runnable)
   ret = vim.list_extend(ret, args.cargoExtraArgs or {})
   table.insert(ret, '--')
   ret = vim.list_extend(ret, args.executableArgs or {})
-  if config.tools.enable_nextest and not vim.startswith(runnable.label, 'doctest') then
+  if
+    config.tools.enable_nextest
+    and not config.tools.cargo_override
+    and not vim.startswith(runnable.label, 'doctest')
+  then
     ret = overrides.try_nextest_transform(ret)
   end
 
-  return 'cargo', ret, dir
+  return config.tools.cargo_override or 'cargo', ret, dir
 end
 
 ---@param choice integer
