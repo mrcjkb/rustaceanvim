@@ -840,7 +840,8 @@ To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com
 #### mason.nvim and nvim-lspconfig
 
 See [`:h rustaceanvim.mason`](./doc/mason.txt) for details about troubleshooting
-mason.nvim and nvim-lspconfig issues.
+mason.nvim and nvim-lspconfig issues, or configuring rustaceanvim to use
+a rust-analyzer installation that is managed by mason.nvim.
 
 ## Related Projects
 

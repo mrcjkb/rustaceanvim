@@ -6,15 +6,30 @@ but not rust-analyzer.
 The main reason for this choice is that it mason.nvim installations of rust-analyzer
 will most likely have been built with a different toolchain than your project,
 leading to inconsistencies and possibly subtle bugs.
+
 If you want to use a mason.nvim installation anyway, you can do so by specifying
-the `server.cmd` setting (see |rustaceanvim.config| and |RustaceanLspClientOpts|).
-
+the `server.cmd` setting (see |rustaceanvim.config| and |RustaceanLspClientOpts|):
+>lua
+  vim.g.rustaceanvim = {
+    server = {
+      cmd = function()
+	local mason_registry = require('mason-registry')
+	local ra_binary = mason_registry.is_installed('rust-analyzer') 
+	  -- This may need to be tweaked, depending on the operating system.
+	  and mason_registry.get_package('rust-analyzer'):get_install_path() .. "/rust-analyzer"
+	  or "rust-analyzer"
+	return { ra_binary } -- You can add args to the list, such as '--log-file'
+      end,
+    },
+  }
+<
 Note that mason-lspconfig.nvim, when configured to ensure rust-analyzer is installed,
-assumes you are using the `nvim-lspconfig.rust_analyzer` client,
-and will set it up for you, leading to conflicts with this plugin.
-You can prevent this by telling mason.nvim not to do so.
+assumes you are using the `nvim-lspconfig.rust_analyzer` client.
+Some Neovim distributions will automatically call the client's `setup`
+function, resulting in a conflict with this plugin.
 
-General approach:
+General approach to prevent mason-lspconfig from setting up
+`lspconfig.rust_analyzer`:
 
 >lua
   require('mason-lspconfig').setup_handlers {
