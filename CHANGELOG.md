@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Config: Customise group action icon with `tools.code_actions.group_icon`.
+  Thanks [@ColdMacaroni](https://github.com/ColdMacaroni)!
 
 ## [4.21.0] - 2024-04-01
 
