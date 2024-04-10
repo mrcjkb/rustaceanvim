@@ -74,7 +74,7 @@ local function compute_width(action_tuples, is_group)
     local text = action.title
 
     if is_group and action.group then
-      text = action.group .. ' ▶'
+      text = action.group .. config.tools.code_actions.group_icon
     end
     local len = string.len(text)
     if len > width then
@@ -180,7 +180,7 @@ local function on_code_action_results(results, ctx)
   local idx = 1
   for key, value in pairs(M.state.actions.grouped) do
     value.idx = idx
-    vim.api.nvim_buf_set_lines(M.state.primary.bufnr, -1, -1, false, { key .. ' ▶' })
+    vim.api.nvim_buf_set_lines(M.state.primary.bufnr, -1, -1, false, { key .. config.tools.code_actions.group_icon })
     idx = idx + 1
   end
 
