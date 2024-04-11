@@ -424,6 +424,10 @@ vim.keymap.set(
   vim.cmd.RustLsp('explainError')
   ```
 
+  Like `vim.diagnostic.goto_next`, `explainError` will cycle diagnostics,
+  starting at the cursor position, until it can find a diagnostic with
+  an error code.
+
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/bac9b31c-22ca-40c4-bfd3-b8c5ba4cc49a)
 
 </details>
@@ -445,6 +449,10 @@ vim.keymap.set(
   ```lua
   vim.cmd.RustLsp('renderDiagnostic')
   ```
+
+  Like `vim.diagnostic.goto_next`, `renderDiagnostic` will cycle diagnostics,
+  starting at the cursor position, until it can find a diagnostic with
+  rendered data.
 
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/a972c6b6-c504-4c2a-8380-53451bb8c2de)
 
