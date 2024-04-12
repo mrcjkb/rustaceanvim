@@ -85,6 +85,8 @@ local function make_rustaceanvim_capabilities()
     properties = { 'documentation', 'detail', 'additionalTextEdits' },
   }
 
+  capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
+
   -- rust analyzer goodies
   local experimental_commands = {
     'rust-analyzer.runSingle',
