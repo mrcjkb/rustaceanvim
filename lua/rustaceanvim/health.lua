@@ -54,38 +54,41 @@ local function check_lua_dependency(dep)
 end
 
 ---@param dep ExternalDependency
----@return string|nil binary
----@return string|nil version
+---@return boolean is_installed
+---@return string binary
+---@return string version
 local check_installed = function(dep)
   local binaries = dep.get_binaries()
   for _, binary in ipairs(binaries) do
-    local is_installed = dep.is_installed or function(bin)
+    local is_executable = dep.is_installed or function(bin)
       return vim.fn.executable(bin) == 1
     end
-    if is_installed(binary) then
+    if is_executable(binary) then
       local handle = io.popen(binary .. ' --version')
       if handle then
         local binary_version, error_msg = handle:read('*a')
         handle:close()
         if error_msg then
-          return binary
+          return false, binary, error_msg
         end
-        return binary, binary_version
+        return true, binary, binary_version
       end
-      return binary
+      return false, binary, 'Unable to determine version.'
     end
   end
+  return false, binaries[1], 'Could not find an executable binary.'
 end
 
 ---@param dep ExternalDependency
 local function check_external_dependency(dep)
-  local binary, version = check_installed(dep)
-  if binary then
+  local is_installed, binary, version_or_err = check_installed(dep)
+  if is_installed then
     ---@cast binary string
-    local mb_version_newline_idx = version and version:find('\n')
-    local mb_version_len = version and (mb_version_newline_idx and mb_version_newline_idx - 1 or version:len())
-    version = version and version:sub(0, mb_version_len) or '(unknown version)'
-    ok(('%s: found %s'):format(dep.name, version))
+    local mb_version_newline_idx = version_or_err and version_or_err:find('\n')
+    local mb_version_len = version_or_err
+      and (mb_version_newline_idx and mb_version_newline_idx - 1 or version_or_err:len())
+    version_or_err = version_or_err and version_or_err:sub(0, mb_version_len) or '(unknown version)'
+    ok(('%s: found %s'):format(dep.name, version_or_err))
     if dep.extra_checks_if_installed then
       dep.extra_checks_if_installed(binary)
     end
@@ -99,10 +102,10 @@ local function check_external_dependency(dep)
       ]]):format(dep.name, dep.url, dep.info))
   else
     error(([[
-      %s: not found.
+      %s: not found: %s
       rustaceanvim requires %s.
       %s
-      ]]):format(dep.name, dep.url, dep.info))
+      ]]):format(dep.name, version_or_err, dep.url, dep.info))
   end
   if dep.extra_checks_if_not_installed then
     dep.extra_checks_if_not_installed()
