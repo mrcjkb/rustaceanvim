@@ -84,7 +84,7 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 {
   'mrcjkb/rustaceanvim',
   version = '^4', -- Recommended
-  ft = { 'rust' },
+  lazy = false, -- This plugin is already lazy
 }
 ```
 

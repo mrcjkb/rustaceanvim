@@ -45,7 +45,7 @@ lazy.setup({
       -- Configure rustaceanvim here
       vim.g.rustaceanvim = {}
     end,
-    ft = { 'rust' },
+    lazy = false,
   },
   -- Add any other plugins needed to reproduce the issue.
   -- see https://github.com/folke/lazy.nvim#-lazynvim for details.
