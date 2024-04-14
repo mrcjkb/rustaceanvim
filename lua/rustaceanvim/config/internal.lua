@@ -128,6 +128,10 @@ local RustaceanDefaultConfig = {
     },
 
     code_actions = {
+      --- text appended to a group action
+      ---@type string
+      group_icon = ' ▶',
+
       --- whether to fall back to `vim.ui.select` if there are no grouped code actions
       ---@type boolean
       ui_select_fallback = false,

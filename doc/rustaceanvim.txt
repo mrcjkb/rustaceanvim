@@ -189,6 +189,7 @@ RustaceanHoverActionsOpts                            *RustaceanHoverActionsOpts*
 RustaceanCodeActionOpts                                *RustaceanCodeActionOpts*
 
     Fields: ~
+        {group_icon?}          (string)   Text appended to a group action. Default: `" ▶"`
         {ui_select_fallback?}  (boolean)  Whether to fall back to `vim.ui.select` if there are no grouped code actions. Default: `false`
 
 

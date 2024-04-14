@@ -84,6 +84,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field replace_builtin_hover? boolean Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions. Default: `true`
 
 ---@class RustaceanCodeActionOpts
+---@field group_icon? string Text appended to a group action
 ---@field ui_select_fallback? boolean Whether to fall back to `vim.ui.select` if there are no grouped code actions. Default: `false`
 
 ---@alias lsp_server_health_status 'ok' | 'warning' | 'error'
