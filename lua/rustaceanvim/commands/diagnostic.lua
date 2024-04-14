@@ -186,7 +186,8 @@ function M.render_diagnostic()
   until diagnostic == nil or rendered_diagnostic ~= nil or searched_all
   if not rendered_diagnostic then
     -- No diagnostics found. Fall back to first result from filter,
-    rendered_diagnostic = get_rendered_diagnostic(diagnostics[1])
+    diagnostic = diagnostics[1]
+    rendered_diagnostic = get_rendered_diagnostic(diagnostic)
     ---@cast rendered_diagnostic string
   end
 

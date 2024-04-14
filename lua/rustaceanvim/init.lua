@@ -35,8 +35,14 @@
 --- 'moveItem {up|down}' - Move items up or down.
 --- 'hover {actions|range}' - Hover actions, or hover over visually selected range.
 --- 'explainError' - Display a hover window with explanations form the Rust error index.
+---                  Like |vim.diagnostic.goto_next|, |explainError| will cycle diagnostics,
+---                  starting at the cursor position, until it can find a diagnostic with
+---                  an error code.
 --- 'renderDiagnostic' - Display a hover window with the rendered diagnostic,
 ---                      as displayed during `cargo build`.
+---                  Like |vim.diagnostic.goto_next|, |renderDiagnostic| will cycle diagnostics,
+---                  starting at the cursor position, until it can find a diagnostic with
+---                  rendered data.
 --- 'openCargo' - Open the Cargo.toml file for the current package.
 --- 'openDocs' - Open docs.rs documentation for the symbol under the cursor.
 --- 'parentModule' - Open the current module's parent module.
