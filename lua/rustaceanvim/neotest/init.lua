@@ -31,6 +31,7 @@ local lib = require('neotest.lib')
 local nio = require('nio')
 local trans = require('rustaceanvim.neotest.trans')
 local cargo = require('rustaceanvim.cargo')
+local overrides = require('rustaceanvim.overrides')
 
 ---@package
 ---@type neotest.Adapter
@@ -239,7 +240,6 @@ function NeotestAdapter.build_spec(run_args)
   local exe, args, cwd = require('rustaceanvim.runnables').get_command(runnable)
   if run_args.strategy == 'dap' then
     local dap = require('rustaceanvim.dap')
-    local overrides = require('rustaceanvim.overrides')
     overrides.sanitize_command_for_debugging(runnable.args.cargoArgs)
     local future = nio.control.future()
     dap.start(runnable.args, false, function(strategy)
@@ -260,6 +260,8 @@ function NeotestAdapter.build_spec(run_args)
       strategy = strategy,
     }
     return run_spec
+  else
+    overrides.undo_debug_sanitize(runnable.args.cargoArgs)
   end
   ---@type rustaceanvim.neotest.RunSpec
   ---@diagnostic disable-next-line: missing-fields

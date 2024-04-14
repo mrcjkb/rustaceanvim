@@ -71,4 +71,14 @@ function M.sanitize_command_for_debugging(command)
   end
 end
 
+---Undo sanitize_command_for_debugging.
+---@param command string[]
+function M.undo_debug_sanitize(command)
+  if command[1] == 'build' then
+    command[1] = 'run'
+  elseif command[1] == 'test' and command[2] == '--no-run' then
+    table.remove(command, 2)
+  end
+end
+
 return M
