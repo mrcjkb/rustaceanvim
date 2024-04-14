@@ -33,7 +33,7 @@ function cargo.get_root_dir(file_name)
   if reuse_active then
     return reuse_active
   end
-  local path = vim.fs.dirname(file_name)
+  local path = file_name:find('%.rs$') and vim.fs.dirname(file_name) or file_name
   if not path then
     return nil
   end
