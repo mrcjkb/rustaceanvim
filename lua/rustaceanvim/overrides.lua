@@ -66,7 +66,7 @@ end
 function M.sanitize_command_for_debugging(command)
   if command[1] == 'run' then
     command[1] = 'build'
-  elseif command[1] == 'test' then
+  elseif command[1] == 'test' and not vim.list_contains(command, '--no-run') then
     table.insert(command, 2, '--no-run')
   end
 end
