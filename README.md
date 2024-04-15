@@ -840,7 +840,8 @@ For issues related to rust-analyzer
 
 #### Where are inlay hints?
 
-As Neovim >= 0.10 supports inlay hints natively, I have removed the
+As Neovim >= 0.10 supports inlay hints natively ([`:h lsp-inlay_hint`](https://neovim.io/doc/user/lsp.html#lsp-inlay_hint)),
+I have removed the
 code from this plugin.
 
 To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com/mrcjkb/rustaceanvim/discussions/46#discussioncomment-7620822).
