@@ -43,6 +43,7 @@
 
 ## Quick Links
 
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Quick setup](#quick-setup)
 - [Usage](#usage)
@@ -50,6 +51,14 @@
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
 - [Migrating from rust-tools](https://github.com/mrcjkb/rustaceanvim/discussions/122)
+
+## Do I need rustaceanvim?
+
+If you are starting out with Rust, [`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
+is probably enough for you.
+It provides the lowest common denominator of LSP support.
+This plugin is for those who would like [additional non-standard features](#usage)
+that are specific to rust-analyzer.
 
 ## Prerequisites
 
