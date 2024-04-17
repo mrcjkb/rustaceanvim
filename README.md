@@ -112,7 +112,7 @@ See the [Usage](#usage) section for more info.
 >[!WARNING]
 >
 > Do not call the [`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
-> setup or set up the lsp client for `rust-analyzer` manually,
+> setup or set up the LSP client for `rust-analyzer` manually,
 > as doing so may cause conflicts.
 
 This is a filetype plugin that works out of the box,
@@ -147,7 +147,7 @@ vim.keymap.set(
 >   you can also use the `vim.g.rustaceanvim.server.on_attach` function,
 >   or an `LspAttach` autocommand.
 > - See the [Advanced configuration](#advanced-configuration) section
->   for more configuration options.
+>   or `:h rustaceanvim.config` for more configuration options.
 <!-- markdownlint-disable -->
 <!-- markdownlint-restore -->
 >[!IMPORTANT]
