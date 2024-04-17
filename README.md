@@ -41,17 +41,26 @@
 > - No dependency on `lspconfig`.
 > - Lazy initialization by design.
 
-## Quick Links
+## :link: Quick Links
 
-- [Installation](#installation)
-- [Quick setup](#quick-setup)
-- [Usage](#usage)
-- [Advanced configuration](#advanced-configuration)
-- [Troubleshooting](#troubleshooting)
-- [FAQ](#faq)
-- [Migrating from rust-tools](https://github.com/mrcjkb/rustaceanvim/discussions/122)
+- [:pencil: Prerequisites](#pencil-prerequisites)
+- [:inbox_tray: Installation](#inbox_tray-installation)
+- [:zap: Quick setup](#zap-quick-setup)
+- [:books: Usage / Features](#books-usage--features)
+- [:gear: Advanced configuration](#gear-advanced-configuration)
+- [:stethoscope: Troubleshooting](#stethoscope-troubleshooting)
+- [:left_speech_bubble: FAQ](#left_speech_bubble-faq)
+- [:rowboat: Migrating from rust-tools](https://github.com/mrcjkb/rustaceanvim/discussions/122)
 
-## Prerequisites
+## :grey_question: Do I need rustaceanvim
+
+If you are starting out with Rust, [`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
+is probably enough for you.
+It provides the lowest common denominator of LSP support.
+This plugin is for those who would like [additional non-standard features](#books-usage--features)
+that are specific to rust-analyzer.
+
+## :pencil: Prerequisites
 
 ### Required
 
@@ -72,7 +81,7 @@
   Can be installed using [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter),
   which also provides highlights, etc.
 
-## Installation
+## :inbox_tray: Installation
 
 This plugin is [available on LuaRocks][luarocks-url]:
 
@@ -103,16 +112,16 @@ To manually generate documentation, use `:helptags ALL`.
 
 Look at the configuration information below to get started.
 
-## Quick Setup
+## :zap: Quick Setup
 
 This plugin automatically configures the `rust-analyzer` builtin LSP
 client and integrates with other Rust tools.
-See the [Usage](#usage) section for more info.
+See the [Usage / Features](#books-usage--features) section for more info.
 
 >[!WARNING]
 >
 > Do not call the [`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
-> setup or set up the lsp client for `rust-analyzer` manually,
+> setup or set up the LSP client for `rust-analyzer` manually,
 > as doing so may cause conflicts.
 
 This is a filetype plugin that works out of the box,
@@ -146,8 +155,8 @@ vim.keymap.set(
 > - If you want to share keymaps with `nvim-lspconfig`,
 >   you can also use the `vim.g.rustaceanvim.server.on_attach` function,
 >   or an `LspAttach` autocommand.
-> - See the [Advanced configuration](#advanced-configuration) section
->   for more configuration options.
+> - See the [Advanced configuration](#gear-advanced-configuration) section
+>   or `:h rustaceanvim.config` for more configuration options.
 <!-- markdownlint-disable -->
 <!-- markdownlint-restore -->
 >[!IMPORTANT]
@@ -157,7 +166,7 @@ vim.keymap.set(
 >   the file is sourced after the plugin
 >   is initialized.
 
-## Usage
+## :books: Usage / Features
 
 <!-- markdownlint-disable -->
 <details>
@@ -676,7 +685,7 @@ by setting the rust-analyzer
 
 <!-- markdownlint-restore -->
 
-## Advanced configuration
+## :gear: Advanced configuration
 
 To modify the default configuration, set `vim.g.rustaceanvim`.
 
@@ -797,7 +806,7 @@ vim.g.rustaceanvim = {
 }
 ```
 
-## Troubleshooting
+## :stethoscope: Troubleshooting
 
 ### Health checks
 
@@ -836,7 +845,7 @@ For issues related to rust-analyzer
 (e.g. LSP features not working), see also
 [the rust-analyzer troubleshooting guide](https://rust-analyzer.github.io/manual.html#troubleshooting).
 
-### FAQ
+### :left_speech_bubble: FAQ
 
 #### Where are inlay hints?
 
@@ -852,7 +861,7 @@ See [`:h rustaceanvim.mason`](./doc/mason.txt) for details about troubleshooting
 mason.nvim and nvim-lspconfig issues, or configuring rustaceanvim to use
 a rust-analyzer installation that is managed by mason.nvim.
 
-## Related Projects
+## :link: Related Projects
 
 - [`rouge8/neotest-rust`](https://github.com/rouge8/neotest-rust)
   A [`neotest`](https://github.com/nvim-neotest/neotest)
