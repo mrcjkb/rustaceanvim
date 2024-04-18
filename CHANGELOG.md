@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.22.5] - 2024-04-18
+
+### Fixed
+
+- UI: `float_win_config.border` not applied
+  to code action group windows [[#363](https://github.com/mrcjkb/rustaceanvim/issues/363)].
+
 ## [4.22.4] - 2024-04-15
 
 ### Fixed

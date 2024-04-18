@@ -170,7 +170,7 @@ local function on_code_action_results(results, ctx)
     width = M.state.primary.geometry.width,
     height = vim.tbl_count(M.state.actions.grouped) + vim.tbl_count(M.state.actions.ungrouped),
     focusable = true,
-    border = 'rounded',
+    border = config.tools.float_win_config.border,
     row = 1,
     col = 0,
   })
@@ -299,7 +299,7 @@ function M.on_cursor_move()
         width = M.state.secondary.geometry.width,
         height = #value.actions,
         focusable = true,
-        border = 'rounded',
+        border = config.tools.float_win_config.border,
         row = line - 2,
         col = M.state.primary.geometry.width + 1,
       })
