@@ -8,7 +8,7 @@ body:
       label: Have you read the docs and searched existing issues?
       description: Please check all of the below that are applicable before submitting an issue
       options:
-        - label: I have read [the README's troubleshooting guide](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#troubleshooting).
+        - label: I have read [the README's troubleshooting guide](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#stethoscope-troubleshooting).
           required: true
         - label: I have searched [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
           required: true
@@ -49,7 +49,7 @@ body:
         > [!IMPORTANT]
         >
         > - To rule out another plugin causing the issue, please start with a [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
-        > - Please refer to the readme's [troubleshooting guide](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#troubleshooting).
+        > - Please refer to the readme's [troubleshooting guide](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#stethoscope-troubleshooting).
         > - Please provide exact (repeatable) steps, including project initialization (if applicable).
       placeholder: |
         mkdir -p /tmp/minimal
