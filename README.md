@@ -847,7 +847,7 @@ For issues related to rust-analyzer
 
 ### :left_speech_bubble: FAQ
 
-#### Where are inlay hints?
+#### Where are inlay hints / type hints?
 
 As Neovim >= 0.10 supports inlay hints natively ([`:h lsp-inlay_hint`](https://neovim.io/doc/user/lsp.html#lsp-inlay_hint)),
 I have removed the
