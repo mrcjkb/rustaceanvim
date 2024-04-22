@@ -855,6 +855,20 @@ code from this plugin.
 
 To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com/mrcjkb/rustaceanvim/discussions/46#discussioncomment-7620822).
 
+#### How to enable auto completion?
+
+Neovim *does not* have built-in support for auto-completion,
+and adding support for that is beyond the scope of this plugin.
+
+You have a few choices for completion:
+
+- Use Neovim's built-in omni completion (see `:h omnifunc`).
+  This supports basic LSP completions, but not autocompletion.
+- For autocompletion, you need a plugin, for example [`nvim-cmp`](https://github.com/hrsh7th/nvim-cmp)
+  and an LSP completion source like [`cmp-nvim-lsp`](https://github.com/hrsh7th/cmp-nvim-lsp).
+  This plugin will automatically register the necessary client capabilities
+  if you have `cmp-nvim-lsp` installed.
+
 #### mason.nvim and nvim-lspconfig
 
 See [`:h rustaceanvim.mason`](./doc/mason.txt) for details about troubleshooting
