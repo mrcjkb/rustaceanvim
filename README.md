@@ -885,6 +885,8 @@ a rust-analyzer installation that is managed by mason.nvim.
   Geared towards people who prefer manual LSP client configuration.
   Has some features that have not yet
   been implemented by this plugin.
+- [`adaszko/tree_climber_rust.nvim`](https://github.com/adaszko/tree_climber_rust.nvim)
+  tree-sitter powered incremental selection tailored for Rust.
 
 ## Inspiration
 
