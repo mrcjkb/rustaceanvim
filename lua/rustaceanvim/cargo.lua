@@ -12,12 +12,13 @@ local function get_mb_active_client_root(file_name)
   ---@diagnostic disable-next-line: missing-parameter
   local cargo_home = compat.uv.os_getenv('CARGO_HOME') or joinpath(vim.env.HOME, '.cargo')
   local registry = joinpath(cargo_home, 'registry', 'src')
+  local checkouts = joinpath(cargo_home, 'git', 'checkouts')
 
   ---@diagnostic disable-next-line: missing-parameter
   local rustup_home = compat.uv.os_getenv('RUSTUP_HOME') or joinpath(vim.env.HOME, '.rustup')
   local toolchains = joinpath(rustup_home, 'toolchains')
 
-  for _, item in ipairs { toolchains, registry } do
+  for _, item in ipairs { toolchains, registry, checkouts } do
     item = os.normalize_path_on_windows(item)
     if file_name:sub(1, #item) == item then
       local clients = rust_analyzer.get_active_rustaceanvim_clients()
