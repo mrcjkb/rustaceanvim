@@ -82,7 +82,8 @@ function M.explain_error()
   local found = false
   local diagnostic
   local pos_map = {}
-  local pos_id = 1
+  ---@type string
+  local pos_id = '0'
   repeat
     diagnostic = vim.diagnostic.get_next(opts)
     pos_map[pos_id] = diagnostic
@@ -102,7 +103,7 @@ function M.explain_error()
         break
       end
     end
-    pos_id = pos[1] * 1000 + pos[2]
+    pos_id = vim.inspect(pos)
     -- diagnostics are (0,0)-indexed but cursors are (1,0)-indexed
     opts.cursor_position = { pos[1] + 1, pos[2] }
     local searched_all = pos_map[pos_id] ~= nil
@@ -183,7 +184,8 @@ function M.render_diagnostic()
   local rendered_diagnostic
   local diagnostic
   local pos_map = {}
-  local pos_id = 1
+  ---@type string
+  local pos_id = '0'
   repeat
     diagnostic = vim.diagnostic.get_next(opts)
     pos_map[pos_id] = diagnostic
@@ -203,7 +205,7 @@ function M.render_diagnostic()
         break
       end
     end
-    pos_id = pos[1] * 1000 + pos[2]
+    pos_id = vim.inspect(pos)
     -- diagnostics are (0,0)-indexed but cursors are (1,0)-indexed
     opts.cursor_position = { pos[1] + 1, pos[2] }
     local searched_all = pos_map[pos_id] ~= nil
