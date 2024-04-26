@@ -102,7 +102,7 @@ function M.explain_error()
         break
       end
     end
-    pos_id = pos[1] + pos[2]
+    pos_id = pos[1] * 1000 + pos[2]
     -- diagnostics are (0,0)-indexed but cursors are (1,0)-indexed
     opts.cursor_position = { pos[1] + 1, pos[2] }
     local searched_all = pos_map[pos_id] ~= nil
@@ -203,7 +203,7 @@ function M.render_diagnostic()
         break
       end
     end
-    pos_id = pos[1] + pos[2]
+    pos_id = pos[1] * 1000 + pos[2]
     -- diagnostics are (0,0)-indexed but cursors are (1,0)-indexed
     opts.cursor_position = { pos[1] + 1, pos[2] }
     local searched_all = pos_map[pos_id] ~= nil
