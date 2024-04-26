@@ -93,8 +93,8 @@ function M.explain_error()
     local pos = { diagnostic.lnum, diagnostic.col }
     -- check if there is an explainable error at the same location
     if not found then
-      local cursor_diagnostics = vim.tbl_filter(function(diagnostic)
-        return pos[1] == diagnostic.lnum and pos[2] == diagnostic.col
+      local cursor_diagnostics = vim.tbl_filter(function(diag)
+        return pos[1] == diag.lnum and pos[2] == diag.col
       end, diagnostics)
       if #cursor_diagnostics ~= 0 then
         diagnostic = cursor_diagnostics[1]
@@ -194,8 +194,8 @@ function M.render_diagnostic()
     local pos = { diagnostic.lnum, diagnostic.col }
     -- check if there is a rendered diagnostic at the same location
     if rendered_diagnostic == nil then
-      local cursor_diagnostics = vim.tbl_filter(function(diagnostic)
-        return pos[1] == diagnostic.lnum and pos[2] == diagnostic.col
+      local cursor_diagnostics = vim.tbl_filter(function(diag)
+        return pos[1] == diag.lnum and pos[2] == diag.col
       end, diagnostics)
       if #cursor_diagnostics ~= 0 then
         diagnostic = cursor_diagnostics[1]
