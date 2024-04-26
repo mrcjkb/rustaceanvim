@@ -10,10 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- LSP: `renderDiagnostic` and `explainError` skipped diagnostics if they were in the same location
+- LSP: `renderDiagnostic` and `explainError` skipped diagnostics
+  if they were in the same location
   as other diagnostics
-- LSP: `renderDiagnostic` and `explainError` stopped searching early and defaulted to the first
-  diagnostic in the file instead of the next diagnostic after the current cursor position
+- LSP: `renderDiagnostic` and `explainError` stopped searching early
+  and defaulted to the first
+  diagnostic in the file,
+  instead of the next diagnostic after the current cursor position
 
 ## [4.22.6] - 2024-04-19
 
