@@ -91,6 +91,17 @@ function M.explain_error()
     end
     found = diagnostic.code ~= nil and diagnostic.source == 'rustc'
     local pos = { diagnostic.lnum, diagnostic.col }
+    -- check if there is an explainable error at the same location
+    if not found then
+      local cursor_diagnostics = vim.tbl_filter(function(diagnostic)
+        return pos[1] == diagnostic.lnum and pos[2] == diagnostic.col
+      end, diagnostics)
+      if #cursor_diagnostics ~= 0 then
+        diagnostic = cursor_diagnostics[1]
+        found = true
+        break
+      end
+    end
     pos_id = pos[1] + pos[2]
     -- diagnostics are (0,0)-indexed but cursors are (1,0)-indexed
     opts.cursor_position = { pos[1] + 1, pos[2] }
@@ -181,6 +192,17 @@ function M.render_diagnostic()
     end
     rendered_diagnostic = get_rendered_diagnostic(diagnostic)
     local pos = { diagnostic.lnum, diagnostic.col }
+    -- check if there is a rendered diagnostic at the same location
+    if rendered_diagnostic == nil then
+      local cursor_diagnostics = vim.tbl_filter(function(diagnostic)
+        return pos[1] == diagnostic.lnum and pos[2] == diagnostic.col
+      end, diagnostics)
+      if #cursor_diagnostics ~= 0 then
+        diagnostic = cursor_diagnostics[1]
+        rendered_diagnostic = get_rendered_diagnostic(diagnostic)
+        break
+      end
+    end
     pos_id = pos[1] + pos[2]
     -- diagnostics are (0,0)-indexed but cursors are (1,0)-indexed
     opts.cursor_position = { pos[1] + 1, pos[2] }
