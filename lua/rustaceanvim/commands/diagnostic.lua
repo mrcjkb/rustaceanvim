@@ -92,7 +92,8 @@ function M.explain_error()
     found = diagnostic.code ~= nil and diagnostic.source == 'rustc'
     local pos = { diagnostic.lnum, diagnostic.col }
     pos_id = pos[1] + pos[2]
-    opts.cursor_position = pos
+    -- diagnostics are (0,0)-indexed but cursors are (1,0)-indexed
+    opts.cursor_position = { pos[1] + 1, pos[2] }
     local searched_all = pos_map[pos_id] ~= nil
   until diagnostic == nil or found or searched_all
   if not found then
@@ -181,7 +182,8 @@ function M.render_diagnostic()
     rendered_diagnostic = get_rendered_diagnostic(diagnostic)
     local pos = { diagnostic.lnum, diagnostic.col }
     pos_id = pos[1] + pos[2]
-    opts.cursor_position = pos
+    -- diagnostics are (0,0)-indexed but cursors are (1,0)-indexed
+    opts.cursor_position = { pos[1] + 1, pos[2] }
     local searched_all = pos_map[pos_id] ~= nil
   until diagnostic == nil or rendered_diagnostic ~= nil or searched_all
   if not rendered_diagnostic then
