@@ -22,9 +22,7 @@
     </strong>
   </p>
   <p>🦀</p>
-</div>
-<!-- markdownlint-restore -->
-
+	
 [![Neovim][neovim-shield]][neovim-url]
 [![Lua][lua-shield]][lua-url]
 [![Rust][rust-shield]][rust-url]
@@ -34,6 +32,8 @@
 [![Issues][issues-shield]][issues-url]
 [![Build Status][ci-shield]][ci-url]
 [![LuaRocks][luarocks-shield]][luarocks-url]
+</div>
+<!-- markdownlint-restore -->
 
 > [!NOTE]
 >
