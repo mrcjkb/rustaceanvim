@@ -35,7 +35,6 @@
 </div>
 <!-- markdownlint-restore -->
 
-
 > [!NOTE]
 >
 > - Just works. [No need to call `setup`!](https://mrcjkb.dev/posts/2023-08-22-setup.html)
