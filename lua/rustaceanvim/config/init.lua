@@ -141,7 +141,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@alias dap_adapter_type_executable "executable"
 ---@alias dap_adapter_type_server "server"
 
----@class DapClientConfig
+---@class DapClientConfig: Configuration
 ---@field type string The dap adapter to use
 ---@field name string
 ---@field request dap_config_request_launch | dap_config_request_attach | dap_config_request_custom The type of dap session

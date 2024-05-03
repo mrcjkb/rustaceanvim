@@ -111,4 +111,6 @@ M.list_contains = vim.list_contains
 
 ---@alias lsp.Handler fun(err: lsp.ResponseError?, result: any, context: lsp.HandlerContext, config?: table): ...any
 
+M.islist = vim.islist or vim.tbl_islist
+
 return M
