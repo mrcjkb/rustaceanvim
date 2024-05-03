@@ -32,6 +32,7 @@ local nio = require('nio')
 local trans = require('rustaceanvim.neotest.trans')
 local cargo = require('rustaceanvim.cargo')
 local overrides = require('rustaceanvim.overrides')
+local compat = require('rustaceanvim.compat')
 
 ---@package
 ---@type neotest.Adapter
@@ -165,7 +166,7 @@ NeotestAdapter.discover_positions = function(file_path)
   -- sort positions by their start range
   local function sort_positions(to_sort)
     for _, item in ipairs(to_sort) do
-      if vim.tbl_islist(item) then
+      if compat.islist(item) then
         sort_positions(item)
       end
     end
@@ -173,8 +174,8 @@ NeotestAdapter.discover_positions = function(file_path)
     -- pop header from the list before sorting since it's used to sort in its parent's context
     local header = table.remove(to_sort, 1)
     table.sort(to_sort, function(a, b)
-      local a_item = vim.tbl_islist(a) and a[1] or a
-      local b_item = vim.tbl_islist(b) and b[1] or b
+      local a_item = compat.islist(a) and a[1] or a
+      local b_item = compat.islist(b) and b[1] or b
       if a_item.range[1] == b_item.range[1] then
         return a_item.name < b_item.name
       else
