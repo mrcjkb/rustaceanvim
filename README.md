@@ -19,7 +19,7 @@
     <strong>
       Supercharge your Rust experience in <a href="https://neovim.io/">Neovim</a>!<br />
       A heavily modified fork of <a href="https://github.com/simrat39/rust-tools.nvim">rust-tools.nvim</a><br />
-      This fork disables snippets
+      <h1><span style="color:blue">This fork disables snippets</span></h1>
     </strong>
   </p>
   <p>🦀</p>
