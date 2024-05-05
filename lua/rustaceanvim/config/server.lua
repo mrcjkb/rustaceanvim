@@ -67,8 +67,8 @@ end
 local function make_rustaceanvim_capabilities()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-  -- snippets
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  -- Explicitly disable snippet support
+  capabilities.textDocument.completion.completionItem.snippetSupport = false
 
   -- send actions with hover request
   capabilities.experimental = {
