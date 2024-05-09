@@ -168,6 +168,11 @@ local RustaceanDefaultConfig = {
       --- default: false
       ---@type boolean
       auto_focus = false,
+
+      --- whether splits opened from floating preview are vertical
+      --- default: false
+      ---@type 'horizontal' | 'vertical'
+      open_split = 'horizontal',
     },
 
     --- settings for showing the crate graph based on graphviz and the dot
