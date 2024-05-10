@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Config: Open vertical splits from floating windows with `tools.float_win_config.open_split = 'vertical'`.
+- Config: Open vertical splits from floating windows with
+  `tools.float_win_config.open_split = 'vertical'`.
+  Thanks [@dwtong](https://github.com/dwtong)!
 
 ## [4.22.10] - 2024-05-04
 
