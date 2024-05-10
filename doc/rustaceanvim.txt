@@ -150,7 +150,7 @@ RustaceanToolsOpts                                          *RustaceanToolsOpts*
         {reload_workspace_from_cargo_toml?}  (boolean)                                    Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
         {hover_actions?}                     (RustaceanHoverActionsOpts)                  Options for hover actions
         {code_actions?}                      (RustaceanCodeActionOpts)                    Options for code actions
-        {float_win_config?}                  (table)                                      Options applied to floating windows. See |api-win_config|.
+        {float_win_config?}                  (FloatWinConfig)                             Options applied to floating windows. See |api-win_config|.
         {create_graph?}                      (RustaceanCrateGraphConfig)                  Options for showing the crate graph based on graphviz and the dot
         {open_url?}                          (fun(url:string):nil)                        If set, overrides how to open URLs
         {rustc?}                             (RustcOpts)                                  Options for `rustc`
@@ -166,6 +166,15 @@ RustaceanExecutorOpts                                    *RustaceanExecutorOpts*
 
     Fields: ~
         {bufnr?}  (integer)  The buffer from which the executor was invoked.
+
+
+FloatWinConfig                                                  *FloatWinConfig*
+
+    Fields: ~
+        {open_split}  ("horizontal"|"vertical")
+
+    See: ~
+        |vim.lsp.util.open_floating_preview.Opts|
 
 
 executor_alias                                                  *executor_alias*

@@ -79,6 +79,7 @@
           plugins = luarc-plugins;
           disabled-diagnostics = [
             "undefined-doc-name"
+            "undefined-doc-class"
             "redundant-parameter"
             "invisible"
           ];
