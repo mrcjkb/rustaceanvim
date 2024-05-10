@@ -27,7 +27,8 @@ local function set_open_split_keymap(bufnr, winnr, lines)
     _window_state.latest_scratch_buf_id = vim.api.nvim_create_buf(false, true) -- not listed and scratch
 
     -- split the window to create a new buffer and set it to our window
-    ui.split(false, _window_state.latest_scratch_buf_id)
+    local vsplit = config.tools.float_win_config.open_split == 'vertical'
+    ui.split(vsplit, _window_state.latest_scratch_buf_id)
 
     -- set filetype to rust for syntax highlighting
     vim.bo[_window_state.latest_scratch_buf_id].filetype = 'rust'

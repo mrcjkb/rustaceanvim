@@ -61,6 +61,7 @@ function M.validate(cfg)
     max_height = { float_win_config.max_height, 'number', true },
     max_width = { float_win_config.max_width, 'number', true },
     auto_focus = { float_win_config.auto_focus, 'boolean' },
+    open_split = { float_win_config.open_split, 'string' },
   })
   if not ok then
     return false, err
