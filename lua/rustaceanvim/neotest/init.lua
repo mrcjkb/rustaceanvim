@@ -27,12 +27,13 @@
 
 ---@diagnostic disable: duplicate-set-field
 
+local cargo = require('rustaceanvim.cargo')
+local compat = require('rustaceanvim.compat')
+local config = require('rustaceanvim.config.internal')
 local lib = require('neotest.lib')
 local nio = require('nio')
-local trans = require('rustaceanvim.neotest.trans')
-local cargo = require('rustaceanvim.cargo')
 local overrides = require('rustaceanvim.overrides')
-local compat = require('rustaceanvim.compat')
+local trans = require('rustaceanvim.neotest.trans')
 
 ---@package
 ---@type neotest.Adapter
@@ -42,7 +43,7 @@ local NeotestAdapter = { name = 'rustaceanvim' }
 ---@param file_name string
 ---@return string | nil
 NeotestAdapter.root = function(file_name)
-  return cargo.get_root_dir(file_name)
+  return cargo.get_config_root_dir(config.server, file_name)
 end
 
 ---@package

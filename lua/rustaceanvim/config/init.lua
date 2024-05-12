@@ -110,6 +110,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@class RustaceanLspClientOpts
 ---@field auto_attach? boolean | fun(bufnr: integer):boolean Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
 ---@field cmd? string[] | fun():string[] Command and arguments for starting rust-analyzer
+---@field get_root_dir? fun(filename: string):string|nil Should return the directory to use for the attached LSP, or nil if no server should attach. Defaults to `rustaceanvim.cargo.get_root_dir`.
 ---@field settings? table | fun(project_root:string|nil, default_settings: table):table Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
 ---@field standalone? boolean Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
 ---@field logfile? string The path to the rust-analyzer log file.

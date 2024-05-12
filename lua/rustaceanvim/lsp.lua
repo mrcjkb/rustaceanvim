@@ -95,7 +95,7 @@ M.start = function(bufnr)
   local client_config = config.server
   ---@type LspStartConfig
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
-  local root_dir = cargo.get_root_dir(bufname)
+  local root_dir = cargo.get_config_root_dir(client_config, bufname)
   if not root_dir then
     --- No project root found. Start in detached/standalone mode.
     root_dir = vim.fs.dirname(bufname)
