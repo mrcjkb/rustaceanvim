@@ -139,31 +139,9 @@ local RustaceanDefaultConfig = {
 
     --- options same as lsp hover
     ---@see vim.lsp.util.open_floating_preview
+    ---@see vim.api.nvim_open_win
     ---@type table Options applied to floating windows.
     float_win_config = {
-
-      -- the border that is used for floating windows
-      ---@see vim.api.nvim_open_win()
-      ---@type string[][] | string
-      border = {
-        { '╭', 'FloatBorder' },
-        { '─', 'FloatBorder' },
-        { '╮', 'FloatBorder' },
-        { '│', 'FloatBorder' },
-        { '╯', 'FloatBorder' },
-        { '─', 'FloatBorder' },
-        { '╰', 'FloatBorder' },
-        { '│', 'FloatBorder' },
-      }, -- maybe: 'double', 'rounded', 'shadow', 'single',
-
-      --- maximal width of floating windows. Nil means no max.
-      ---@type integer | nil
-      max_width = nil,
-
-      --- maximal height of floating windows. Nil means no max.
-      ---@type integer | nil
-      max_height = nil,
-
       --- whether the window gets automatically focused
       --- default: false
       ---@type boolean

@@ -77,8 +77,10 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field bufnr? integer The buffer from which the executor was invoked.
 
 ---@class FloatWinConfig
----@field open_split 'horizontal' | 'vertical'
+---@field auto_focus? boolean
+---@field open_split? 'horizontal' | 'vertical'
 ---@see vim.lsp.util.open_floating_preview.Opts
+---@see vim.api.nvim_open_win
 
 ---@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux' | 'neotest'
 

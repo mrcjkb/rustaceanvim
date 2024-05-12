@@ -57,9 +57,6 @@ function M.validate(cfg)
   end
   local float_win_config = tools.float_win_config
   ok, err = validate('tools.float_win_config', {
-    border = { float_win_config.border, { 'table', 'string' } },
-    max_height = { float_win_config.max_height, 'number', true },
-    max_width = { float_win_config.max_width, 'number', true },
     auto_focus = { float_win_config.auto_focus, 'boolean' },
     open_split = { float_win_config.open_split, 'string' },
   })

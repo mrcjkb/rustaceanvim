@@ -171,10 +171,12 @@ RustaceanExecutorOpts                                    *RustaceanExecutorOpts*
 FloatWinConfig                                                  *FloatWinConfig*
 
     Fields: ~
-        {open_split}  ("horizontal"|"vertical")
+        {auto_focus?}  (boolean)
+        {open_split?}  ("horizontal"|"vertical")
 
     See: ~
         |vim.lsp.util.open_floating_preview.Opts|
+        |vim.api.nvim_open_win|
 
 
 executor_alias                                                  *executor_alias*
