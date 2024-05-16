@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Executors/termopen:
  `<Esc>` to close buffer not silent.
   Thanks [@b1n](https://github.com/b1n)!
+- LSP: Only register `completionItem.snippetSupport` client capability
+  when using Neovim >= 0.10.
 
 ## [4.23.1] - 2024-05-12
 

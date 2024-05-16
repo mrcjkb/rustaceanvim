@@ -67,8 +67,11 @@ end
 local function make_rustaceanvim_capabilities()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-  -- snippets
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  if vim.fn.has('nvim-0.10.0') == 1 then
+    -- snippets
+    -- This will also be added if cmp_nvim_lsp is detected.
+    capabilities.textDocument.completion.completionItem.snippetSupport = true
+  end
 
   -- send actions with hover request
   capabilities.experimental = {
