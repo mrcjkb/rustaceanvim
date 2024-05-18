@@ -28,7 +28,7 @@ if not uv.fs_stat(lazypath) then
     'git',
     'clone',
     '--filter=blob:none',
-    'git@github.com:folke/lazy.nvim.git',
+    'https://github.com/folke/lazy.nvim.git',
     '--branch=stable',
     lazypath,
   }
