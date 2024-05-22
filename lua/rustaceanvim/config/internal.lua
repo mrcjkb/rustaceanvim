@@ -278,7 +278,7 @@ local RustaceanDefaultConfig = {
     end,
 
     ---@type fun(filename: string):string|nil
-    get_root_dir = cargo.get_root_dir,
+    root_dir = cargo.get_root_dir,
 
     --- standalone file support
     --- setting it to false may improve startup time
