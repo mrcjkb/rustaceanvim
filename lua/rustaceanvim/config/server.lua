@@ -22,8 +22,11 @@ function server.load_rust_analyzer_settings(project_root, opts)
   local default_settings = opts.default_settings or config.server.default_settings
   local use_clippy = config.tools.enable_clippy and vim.fn.executable('cargo-clippy') == 1
   ---@diagnostic disable-next-line: undefined-field
-  if default_settings['rust-analyzer'].check == nil and use_clippy and
-      type(default_settings['rust-analyzer'].checkOnSave) ~= 'table' then
+  if
+    default_settings['rust-analyzer'].check == nil
+    and use_clippy
+    and type(default_settings['rust-analyzer'].checkOnSave) ~= 'table'
+  then
     ---@diagnostic disable-next-line: inject-field
     default_settings['rust-analyzer'].check = {
       allFeatures = true,
@@ -154,4 +157,3 @@ function server.create_client_capabilities()
 end
 
 return server
-
