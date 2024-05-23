@@ -63,23 +63,53 @@ end
 ---@class rustaceanvim.neotest.Position: neotest.Position
 ---@field runnable? RARunnable
 
+----@param name string
+----@return integer
+local function find_buffer_by_name(name)
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    local buf_name = vim.api.nvim_buf_get_name(bufnr)
+    if buf_name == name then
+      return bufnr
+    end
+  end
+  return 0
+end
+
+---@package
+---@class nio.rustaceanvim.Client: nio.lsp.Client
+---@field request nio.rustaceanvim.RequestClient Interface to all requests that can be sent by the client
+---@field config vim.lsp.ClientConfig
+
+---@package
+---@class nio.rustaceanvim.RequestClient: nio.lsp.RequestClient
+---@field experimental_runnables fun(args: nio.lsp.types.ImplementationParams, bufnr: integer?, opts: nio.lsp.RequestOpts): nio.lsp.types.ResponseError|nil, RARunnable[]|nil
+
 ---@package
 ---@param file_path string
 ---@return neotest.Tree
 NeotestAdapter.discover_positions = function(file_path)
   ---@type rustaceanvim.neotest.Position[]
   local positions = {}
-  local rust_analyzer = require('rustaceanvim.rust_analyzer')
-  local future = nio.control.future()
-  rust_analyzer.file_request(file_path, 'experimental/runnables', nil, function(err, runnables)
-    if err then
-      future.set_error(err)
-    else
-      future.set(runnables)
-    end
-  end)
-  local ok, runnables = pcall(future.wait)
-  if not ok or type(runnables) ~= 'table' or #runnables == 0 then
+
+  local lsp_client = require('rustaceanvim.rust_analyzer').get_client_for_file(file_path, 'experimental/runnables')
+  if not lsp_client then
+    ---@diagnostic disable-next-line: missing-parameter
+    return lib.positions.parse_tree(positions)
+  end
+  local nio_client = nio.lsp.get_client_by_id(lsp_client.id)
+  ---@cast nio_client nio.rustaceanvim.Client
+  local bufnr = find_buffer_by_name(file_path)
+  local params = {
+    textDocument = {
+      uri = vim.uri_from_fname(file_path),
+    },
+    position = nil,
+  }
+  local err, runnables = nio_client.request.experimental_runnables(params, bufnr, {
+    timeout = 100000,
+  })
+
+  if err or type(runnables) ~= 'table' or #runnables == 0 then
     ---@diagnostic disable-next-line: missing-parameter
     return lib.positions.parse_tree(positions)
   end
