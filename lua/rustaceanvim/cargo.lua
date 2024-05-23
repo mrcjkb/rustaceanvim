@@ -56,7 +56,7 @@ function cargo.get_root_dir(file_name)
         cargo_metadata = table.concat(d, '\n')
       end,
       stdout_buffered = true,
-      cwd = path,
+      cwd = compat.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
     })
     if cm > 0 then
       cm = vim.fn.jobwait({ cm })[1]

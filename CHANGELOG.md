@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.23.4] - 2024-05-23
+
+### Fixed
+
+- LSP: Error when editing a rust file in a directory
+  that does not exist [(#404)](https://github.com/mrcjkb/rustaceanvim/issues/404).
+
 ## [4.23.3] - 2024-05-23
 
 ### Fixed
