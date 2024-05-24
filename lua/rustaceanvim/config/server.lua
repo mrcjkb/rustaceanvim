@@ -54,7 +54,7 @@ function server.load_rust_analyzer_settings(project_root, opts)
   local json = require('rustaceanvim.config.json')
   local rust_analyzer_settings = json.silent_decode(content)
   local ra_key = 'rust-analyzer'
-  local has_ra_key = true
+  local has_ra_key = false
   for key, _ in pairs(rust_analyzer_settings) do
     if key:find(ra_key) ~= nil then
       has_ra_key = true

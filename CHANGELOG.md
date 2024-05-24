@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.23.5] - 2024-05-24
+
+### Fixed
+
+- LSP: Bug preventing rustaceanvim from loading `rust-analyzer.json` settings
+  if there's no `"rust-analyzer":` key.
+
 ## [4.23.4] - 2024-05-23
 
 ### Fixed
