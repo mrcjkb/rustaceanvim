@@ -1,7 +1,7 @@
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
 
-if not _G.did_rustaceanvim_initialize then
+if not vim.g.did_rustaceanvim_initialize then
   require('rustaceanvim.config.check').check_for_lspconfig_conflict(vim.schedule_wrap(function(warn)
     vim.notify_once(warn, vim.log.levels.WARN)
   end))
@@ -44,7 +44,7 @@ if not _G.did_rustaceanvim_initialize then
   commands.create_rustc_command()
 end
 
-_G.did_rustaceanvim_initialize = true
+vim.g.did_rustaceanvim_initialize = true
 
 local auto_attach = config.server.auto_attach
 if type(auto_attach) == 'function' then
