@@ -46,12 +46,19 @@ end
 
 vim.g.loaded_rustaceanvim = true
 
+local bufnr = vim.api.nvim_get_current_buf()
 local auto_attach = config.server.auto_attach
 if type(auto_attach) == 'function' then
-  local bufnr = vim.api.nvim_get_current_buf()
   auto_attach = auto_attach(bufnr)
 end
 
 if auto_attach then
-  require('rustaceanvim.lsp').start()
+  -- Defer for a smoother experience on low-end devices
+  vim.api.nvim_create_autocmd('BufEnter', {
+    buffer = bufnr,
+    group = vim.api.nvim_create_augroup('RustaceanvimAttach', { clear = true }),
+    callback = function()
+      require('rustaceanvim.lsp').start()
+    end,
+  })
 end
