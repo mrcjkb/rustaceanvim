@@ -277,7 +277,7 @@ local RustaceanDefaultConfig = {
       return { 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
     end,
 
-    ---@type fun(filename: string):string|nil
+    ---@type string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
     root_dir = cargo.get_root_dir,
 
     --- standalone file support
