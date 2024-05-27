@@ -1,4 +1,5 @@
 local types = require('rustaceanvim.types.internal')
+local cargo = require('rustaceanvim.cargo')
 local compat = require('rustaceanvim.compat')
 local config = require('rustaceanvim.config')
 local executors = require('rustaceanvim.executors')
@@ -275,6 +276,10 @@ local RustaceanDefaultConfig = {
     cmd = function()
       return { 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
     end,
+
+    ---@type string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
+    root_dir = cargo.get_root_dir,
+
     --- standalone file support
     --- setting it to false may improve startup time
     ---@type boolean

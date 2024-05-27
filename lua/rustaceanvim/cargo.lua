@@ -27,13 +27,29 @@ local function get_mb_active_client_root(file_name)
   end
 end
 
+---Attempts to find the root for an existing active client. If no existing
+---client root is found, returns the result of evaluating `config.root_dir`.
+---@param config RustaceanLspClientConfig
 ---@param file_name string
 ---@return string | nil root_dir
-function cargo.get_root_dir(file_name)
+function cargo.get_config_root_dir(config, file_name)
   local reuse_active = get_mb_active_client_root(file_name)
   if reuse_active then
     return reuse_active
   end
+
+  local config_root_dir = config.root_dir
+  if type(config_root_dir) == 'function' then
+    return config_root_dir(file_name, cargo.get_root_dir)
+  else
+    return config_root_dir
+  end
+end
+
+---The default implementation used for `vim.g.rustaceanvim.server.root_dir`
+---@param file_name string
+---@return string | nil root_dir
+function cargo.get_root_dir(file_name)
   local path = file_name:find('%.rs$') and vim.fs.dirname(file_name) or file_name
   if not path then
     return nil

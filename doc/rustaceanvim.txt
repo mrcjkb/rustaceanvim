@@ -234,12 +234,13 @@ RustcOpts                                                            *RustcOpts*
 RustaceanLspClientOpts                                  *RustaceanLspClientOpts*
 
     Fields: ~
-        {auto_attach?}           (boolean|fun(bufnr:integer):boolean)                               Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
-        {cmd?}                   (string[]|fun():string[])                                          Command and arguments for starting rust-analyzer
-        {settings?}              (table|fun(project_root:string|nil,default_settings:table):table)  Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
-        {standalone?}            (boolean)                                                          Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
-        {logfile?}               (string)                                                           The path to the rust-analyzer log file.
-        {load_vscode_settings?}  (boolean)                                                          Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json. If found, loaded settings will override configured options. Default: false
+        {auto_attach?}           (boolean|fun(bufnr:integer):boolean)                                              Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
+        {cmd?}                   (string[]|fun():string[])                                                         Command and arguments for starting rust-analyzer
+        {root_dir?}              (string|fun(filename:string,default:fun(filename:string):string|nil):string|nil)  The directory to use for the attached LSP. Can be a function, which may return nil if no server should attach. The second argument contains the default implementation, which can be used for fallback behavior.
+        {settings?}              (table|fun(project_root:string|nil,default_settings:table):table)                 Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
+        {standalone?}            (boolean)                                                                         Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
+        {logfile?}               (string)                                                                          The path to the rust-analyzer log file.
+        {load_vscode_settings?}  (boolean)                                                                         Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json. If found, loaded settings will override configured options. Default: false
 
 
 RustaceanDapOpts                                              *RustaceanDapOpts*
