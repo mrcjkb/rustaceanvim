@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Config: Add a new `config.server.root_dir` option to override the root
   directory detection logic
+  Thanks [@bgw](https://github.com/bgw)!
 
 ## [4.23.5] - 2024-05-24
 
