@@ -6,13 +6,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [4.24.0] - 2024-05-30
 
 ### Added
 
 - Config: Add a new `config.server.root_dir` option to override the root
   directory detection logic
   Thanks [@bgw](https://github.com/bgw)!
+
+### Fixed
+
+- LSP: Force-extend Neovim's default client capabilities
+  with detected plugin capabilities, to ensure plugin capability
+  extensions take precedence in case of conflict.
 
 ## [4.23.5] - 2024-05-24
 

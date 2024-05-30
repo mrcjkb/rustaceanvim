@@ -148,7 +148,7 @@ function server.create_client_capabilities()
     }
   end)
   return vim.tbl_deep_extend(
-    'keep',
+    'force',
     rs_capabilities,
     cmp_capabilities,
     selection_range_capabilities,
