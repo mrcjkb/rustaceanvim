@@ -182,13 +182,13 @@ FloatWinConfig                                                  *FloatWinConfig*
 executor_alias                                                  *executor_alias*
 
     Type: ~
-        "termopen"|"quickfix"|"toggleterm"|"vimux"|"neotest"
+        "termopen"|"quickfix"|"toggleterm"|"vimux"
 
 
 test_executor_alias                                        *test_executor_alias*
 
     Type: ~
-        executor_alias|"background"
+        executor_alias|"background"|"neotest"
 
 
 RustaceanHoverActionsOpts                            *RustaceanHoverActionsOpts*

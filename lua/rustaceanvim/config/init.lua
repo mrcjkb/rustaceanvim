@@ -82,9 +82,9 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@see vim.lsp.util.open_floating_preview.Opts
 ---@see vim.api.nvim_open_win
 
----@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux' | 'neotest'
+---@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux'
 
----@alias test_executor_alias executor_alias | 'background'
+---@alias test_executor_alias executor_alias | 'background' | 'neotest'
 
 ---@class RustaceanHoverActionsOpts
 ---@field replace_builtin_hover? boolean Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions. Default: `true`
