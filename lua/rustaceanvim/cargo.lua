@@ -59,6 +59,7 @@ function cargo.get_root_dir(file_name)
     upward = true,
     path = path,
   })[1])
+  ---@type string | nil
   local cargo_workspace_dir = nil
   if vim.fn.executable('cargo') == 1 then
     local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
@@ -80,8 +81,10 @@ function cargo.get_root_dir(file_name)
       cm = -1
     end
     if cm == 0 then
-      cargo_workspace_dir = vim.fn.json_decode(cargo_metadata)['workspace_root']
-      ---@cast cargo_workspace_dir string
+      local ok, cargo_metadata_json = pcall(vim.fn.json_decode, cargo_metadata)
+      if ok then
+        cargo_workspace_dir = cargo_metadata_json['workspace_root']
+      end
     end
   end
   return cargo_workspace_dir
