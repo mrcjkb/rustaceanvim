@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- LSP: Use LuaSnip's [`SnippetTextEdit`](https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#snippet-textedit)
+  handler if available.
+  This enables snippet text edits in code actions.
+
 ### Fixed
 
 - Error when decoding invalid JSON or blank string from cargo metadata.

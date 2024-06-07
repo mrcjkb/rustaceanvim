@@ -23,7 +23,7 @@ local function parse_snippet(input)
   return ok and tostring(parsed) or parse_snippet_fallback(input)
 end
 
----@param spe? table
+---@param spe? rust.lsp.SnippetTextEdit[]
 function M.snippet_text_edits_to_text_edits(spe)
   if type(spe) ~= 'table' then
     return
