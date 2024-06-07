@@ -82,7 +82,7 @@ function cargo.get_root_dir(file_name)
     end
     if cm == 0 then
       local ok, cargo_metadata_json = pcall(vim.fn.json_decode, cargo_metadata)
-      if ok then
+      if ok and cargo_metadata_json then
         cargo_workspace_dir = cargo_metadata_json['workspace_root']
       end
     end
