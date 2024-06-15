@@ -6,7 +6,6 @@ describe('#56-non-regression: server.settings is table', function()
     server = {
       settings = {
         ['rust-analyzer'] = {
-          cargo = { allFeatures = true },
           checkOnSave = true,
           check = {
             enable = true,
