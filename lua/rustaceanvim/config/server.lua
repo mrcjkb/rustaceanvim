@@ -29,7 +29,6 @@ function server.load_rust_analyzer_settings(project_root, opts)
   then
     ---@diagnostic disable-next-line: inject-field
     default_settings['rust-analyzer'].check = {
-      allFeatures = true,
       command = 'clippy',
       extraArgs = { '--no-deps' },
     }
