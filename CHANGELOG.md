@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- DAP: Dynamic library path setup using nigthly rust builds
-  (stable rustc was always used due to missed cwd parameter).
-- DAP: Dynamic linking on macOS didn't work due to a typo in
-  `DYLD_LIBRARY_PATH` constant.
+- DAP: Dynamic library path setup using nightly rust builds
+  (stable `rustc` was always used due to a missing `cwd` parameter).
+  Thanks [@morfnasilu](https://github.com/morfnasilu)!
+- DAP: Dynamic linking on macOS not working due to a typo in the
+  `DYLD_LIBRARY_PATH` environment variable.
+  Thanks [@morfnasilu](https://github.com/morfnasilu)!
 
 ## [4.24.1] - 2024-06-15
 
