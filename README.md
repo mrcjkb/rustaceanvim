@@ -857,7 +857,8 @@ To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com
 
 #### How to enable auto completion?
 
-As of #ff097f2091e7a970e5b12960683b4dade5563040 Neovim has built-in completion based on the `triggerCharacters` sent by
+As of [#ff097f2091e7a970e5b12960683b4dade5563040](https://github.com/neovim/neovim/pull/27339),
+Neovim has built-in completion based on the `triggerCharacters` sent by
 language servers. Omni completion is also available for a more traditional `vim`-like completion experience.
 
 For more extensible and complex autocompletion setups you need a plugin such as [`nvim-cmp`](https://github.com/hrsh7th/nvim-cmp)
