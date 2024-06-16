@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- LSP: If Neovim's file watcher is disabled, configure rust-analyzer
+  to enable server-side file watching, unless it has been configured
+  otherwise [[#423](https://github.com/mrcjkb/rustaceanvim/issues/423)].
+
 ### Fixed
 
 - DAP: Dynamic library path setup using nightly rust builds
