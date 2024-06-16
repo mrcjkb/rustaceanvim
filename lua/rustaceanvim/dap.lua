@@ -188,7 +188,7 @@ local function add_dynamic_library_paths(adapter, workspace_root)
   if not workspace_root or environments[workspace_root] then
     return
   end
-  compat.system({ 'rustc', '--print', 'target-libdir' }, nil, function(sc)
+  compat.system({ 'rustc', '--print', 'target-libdir' }, { cwd = workspace_root }, function(sc)
     ---@cast sc vim.SystemCompleted
     local result = sc.stdout
     if sc.code ~= 0 or result == nil then
@@ -202,7 +202,7 @@ local function add_dynamic_library_paths(adapter, workspace_root)
     elseif shell.is_macos() then
       ---@diagnostic disable-next-line: missing-parameter
       environments[workspace_root] = environments[workspace_root]
-        or format_environment_variable(adapter, 'DKLD_LIBRARY_PATH', { rustc_target_path, target_path }, ':')
+        or format_environment_variable(adapter, 'DYLD_LIBRARY_PATH', { rustc_target_path, target_path }, ':')
     else
       ---@diagnostic disable-next-line: missing-parameter
       environments[workspace_root] = environments[workspace_root]
