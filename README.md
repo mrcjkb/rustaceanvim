@@ -867,6 +867,11 @@ and a LSP completion source like [`cmp-nvim-lsp`](https://github.com/hrsh7th/cmp
 This plugin will automatically register the necessary client capabilities
 if you have `cmp-nvim-lsp` installed.
 
+#### I'm having issues with (auto)completion
+
+rustaceanvim doesn't implement (auto)completion.
+Issues with (auto)completion either come from another plugin or rust-analzyer.
+
 #### mason.nvim and nvim-lspconfig
 
 See [`:h rustaceanvim.mason`](./doc/mason.txt) for details about troubleshooting
