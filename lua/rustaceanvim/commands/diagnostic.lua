@@ -249,4 +249,50 @@ function M.render_diagnostic()
   end)
 end
 
+function M.render_diagnostic_current_line()
+  local win_id = vim.api.nvim_get_current_win()
+  local cursor_position = vim.api.nvim_win_get_cursor(win_id)
+
+  -- get rendered diagnostics from current line
+  local rendered_diagnostics = vim.tbl_map(function(diagnostic)
+    return get_rendered_diagnostic(diagnostic)
+  end, vim.diagnostic.get(0, {
+      lnum = cursor_position[1] - 1
+    }))
+  rendered_diagnostics = vim.tbl_filter(function(diagnostic)
+    return diagnostic ~= nil
+  end, rendered_diagnostics)
+
+  -- if no renderable diagnostics on current line
+  if #rendered_diagnostics == 0 then
+    vim.notify('No renderable diagnostics found.', vim.log.levels.INFO)
+    return
+  end
+
+  local rendered_diagnostic = rendered_diagnostics[1]
+  local lines = vim.split(rendered_diagnostic, '\n')
+  local float_preview_lines = vim.deepcopy(lines)
+  table.insert(float_preview_lines, 1, '---')
+  table.insert(float_preview_lines, 1, '1. Open in split')
+  vim.schedule(function()
+    close_hover()
+    local bufnr, winnr = vim.lsp.util.open_floating_preview(
+      float_preview_lines,
+      '',
+      vim.tbl_extend('keep', config.tools.float_win_config, {
+        focus = false,
+        focusable = true,
+        focus_id = 'ra-render-diagnostic',
+        close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
+      })
+    )
+    _window_state.float_winnr = winnr
+    set_close_keymaps(bufnr)
+    set_open_split_keymap(bufnr, winnr, lines)
+    if config.tools.float_win_config.auto_focus then
+      vim.api.nvim_set_current_win(winnr)
+    end
+  end)
+end
+
 return M
