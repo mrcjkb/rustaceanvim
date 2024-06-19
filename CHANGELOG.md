@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- LSP: Added current/cycle arguments to explainError and renderDiagnostic.
+  No argument defaults to cycle which is current base behavior. 'current' option
+  makes these functions only look for diagnostics in current cursor line
+
 ### Fixed
 
 - LSP: Support completions for `RustLsp` with selection ranges.
