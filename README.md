@@ -453,17 +453,19 @@ vim.keymap.set(
   together.
   
   ```vim
-  :RustLsp renderDiagnostic
+  :RustLsp renderDiagnostic {cycle?|current?}
   ```
   ```lua
-  vim.cmd.RustLsp('renderDiagnostic')
+  vim.cmd.RustLsp('renderDiagnostic') -- defaults to 'cycle'
+  vim.cmd.RustLsp({ 'renderDiagnostic', 'cycle' })
+  vim.cmd.RustLsp({ 'renderDiagnostic', 'current' })
   ```
 
-  If cycle option:
+  If 'cycle' option:
     Like |vim.diagnostic.goto_next|, |renderDiagnostic| will cycle diagnostics,
     starting at the cursor position, until it can find a diagnostic with
     rendered data.
-  If current option:
+  If 'current' option:
     Searches for diagnostics only in the current cursor line
   Defaults to 'renderDiagnostic cycle', if called without an argument 
 
