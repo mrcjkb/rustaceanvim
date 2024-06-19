@@ -427,15 +427,21 @@ vim.keymap.set(
   over error diagnostics (if they have an error code).
   
   ```vim
-  :RustLsp explainError
+  :RustLsp explainError {cycle?|current?}
   ```
   ```lua
-  vim.cmd.RustLsp('explainError')
+  vim.cmd.RustLsp('explainError') -- default to 'cycle'
+  vim.cmd.RustLsp({ 'explainError', 'cycle' })
+  vim.cmd.RustLsp({ 'explainError', 'current' })
   ```
 
-  Like `vim.diagnostic.goto_next`, `explainError` will cycle diagnostics,
-  starting at the cursor position, until it can find a diagnostic with
-  an error code.
+  If cycle option:
+    Like |vim.diagnostic.goto_next|, |explainError| will cycle diagnostics,
+    starting at the cursor position, until it can find a diagnostic with
+    an error code.
+  If current option
+    Searches for diagnostics only in the current cursor line
+  Defaults to 'explainError cycle', if called without an argument 
 
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/bac9b31c-22ca-40c4-bfd3-b8c5ba4cc49a)
 

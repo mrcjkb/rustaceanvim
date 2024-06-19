@@ -158,6 +158,75 @@ function M.explain_error()
   compat.system({ rustc, '--explain', tostring(diagnostic.code) }, nil, vim.schedule_wrap(handler))
 end
 
+function M.explain_error_current_line()
+  if vim.fn.executable(rustc) ~= 1 then
+    vim.notify('rustc is needed to explain errors.', vim.log.levels.ERROR)
+    return
+  end
+
+  local win_id = vim.api.nvim_get_current_win()
+  local cursor_position = vim.api.nvim_win_get_cursor(win_id)
+
+  -- get matching diagnostics from current line
+  local diagnostics = vim.tbl_filter(function(diagnostic)
+    return diagnostic.code ~= nil
+      and diagnostic.source == 'rustc'
+      and diagnostic.severity == vim.diagnostic.severity.ERROR
+  end, vim.diagnostic.get(0, {
+      lnum = cursor_position[1] - 1
+    }))
+
+  -- no matching diagnostics on current line
+  if #diagnostics == 0 then
+    vim.notify('No explainable errors found.', vim.log.levels.INFO)
+    return
+  end
+
+  -- local opts = {
+  --   cursor_position = vim.api.nvim_win_get_cursor(win_id),
+  --   severity = vim.diagnostic.severity.ERROR,
+  --   wrap = true,
+  -- }
+  local diagnostic = diagnostics[1]
+  -- local pos = { diagnostic.lnum, diagnostic.col }
+  -- opts.cursor_position = pos
+
+  ---@param sc vim.SystemCompleted
+  local function handler(sc)
+    if sc.code ~= 0 or not sc.stdout then
+      vim.notify('Error calling rustc --explain' .. (sc.stderr and ': ' .. sc.stderr or ''), vim.log.levels.ERROR)
+      return
+    end
+    local output = sc.stdout:gsub('```', '```rust', 1)
+    local markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(output, {})
+    local float_preview_lines = vim.deepcopy(markdown_lines)
+    table.insert(float_preview_lines, 1, '---')
+    table.insert(float_preview_lines, 1, '1. Open in split')
+    vim.schedule(function()
+      close_hover()
+      local bufnr, winnr = vim.lsp.util.open_floating_preview(
+        float_preview_lines,
+        'markdown',
+        vim.tbl_extend('keep', config.tools.float_win_config, {
+          focus = false,
+          focusable = true,
+          focus_id = 'rustc-explain-error',
+          close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
+        })
+      )
+      _window_state.float_winnr = winnr
+      set_close_keymaps(bufnr)
+      set_open_split_keymap(bufnr, winnr, markdown_lines)
+
+      if config.tools.float_win_config.auto_focus then
+        vim.api.nvim_set_current_win(winnr)
+      end
+    end)
+  end
+
+  compat.system({ rustc, '--explain', tostring(diagnostic.code) }, nil, vim.schedule_wrap(handler))
+end
+
 ---@param diagnostic table
 ---@return string | nil
 local function get_rendered_diagnostic(diagnostic)

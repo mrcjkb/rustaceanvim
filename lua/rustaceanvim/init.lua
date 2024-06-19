@@ -34,10 +34,14 @@
 --- 'expandMacro' - Expand macros recursively.
 --- 'moveItem {up|down}' - Move items up or down.
 --- 'hover {actions|range}' - Hover actions, or hover over visually selected range.
---- 'explainError' - Display a hover window with explanations form the Rust error index.
----                  Like |vim.diagnostic.goto_next|, |explainError| will cycle diagnostics,
----                  starting at the cursor position, until it can find a diagnostic with
----                  an error code.
+--- 'explainError {cycle?|current?}' - Display a hover window with explanations form the Rust error index.
+---                  If cycle option:
+---                    Like |vim.diagnostic.goto_next|, |explainError| will cycle diagnostics,
+---                    starting at the cursor position, until it can find a diagnostic with
+---                    an error code.
+---                  If current option
+---                    Searches for diagnostics only in the current cursor line
+---                  Defaults to 'explainError cycle', if called without an argument 
 --- 'renderDiagnostic {cycle?|current?}' - Display a hover window with the rendered diagnostic,
 ---                      as displayed during `cargo build`.
 ---                  If cycle option:
