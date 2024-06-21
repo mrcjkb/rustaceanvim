@@ -182,14 +182,7 @@ function M.explain_error_current_line()
     return
   end
 
-  -- local opts = {
-  --   cursor_position = vim.api.nvim_win_get_cursor(win_id),
-  --   severity = vim.diagnostic.severity.ERROR,
-  --   wrap = true,
-  -- }
   local diagnostic = diagnostics[1]
-  -- local pos = { diagnostic.lnum, diagnostic.col }
-  -- opts.cursor_position = pos
 
   ---@param sc vim.SystemCompleted
   local function handler(sc)
