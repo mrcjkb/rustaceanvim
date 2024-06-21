@@ -60,13 +60,39 @@ local rustlsp_command_tbl = {
     end,
   },
   explainError = {
-    impl = function(_)
-      require('rustaceanvim.commands.diagnostic').explain_error()
+    impl = function(args)
+      local subcmd = args[1] or 'cycle'
+      if subcmd == 'cycle' then
+        require('rustaceanvim.commands.diagnostic').explain_error()
+      elseif subcmd == 'current' then
+        require('rustaceanvim.commands.diagnostic').explain_error_current_line()
+      else
+        vim.notify(
+          'explainError: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'",
+          vim.log.levels.ERROR
+        )
+      end
+    end,
+    complete = function()
+      return { 'cycle', 'current' }
     end,
   },
   renderDiagnostic = {
-    impl = function(_)
-      require('rustaceanvim.commands.diagnostic').render_diagnostic()
+    impl = function(args)
+      local subcmd = args[1] or 'cycle'
+      if subcmd == 'cycle' then
+        require('rustaceanvim.commands.diagnostic').render_diagnostic()
+      elseif subcmd == 'current' then
+        require('rustaceanvim.commands.diagnostic').render_diagnostic_current_line()
+      else
+        vim.notify(
+          'renderDiagnostic: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'",
+          vim.log.levels.ERROR
+        )
+      end
+    end,
+    complete = function()
+      return { 'cycle', 'current' }
     end,
   },
   rebuildProcMacros = {
