@@ -67,8 +67,8 @@ function M.explain_error()
 
   local diagnostics = vim.tbl_filter(function(diagnostic)
     return diagnostic.code ~= nil
-        and diagnostic.source == 'rustc'
-        and diagnostic.severity == vim.diagnostic.severity.ERROR
+      and diagnostic.source == 'rustc'
+      and diagnostic.severity == vim.diagnostic.severity.ERROR
   end, vim.diagnostic.get(0, {}))
   if #diagnostics == 0 then
     vim.notify('No explainable errors found.', vim.log.levels.INFO)
@@ -171,8 +171,8 @@ function M.explain_error_current_line()
   local diagnostics = vim.tbl_filter(
     function(diagnostic)
       return diagnostic.code ~= nil
-          and diagnostic.source == 'rustc'
-          and diagnostic.severity == vim.diagnostic.severity.ERROR
+        and diagnostic.source == 'rustc'
+        and diagnostic.severity == vim.diagnostic.severity.ERROR
     end,
     vim.diagnostic.get(0, {
       lnum = cursor_position[1] - 1,

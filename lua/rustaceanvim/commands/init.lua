@@ -67,7 +67,10 @@ local rustlsp_command_tbl = {
       elseif subcmd == 'current' then
         require('rustaceanvim.commands.diagnostic').explain_error_current_line()
       else
-        vim.notify('explainError: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'", vim.log.levels.ERROR)
+        vim.notify(
+          'explainError: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'",
+          vim.log.levels.ERROR
+        )
       end
     end,
     complete = function()
@@ -82,7 +85,10 @@ local rustlsp_command_tbl = {
       elseif subcmd == 'current' then
         require('rustaceanvim.commands.diagnostic').render_diagnostic_current_line()
       else
-        vim.notify('renderDiagnostic: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'", vim.log.levels.ERROR)
+        vim.notify(
+          'renderDiagnostic: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'",
+          vim.log.levels.ERROR
+        )
       end
     end,
     complete = function()
