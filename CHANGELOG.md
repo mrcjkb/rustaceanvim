@@ -6,11 +6,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.25.1] - 2024-06-21
-
-### Changed
-
-- Testables: Default to `termopen` test executor if not using `neotest`
+## [Unreleased]
 
 ### Added
 
@@ -18,6 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the `explainError` and `renderDiagnostic` commands.
   No argument defaults to `cycle`, which is current base behaviour. `current`
   makes these functions only look for diagnostics in current cursor line
+
+### Fixed
+
+## [4.25.1] - 2024-06-21
+
+### Changed
+
+- Testables: Default to `termopen` test executor if not using `neotest`
+
+### Added
 
 ### Fixed
 
