@@ -67,8 +67,8 @@ function M.explain_error()
 
   local diagnostics = vim.tbl_filter(function(diagnostic)
     return diagnostic.code ~= nil
-      and diagnostic.source == 'rustc'
-      and diagnostic.severity == vim.diagnostic.severity.ERROR
+        and diagnostic.source == 'rustc'
+        and diagnostic.severity == vim.diagnostic.severity.ERROR
   end, vim.diagnostic.get(0, {}))
   if #diagnostics == 0 then
     vim.notify('No explainable errors found.', vim.log.levels.INFO)
@@ -168,13 +168,16 @@ function M.explain_error_current_line()
   local cursor_position = vim.api.nvim_win_get_cursor(win_id)
 
   -- get matching diagnostics from current line
-  local diagnostics = vim.tbl_filter(function(diagnostic)
-    return diagnostic.code ~= nil
-      and diagnostic.source == 'rustc'
-      and diagnostic.severity == vim.diagnostic.severity.ERROR
-  end, vim.diagnostic.get(0, {
-      lnum = cursor_position[1] - 1
-    }))
+  local diagnostics = vim.tbl_filter(
+    function(diagnostic)
+      return diagnostic.code ~= nil
+          and diagnostic.source == 'rustc'
+          and diagnostic.severity == vim.diagnostic.severity.ERROR
+    end,
+    vim.diagnostic.get(0, {
+      lnum = cursor_position[1] - 1,
+    })
+  )
 
   -- no matching diagnostics on current line
   if #diagnostics == 0 then
@@ -316,11 +319,14 @@ function M.render_diagnostic_current_line()
   local cursor_position = vim.api.nvim_win_get_cursor(win_id)
 
   -- get rendered diagnostics from current line
-  local rendered_diagnostics = vim.tbl_map(function(diagnostic)
-    return get_rendered_diagnostic(diagnostic)
-  end, vim.diagnostic.get(0, {
-      lnum = cursor_position[1] - 1
-    }))
+  local rendered_diagnostics = vim.tbl_map(
+    function(diagnostic)
+      return get_rendered_diagnostic(diagnostic)
+    end,
+    vim.diagnostic.get(0, {
+      lnum = cursor_position[1] - 1,
+    })
+  )
   rendered_diagnostics = vim.tbl_filter(function(diagnostic)
     return diagnostic ~= nil
   end, rendered_diagnostics)
