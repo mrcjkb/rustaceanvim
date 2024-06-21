@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- LSP: Added current/cycle arguments to explainError and renderDiagnostic.
-  No argument defaults to cycle which is current base behavior. 'current' option
+- LSP: Added optional `current`/`cycle` arguments to 
+  the `explainError` and `renderDiagnostic` commands.
+  No argument defaults to `cycle`, which is current base behaviour. `current`
   makes these functions only look for diagnostics in current cursor line
 
 ### Fixed
