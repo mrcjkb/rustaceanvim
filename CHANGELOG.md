@@ -6,6 +6,130 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- LSP: Added optional `current`/`cycle` arguments to
+  the `explainError` and `renderDiagnostic` commands.
+  No argument defaults to `cycle`, which is current base behaviour. `current`
+  makes these functions only look for diagnostics in current cursor line
+  Thanks [@Rumi152](https://github.com/Rumi152)!
+
+### Fixed
+
+## [4.25.1] - 2024-06-21
+
+### Changed
+
+- Testables: Default to `termopen` test executor if not using `neotest`
+
+### Added
+
+### Fixed
+
+- LSP: Support completions for `RustLsp` with selection ranges.
+
+## [4.25.0] - 2024-06-16
+
+### Added
+
+- LSP: If Neovim's file watcher is disabled, configure rust-analyzer
+  to enable server-side file watching, unless it has been configured
+  otherwise [[#423](https://github.com/mrcjkb/rustaceanvim/issues/423)].
+
+### Fixed
+
+- DAP: Dynamic library path setup using nightly rust builds
+  (stable `rustc` was always used due to a missing `cwd` parameter).
+  Thanks [@morfnasilu](https://github.com/morfnasilu)!
+- DAP: Dynamic linking on macOS not working due to a typo in the
+  `DYLD_LIBRARY_PATH` environment variable.
+  Thanks [@morfnasilu](https://github.com/morfnasilu)!
+
+## [4.24.1] - 2024-06-15
+
+### Fixed
+
+- Don't set deprecated `allFeatures` setting by default.
+  Thanks [@zjp-CN](https://github.com/zjp-CN)!
+- Error when decoding invalid JSON or blank string from cargo metadata.
+
+## [4.24.0] - 2024-05-30
+
+### Added
+
+- Config: Add a new `config.server.root_dir` option to override the root
+  directory detection logic
+  Thanks [@bgw](https://github.com/bgw)!
+
+### Fixed
+
+- LSP: Force-extend Neovim's default client capabilities
+  with detected plugin capabilities, to ensure plugin capability
+  extensions take precedence in case of conflict.
+
+## [4.23.5] - 2024-05-24
+
+### Fixed
+
+- LSP: Bug preventing rustaceanvim from loading `rust-analyzer.json` settings
+  if there's no `"rust-analyzer":` key.
+
+## [4.23.4] - 2024-05-23
+
+### Fixed
+
+- LSP: Error when editing a rust file in a directory
+  that does not exist [(#404)](https://github.com/mrcjkb/rustaceanvim/issues/404).
+
+## [4.23.3] - 2024-05-23
+
+### Fixed
+
+- LSP/Clippy: use correct rust-analyzer config key, `check` instead
+  of `checkOnSave`, to enable clippy if detected.
+  Thanks [@Ryex](https://github.com/Ryex)!
+
+## [4.23.2] - 2024-05-16
+
+### Fixed
+
+- Executors/termopen:
+ `<Esc>` to close buffer not silent.
+  Thanks [@b1nhack](https://github.com/b1nhack)!
+- LSP: Only register `completionItem.snippetSupport` client capability
+  when using Neovim >= 0.10.
+
+## [4.23.1] - 2024-05-12
+
+### Fixed
+
+- UI/Config: Don't override Neovim defaults in default `float_win_config`.
+
+## [4.23.0] - 2024-05-11
+
+### Added
+
+- Config: Open vertical splits from floating windows with
+  `tools.float_win_config.open_split = 'vertical'`.
+  Thanks [@dwtong](https://github.com/dwtong)!
+
+## [4.22.10] - 2024-05-04
+
+### Fixed
+
+- Neotest: Remove unsupported `--show-output` flag when running
+  with cargo-nextest.
+
+## [4.22.9] - 2024-05-04
+
+### Changed
+
+- Update neovim nightly API call.
+  If you are using neovim nightly, you need a build after May 04, 2024.
+  Thanks [@NicolasGB](https://github.com/NicolasGB)!
+
 ## [4.22.8] - 2024-04-26
 
 ### Fixed

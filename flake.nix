@@ -79,6 +79,7 @@
           plugins = luarc-plugins;
           disabled-diagnostics = [
             "undefined-doc-name"
+            "undefined-doc-class"
             "redundant-parameter"
             "invisible"
           ];
@@ -87,20 +88,22 @@
         type-check-nightly = pre-commit-hooks.lib.${system}.run {
           src = self;
           hooks = {
-            lua-ls.enable = true;
-          };
-          settings = {
-            lua-ls.config = luarc-nightly;
+            lua-ls = {
+              enable = true;
+              settings.configuration = luarc-nightly;
+            };
           };
         };
 
         type-check-stable = pre-commit-hooks.lib.${system}.run {
           src = self;
           hooks = {
-            lua-ls.enable = true;
-          };
-          settings = {
-            lua-ls.config = luarc-stable;
+            lua-ls = {
+              enable = true;
+              settings = {
+                configuration = luarc-stable;
+              };
+            };
           };
         };
 

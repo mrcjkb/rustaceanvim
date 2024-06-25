@@ -65,7 +65,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field reload_workspace_from_cargo_toml? boolean Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
 ---@field hover_actions? RustaceanHoverActionsOpts Options for hover actions
 ---@field code_actions? RustaceanCodeActionOpts Options for code actions
----@field float_win_config? table Options applied to floating windows. See |api-win_config|.
+---@field float_win_config? FloatWinConfig Options applied to floating windows. See |api-win_config|.
 ---@field create_graph? RustaceanCrateGraphConfig Options for showing the crate graph based on graphviz and the dot
 ---@field open_url? fun(url:string):nil If set, overrides how to open URLs
 ---@field rustc? RustcOpts Options for `rustc`
@@ -76,9 +76,15 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@class RustaceanExecutorOpts
 ---@field bufnr? integer The buffer from which the executor was invoked.
 
----@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux' | 'neotest'
+---@class FloatWinConfig
+---@field auto_focus? boolean
+---@field open_split? 'horizontal' | 'vertical'
+---@see vim.lsp.util.open_floating_preview.Opts
+---@see vim.api.nvim_open_win
 
----@alias test_executor_alias executor_alias | 'background'
+---@alias executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux'
+
+---@alias test_executor_alias executor_alias | 'background' | 'neotest'
 
 ---@class RustaceanHoverActionsOpts
 ---@field replace_builtin_hover? boolean Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions. Default: `true`
@@ -104,10 +110,12 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@class RustaceanLspClientOpts
 ---@field auto_attach? boolean | fun(bufnr: integer):boolean Whether to automatically attach the LSP client. Defaults to `true` if the `rust-analyzer` executable is found.
 ---@field cmd? string[] | fun():string[] Command and arguments for starting rust-analyzer
+---@field root_dir? string | fun(filename: string, default: fun(filename: string):string|nil):string|nil The directory to use for the attached LSP. Can be a function, which may return nil if no server should attach. The second argument contains the default implementation, which can be used for fallback behavior.
 ---@field settings? table | fun(project_root:string|nil, default_settings: table):table Setting passed to rust-analyzer. Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table. See https://rust-analyzer.github.io/manual.html#configuration.
 ---@field standalone? boolean Standalone file support (enabled by default). Disabling it may improve rust-analyzer's startup time.
 ---@field logfile? string The path to the rust-analyzer log file.
 ---@field load_vscode_settings? boolean Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json. If found, loaded settings will override configured options. Default: false
+---@see vim.lsp.ClientConfig
 
 ---@class RustaceanDapOpts
 --- @field autoload_configurations boolean Whether to autoload nvim-dap configurations when rust-analyzer has attached? Default: `true`.
@@ -141,7 +149,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@alias dap_adapter_type_executable "executable"
 ---@alias dap_adapter_type_server "server"
 
----@class DapClientConfig
+---@class DapClientConfig: Configuration
 ---@field type string The dap adapter to use
 ---@field name string
 ---@field request dap_config_request_launch | dap_config_request_attach | dap_config_request_custom The type of dap session

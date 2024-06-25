@@ -73,6 +73,27 @@ local function get_start_settings(bufname, root_dir, client_config)
   return evaluated_settings
 end
 
+---HACK: Workaround for https://github.com/neovim/neovim/pull/28690
+--- to solve #423.
+--- Checks if Neovim's file watcher is enabled, and if it isn't,
+--- configures rust-analyzer to enable server-side file watching (if not configured otherwise).
+---
+---@param server_cfg LspStartConfig LSP start settings
+local function configure_file_watcher(server_cfg)
+  local is_client_file_watcher_enabled =
+    vim.tbl_get(server_cfg.capabilities, 'workspace', 'didChangeWatchedFiles', 'dynamicRegistration')
+  local file_watcher_setting = vim.tbl_get(server_cfg.settings, 'rust-analyzer', 'files', 'watcher')
+  if is_client_file_watcher_enabled and not file_watcher_setting then
+    server_cfg.settings = vim.tbl_deep_extend('force', server_cfg.settings, {
+      ['rust-analyzer'] = {
+        files = {
+          watcher = 'server',
+        },
+      },
+    })
+  end
+end
+
 ---@class LspStartConfig: RustaceanLspClientConfig
 ---@field root_dir string | nil
 ---@field init_options? table
@@ -95,7 +116,7 @@ M.start = function(bufnr)
   local client_config = config.server
   ---@type LspStartConfig
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
-  local root_dir = cargo.get_root_dir(bufname)
+  local root_dir = cargo.get_config_root_dir(client_config, bufname)
   if not root_dir then
     --- No project root found. Start in detached/standalone mode.
     root_dir = vim.fs.dirname(bufname)
@@ -105,6 +126,7 @@ M.start = function(bufnr)
   lsp_start_config.root_dir = root_dir
 
   lsp_start_config.settings = get_start_settings(bufname, root_dir, client_config)
+  configure_file_watcher(lsp_start_config)
 
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do

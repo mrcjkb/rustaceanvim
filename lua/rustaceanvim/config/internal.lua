@@ -1,4 +1,5 @@
 local types = require('rustaceanvim.types.internal')
+local cargo = require('rustaceanvim.cargo')
 local compat = require('rustaceanvim.compat')
 local config = require('rustaceanvim.config')
 local executors = require('rustaceanvim.executors')
@@ -66,21 +67,12 @@ local function load_dap_configuration(type)
 end
 
 ---@return RustaceanExecutor
-local function get_crate_test_executor()
-  if vim.fn.has('nvim-0.10.0') == 1 then
-    return executors.background
-  else
-    return executors.termopen
-  end
-end
-
----@return RustaceanExecutor
 local function get_test_executor()
   if package.loaded['rustaceanvim.neotest'] ~= nil then
     -- neotest has been set up with rustaceanvim as an adapter
     return executors.neotest
   end
-  return get_crate_test_executor()
+  return executors.termopen
 end
 
 ---@class RustaceanConfig
@@ -97,7 +89,7 @@ local RustaceanDefaultConfig = {
     test_executor = get_test_executor(),
 
     ---@type RustaceanExecutor
-    crate_test_executor = get_crate_test_executor(),
+    crate_test_executor = executors.termopen,
 
     ---@type string | nil
     cargo_override = nil,
@@ -139,35 +131,18 @@ local RustaceanDefaultConfig = {
 
     --- options same as lsp hover
     ---@see vim.lsp.util.open_floating_preview
+    ---@see vim.api.nvim_open_win
     ---@type table Options applied to floating windows.
     float_win_config = {
-
-      -- the border that is used for floating windows
-      ---@see vim.api.nvim_open_win()
-      ---@type string[][] | string
-      border = {
-        { '╭', 'FloatBorder' },
-        { '─', 'FloatBorder' },
-        { '╮', 'FloatBorder' },
-        { '│', 'FloatBorder' },
-        { '╯', 'FloatBorder' },
-        { '─', 'FloatBorder' },
-        { '╰', 'FloatBorder' },
-        { '│', 'FloatBorder' },
-      }, -- maybe: 'double', 'rounded', 'shadow', 'single',
-
-      --- maximal width of floating windows. Nil means no max.
-      ---@type integer | nil
-      max_width = nil,
-
-      --- maximal height of floating windows. Nil means no max.
-      ---@type integer | nil
-      max_height = nil,
-
       --- whether the window gets automatically focused
       --- default: false
       ---@type boolean
       auto_focus = false,
+
+      --- whether splits opened from floating preview are vertical
+      --- default: false
+      ---@type 'horizontal' | 'vertical'
+      open_split = 'horizontal',
     },
 
     --- settings for showing the crate graph based on graphviz and the dot
@@ -292,6 +267,10 @@ local RustaceanDefaultConfig = {
     cmd = function()
       return { 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
     end,
+
+    ---@type string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
+    root_dir = cargo.get_root_dir,
+
     --- standalone file support
     --- setting it to false may improve startup time
     ---@type boolean

@@ -22,9 +22,7 @@
     </strong>
   </p>
   <p>🦀</p>
-</div>
-<!-- markdownlint-restore -->
-
+	
 [![Neovim][neovim-shield]][neovim-url]
 [![Lua][lua-shield]][lua-url]
 [![Rust][rust-shield]][rust-url]
@@ -34,6 +32,8 @@
 [![Issues][issues-shield]][issues-url]
 [![Build Status][ci-shield]][ci-url]
 [![LuaRocks][luarocks-shield]][luarocks-url]
+</div>
+<!-- markdownlint-restore -->
 
 > [!NOTE]
 >
@@ -427,15 +427,23 @@ vim.keymap.set(
   over error diagnostics (if they have an error code).
   
   ```vim
-  :RustLsp explainError
+  :RustLsp explainError {cycle?|current?}
   ```
   ```lua
-  vim.cmd.RustLsp('explainError')
+  vim.cmd.RustLsp('explainError') -- default to 'cycle'
+  vim.cmd.RustLsp({ 'explainError', 'cycle' })
+  vim.cmd.RustLsp({ 'explainError', 'current' })
   ```
 
-  Like `vim.diagnostic.goto_next`, `explainError` will cycle diagnostics,
-  starting at the cursor position, until it can find a diagnostic with
-  an error code.
+  - If called with `cycle` or no args:
+    Like `vim.diagnostic.goto_next`,
+    `explainError` will cycle diagnostics,
+    starting at the cursor position,
+    until it can find a diagnostic with an error code.
+    
+  - If called with `current`:
+    Searches for diagnostics only in the
+    current cursor line.
 
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/bac9b31c-22ca-40c4-bfd3-b8c5ba4cc49a)
 
@@ -453,15 +461,23 @@ vim.keymap.set(
   together.
   
   ```vim
-  :RustLsp renderDiagnostic
+  :RustLsp renderDiagnostic {cycle?|current?}
   ```
   ```lua
-  vim.cmd.RustLsp('renderDiagnostic')
+  vim.cmd.RustLsp('renderDiagnostic') -- defaults to 'cycle'
+  vim.cmd.RustLsp({ 'renderDiagnostic', 'cycle' })
+  vim.cmd.RustLsp({ 'renderDiagnostic', 'current' })
   ```
 
-  Like `vim.diagnostic.goto_next`, `renderDiagnostic` will cycle diagnostics,
-  starting at the cursor position, until it can find a diagnostic with
-  rendered data.
+  - If called with `cycle` or no args:
+    Like `vim.diagnostic.goto_next`,
+    `renderDiagnostic` will cycle diagnostics,
+    starting at the cursor position,
+    until it can find a diagnostic with rendered data.
+    
+  - If called with `current`:
+    Searches for diagnostics only in the
+    current cursor line.
 
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/a972c6b6-c504-4c2a-8380-53451bb8c2de)
 
@@ -857,17 +873,20 @@ To enable inlay hints in Neovim < 0.10, see [this discussion](https://github.com
 
 #### How to enable auto completion?
 
-Neovim *does not* have built-in support for auto-completion,
-and adding support for that is beyond the scope of this plugin.
+As of [#ff097f2091e7a970e5b12960683b4dade5563040](https://github.com/neovim/neovim/pull/27339),
+Neovim has built-in completion based on the `triggerCharacters` sent by
+language servers.
+Omni completion is also available for a more traditional `vim`-like completion experience.
 
-You have a few choices for completion:
+For more extensible and complex autocompletion setups you need a plugin such as [`nvim-cmp`](https://github.com/hrsh7th/nvim-cmp)
+and a LSP completion source like [`cmp-nvim-lsp`](https://github.com/hrsh7th/cmp-nvim-lsp).
+This plugin will automatically register the necessary client capabilities
+if you have `cmp-nvim-lsp` installed.
 
-- Use Neovim's built-in omni completion (see `:h omnifunc`).
-  This supports basic LSP completions, but not autocompletion.
-- For autocompletion, you need a plugin, for example [`nvim-cmp`](https://github.com/hrsh7th/nvim-cmp)
-  and an LSP completion source like [`cmp-nvim-lsp`](https://github.com/hrsh7th/cmp-nvim-lsp).
-  This plugin will automatically register the necessary client capabilities
-  if you have `cmp-nvim-lsp` installed.
+#### I'm having issues with (auto)completion
+
+rustaceanvim doesn't implement (auto)completion.
+Issues with (auto)completion either come from another plugin or rust-analzyer.
 
 #### mason.nvim and nvim-lspconfig
 

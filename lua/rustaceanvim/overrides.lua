@@ -50,8 +50,18 @@ function M.try_nextest_transform(args)
     table.insert(args, 3, '--nocapture')
     table.remove(args, #args)
   end
-  if args[#args] == '--exact' then
-    table.remove(args, #args)
+  local nextest_unsupported_flags = {
+    '--exact',
+    '--show-output',
+  }
+  local indexes_to_remove_reverse_order = {}
+  for i, arg in ipairs(args) do
+    if compat.list_contains(nextest_unsupported_flags, arg) then
+      table.insert(indexes_to_remove_reverse_order, 1, i)
+    end
+  end
+  for _, i in pairs(indexes_to_remove_reverse_order) do
+    table.remove(args, i)
   end
   return args
 end

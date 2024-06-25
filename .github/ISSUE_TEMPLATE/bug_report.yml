@@ -6,9 +6,11 @@ body:
   - type: checkboxes
     attributes:
       label: Have you read the docs and searched existing issues?
-      description: Please check all of the below that are applicable before submitting an issue
+      description: Please check all of the below that are applicable before submitting an issue.
       options:
-        - label: I have read [the README's troubleshooting guide](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#stethoscope-troubleshooting).
+        - label: I have read [the README's troubleshooting guide](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#stethoscope-troubleshooting) and FAQ(https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#left_speech_bubble-faq).
+          required: true
+        - label: I am using the latest rustaceanvim release.
           required: true
         - label: I have searched [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
           required: true

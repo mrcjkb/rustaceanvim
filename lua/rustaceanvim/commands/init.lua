@@ -60,13 +60,39 @@ local rustlsp_command_tbl = {
     end,
   },
   explainError = {
-    impl = function(_)
-      require('rustaceanvim.commands.diagnostic').explain_error()
+    impl = function(args)
+      local subcmd = args[1] or 'cycle'
+      if subcmd == 'cycle' then
+        require('rustaceanvim.commands.diagnostic').explain_error()
+      elseif subcmd == 'current' then
+        require('rustaceanvim.commands.diagnostic').explain_error_current_line()
+      else
+        vim.notify(
+          'explainError: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'",
+          vim.log.levels.ERROR
+        )
+      end
+    end,
+    complete = function()
+      return { 'cycle', 'current' }
     end,
   },
   renderDiagnostic = {
-    impl = function(_)
-      require('rustaceanvim.commands.diagnostic').render_diagnostic()
+    impl = function(args)
+      local subcmd = args[1] or 'cycle'
+      if subcmd == 'cycle' then
+        require('rustaceanvim.commands.diagnostic').render_diagnostic()
+      elseif subcmd == 'current' then
+        require('rustaceanvim.commands.diagnostic').render_diagnostic_current_line()
+      else
+        vim.notify(
+          'renderDiagnostic: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'",
+          vim.log.levels.ERROR
+        )
+      end
+    end,
+    complete = function()
+      return { 'cycle', 'current' }
     end,
   },
   rebuildProcMacros = {
@@ -332,17 +358,17 @@ function M.create_rust_lsp_command()
     bang = true,
     desc = 'Interacts with the rust-analyzer LSP client',
     complete = function(arg_lead, cmdline, _)
-      local commands = cmdline:match('^' .. rust_lsp_cmd_name .. '!') ~= nil
+      local commands = cmdline:match("^['<,'>]*" .. rust_lsp_cmd_name .. '!') ~= nil
           -- bang!
           and tbl_keys_by_value_filter(function(command)
             return command.bang == true
           end, rustlsp_command_tbl)
         or vim.tbl_keys(rustlsp_command_tbl)
-      local subcmd, subcmd_arg_lead = cmdline:match('^' .. rust_lsp_cmd_name .. '[!]*%s(%S+)%s(.*)$')
+      local subcmd, subcmd_arg_lead = cmdline:match("^['<,'>]*" .. rust_lsp_cmd_name .. '[!]*%s(%S+)%s(.*)$')
       if subcmd and subcmd_arg_lead and rustlsp_command_tbl[subcmd] and rustlsp_command_tbl[subcmd].complete then
         return rustlsp_command_tbl[subcmd].complete(subcmd_arg_lead)
       end
-      if cmdline:match('^' .. rust_lsp_cmd_name .. '[!]*%s+%w*$') then
+      if cmdline:match("^['<,'>]*" .. rust_lsp_cmd_name .. '[!]*%s+%w*$') then
         return vim.tbl_filter(function(command)
           return command:find(arg_lead) ~= nil
         end, commands)

@@ -27,13 +27,29 @@ local function get_mb_active_client_root(file_name)
   end
 end
 
+---Attempts to find the root for an existing active client. If no existing
+---client root is found, returns the result of evaluating `config.root_dir`.
+---@param config RustaceanLspClientConfig
 ---@param file_name string
 ---@return string | nil root_dir
-function cargo.get_root_dir(file_name)
+function cargo.get_config_root_dir(config, file_name)
   local reuse_active = get_mb_active_client_root(file_name)
   if reuse_active then
     return reuse_active
   end
+
+  local config_root_dir = config.root_dir
+  if type(config_root_dir) == 'function' then
+    return config_root_dir(file_name, cargo.get_root_dir)
+  else
+    return config_root_dir
+  end
+end
+
+---The default implementation used for `vim.g.rustaceanvim.server.root_dir`
+---@param file_name string
+---@return string | nil root_dir
+function cargo.get_root_dir(file_name)
   local path = file_name:find('%.rs$') and vim.fs.dirname(file_name) or file_name
   if not path then
     return nil
@@ -43,6 +59,7 @@ function cargo.get_root_dir(file_name)
     upward = true,
     path = path,
   })[1])
+  ---@type string | nil
   local cargo_workspace_dir = nil
   if vim.fn.executable('cargo') == 1 then
     local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
@@ -56,7 +73,7 @@ function cargo.get_root_dir(file_name)
         cargo_metadata = table.concat(d, '\n')
       end,
       stdout_buffered = true,
-      cwd = path,
+      cwd = compat.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
     })
     if cm > 0 then
       cm = vim.fn.jobwait({ cm })[1]
@@ -64,8 +81,10 @@ function cargo.get_root_dir(file_name)
       cm = -1
     end
     if cm == 0 then
-      cargo_workspace_dir = vim.fn.json_decode(cargo_metadata)['workspace_root']
-      ---@cast cargo_workspace_dir string
+      local ok, cargo_metadata_json = pcall(vim.fn.json_decode, cargo_metadata)
+      if ok and cargo_metadata_json then
+        cargo_workspace_dir = cargo_metadata_json['workspace_root']
+      end
     end
   end
   return cargo_workspace_dir

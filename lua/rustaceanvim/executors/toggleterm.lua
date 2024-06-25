@@ -20,7 +20,7 @@ local M = {
           vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes([[<C-\><C-n>]], true, true, true), '', true)
 
           -- set close keymap
-          vim.api.nvim_buf_set_keymap(t.bufnr, 'n', 'q', '<cmd>close<CR>', { noremap = true, silent = true })
+          vim.keymap.set('n', 'q', '<CMD>close<CR>', { buffer = t.bufnr, noremap = true })
         end,
       })
       :toggle()

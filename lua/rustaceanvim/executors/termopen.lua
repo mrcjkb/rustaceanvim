@@ -27,7 +27,7 @@ local M = {
     ui.resize(false, '-5')
 
     -- close the buffer when escape is pressed :)
-    vim.api.nvim_buf_set_keymap(latest_buf_id, 'n', '<Esc>', ':q<CR>', { noremap = true })
+    vim.keymap.set('n', '<Esc>', '<CMD>q<CR>', { buffer = latest_buf_id, noremap = true })
 
     -- run the command
     vim.fn.termopen(full_command)

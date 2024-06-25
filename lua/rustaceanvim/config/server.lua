@@ -22,13 +22,20 @@ function server.load_rust_analyzer_settings(project_root, opts)
   local default_settings = opts.default_settings or config.server.default_settings
   local use_clippy = config.tools.enable_clippy and vim.fn.executable('cargo-clippy') == 1
   ---@diagnostic disable-next-line: undefined-field
-  if default_settings['rust-analyzer'].checkOnSave == nil and use_clippy then
+  if
+    default_settings['rust-analyzer'].check == nil
+    and use_clippy
+    and type(default_settings['rust-analyzer'].checkOnSave) ~= 'table'
+  then
     ---@diagnostic disable-next-line: inject-field
-    default_settings['rust-analyzer'].checkOnSave = {
-      allFeatures = true,
+    default_settings['rust-analyzer'].check = {
       command = 'clippy',
       extraArgs = { '--no-deps' },
     }
+    if type(default_settings['rust-analyzer'].checkOnSave) ~= 'boolean' then
+      ---@diagnostic disable-next-line: inject-field
+      default_settings['rust-analyzer'].checkOnSave = true
+    end
   end
   if not project_root then
     return default_settings
@@ -46,7 +53,7 @@ function server.load_rust_analyzer_settings(project_root, opts)
   local json = require('rustaceanvim.config.json')
   local rust_analyzer_settings = json.silent_decode(content)
   local ra_key = 'rust-analyzer'
-  local has_ra_key = true
+  local has_ra_key = false
   for key, _ in pairs(rust_analyzer_settings) do
     if key:find(ra_key) ~= nil then
       has_ra_key = true
@@ -67,8 +74,11 @@ end
 local function make_rustaceanvim_capabilities()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-  -- snippets
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  if vim.fn.has('nvim-0.10.0') == 1 then
+    -- snippets
+    -- This will also be added if cmp_nvim_lsp is detected.
+    capabilities.textDocument.completion.completionItem.snippetSupport = true
+  end
 
   -- send actions with hover request
   capabilities.experimental = {
@@ -137,7 +147,7 @@ function server.create_client_capabilities()
     }
   end)
   return vim.tbl_deep_extend(
-    'keep',
+    'force',
     rs_capabilities,
     cmp_capabilities,
     selection_range_capabilities,
