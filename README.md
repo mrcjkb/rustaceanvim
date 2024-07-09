@@ -54,7 +54,9 @@
 
 ## :grey_question: Do I need rustaceanvim
 
-If you are starting out with Rust, [`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
+If you are starting out with Rust, Neovim's built-in LSP client API
+(see [`:h lsp`](https://neovim.io/doc/user/lsp.html)) or
+[`nvim-lspconfig.rust_analyzer`](https://github.com/neovim/nvim-lspconfig)
 is probably enough for you.
 It provides the lowest common denominator of LSP support.
 This plugin is for those who would like [additional non-standard features](#books-usage--features)
