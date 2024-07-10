@@ -43,7 +43,7 @@ local function get_cargo_args_from_runnables_args(runnable_args)
     table.insert(cargo_args, message_json)
   end
 
-  for _, value in ipairs(runnable_args.cargoExtraArgs) do
+  for _, value in ipairs(runnable_args.cargoExtraArgs or {}) do
     if not compat.list_contains(cargo_args, value) then
       table.insert(cargo_args, value)
     end

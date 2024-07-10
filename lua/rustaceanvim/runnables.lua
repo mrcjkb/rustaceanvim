@@ -23,7 +23,7 @@ end
 ---@class RARunnableArgs
 ---@field workspaceRoot string
 ---@field cargoArgs string[]
----@field cargoExtraArgs string[]
+---@field cargoExtraArgs? string[]
 ---@field executableArgs string[]
 
 ---@param option string
