@@ -11,11 +11,21 @@ local os = require('rustaceanvim.os')
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
   ---@diagnostic disable-next-line
-  vim.lsp.util.apply_text_edits = function(edits, bufnr, offset_encoding)
-    local overrides = require('rustaceanvim.overrides')
-    overrides.snippet_text_edits_to_text_edits(edits)
-    old_func(edits, bufnr, offset_encoding)
-  end
+  vim.lsp.util.apply_text_edits = config.tools.snippet_text_edit_handler
+      ---@param edits rust.lsp.SnippetTextEdit[]
+      ---@param bufnr number
+      ---@param offset_encoding string
+      and function(edits, bufnr, offset_encoding)
+        config.tools.snippet_text_edit_handler(edits, bufnr, offset_encoding, old_func)
+      end
+    ---@param edits rust.lsp.SnippetTextEdit[]
+    ---@param bufnr number
+    ---@param offset_encoding string
+    or function(edits, bufnr, offset_encoding)
+      local overrides = require('rustaceanvim.overrides')
+      overrides.snippet_text_edits_to_text_edits(edits)
+      old_func(edits, bufnr, offset_encoding)
+    end
 end
 
 ---@param client lsp.Client

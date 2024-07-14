@@ -75,6 +75,14 @@ local function get_test_executor()
   return executors.termopen
 end
 
+---@return fun(edits: rust.lsp.SnippetTextEdit[], bufnr: integer, offset_encoding: string, apply_text_edits: function) | nil
+local function get_snippet_text_edit_handler()
+  local ok, luasnip = pcall(require, 'luasnip.extras.lsp')
+  if ok and luasnip.apply_text_edits then
+    return luasnip.apply_text_edits
+  end
+end
+
 ---@class RustaceanConfig
 local RustaceanDefaultConfig = {
   ---@class RustaceanToolsConfig
@@ -90,6 +98,9 @@ local RustaceanDefaultConfig = {
 
     ---@type RustaceanExecutor
     crate_test_executor = executors.termopen,
+
+    ---@type fun(edits: rust.lsp.SnippetTextEdit[], bufnr: integer, offset_encoding: string, apply_text_edits: function) | nil
+    snippet_text_edit_handler = get_snippet_text_edit_handler(),
 
     ---@type string | nil
     cargo_override = nil,

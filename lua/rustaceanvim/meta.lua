@@ -1,0 +1,4 @@
+---@class rust.lsp.SnippetTextEdit
+---@field insertTextFormat number
+---@field newText string
+---@field range table see |vim.lsp.util.make_range_params()|
