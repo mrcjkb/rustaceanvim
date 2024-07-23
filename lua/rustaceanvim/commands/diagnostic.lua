@@ -233,8 +233,41 @@ local function get_rendered_diagnostic(diagnostic)
   end
 end
 
+local function validate_window_dimensions(float_preview_lines, user_float_win_config)
+  local float_preview_config = vim.tbl_extend('keep', user_float_win_config, {
+    focus = false,
+    focusable = true,
+    focus_id = 'ra-render-diagnostic',
+    close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
+  })
+
+  local c = vim.deepcopy(float_preview_config)
+  for _, key in ipairs { 'width', 'height', 'max_width', 'max_height' } do
+    c[key] = nil
+  end
+
+  local width, height = vim.lsp.util._make_floating_popup_size(float_preview_lines, c)
+
+  if user_float_win_config.width and user_float_win_config.width > width then
+    width = user_float_win_config.width
+  end
+  if user_float_win_config.height and user_float_win_config.height > height then
+    height = user_float_win_config.height
+  end
+  if user_float_win_config.max_width and user_float_win_config.max_width < width then
+    float_preview_config.max_width = width
+  end
+  if user_float_win_config.max_height and user_float_win_config.max_height < height then
+    float_preview_config.max_height = height
+  end
+
+  float_preview_config.height = height
+  float_preview_config.width = width
+  return float_preview_config
+end
+
 ---@param rendered_diagnostic string
-function M.render_ansi_code_diagnostic(rendered_diagnostic)
+local function render_ansi_code_diagnostic(rendered_diagnostic)
   local lines =
     vim.split(rendered_diagnostic:gsub('[\27\155][][()#;?%d]*[A-PRZcf-ntqry=><~]', ''), '\n', { trimempty = true })
   local float_preview_lines = vim.deepcopy(lines)
@@ -245,12 +278,7 @@ function M.render_ansi_code_diagnostic(rendered_diagnostic)
     local bufnr, winnr = vim.lsp.util.open_floating_preview(
       float_preview_lines,
       '',
-      vim.tbl_extend('keep', config.tools.float_win_config, {
-        focus = false,
-        focusable = true,
-        focus_id = 'ra-render-diagnostic',
-        close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
-      })
+      validate_window_dimensions(float_preview_lines, config.tools.float_win_config)
     )
     local autocmd_id = vim.api.nvim_create_autocmd('WinEnter', {
       callback = function(args)
@@ -357,7 +385,7 @@ function M.render_diagnostic()
   -- Open folds under the cursor
   vim.cmd('normal! zv')
 
-  M.render_ansi_code_diagnostic(rendered_diagnostic)
+  render_ansi_code_diagnostic(rendered_diagnostic)
 end
 
 function M.render_diagnostic_current_line()
@@ -384,7 +412,7 @@ function M.render_diagnostic_current_line()
   end
 
   local rendered_diagnostic = rendered_diagnostics[1]
-  M.render_ansi_code_diagnostic(rendered_diagnostic)
+  render_ansi_code_diagnostic(rendered_diagnostic)
 end
 
 return M
