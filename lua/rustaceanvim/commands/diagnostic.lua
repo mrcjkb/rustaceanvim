@@ -15,8 +15,8 @@ local _window_state = {
 
 ---@param bufnr integer
 ---@param winnr integer
----@param lines string
-local function set_open_split_keymap(bufnr, winnr, lines)
+---@param render_fn function
+local function set_split_open_keymap(bufnr, winnr, render_fn)
   local function open_split()
     -- check if a buffer with the latest id is already open, if it is then
     -- delete it and continue
@@ -28,11 +28,7 @@ local function set_open_split_keymap(bufnr, winnr, lines)
     -- split the window to create a new buffer and set it to our window
     local vsplit = config.tools.float_win_config.open_split == 'vertical'
     ui.split(vsplit, _window_state.latest_scratch_buf_id)
-
-    -- write the expansion content to the buffer
-    local chanid = vim.api.nvim_open_term(_window_state.latest_scratch_buf_id, {})
-
-    vim.api.nvim_chan_send(chanid, vim.trim(lines))
+    render_fn()
   end
   vim.keymap.set('n', '<CR>', function()
     local line = vim.api.nvim_win_get_cursor(winnr)[1]
@@ -141,7 +137,12 @@ function M.explain_error()
       )
       _window_state.float_winnr = winnr
       set_close_keymaps(bufnr)
-      set_open_split_keymap(bufnr, winnr, markdown_lines)
+      set_split_open_keymap(bufnr, winnr, function()
+        -- set filetype to rust for syntax highlighting
+        vim.bo[_window_state.latest_scratch_buf_id].filetype = 'rust'
+        -- write the expansion content to the buffer
+        vim.api.nvim_buf_set_lines(_window_state.latest_scratch_buf_id, 0, 0, false, markdown_lines)
+      end)
 
       if config.tools.float_win_config.auto_focus then
         vim.api.nvim_set_current_win(winnr)
@@ -211,7 +212,12 @@ function M.explain_error_current_line()
       )
       _window_state.float_winnr = winnr
       set_close_keymaps(bufnr)
-      set_open_split_keymap(bufnr, winnr, markdown_lines)
+      set_split_open_keymap(bufnr, winnr, function()
+        -- set filetype to rust for syntax highlighting
+        vim.bo[_window_state.latest_scratch_buf_id].filetype = 'rust'
+        -- write the expansion content to the buffer
+        vim.api.nvim_buf_set_lines(_window_state.latest_scratch_buf_id, 0, 0, false, markdown_lines)
+      end)
 
       if config.tools.float_win_config.auto_focus then
         vim.api.nvim_set_current_win(winnr)
@@ -307,7 +313,10 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
     vim.api.nvim_chan_send(chanid, vim.trim('1. Open in split\r\n' .. '---\r\n' .. rendered_diagnostic))
     _window_state.float_winnr = winnr
     set_close_keymaps(bufnr)
-    set_open_split_keymap(bufnr, winnr, rendered_diagnostic)
+    set_split_open_keymap(bufnr, winnr, function()
+      local chan_id = vim.api.nvim_open_term(_window_state.latest_scratch_buf_id, {})
+      vim.api.nvim_chan_send(chan_id, vim.trim(rendered_diagnostic))
+    end)
     if config.tools.float_win_config.auto_focus then
       vim.api.nvim_set_current_win(winnr)
       vim.api.nvim_feedkeys(
