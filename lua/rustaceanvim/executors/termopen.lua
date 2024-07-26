@@ -1,7 +1,7 @@
 ---@type integer | nil
 local latest_buf_id = nil
 
----@type RustaceanExecutor
+---@type rustaceanvim.Executor
 local M = {
   execute_command = function(command, args, cwd, _)
     local shell = require('rustaceanvim.shell')

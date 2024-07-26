@@ -78,7 +78,7 @@ local function get_rustc_sysroot(callback)
   end)
 end
 
----@alias DapSourceMap {[string]: string}
+---@alias rustaceanvim.dap.SourceMap {[string]: string}
 
 ---@param tbl { [string]: string }
 ---@return string[][]
@@ -95,7 +95,7 @@ end
 
 ---codelldb expects a map,
 -- while lldb expects a list of tuples.
----@param adapter DapExecutableConfig | DapServerConfig | boolean
+---@param adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | boolean
 ---@param tbl { [string]: string }
 ---@return string[][] | { [string]: string }
 local function format_source_map(adapter, tbl)
@@ -105,7 +105,7 @@ local function format_source_map(adapter, tbl)
   return tbl_to_tuple_list(tbl)
 end
 
----@type {[string]: DapSourceMap}
+---@type {[string]: rustaceanvim.dap.SourceMap}
 local source_maps = {}
 
 ---See https://github.com/vadimcn/codelldb/issues/204
@@ -127,7 +127,7 @@ local function generate_source_map(workspace_root)
       if not src_path then
         return
       end
-      ---@type DapSourceMap
+      ---@type rustaceanvim.dap.SourceMap
       source_maps[workspace_root] = {
         [vim.fs.joinpath('/rustc', commit_hash)] = src_path,
       }
@@ -164,7 +164,7 @@ local function get_lldb_commands(workspace_root)
 end
 
 ---map for codelldb, list of strings for lldb-dap
----@param adapter DapExecutableConfig | DapServerConfig
+---@param adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config
 ---@param key string
 ---@param segments string[]
 ---@param sep string
@@ -177,11 +177,11 @@ local function format_environment_variable(adapter, key, segments, sep)
   return adapter.type == 'server' and { [key] = value } or { key .. '=' .. value }
 end
 
----@type {[string]: EnvironmentMap}
+---@type {[string]: rustaceanvim.EnvironmentMap}
 local environments = {}
 
 -- Most succinct description: https://github.com/bevyengine/bevy/issues/2589#issuecomment-1753413600
----@param adapter DapExecutableConfig | DapServerConfig
+---@param adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config
 ---@param workspace_root string | nil
 local function add_dynamic_library_paths(adapter, workspace_root)
   if not workspace_root or environments[workspace_root] then
@@ -221,8 +221,8 @@ local function pall_with_warn(action, desc)
   end
 end
 
----@param adapter DapExecutableConfig | DapServerConfig
----@param args RARunnableArgs
+---@param adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config
+---@param args rustaceanvim.RARunnableArgs
 ---@param verbose? boolean
 local function handle_configured_options(adapter, args, verbose)
   local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
@@ -250,9 +250,9 @@ local function handle_configured_options(adapter, args, verbose)
   end
 end
 
----@param args RARunnableArgs
+---@param args rustaceanvim.RARunnableArgs
 ---@param verbose? boolean
----@param callback? fun(config: DapClientConfig)
+---@param callback? fun(config: rustaceanvim.dap.client.Config)
 ---@param on_error? fun(err: string)
 function M.start(args, verbose, callback, on_error)
   if verbose then
@@ -264,7 +264,7 @@ function M.start(args, verbose, callback, on_error)
     callback = dap.run
   end
   local adapter = types.evaluate(config.dap.adapter)
-  --- @cast adapter DapExecutableConfig | DapServerConfig | disable
+  --- @cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
   if adapter == false then
     on_error('Debug adapter is disabled.')
     return
@@ -342,11 +342,11 @@ function M.start(args, verbose, callback, on_error)
       local _, dap_config = next(dap.configurations.rust or {})
 
       local local_config = types.evaluate(config.dap.configuration)
-      --- @cast local_config DapClientConfig | boolean
+      --- @cast local_config rustaceanvim.dap.client.Config | boolean
 
       ---@diagnostic disable-next-line: param-type-mismatch
       local final_config = local_config ~= false and vim.deepcopy(local_config) or vim.deepcopy(dap_config)
-      --- @cast final_config DapClientConfig
+      --- @cast final_config rustaceanvim.dap.client.Config
 
       if dap.adapters[final_config.type] == nil then
         on_error('No adapter exists named "' .. final_config.type .. '". See ":h dap-adapter" for more information')

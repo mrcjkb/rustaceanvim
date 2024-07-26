@@ -14,7 +14,7 @@ end
 ---@type { [string]: boolean? } Used to prevent this plugin from adding the same configuration twice
 local _dap_configuration_added = {}
 
----@param args RARunnableArgs
+---@param args rustaceanvim.RARunnableArgs
 ---@return string
 local function build_label(args)
   local ret = ''
@@ -35,7 +35,7 @@ local function build_label(args)
   return ret
 end
 
----@param result RARunnable[]
+---@param result rustaceanvim.RARunnable[]
 ---@return string[] option_strings
 local function get_options(result)
   ---@type string[]
@@ -53,7 +53,7 @@ local function get_options(result)
   return option_strings
 end
 
----@param args RARunnableArgs
+---@param args rustaceanvim.RARunnableArgs
 ---@return boolean
 local function is_valid_test(args)
   local is_not_cargo_check = args.cargoArgs[1] ~= 'check'
@@ -66,11 +66,11 @@ end
 -- This function also makes it so that the debuggable commands are more
 -- debugging friendly. For example, we move cargo run to cargo build, and cargo
 -- test to cargo test --no-run.
----@param result RARunnable[]
+---@param result rustaceanvim.RARunnable[]
 local function sanitize_results_for_debugging(result)
-  ---@type RARunnable[]
+  ---@type rustaceanvim.RARunnable[]
   local ret = vim.tbl_filter(function(value)
-    ---@cast value RARunnable
+    ---@cast value rustaceanvim.RARunnable
     return is_valid_test(value.args)
   end, result or {})
 
@@ -95,7 +95,7 @@ local function dap_run(args)
   end
 end
 
----@param debuggables RARunnable[]
+---@param debuggables rustaceanvim.RARunnable[]
 ---@param executableArgsOverride? string[]
 local function ui_select_debuggable(debuggables, executableArgsOverride)
   debuggables = ra_runnables.apply_exec_args_override(executableArgsOverride, debuggables)
@@ -112,7 +112,7 @@ local function ui_select_debuggable(debuggables, executableArgsOverride)
   end)
 end
 
----@param debuggables RARunnable[]
+---@param debuggables rustaceanvim.RARunnable[]
 local function add_debuggables_to_nvim_dap(debuggables)
   local ok, dap = pcall(require, 'dap')
   if not ok then
@@ -132,7 +132,7 @@ local function add_debuggables_to_nvim_dap(debuggables)
   end
 end
 
----@param debuggables RARunnable[]
+---@param debuggables rustaceanvim.RARunnable[]
 ---@param executableArgsOverride? string[]
 local function debug_at_cursor_position(debuggables, executableArgsOverride)
   if debuggables == nil then
@@ -148,10 +148,10 @@ local function debug_at_cursor_position(debuggables, executableArgsOverride)
   dap_run(args)
 end
 
----@param callback fun(result:RARunnable[])
+---@param callback fun(result:rustaceanvim.RARunnable[])
 local function mk_handler(callback)
   return function(_, result, _, _)
-    ---@cast result RARunnable[]
+    ---@cast result rustaceanvim.RARunnable[]
     if result == nil then
       return
     end

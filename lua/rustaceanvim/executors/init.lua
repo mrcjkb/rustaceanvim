@@ -7,7 +7,7 @@ local vimux = require('rustaceanvim.executors.vimux')
 local background = require('rustaceanvim.executors.background')
 local neotest = require('rustaceanvim.executors.neotest')
 
----@type { [test_executor_alias]: RustaceanExecutor }
+---@type { [rustaceanvim.test_executor_alias]: rustaceanvim.Executor }
 local M = {}
 
 M.termopen = termopen

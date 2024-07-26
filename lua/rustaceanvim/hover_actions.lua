@@ -7,7 +7,7 @@ local function get_params()
   return lsp_util.make_position_params(0, nil)
 end
 
----@class HoverActionsState
+---@class rustaceanvim.hover_actions.State
 local _state = {
   ---@type integer
   winnr = nil,

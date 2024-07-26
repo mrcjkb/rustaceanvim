@@ -1,5 +1,5 @@
 local M = {}
----@type RustaceanConfig
+---@type rustaceanvim.Config
 local config = require('rustaceanvim.config.internal')
 local types = require('rustaceanvim.types.internal')
 local rust_analyzer = require('rustaceanvim.rust_analyzer')
@@ -77,7 +77,7 @@ end
 --- Checks if Neovim's file watcher is enabled, and if it isn't,
 --- configures rust-analyzer to enable server-side file watching (if not configured otherwise).
 ---
----@param server_cfg LspStartConfig LSP start settings
+---@param server_cfg rustaceanvim.lsp.StartConfig LSP start settings
 local function configure_file_watcher(server_cfg)
   local is_client_file_watcher_enabled =
     vim.tbl_get(server_cfg.capabilities, 'workspace', 'didChangeWatchedFiles', 'dynamicRegistration')
@@ -93,7 +93,7 @@ local function configure_file_watcher(server_cfg)
   end
 end
 
----@class LspStartConfig: RustaceanLspClientConfig
+---@class rustaceanvim.lsp.StartConfig: rustaceanvim.lsp.ClientConfig
 ---@field root_dir string | nil
 ---@field init_options? table
 ---@field settings table
@@ -113,7 +113,7 @@ M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
   local client_config = config.server
-  ---@type LspStartConfig
+  ---@type rustaceanvim.lsp.StartConfig
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = cargo.get_config_root_dir(client_config, bufname)
   if not root_dir then

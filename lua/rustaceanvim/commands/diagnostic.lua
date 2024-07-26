@@ -5,7 +5,7 @@ local ui = require('rustaceanvim.ui')
 
 local rustc = 'rustc'
 
----@class DiagnosticWindowState
+---@class rustaceanvim.diagnostic.WindowState
 local _window_state = {
   ---@type integer | nil
   float_winnr = nil,

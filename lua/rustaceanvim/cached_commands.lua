@@ -1,19 +1,19 @@
 local M = {}
 
----@alias RARunnablesChoice { choice: integer, runnables: RARunnable[] }
+---@alias rustaceanvim.RARunnablesChoice { choice: integer, runnables: rustaceanvim.RARunnable[] }
 
----@class CommandCache
+---@class rustaceanvim.CommandCache
 local cache = {
-  ---@type RARunnableArgs | nil
+  ---@type rustaceanvim.RARunnableArgs | nil
   last_debuggable = nil,
-  ---@type RARunnablesChoice
+  ---@type rustaceanvim.RARunnablesChoice
   last_runnable = nil,
-  ---@type RARunnablesChoice
+  ---@type rustaceanvim.RARunnablesChoice
   last_testable = nil,
 }
 
 ---@param choice integer
----@param runnables RARunnable[]
+---@param runnables rustaceanvim.RARunnable[]
 M.set_last_runnable = function(choice, runnables)
   cache.last_runnable = {
     choice = choice,
@@ -22,7 +22,7 @@ M.set_last_runnable = function(choice, runnables)
 end
 
 ---@param choice integer
----@param runnables RARunnable[]
+---@param runnables rustaceanvim.RARunnable[]
 M.set_last_testable = function(choice, runnables)
   cache.last_testable = {
     choice = choice,
@@ -30,7 +30,7 @@ M.set_last_testable = function(choice, runnables)
   }
 end
 
----@param args RARunnableArgs
+---@param args rustaceanvim.RARunnableArgs
 M.set_last_debuggable = function(args)
   cache.last_debuggable = args
 end
@@ -50,7 +50,7 @@ M.execute_last_debuggable = function(executableArgsOverride)
   end
 end
 
----@param choice RARunnablesChoice
+---@param choice rustaceanvim.RARunnablesChoice
 ---@param executableArgsOverride? string[]
 local function override_executable_args_if_set(choice, executableArgsOverride)
   if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then

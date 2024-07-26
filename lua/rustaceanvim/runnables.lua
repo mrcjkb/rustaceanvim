@@ -11,16 +11,16 @@ local function get_params()
   }
 end
 
----@class RARunnable
----@field args RARunnableArgs
+---@class rustaceanvim.RARunnable
+---@field args rustaceanvim.RARunnableArgs
 ---@field label string
----@field location? RARunnableLocation
+---@field location? rustaceanvim.RARunnableLocation
 
----@class RARunnableLocation
+---@class rustaceanvim.RARunnableLocation
 ---@field targetRange lsp.Range
 ---@field targetSelectionRange lsp.Range
 
----@class RARunnableArgs
+---@class rustaceanvim.RARunnableArgs
 ---@field workspaceRoot string
 ---@field cargoArgs string[]
 ---@field cargoExtraArgs? string[]
@@ -37,9 +37,9 @@ local function prettify_test_option(option)
   return option:gsub('%-%-all%-targets', '(all targets)') or option
 end
 
----@param result RARunnable[]
+---@param result rustaceanvim.RARunnable[]
 ---@param executableArgsOverride? string[]
----@param opts RunnablesOpts
+---@param opts rustaceanvim.runnables.Opts
 ---@return string[]
 local function get_options(result, executableArgsOverride, opts)
   local option_strings = {}
@@ -62,9 +62,9 @@ local function get_options(result, executableArgsOverride, opts)
   return option_strings
 end
 
----@alias CargoCmd 'cargo'
+---@alias rustaceanvim.CargoCmd 'cargo'
 
----@param runnable RARunnable
+---@param runnable rustaceanvim.RARunnable
 ---@return string executable
 ---@return string[] args
 ---@return string | nil dir
@@ -89,8 +89,8 @@ function M.get_command(runnable)
 end
 
 ---@param choice integer
----@param runnables RARunnable[]
----@return CargoCmd command build command
+---@param runnables rustaceanvim.RARunnable[]
+---@return rustaceanvim.CargoCmd command build command
 ---@return string[] args
 ---@return string|nil dir
 local function getCommand(choice, runnables)
@@ -98,7 +98,7 @@ local function getCommand(choice, runnables)
 end
 
 ---@param choice integer
----@param runnables RARunnable[]
+---@param runnables rustaceanvim.RARunnable[]
 function M.run_command(choice, runnables)
   -- do nothing if choice is too high or too low
   if not choice or choice < 1 or choice > #runnables then
@@ -123,17 +123,17 @@ function M.run_command(choice, runnables)
   end
 end
 
----@param runnable RARunnable
+---@param runnable rustaceanvim.RARunnable
 ---@return boolean
 local function is_testable(runnable)
-  ---@cast runnable RARunnable
+  ---@cast runnable rustaceanvim.RARunnable
   local cargoArgs = runnable.args and runnable.args.cargoArgs or {}
   return #cargoArgs > 0 and vim.startswith(cargoArgs[1], 'test')
 end
 
 ---@param executableArgsOverride? string[]
----@param runnables RARunnable[]
----@return RARunnable[]
+---@param runnables rustaceanvim.RARunnable[]
+---@return rustaceanvim.RARunnable[]
 function M.apply_exec_args_override(executableArgsOverride, runnables)
   if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
     local unique_runnables = {}
@@ -147,10 +147,10 @@ function M.apply_exec_args_override(executableArgsOverride, runnables)
 end
 
 ---@param executableArgsOverride? string[]
----@param opts RunnablesOpts
----@return fun(_, result: RARunnable[])
+---@param opts rustaceanvim.runnables.Opts
+---@return fun(_, result: rustaceanvim.RARunnable[])
 local function mk_handler(executableArgsOverride, opts)
-  ---@param runnables RARunnable[]
+  ---@param runnables rustaceanvim.RARunnable[]
   return function(_, runnables)
     if runnables == nil then
       return
@@ -182,7 +182,7 @@ local function is_within_range(position, targetRange)
   return targetRange.start.line <= position.line and targetRange['end'].line >= position.line
 end
 
----@param runnables RARunnable
+---@param runnables rustaceanvim.RARunnable
 ---@return integer | nil choice
 function M.get_runnable_at_cursor_position(runnables)
   ---@type lsp.Position
@@ -206,7 +206,7 @@ function M.get_runnable_at_cursor_position(runnables)
 end
 
 local function mk_cursor_position_handler(executableArgsOverride)
-  ---@param runnables RARunnable[]
+  ---@param runnables rustaceanvim.RARunnable[]
   return function(_, runnables)
     if runnables == nil then
       return
@@ -226,14 +226,14 @@ local function mk_cursor_position_handler(executableArgsOverride)
   end
 end
 
----@class RunnablesOpts
+---@class rustaceanvim.runnables.Opts
 ---@field tests_only? boolean
 
 ---Sends the request to rust-analyzer to get the runnables and handles them
 ---@param executableArgsOverride? string[]
----@param opts? RunnablesOpts
+---@param opts? rustaceanvim.runnables.Opts
 function M.runnables(executableArgsOverride, opts)
-  ---@type RunnablesOpts
+  ---@type rustaceanvim.runnables.Opts
   opts = vim.tbl_deep_extend('force', { tests_only = false }, opts or {})
   vim.lsp.buf_request(0, 'experimental/runnables', get_params(), mk_handler(executableArgsOverride, opts))
 end

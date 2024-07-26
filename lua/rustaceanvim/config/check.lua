@@ -23,7 +23,7 @@ local function validate(path, tbl)
 end
 
 ---Validates the config.
----@param cfg RustaceanConfig
+---@param cfg rustaceanvim.Config
 ---@return boolean is_valid
 ---@return string|nil error_message
 function M.validate(cfg)
@@ -107,14 +107,14 @@ function M.validate(cfg)
   if adapter == false then
     ok = true
   elseif adapter.type == 'executable' then
-    ---@cast adapter DapExecutableConfig
+    ---@cast adapter rustaceanvim.dap.executable.Config
     ok, err = validate('dap.adapter', {
       command = { adapter.command, 'string' },
       name = { adapter.name, 'string', true },
       args = { adapter.args, 'table', true },
     })
   elseif adapter.type == 'server' then
-    ---@cast adapter DapServerConfig
+    ---@cast adapter rustaceanvim.dap.server.Config
     ok, err = validate('dap.adapter', {
       command = { adapter.executable, 'table' },
       name = { adapter.name, 'string', true },

@@ -1,7 +1,7 @@
 error('Cannot import a meta module')
 
----@class RustaceanTestExecutor: RustaceanExecutor
----@field execute_command fun(cmd:string, args:string[], cwd:string|nil, opts?: RustaceanExecutorOpts)
+---@class rustaceanvim.TestExecutor: rustaceanvim.Executor
+---@field execute_command fun(cmd:string, args:string[], cwd:string|nil, opts?: rustaceanvim.ExecutorOpts)
 
----@class RustaceanTestExecutorOpts: RustaceanExecutorOpts
----@field runnable? RARunnable
+---@class rustaceanvim.TestExecutor.Opts: rustaceanvim.ExecutorOpts
+---@field runnable? rustaceanvim.RARunnable

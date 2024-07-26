@@ -1,6 +1,6 @@
 local M = {}
 
----@param runnable RARunnable
+---@param runnable rustaceanvim.RARunnable
 ---@return string | nil
 local function get_test_path(runnable)
   local executableArgs = runnable.args and runnable.args.executableArgs or {}
@@ -8,7 +8,7 @@ local function get_test_path(runnable)
 end
 
 ---@overload fun(file_path: string, test_path: string | nil)
----@overload fun(file_path: string, runnable: RARunnable)
+---@overload fun(file_path: string, runnable: rustaceanvim.RARunnable)
 ---@return string
 function M.get_position_id(file_path, runnable)
   local test_path = runnable
@@ -20,7 +20,7 @@ function M.get_position_id(file_path, runnable)
 end
 
 ---@param file_path string
----@param runnable RARunnable
+---@param runnable rustaceanvim.RARunnable
 ---@return rustaceanvim.neotest.Position | nil
 function M.runnable_to_position(file_path, runnable)
   local cargoArgs = runnable.args and runnable.args.cargoArgs or {}

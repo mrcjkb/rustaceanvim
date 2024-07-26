@@ -7,11 +7,11 @@ local server_config = require('rustaceanvim.config.server')
 
 local RustaceanConfig
 
----@class RustAnalyzerInitializedStatusInternal : RustAnalyzerInitializedStatus
----@field health lsp_server_health_status
+---@class rustaceanvim.internal.RAInitializedStatus : rustaceanvim.RAInitializedStatus
+---@field health rustaceanvim.lsp_server_health_status
 ---@field quiescent boolean inactive?
 ---
----@param dap_adapter DapExecutableConfig | DapServerConfig | disable
+---@param dap_adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
 ---@return boolean
 local function should_enable_dap_config_value(dap_adapter)
   local adapter = types.evaluate(dap_adapter)
@@ -21,21 +21,21 @@ local function should_enable_dap_config_value(dap_adapter)
   return vim.fn.executable('rustc') == 1
 end
 
----@param adapter DapServerConfig | DapExecutableConfig
+---@param adapter rustaceanvim.dap.server.Config | rustaceanvim.dap.executable.Config
 local function is_codelldb_adapter(adapter)
   return adapter.type == 'server'
 end
 
----@param adapter DapServerConfig | DapExecutableConfig
+---@param adapter rustaceanvim.dap.server.Config | rustaceanvim.dap.executable.Config
 local function is_lldb_adapter(adapter)
   return adapter.type == 'executable'
 end
 
 ---@param type string
----@return DapClientConfig
+---@return rustaceanvim.dap.client.Config
 local function load_dap_configuration(type)
   -- default
-  ---@type DapClientConfig
+  ---@type rustaceanvim.dap.client.Config
   local dap_config = {
     name = 'Rust debug client',
     type = type,
@@ -54,7 +54,7 @@ local function load_dap_configuration(type)
       -- `configurations` are tables of `configuration` entries
       -- use the first `configuration` that matches
       for _, entry in pairs(configuration_entries) do
-        ---@cast entry DapClientConfig
+        ---@cast entry rustaceanvim.dap.client.Config
         if entry.type == type then
           dap_config = entry
           break
@@ -65,7 +65,7 @@ local function load_dap_configuration(type)
   return dap_config
 end
 
----@return RustaceanExecutor
+---@return rustaceanvim.Executor
 local function get_test_executor()
   if package.loaded['rustaceanvim.neotest'] ~= nil then
     -- neotest has been set up with rustaceanvim as an adapter
@@ -74,20 +74,20 @@ local function get_test_executor()
   return executors.termopen
 end
 
----@class RustaceanConfig
+---@class rustaceanvim.Config
 local RustaceanDefaultConfig = {
-  ---@class RustaceanToolsConfig
+  ---@class rustaceanvim.tools.Config
   tools = {
 
     --- how to execute terminal commands
     --- options right now: termopen / quickfix / toggleterm / vimux
-    ---@type RustaceanExecutor
+    ---@type rustaceanvim.Executor
     executor = executors.termopen,
 
-    ---@type RustaceanExecutor
+    ---@type rustaceanvim.Executor
     test_executor = get_test_executor(),
 
-    ---@type RustaceanExecutor
+    ---@type rustaceanvim.Executor
     crate_test_executor = executors.termopen,
 
     ---@type string | nil
@@ -101,7 +101,7 @@ local RustaceanDefaultConfig = {
 
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
-    ---@type fun(health:RustAnalyzerInitializedStatus) | nil
+    ---@type fun(health:rustaceanvim.RAInitializedStatus) | nil
     on_initialized = nil,
 
     --- automatically call RustReloadWorkspace when writing to a Cargo.toml file.
@@ -110,7 +110,7 @@ local RustaceanDefaultConfig = {
 
     --- options same as lsp hover
     ---@see vim.lsp.util.open_floating_preview
-    ---@class RustaceanHoverActionsConfig
+    ---@class rustaceanvim.hover-actions.Config
     hover_actions = {
 
       --- whether to replace Neovim's built-in `vim.lsp.buf.hover`.
@@ -146,7 +146,7 @@ local RustaceanDefaultConfig = {
 
     --- settings for showing the crate graph based on graphviz and the dot
     --- command
-    ---@class RustaceanCrateGraphConfig
+    ---@class rustaceanvim.crate-graph.Config
     crate_graph = {
       -- backend used for displaying the graph
       -- see: https://graphviz.org/docs/outputs/
@@ -233,7 +233,7 @@ local RustaceanDefaultConfig = {
       require('rustaceanvim.os').open_url(url)
     end,
     ---settings for rustc
-    ---@class RustaceanRustcConfig
+    ---@class rustaceanvim.rustc.Config
     rustc = {
       ---@type string
       edition = '2021',
@@ -242,8 +242,7 @@ local RustaceanDefaultConfig = {
 
   --- all the opts to send to the LSP client
   --- these override the defaults set by rust-tools.nvim
-  ---@diagnostic disable-next-line: undefined-doc-class
-  ---@class RustaceanLspClientConfig: vim.lsp.ClientConfig
+  ---@class rustaceanvim.lsp.ClientConfig: vim.lsp.ClientConfig
   server = {
     ---@type lsp.ClientCapabilities
     capabilities = server_config.create_client_capabilities(),
@@ -295,13 +294,13 @@ local RustaceanDefaultConfig = {
   },
 
   --- debugging stuff
-  --- @class RustaceanDapConfig
+  --- @class rustaceanvim.dap.Config
   dap = {
     --- @type boolean Whether to autoload nvim-dap configurations when rust-analyzer has attached?
     autoload_configurations = vim.fn.has('nvim-0.10.0') == 1, -- Compiling the debug build cannot be run asynchronously on Neovim < 0.10
-    --- @type DapExecutableConfig | DapServerConfig | disable | fun():(DapExecutableConfig | DapServerConfig | disable)
+    --- @type rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable | fun():(rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable)
     adapter = function()
-      --- @type DapExecutableConfig | DapServerConfig | disable
+      --- @type rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
       local result = false
       local has_mason, mason_registry = pcall(require, 'mason-registry')
       if has_mason and mason_registry.is_installed('codelldb') then
@@ -318,7 +317,7 @@ local RustaceanDefaultConfig = {
         end
         result = config.get_codelldb_adapter(codelldb_path, liblldb_path)
       elseif vim.fn.executable('codelldb') == 1 then
-        ---@cast result DapServerConfig
+        ---@cast result rustaceanvim.dap.server.Config
         result = {
           type = 'server',
           host = '127.0.0.1',
@@ -335,7 +334,7 @@ local RustaceanDefaultConfig = {
           return result
         end
         local command = has_lldb_dap and 'lldb-dap' or 'lldb-vscode'
-        ---@cast result DapExecutableConfig
+        ---@cast result rustaceanvim.dap.executable.Config
         result = {
           type = 'executable',
           command = command,
@@ -361,21 +360,21 @@ local RustaceanDefaultConfig = {
         return false
       end
       local adapter = types.evaluate(RustaceanConfig.dap.adapter)
-      ---@cast adapter DapExecutableConfig | DapServerConfig | disable
+      ---@cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
       return adapter ~= false and is_lldb_adapter(adapter)
     end,
-    --- @type DapClientConfig | disable | fun():(DapClientConfig | disable)
+    --- @type rustaceanvim.dap.client.Config | rustaceanvim.disable | fun():(rustaceanvim.dap.client.Config | rustaceanvim.disable)
     configuration = function()
       local ok, _ = pcall(require, 'dap')
       if not ok then
         return false
       end
       local adapter = types.evaluate(RustaceanConfig.dap.adapter)
-      ---@cast adapter DapExecutableConfig | DapServerConfig | disable
+      ---@cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
       if adapter == false then
         return false
       end
-      ---@cast adapter DapExecutableConfig | DapServerConfig
+      ---@cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config
       local type = is_codelldb_adapter(adapter) and 'codelldb' or 'lldb'
       return load_dap_configuration(type)
     end,
@@ -391,7 +390,7 @@ for _, executor in pairs { 'executor', 'test_executor', 'crate_test_executor' } 
   end
 end
 
----@type RustaceanConfig
+---@type rustaceanvim.Config
 RustaceanConfig = vim.tbl_deep_extend('force', {}, RustaceanDefaultConfig, opts)
 
 -- Override user dap.adapter config in a backward compatible way

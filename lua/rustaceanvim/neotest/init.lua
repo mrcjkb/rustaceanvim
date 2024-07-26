@@ -61,7 +61,7 @@ end
 
 ---@package
 ---@class rustaceanvim.neotest.Position: neotest.Position
----@field runnable? RARunnable
+---@field runnable? rustaceanvim.RARunnable
 
 ----@param name string
 ----@return integer
@@ -82,7 +82,7 @@ end
 
 ---@package
 ---@class nio.rustaceanvim.RequestClient: nio.lsp.RequestClient
----@field experimental_runnables fun(args: nio.lsp.types.ImplementationParams, bufnr: integer?, opts: nio.lsp.RequestOpts): nio.lsp.types.ResponseError|nil, RARunnable[]|nil
+---@field experimental_runnables fun(args: nio.lsp.types.ImplementationParams, bufnr: integer?, opts: nio.lsp.RequestOpts): nio.lsp.types.ResponseError|nil, rustaceanvim.RARunnable[]|nil
 
 ---@package
 ---@param file_path string
@@ -125,7 +125,7 @@ NeotestAdapter.discover_positions = function(file_path)
     end
   end
   ---@diagnostic disable-next-line: cast-type-mismatch
-  ---@cast runnables RARunnable[]
+  ---@cast runnables rustaceanvim.RARunnable[]
 
   ---@type { [string]: neotest.Position }
   local tests_by_name = {}
@@ -283,7 +283,7 @@ function NeotestAdapter.build_spec(run_args)
       ---@cast strategy string
       lib.notify(strategy, vim.log.levels.ERROR)
     end
-    ---@cast strategy DapClientConfig
+    ---@cast strategy rustaceanvim.dap.client.Config
     ---@type rustaceanvim.neotest.RunSpec
     local run_spec = {
       cwd = cwd,

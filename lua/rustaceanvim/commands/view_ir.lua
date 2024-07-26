@@ -6,7 +6,7 @@ local ui = require('rustaceanvim.ui')
 ---@type integer | nil
 local latest_buf_id = nil
 
----@alias ir_level 'Hir' | 'Mir'
+---@alias rustaceanvim.ir.level 'Hir' | 'Mir'
 
 local function handler(level, err, result)
   local requestType = 'view' .. level
@@ -39,7 +39,7 @@ local function handler(level, err, result)
   vim.api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, lines)
 end
 
----@param level ir_level
+---@param level rustaceanvim.ir.level
 function M.viewIR(level)
   local position_params = vim.lsp.util.make_position_params(0, nil)
   rl.buf_request(0, 'rust-analyzer/view' .. level, position_params, function(...)
