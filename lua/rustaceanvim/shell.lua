@@ -1,22 +1,20 @@
 local M = {}
 
-local compat = require('rustaceanvim.compat')
-
 ---@return boolean
 function M.is_windows()
-  local sysname = compat.uv.os_uname().sysname
+  local sysname = vim.uv.os_uname().sysname
   return sysname == 'Windows' or sysname == 'Windows_NT'
 end
 
 ---@return boolean
 function M.is_macos()
-  return compat.uv.os_uname().sysname == 'Darwin'
+  return vim.uv.os_uname().sysname == 'Darwin'
 end
 
 ---@return boolean
 local function is_nushell()
   ---@diagnostic disable-next-line: missing-parameter
-  local shell = compat.uv.os_getenv('SHELL')
+  local shell = vim.uv.os_getenv('SHELL')
   local nu = 'nu'
   -- Check if $SHELL ends in "nu"
   return shell ~= nil and shell:sub(-string.len(nu)) == nu

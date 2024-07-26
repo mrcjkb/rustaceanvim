@@ -1,7 +1,5 @@
 local M = {}
 
-local compat = require('rustaceanvim.compat')
-
 ---@param input string unparsed snippet
 ---@return string parsed snippet
 local function parse_snippet_fallback(input)
@@ -56,7 +54,7 @@ function M.try_nextest_transform(args)
   }
   local indexes_to_remove_reverse_order = {}
   for i, arg in ipairs(args) do
-    if compat.list_contains(nextest_unsupported_flags, arg) then
+    if vim.list_contains(nextest_unsupported_flags, arg) then
       table.insert(indexes_to_remove_reverse_order, 1, i)
     end
   end
@@ -78,7 +76,7 @@ end
 function M.sanitize_command_for_debugging(command)
   if command[1] == 'run' then
     command[1] = 'build'
-  elseif command[1] == 'test' and not compat.list_contains(command, '--no-run') then
+  elseif command[1] == 'test' and not vim.list_contains(command, '--no-run') then
     table.insert(command, 2, '--no-run')
   end
 end

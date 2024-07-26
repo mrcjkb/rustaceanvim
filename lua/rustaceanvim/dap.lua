@@ -1,5 +1,4 @@
 local config = require('rustaceanvim.config.internal')
-local compat = require('rustaceanvim.compat')
 local shell = require('rustaceanvim.shell')
 local types = require('rustaceanvim.types.internal')
 
@@ -39,12 +38,12 @@ local function get_cargo_args_from_runnables_args(runnable_args)
   local cargo_args = runnable_args.cargoArgs
 
   local message_json = '--message-format=json'
-  if not compat.list_contains(cargo_args, message_json) then
+  if not vim.list_contains(cargo_args, message_json) then
     table.insert(cargo_args, message_json)
   end
 
   for _, value in ipairs(runnable_args.cargoExtraArgs or {}) do
-    if not compat.list_contains(cargo_args, value) then
+    if not vim.list_contains(cargo_args, value) then
       table.insert(cargo_args, value)
     end
   end
@@ -54,7 +53,7 @@ end
 
 ---@param callback fun(commit_hash:string)
 local function get_rustc_commit_hash(callback)
-  compat.system({ 'rustc', '--version', '--verbose' }, nil, function(sc)
+  vim.system({ 'rustc', '--version', '--verbose' }, nil, function(sc)
     ---@cast sc vim.SystemCompleted
     local result = sc.stdout
     if sc.code ~= 0 or result == nil then
@@ -69,7 +68,7 @@ local function get_rustc_commit_hash(callback)
 end
 
 local function get_rustc_sysroot(callback)
-  compat.system({ 'rustc', '--print', 'sysroot' }, nil, function(sc)
+  vim.system({ 'rustc', '--print', 'sysroot' }, nil, function(sc)
     ---@cast sc vim.SystemCompleted
     local result = sc.stdout
     if sc.code ~= 0 or result == nil then
@@ -119,8 +118,8 @@ local function generate_source_map(workspace_root)
     get_rustc_sysroot(function(rustc_sysroot)
       local src_path
       for _, src_dir in pairs { 'src', 'rustc-src' } do
-        src_path = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', src_dir, 'rust')
-        if compat.uv.fs_stat(src_path) then
+        src_path = vim.fs.joinpath(rustc_sysroot, 'lib', 'rustlib', src_dir, 'rust')
+        if vim.uv.fs_stat(src_path) then
           break
         end
         src_path = nil
@@ -130,7 +129,7 @@ local function generate_source_map(workspace_root)
       end
       ---@type DapSourceMap
       source_maps[workspace_root] = {
-        [compat.joinpath('/rustc', commit_hash)] = src_path,
+        [vim.fs.joinpath('/rustc', commit_hash)] = src_path,
       }
     end)
   end)
@@ -145,12 +144,12 @@ local function get_lldb_commands(workspace_root)
     return
   end
   get_rustc_sysroot(function(rustc_sysroot)
-    local script = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_lookup.py')
-    if not compat.uv.fs_stat(script) then
+    local script = vim.fs.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_lookup.py')
+    if not vim.uv.fs_stat(script) then
       return
     end
     local script_import = 'command script import "' .. script .. '"'
-    local commands_file = compat.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_commands')
+    local commands_file = vim.fs.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_commands')
     local file = io.open(commands_file, 'r')
     local workspace_root_cmds = {}
     if file then
@@ -172,7 +171,7 @@ end
 ---@return {[string]: string} | string[]
 local function format_environment_variable(adapter, key, segments, sep)
   ---@diagnostic disable-next-line: missing-parameter
-  local existing = compat.uv.os_getenv(key)
+  local existing = vim.uv.os_getenv(key)
   existing = existing and sep .. existing or ''
   local value = table.concat(segments, sep) .. existing
   return adapter.type == 'server' and { [key] = value } or { key .. '=' .. value }
@@ -188,14 +187,14 @@ local function add_dynamic_library_paths(adapter, workspace_root)
   if not workspace_root or environments[workspace_root] then
     return
   end
-  compat.system({ 'rustc', '--print', 'target-libdir' }, { cwd = workspace_root }, function(sc)
+  vim.system({ 'rustc', '--print', 'target-libdir' }, { cwd = workspace_root }, function(sc)
     ---@cast sc vim.SystemCompleted
     local result = sc.stdout
     if sc.code ~= 0 or result == nil then
       return
     end
     local rustc_target_path = (result:gsub('\n$', ''))
-    local target_path = compat.joinpath(workspace_root, 'target', 'debug', 'deps')
+    local target_path = vim.fs.joinpath(workspace_root, 'target', 'debug', 'deps')
     if shell.is_windows() then
       environments[workspace_root] = environments[workspace_root]
         or format_environment_variable(adapter, 'PATH', { rustc_target_path, target_path }, ';')
@@ -278,7 +277,7 @@ function M.start(args, verbose, callback, on_error)
   if verbose then
     vim.notify('Compiling a debug build for debugging. This might take some time...')
   end
-  compat.system(cmd, { cwd = args.workspaceRoot }, function(sc)
+  vim.system(cmd, { cwd = args.workspaceRoot }, function(sc)
     ---@cast sc vim.SystemCompleted
     local output = sc.stdout
     if sc.code ~= 0 or output == nil then
@@ -304,10 +303,10 @@ function M.start(args, verbose, callback, on_error)
           goto loop_end
         end
 
-        local is_binary = compat.list_contains(artifact.target.crate_types, 'bin')
-        local is_build_script = compat.list_contains(artifact.target.kind, 'custom-build')
+        local is_binary = vim.list_contains(artifact.target.crate_types, 'bin')
+        local is_build_script = vim.list_contains(artifact.target.kind, 'custom-build')
         local is_test = ((artifact.profile.test == true) and (artifact.executable ~= nil))
-          or compat.list_contains(artifact.target.kind, 'test')
+          or vim.list_contains(artifact.target.kind, 'test')
         -- only add executable to the list if we want a binary debug and it is a binary
         -- or if we want a test debug and it is a test
         if

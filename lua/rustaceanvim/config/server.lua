@@ -14,7 +14,6 @@ local server = {}
 ---@see https://rust-analyzer.github.io/manual.html#configuration
 function server.load_rust_analyzer_settings(project_root, opts)
   local config = require('rustaceanvim.config.internal')
-  local compat = require('rustaceanvim.compat')
   local os = require('rustaceanvim.os')
 
   local default_opts = { settings_file_pattern = 'rust-analyzer.json' }
@@ -40,7 +39,7 @@ function server.load_rust_analyzer_settings(project_root, opts)
   if not project_root then
     return default_settings
   end
-  local results = vim.fn.glob(compat.joinpath(project_root, opts.settings_file_pattern), true, true)
+  local results = vim.fn.glob(vim.fs.joinpath(project_root, opts.settings_file_pattern), true, true)
   if #results == 0 then
     return default_settings
   end

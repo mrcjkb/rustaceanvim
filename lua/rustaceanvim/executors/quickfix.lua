@@ -1,5 +1,3 @@
-local compat = require('rustaceanvim.compat')
-
 local function clear_qf()
   vim.fn.setqflist({}, ' ', { title = 'cargo' })
 end
@@ -31,7 +29,7 @@ local M = {
 
     -- start compiling
     local cmd = vim.list_extend({ command }, args)
-    compat.system(
+    vim.system(
       cmd,
       cwd and { cwd = cwd } or {},
       vim.schedule_wrap(function(sc)

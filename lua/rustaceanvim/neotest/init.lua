@@ -28,7 +28,6 @@
 ---@diagnostic disable: duplicate-set-field
 
 local cargo = require('rustaceanvim.cargo')
-local compat = require('rustaceanvim.compat')
 local config = require('rustaceanvim.config.internal')
 local lib = require('neotest.lib')
 local nio = require('nio')
@@ -197,7 +196,7 @@ NeotestAdapter.discover_positions = function(file_path)
   -- sort positions by their start range
   local function sort_positions(to_sort)
     for _, item in ipairs(to_sort) do
-      if compat.islist(item) then
+      if vim.islist(item) then
         sort_positions(item)
       end
     end
@@ -205,8 +204,8 @@ NeotestAdapter.discover_positions = function(file_path)
     -- pop header from the list before sorting since it's used to sort in its parent's context
     local header = table.remove(to_sort, 1)
     table.sort(to_sort, function(a, b)
-      local a_item = compat.islist(a) and a[1] or a
-      local b_item = compat.islist(b) and b[1] or b
+      local a_item = vim.islist(a) and a[1] or a
+      local b_item = vim.islist(b) and b[1] or b
       if a_item.range[1] == b_item.range[1] then
         return a_item.name < b_item.name
       else

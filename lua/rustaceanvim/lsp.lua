@@ -1,7 +1,6 @@
 local M = {}
 ---@type RustaceanConfig
 local config = require('rustaceanvim.config.internal')
-local compat = require('rustaceanvim.compat')
 local types = require('rustaceanvim.types.internal')
 local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local server_status = require('rustaceanvim.server_status')
@@ -46,7 +45,7 @@ local function find_vscode_settings(bufname)
     return settings
   end
   local vscode_dir = found_dirs[1]
-  local results = vim.fn.glob(compat.joinpath(vscode_dir, 'settings.json'), true, true)
+  local results = vim.fn.glob(vim.fs.joinpath(vscode_dir, 'settings.json'), true, true)
   if vim.tbl_isempty(results) then
     return settings
   end
@@ -243,7 +242,7 @@ end
 M.restart = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = M.stop(bufnr)
-  local timer, _, _ = compat.uv.new_timer()
+  local timer, _, _ = vim.uv.new_timer()
   if not timer then
     -- TODO: Log error when logging is implemented
     return

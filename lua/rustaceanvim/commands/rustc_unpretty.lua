@@ -1,7 +1,6 @@
 local M = {}
 
 local config = require('rustaceanvim.config.internal')
-local compat = require('rustaceanvim.compat')
 local ui = require('rustaceanvim.ui')
 local api = vim.api
 local ts = vim.treesitter
@@ -129,7 +128,7 @@ function M.rustc_unpretty(level)
   end
   text = table.concat(b, '\n')
 
-  compat.system({
+  vim.system({
     rustc,
     '--crate-type',
     'lib',

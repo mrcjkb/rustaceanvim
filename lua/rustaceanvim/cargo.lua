@@ -1,7 +1,5 @@
-local compat = require('rustaceanvim.compat')
 local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local os = require('rustaceanvim.os')
-local joinpath = compat.joinpath
 
 local cargo = {}
 
@@ -10,13 +8,13 @@ local cargo = {}
 ---@return string | nil root_dir The root directory of the active client for file_name (if there is one)
 local function get_mb_active_client_root(file_name)
   ---@diagnostic disable-next-line: missing-parameter
-  local cargo_home = compat.uv.os_getenv('CARGO_HOME') or joinpath(vim.env.HOME, '.cargo')
-  local registry = joinpath(cargo_home, 'registry', 'src')
-  local checkouts = joinpath(cargo_home, 'git', 'checkouts')
+  local cargo_home = vim.uv.os_getenv('CARGO_HOME') or vim.fs.joinpath(vim.env.HOME, '.cargo')
+  local registry = vim.fs.joinpath(cargo_home, 'registry', 'src')
+  local checkouts = vim.fs.joinpath(cargo_home, 'git', 'checkouts')
 
   ---@diagnostic disable-next-line: missing-parameter
-  local rustup_home = compat.uv.os_getenv('RUSTUP_HOME') or joinpath(vim.env.HOME, '.rustup')
-  local toolchains = joinpath(rustup_home, 'toolchains')
+  local rustup_home = vim.uv.os_getenv('RUSTUP_HOME') or vim.fs.joinpath(vim.env.HOME, '.rustup')
+  local toolchains = vim.fs.joinpath(rustup_home, 'toolchains')
 
   for _, item in ipairs { toolchains, registry, checkouts } do
     item = os.normalize_path_on_windows(item)
@@ -65,7 +63,7 @@ function cargo.get_root_dir(file_name)
     local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
     if cargo_crate_dir ~= nil then
       cmd[#cmd + 1] = '--manifest-path'
-      cmd[#cmd + 1] = joinpath(cargo_crate_dir, 'Cargo.toml')
+      cmd[#cmd + 1] = vim.fs.joinpath(cargo_crate_dir, 'Cargo.toml')
     end
     local cargo_metadata = ''
     local cm = vim.fn.jobstart(cmd, {
@@ -73,7 +71,7 @@ function cargo.get_root_dir(file_name)
         cargo_metadata = table.concat(d, '\n')
       end,
       stdout_buffered = true,
-      cwd = compat.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
+      cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
     })
     if cm > 0 then
       cm = vim.fn.jobwait({ cm })[1]

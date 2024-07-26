@@ -1,6 +1,5 @@
 local types = require('rustaceanvim.types.internal')
 local cargo = require('rustaceanvim.cargo')
-local compat = require('rustaceanvim.compat')
 local config = require('rustaceanvim.config')
 local executors = require('rustaceanvim.executors')
 local os = require('rustaceanvim.os')
@@ -307,13 +306,13 @@ local RustaceanDefaultConfig = {
       local has_mason, mason_registry = pcall(require, 'mason-registry')
       if has_mason and mason_registry.is_installed('codelldb') then
         local codelldb_package = mason_registry.get_package('codelldb')
-        local mason_codelldb_path = compat.joinpath(codelldb_package:get_install_path(), 'extension')
-        local codelldb_path = compat.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
-        local liblldb_path = compat.joinpath(mason_codelldb_path, 'lldb', 'lib', 'liblldb')
+        local mason_codelldb_path = vim.fs.joinpath(codelldb_package:get_install_path(), 'extension')
+        local codelldb_path = vim.fs.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
+        local liblldb_path = vim.fs.joinpath(mason_codelldb_path, 'lldb', 'lib', 'liblldb')
         local shell = require('rustaceanvim.shell')
         if shell.is_windows() then
           codelldb_path = codelldb_path .. '.exe'
-          liblldb_path = compat.joinpath(mason_codelldb_path, 'lldb', 'bin', 'liblldb.dll')
+          liblldb_path = vim.fs.joinpath(mason_codelldb_path, 'lldb', 'bin', 'liblldb.dll')
         else
           liblldb_path = liblldb_path .. (shell.is_macos() and '.dylib' or '.so')
         end

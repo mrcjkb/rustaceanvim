@@ -66,7 +66,7 @@ that are specific to rust-analyzer.
 
 ### Required
 
-- `neovim >= 0.9`
+- `neovim >= 0.10`
 - [`rust-analyzer`](https://rust-analyzer.github.io/)
 
 ### Optional
