@@ -82,6 +82,7 @@ local function make_rustaceanvim_capabilities()
   -- send actions with hover request
   capabilities.experimental = {
     hoverActions = true,
+    colorDiagnosticOutput = true,
     hoverRange = true,
     serverStatusNotification = true,
     snippetTextEdit = true,
