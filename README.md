@@ -94,7 +94,7 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 ```lua
 {
   'mrcjkb/rustaceanvim',
-  version = '^4', -- Recommended
+  version = '^5', -- Recommended
   lazy = false, -- This plugin is already lazy
 }
 ```
