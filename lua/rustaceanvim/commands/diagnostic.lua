@@ -259,31 +259,25 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
         close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
       })
     )
-    local autocmd_id = vim.api.nvim_create_autocmd('WinEnter', {
-      callback = function(args)
-        if args.buf == bufnr then
-          vim.api.nvim_feedkeys(
-            vim.api.nvim_replace_termcodes(
-              [[<c-\><c-n>]] .. '<cmd>lua vim.api.nvim_win_set_cursor(' .. winnr .. ',{1,0})<CR>',
-              true,
-              false,
-              true
-            ),
-            'n',
-            true
-          )
-        end
-      end,
-    })
-    local chanid = vim.api.nvim_open_term(bufnr, {})
-    vim.api.nvim_create_autocmd('WinClosed', {
-      once = true,
-      pattern = tostring(winnr),
+    vim.api.nvim_create_autocmd('WinEnter', {
       callback = function()
-        vim.api.nvim_del_autocmd(autocmd_id)
+        vim.api.nvim_feedkeys(
+          vim.api.nvim_replace_termcodes(
+            [[<c-\><c-n>]] .. '<cmd>lua vim.api.nvim_win_set_cursor(' .. winnr .. ',{1,0})<CR>',
+            true,
+            false,
+            true
+          ),
+          'n',
+          true
+        )
       end,
+      buffer = bufnr,
     })
+
+    local chanid = vim.api.nvim_open_term(bufnr, {})
     vim.api.nvim_chan_send(chanid, vim.trim('1. Open in split\r\n' .. '---\r\n' .. rendered_diagnostic))
+
     _window_state.float_winnr = winnr
     set_close_keymaps(bufnr)
     set_split_open_keymap(bufnr, winnr, function()
