@@ -10,7 +10,7 @@ end
 ---@type integer | nil
 local latest_buf_id = nil
 
----@class RAMacroExpansionResult
+---@class rustaceanvim.RAMacroExpansionResult
 ---@field name string
 ---@field expansion string
 
@@ -22,7 +22,7 @@ local latest_buf_id = nil
 -- {
 --   $crate::io::_eprint(std::fmt::Arguments::new_v1(&[], &[std::fmt::ArgumentV1::new(&(err),std::fmt::Display::fmt),]));
 -- }
----@param result RAMacroExpansionResult
+---@param result rustaceanvim.RAMacroExpansionResult
 ---@return string[]
 local function parse_lines(result)
   local ret = {}
@@ -42,7 +42,7 @@ local function parse_lines(result)
   return ret
 end
 
----@param result? RAMacroExpansionResult
+---@param result? rustaceanvim.RAMacroExpansionResult
 local function handler(_, result)
   -- echo a message when result is nil (meaning no macro under cursor) and
   -- exit

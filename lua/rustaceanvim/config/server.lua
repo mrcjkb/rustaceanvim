@@ -2,14 +2,14 @@
 
 local server = {}
 
----@class LoadRASettingsOpts
+---@class rustaceanvim.LoadRASettingsOpts
 ---@field settings_file_pattern string|nil File name or pattern to search for. Defaults to 'rust-analyzer.json'
 ---@field default_settings table|nil Default settings to merge the loaded settings into
 
 --- Load rust-analyzer settings from a JSON file,
 --- falling back to the default settings if none is found or if it cannot be decoded.
 ---@param project_root string|nil The project root
----@param opts LoadRASettingsOpts|nil
+---@param opts rustaceanvim.LoadRASettingsOpts|nil
 ---@return table server_settings
 ---@see https://rust-analyzer.github.io/manual.html#configuration
 function server.load_rust_analyzer_settings(project_root, opts)

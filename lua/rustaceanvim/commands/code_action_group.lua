@@ -2,19 +2,19 @@ local ui = require('rustaceanvim.ui')
 local config = require('rustaceanvim.config.internal')
 local M = {}
 
----@class RACodeAction
+---@class rustaceanvim.RACodeAction
 ---@field kind string
 ---@field group? string
 ---@field edit? table
 ---@field command? { command: string } | string
 
----@class RACommand
+---@class rustaceanvim.RACommand
 ---@field title string
 ---@field group? string
 ---@field command string
 ---@field arguments? any[]
 
----@param action RACodeAction | RACommand
+---@param action rustaceanvim.RACodeAction | rustaceanvim.RACommand
 ---@param client lsp.Client
 ---@param ctx table
 function M.apply_action(action, client, ctx)
@@ -32,7 +32,7 @@ function M.apply_action(action, client, ctx)
   end
 end
 
----@alias action_tuple { [1]: number, [2]: RACodeAction|RACommand }
+---@alias action_tuple { [1]: number, [2]: rustaceanvim.RACodeAction|rustaceanvim.RACommand }
 
 ---@param action_tuple action_tuple | nil
 ---@param ctx table
@@ -48,7 +48,7 @@ function M.on_user_choice(action_tuple, ctx)
   end
   if not action.edit and type(code_action_provider) == 'table' and code_action_provider.resolveProvider then
     client.request('codeAction/resolve', action, function(err, resolved_action)
-      ---@cast resolved_action RACodeAction|RACommand
+      ---@cast resolved_action rustaceanvim.RACodeAction|rustaceanvim.RACommand
       if err then
         vim.notify(err.code .. ': ' .. err.message, vim.log.levels.ERROR)
         return
@@ -60,12 +60,12 @@ function M.on_user_choice(action_tuple, ctx)
   end
 end
 
----@class CodeActionWindowGeometry
+---@class rustaceanvim.CodeActionWindowGeometry
 ---@field width integer
 
 ---@param action_tuples action_tuple[]
 ---@param is_group boolean
----@return CodeActionWindowGeometry
+---@return rustaceanvim.CodeActionWindowGeometry
 local function compute_width(action_tuples, is_group)
   local width = 0
 
@@ -106,10 +106,10 @@ local function on_primary_quit()
   M.cleanup()
 end
 
----@class RACodeActionResult
----@field result? RACodeAction[] | RACommand[]
+---@class rustaceanvim.RACodeActionResult
+---@field result? rustaceanvim.RACodeAction[] | rustaceanvim.RACommand[]
 
----@param results { [number]: RACodeActionResult }
+---@param results { [number]: rustaceanvim.RACodeActionResult }
 ---@param ctx table
 local function on_code_action_results(results, ctx)
   local cur_win = vim.api.nvim_get_current_win()
@@ -129,7 +129,7 @@ local function on_code_action_results(results, ctx)
 
   M.state.primary.geometry = compute_width(action_tuples, true)
   ---@alias grouped_actions_tbl { actions: action_tuple[], idx: integer | nil }
-  ---@class PartitionedActions
+  ---@class rustaceanvim.PartitionedActions
   M.state.actions = {
     grouped = {},
     ungrouped = {},
@@ -332,16 +332,16 @@ function M.on_cursor_move()
   end
 end
 
----@class CodeActionWindowState
+---@class rustaceanvim.CodeActionWindowState
 ---@field bufnr integer | nil
 ---@field winnr integer | nil
----@field geometry CodeActionWindowGeometry | nil
+---@field geometry rustaceanvim.CodeActionWindowGeometry | nil
 ---@field clear fun()
 
----@class CodeActionInternalState
+---@class rustaceanvim.CodeActionInternalState
 M.state = {
   ctx = {},
-  ---@type PartitionedActions
+  ---@type rustaceanvim.PartitionedActions
   actions = {
     ---@type grouped_actions_tbl[]
     grouped = {},
@@ -350,7 +350,7 @@ M.state = {
   },
   ---@type number | nil
   active_group_index = nil,
-  ---@type CodeActionWindowState
+  ---@type rustaceanvim.CodeActionWindowState
   primary = {
     bufnr = nil,
     winnr = nil,
@@ -361,7 +361,7 @@ M.state = {
       M.state.primary.winnr = nil
     end,
   },
-  ---@type CodeActionWindowState
+  ---@type rustaceanvim.CodeActionWindowState
   secondary = {
     bufnr = nil,
     winnr = nil,

@@ -2,18 +2,18 @@
 
 local config = require('rustaceanvim.config.internal')
 
----@class RustaceanCommands
+---@class rustaceanvim.Commands
 local M = {}
 
 local rust_lsp_cmd_name = 'RustLsp'
 local rustc_cmd_name = 'Rustc'
 
----@class command_tbl
+---@class rustaceanvim.command_tbl
 ---@field impl fun(args: string[], opts: vim.api.keyset.user_command) The command implementation
 ---@field complete? fun(subcmd_arg_lead: string): string[] Command completions callback, taking the lead of the subcommand's arguments
 ---@field bang? boolean Whether this command supports a bang!
 
----@type command_tbl[]
+---@type rustaceanvim.command_tbl[]
 local rustlsp_command_tbl = {
   codeAction = {
     impl = function(_)
@@ -278,7 +278,7 @@ local rustlsp_command_tbl = {
   },
 }
 
----@type command_tbl[]
+---@type rustaceanvim.command_tbl[]
 local rustc_command_tbl = {
   unpretty = {
     impl = function(args)
@@ -309,7 +309,7 @@ local rustc_command_tbl = {
   },
 }
 
----@param command_tbl command_tbl
+---@param command_tbl rustaceanvim.command_tbl
 ---@param opts table
 ---@see vim.api.nvim_create_user_command
 local function run_command(command_tbl, cmd_name, opts)

@@ -1,4 +1,4 @@
----@type RustaceanConfig
+---@type rustaceanvim.Config
 local config = require('rustaceanvim.config.internal')
 
 if not vim.g.loaded_rustaceanvim then
@@ -8,7 +8,7 @@ if not vim.g.loaded_rustaceanvim then
   vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
     local runnables = require('rustaceanvim.runnables')
     local cached_commands = require('rustaceanvim.cached_commands')
-    ---@type RARunnable[]
+    ---@type rustaceanvim.RARunnable[]
     local ra_runnables = command.arguments
     local runnable = ra_runnables[1]
     local cargo_args = runnable.args.cargoArgs

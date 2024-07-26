@@ -6,7 +6,7 @@ local function get_test_summary(output)
   return output:match('(test result:.*)')
 end
 
----@type RustaceanExecutor
+---@type rustaceanvim.Executor
 ---@diagnostic disable-next-line: missing-fields
 local M = {}
 
@@ -14,7 +14,7 @@ local M = {}
 ---@field test_id string
 
 M.execute_command = function(command, args, cwd, opts)
-  ---@type RustaceanExecutorOpts
+  ---@type rustaceanvim.ExecutorOpts
   opts = vim.tbl_deep_extend('force', { bufnr = 0 }, opts or {})
   if vim.fn.has('nvim-0.10.0') ~= 1 then
     vim.schedule(function()

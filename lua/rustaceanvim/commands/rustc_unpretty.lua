@@ -26,7 +26,7 @@ M.available_unpretty = {
   'stable-mir',
   'mir-cfg',
 }
----@alias rustcir_level 'normal'| 'identified'| 'expanded'| 'expanded,identified'| 'expanded,hygiene'| 'ast-tree'| 'ast-tree,expanded'| 'hir'| 'hir,identified'| 'hir,typed'| 'hir-tree'| 'thir-tree'| 'thir-flat'| 'mir'| 'stable-mir'| 'mir-cfg'
+---@alias rustaceanvim.rustcir.level 'normal'| 'identified'| 'expanded'| 'expanded,identified'| 'expanded,hygiene'| 'ast-tree'| 'ast-tree,expanded'| 'hir'| 'hir,identified'| 'hir,typed'| 'hir-tree'| 'thir-tree'| 'thir-flat'| 'mir'| 'stable-mir'| 'mir-cfg'
 
 ---@type integer | nil
 local latest_buf_id = nil
@@ -92,7 +92,7 @@ local function handler(sc)
   vim.api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, lines)
 end
 
----@param level rustcir_level
+---@param level rustaceanvim.rustcir.level
 function M.rustc_unpretty(level)
   if #api.nvim_get_runtime_file('parser/rust.so', true) == 0 then
     vim.notify("a treesitter parser for Rust is required for 'rustc unpretty'", vim.log.levels.ERROR)

@@ -1,4 +1,4 @@
----@type RustaceanExecutor
+---@type rustaceanvim.Executor
 local M = {
   execute_command = function(command, args, cwd, _)
     local ok, term = pcall(require, 'toggleterm.terminal')

@@ -12,13 +12,13 @@ local error = h.error or h.report_error
 ---@diagnostic disable-next-line: deprecated
 local warn = h.warn or h.report_warn
 
----@class LuaDependency
+---@class rustaceanvim.LuaDependency
 ---@field module string The name of a module
 ---@field optional fun():boolean Function that returns whether the dependency is optional
 ---@field url string URL (markdown)
 ---@field info string Additional information
 
----@type LuaDependency[]
+---@type rustaceanvim.LuaDependency[]
 local lua_dependencies = {
   {
     module = 'dap',
@@ -30,7 +30,7 @@ local lua_dependencies = {
   },
 }
 
----@class ExternalDependency
+---@class rustaceanvim.ExternalDependency
 ---@field name string Name of the dependency
 ---@field get_binaries fun():string[] Function that returns the binaries to check for
 ---@field is_installed? fun(bin: string):boolean Default: `vim.fn.executable(bin) == 1`
@@ -40,7 +40,7 @@ local lua_dependencies = {
 ---@field extra_checks_if_installed? fun(bin: string) Optional extra checks to perform if the dependency is installed
 ---@field extra_checks_if_not_installed? fun() Optional extra checks to perform if the dependency is not installed
 
----@param dep LuaDependency
+---@param dep rustaceanvim.LuaDependency
 local function check_lua_dependency(dep)
   if pcall(require, dep.module) then
     ok(dep.url .. ' installed.')
@@ -53,7 +53,7 @@ local function check_lua_dependency(dep)
   end
 end
 
----@param dep ExternalDependency
+---@param dep rustaceanvim.ExternalDependency
 ---@return boolean is_installed
 ---@return string binary
 ---@return string version
@@ -79,7 +79,7 @@ local check_installed = function(dep)
   return false, binaries[1], 'Could not find an executable binary.'
 end
 
----@param dep ExternalDependency
+---@param dep rustaceanvim.ExternalDependency
 local function check_external_dependency(dep)
   local is_installed, binary, version_or_err = check_installed(dep)
   if is_installed then
@@ -112,7 +112,7 @@ local function check_external_dependency(dep)
   end
 end
 
----@param config RustaceanConfig
+---@param config rustaceanvim.Config
 local function check_config(config)
   start('Checking config')
   if vim.g.rustaceanvim and not config.was_g_rustaceanvim_sourced then
@@ -158,7 +158,7 @@ function health.check()
   start('Checking external dependencies')
 
   local adapter = types.evaluate(config.dap.adapter)
-  ---@cast adapter DapExecutableConfig | DapServerConfig | boolean
+  ---@cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | boolean
 
   ---@return string
   local function get_rust_analyzer_binary()
@@ -173,7 +173,7 @@ function health.check()
     return cmd[1]
   end
 
-  ---@type ExternalDependency[]
+  ---@type rustaceanvim.ExternalDependency[]
   local external_dependencies = {
     {
       name = 'rust-analyzer',
@@ -253,10 +253,10 @@ function health.check()
       name = adapter.name or 'debug adapter',
       get_binaries = function()
         if adapter.type == 'executable' then
-          ---@cast adapter DapExecutableConfig
+          ---@cast adapter rustaceanvim.dap.executable.Config
           return { 'lldb', adapter.command }
         else
-          ---@cast adapter DapServerConfig
+          ---@cast adapter rustaceanvim.dap.server.Config
           return { 'codelldb', adapter.executable.command }
         end
       end,

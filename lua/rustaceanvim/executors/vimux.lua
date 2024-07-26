@@ -1,6 +1,6 @@
 local shell = require('rustaceanvim.shell')
 
----@type RustaceanExecutor
+---@type rustaceanvim.Executor
 local M = {
   execute_command = function(command, args, cwd, _)
     local commands = {}

@@ -5,7 +5,7 @@ local M = {}
 ---@type { [integer]: boolean }
 local _ran_once = {}
 
----@param result RustAnalyzerInitializedStatusInternal
+---@param result rustaceanvim.internal.RAInitializedStatus
 function M.handler(_, result, ctx, _)
   -- quiescent means the full set of results is ready.
   if not result.quiescent or _ran_once[ctx.client_id] then

@@ -27,7 +27,7 @@ end
 
 ---Attempts to find the root for an existing active client. If no existing
 ---client root is found, returns the result of evaluating `config.root_dir`.
----@param config RustaceanLspClientConfig
+---@param config rustaceanvim.lsp.ClientConfig
 ---@param file_name string
 ---@return string | nil root_dir
 function cargo.get_config_root_dir(config, file_name)

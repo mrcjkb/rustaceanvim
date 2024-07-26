@@ -1,12 +1,12 @@
 local trans = require('rustaceanvim.neotest.trans')
 
----@type RustaceanTestExecutor
+---@type rustaceanvim.TestExecutor
 ---@diagnostic disable-next-line: missing-fields
 local M = {}
 
----@param opts RustaceanTestExecutorOpts
+---@param opts rustaceanvim.TestExecutor.Opts
 M.execute_command = function(_, _, _, opts)
-  ---@type RustaceanTestExecutorOpts
+  ---@type rustaceanvim.TestExecutor.Opts
   opts = vim.tbl_deep_extend('force', { bufnr = 0 }, opts or {})
   if type(opts.runnable) ~= 'table' then
     vim.notify('rustaceanvim neotest executor called without a runnable. This is a bug!', vim.log.levels.ERROR)
