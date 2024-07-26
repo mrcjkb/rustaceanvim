@@ -1,7 +1,6 @@
 local M = {}
 
 local config = require('rustaceanvim.config.internal')
-local compat = require('rustaceanvim.compat')
 local ui = require('rustaceanvim.ui')
 
 local rustc = 'rustc'
@@ -155,7 +154,7 @@ function M.explain_error()
   vim.api.nvim_win_set_cursor(win_id, { diagnostic.lnum + 1, diagnostic.col })
   -- Open folds under the cursor
   vim.cmd('normal! zv')
-  compat.system({ rustc, '--explain', tostring(diagnostic.code) }, nil, vim.schedule_wrap(handler))
+  vim.system({ rustc, '--explain', tostring(diagnostic.code) }, nil, vim.schedule_wrap(handler))
 end
 
 function M.explain_error_current_line()
@@ -220,7 +219,7 @@ function M.explain_error_current_line()
     end)
   end
 
-  compat.system({ rustc, '--explain', tostring(diagnostic.code) }, nil, vim.schedule_wrap(handler))
+  vim.system({ rustc, '--explain', tostring(diagnostic.code) }, nil, vim.schedule_wrap(handler))
 end
 
 ---@param diagnostic table

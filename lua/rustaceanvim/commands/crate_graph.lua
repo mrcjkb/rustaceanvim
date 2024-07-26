@@ -1,5 +1,4 @@
 local config = require('rustaceanvim.config.internal')
-local compat = require('rustaceanvim.compat')
 
 local M = {}
 
@@ -33,7 +32,7 @@ local function handler_factory(backend, output, pipe)
       vim.notify('no crate graph backend specified.', vim.log.levels.ERROR)
       return
     end
-    if not compat.list_contains(config.tools.crate_graph.enabled_graphviz_backends, backend) then
+    if not vim.list_contains(config.tools.crate_graph.enabled_graphviz_backends, backend) then
       vim.notify('crate graph backend not recognized as valid: ' .. vim.inspect(backend), vim.log.levels.ERROR)
       return
     end

@@ -26,10 +26,9 @@ M.execute_command = function(command, args, cwd, opts)
   vim.diagnostic.reset(diag_namespace, opts.bufnr)
   local is_single_test = args[1] == 'test'
   local notify_prefix = (is_single_test and 'test ' or 'tests ')
-  local compat = require('rustaceanvim.compat')
   local cmd = vim.list_extend({ command }, args)
   local fname = vim.api.nvim_buf_get_name(opts.bufnr)
-  compat.system(cmd, { cwd = cwd }, function(sc)
+  vim.system(cmd, { cwd = cwd }, function(sc)
     ---@cast sc vim.SystemCompleted
     if sc.code == 0 then
       local summary = get_test_summary(sc.stdout or '')

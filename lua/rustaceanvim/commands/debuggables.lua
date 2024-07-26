@@ -1,6 +1,5 @@
 local M = {}
 
-local compat = require('rustaceanvim.compat')
 local ra_runnables = require('rustaceanvim.runnables')
 local config = require('rustaceanvim.config.internal')
 
@@ -189,7 +188,7 @@ end
 function M.add_dap_debuggables()
   -- Defer, because rust-analyzer may not be ready yet
   runnables_request(mk_handler(add_debuggables_to_nvim_dap))
-  local timer = compat.uv.new_timer()
+  local timer = vim.uv.new_timer()
   timer:start(
     2000,
     0,

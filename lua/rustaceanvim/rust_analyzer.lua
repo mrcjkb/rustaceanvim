@@ -1,6 +1,5 @@
 ---@mod rustaceanvim.rust_analyzer Functions for interacting with rust-analyzer
 
-local compat = require('rustaceanvim.compat')
 local os = require('rustaceanvim.os')
 
 ---@class RustAnalyzerClientAdapter
@@ -17,7 +16,7 @@ M.get_active_rustaceanvim_clients = function(bufnr, filter)
   if bufnr then
     filter.bufnr = bufnr
   end
-  return compat.get_clients(filter)
+  return vim.lsp.get_clients(filter)
 end
 
 ---@param method string LSP method name

@@ -1,7 +1,6 @@
 local M = {}
 
 local rl = require('rustaceanvim.rust_analyzer')
-local compat = require('rustaceanvim.compat')
 
 local function get_params()
   return vim.lsp.util.make_position_params(0, nil)
@@ -15,7 +14,7 @@ local function handler(_, result, ctx)
 
   local location = result
 
-  if compat.islist(result) then
+  if vim.islist(result) then
     location = result[1]
   end
 

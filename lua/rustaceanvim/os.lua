@@ -2,7 +2,6 @@
 
 local os = {}
 
-local compat = require('rustaceanvim.compat')
 local shell = require('rustaceanvim.shell')
 
 ---@param url string
@@ -17,15 +16,15 @@ function os.open_url(url)
   end
 
   if vim.fn.has('mac') == 1 then
-    compat.system({ 'open', url }, nil, on_exit)
+    vim.system({ 'open', url }, nil, on_exit)
     return
   end
   if vim.fn.executable('sensible-browser') == 1 then
-    compat.system({ 'sensible-browser', url }, nil, on_exit)
+    vim.system({ 'sensible-browser', url }, nil, on_exit)
     return
   end
   if vim.fn.executable('xdg-open') == 1 then
-    compat.system({ 'xdg-open', url }, nil, on_exit)
+    vim.system({ 'xdg-open', url }, nil, on_exit)
     return
   end
   local ok, err = pcall(vim.fn['netrw#BrowseX'], url, 0)
