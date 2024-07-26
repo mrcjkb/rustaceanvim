@@ -707,7 +707,7 @@ by setting the rust-analyzer
 
 To modify the default configuration, set `vim.g.rustaceanvim`.
 
-- See [`:help rustaceanvim.config`](./doc/rustaceanvim.txt) for a detailed
+- See [`:h rustaceanvim`](./doc/rustaceanvim.txt) for a detailed
   documentation of all available configuration options.
   You may need to run `:helptags ALL` if the documentation has not been installed.
 - The default configuration [can be found here (see `RustaceanDefaultConfig`)](./lua/rustaceanvim/config/internal.lua).
