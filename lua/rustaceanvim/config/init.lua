@@ -11,13 +11,13 @@
 ---Example:
 ---
 --->lua
-------@type RustaceanOpts
+------@type rustaceanvim.Opts
 ---vim.g.rustaceanvim = {
----   ---@type RustaceanToolsOpts
+---   ---@type rustaceanvim.tools.Opts
 ---   tools = {
 ---     -- ...
 ---   },
----   ---@type RustaceanLspClientOpts
+---   ---@type rustaceanvim.lsp.ClientOpts
 ---   server = {
 ---     on_attach = function(client, bufnr)
 ---       -- Set keybindings, etc. here.
@@ -29,7 +29,7 @@
 ---     },
 ---     -- ...
 ---   },
----   ---@type RustaceanDapOpts
+---   ---@type rustaceanvim.dap.Opts
 ---   dap = {
 ---     -- ...
 ---   },
@@ -38,7 +38,7 @@
 ---
 ---Notes:
 ---
---- - `vim.g.rustaceanvim` can also be a function that returns a `RustaceanOpts` table.
+--- - `vim.g.rustaceanvim` can also be a function that returns a `rustaceanvim.Opts` table.
 --- - `server.settings`, by default, is a function that looks for a `rust-analyzer.json` file
 ---    in the project root, to load settings from it. It falls back to an empty table.
 ---
