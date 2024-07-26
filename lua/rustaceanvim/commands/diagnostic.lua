@@ -241,6 +241,7 @@ end
 
 ---@param rendered_diagnostic string
 local function render_ansi_code_diagnostic(rendered_diagnostic)
+  -- adopted from https://stackoverflow.com/questions/48948630/lua-ansi-escapes-pattern
   local lines =
     vim.split(rendered_diagnostic:gsub('[\27\155][][()#;?%d]*[A-PRZcf-ntqry=><~]', ''), '\n', { trimempty = true })
   local float_preview_lines = vim.deepcopy(lines)
