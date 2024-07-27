@@ -294,6 +294,14 @@ function NeotestAdapter.build_spec(run_args)
   else
     overrides.undo_debug_sanitize(runnable.args.cargoArgs)
   end
+  local is_cargo_test = args[1] == 'test'
+  local insert_pos = is_cargo_test and 2 or 3
+  table.insert(args, insert_pos, '--no-fail-fast')
+  table.insert(args, insert_pos, '--color=never')
+  if is_cargo_test then
+    -- cargo test needs to pass --color=never to the test runner too
+    table.insert(args, '--color=never')
+  end
   ---@type rustaceanvim.neotest.RunSpec
   ---@diagnostic disable-next-line: missing-fields
   local run_spec = {
@@ -316,25 +324,6 @@ local function get_file_root(tree)
     end
   end
   return tree
-end
-
----@param results table<string, neotest.Result>
----@param context rustaceanvim.neotest.RunContext
----@param pass_positions fun():string, ...
-local function populate_pass_positions(results, context, pass_positions)
-  vim
-    .iter(pass_positions)
-    ---@param pos string
-    :map(function(pos)
-      return trans.get_position_id(context.file, pos)
-    end)
-    ---@param pos string
-    :each(function(pos)
-      results[pos] = {
-        status = 'passed',
-      }
-    end)
-  --
 end
 
 ---@package
@@ -395,8 +384,7 @@ function NeotestAdapter.results(spec, strategy_result)
     end
   end
   if has_failures then
-    local pass_positions = output_content:gmatch('test%s(%S+)%s...%sok')
-    populate_pass_positions(results, context, pass_positions)
+    require('rustaceanvim.neotest.parser').populate_pass_positions(results, context, output_content)
   end
   return results
 end
