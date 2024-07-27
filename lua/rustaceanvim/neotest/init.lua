@@ -318,6 +318,25 @@ local function get_file_root(tree)
   return tree
 end
 
+---@param results table<string, neotest.Result>
+---@param context rustaceanvim.neotest.RunContext
+---@param pass_positions fun():string, ...
+local function populate_pass_positions(results, context, pass_positions)
+  vim
+    .iter(pass_positions)
+    ---@param pos string
+    :map(function(pos)
+      return trans.get_position_id(context.file, pos)
+    end)
+    ---@param pos string
+    :each(function(pos)
+      results[pos] = {
+        status = 'passed',
+      }
+    end)
+  --
+end
+
 ---@package
 ---@param spec neotest.RunSpec
 ---@param strategy_result neotest.StrategyResult
@@ -377,11 +396,7 @@ function NeotestAdapter.results(spec, strategy_result)
   end
   if has_failures then
     local pass_positions = output_content:gmatch('test%s(%S+)%s...%sok')
-    for pos in pass_positions do
-      results[trans.get_position_id(context.file, pos)] = {
-        status = 'passed',
-      }
-    end
+    populate_pass_positions(results, context, pass_positions)
   end
   return results
 end
