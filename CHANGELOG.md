@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.1] - 2024-07-27
+
+### Fixed
+
+- Neotest: One test failure caused all succeeding tests to be marked as failed
+  when using cargo-nextest 0.9.7 [[#460](https://github.com/mrcjkb/rustaceanvim/issues/460)].
+- Neotest: Disable ansi colour coding in output to ensure output can be parsed.
+
 ## [5.1.0] - 2024-07-27
 
 ### Added
