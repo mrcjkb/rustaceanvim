@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- LSP: Added colored ansi code diagnotic to floating and split window
+- LSP: Added colored ansi code diagnostic to floating and split windows
   for `RustLsp renderDiagnostic`.
   Thanks [@xzbdmw](https://github.com/xzbdmw)!
 
