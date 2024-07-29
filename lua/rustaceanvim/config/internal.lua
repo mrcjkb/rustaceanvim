@@ -236,7 +236,7 @@ local RustaceanDefaultConfig = {
     ---@class rustaceanvim.rustc.Config
     rustc = {
       ---@type string
-      edition = '2021',
+      default_edition = '2021',
     },
   },
 

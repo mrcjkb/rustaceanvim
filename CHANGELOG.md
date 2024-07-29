@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when using cargo-nextest 0.9.7 [[#460](https://github.com/mrcjkb/rustaceanvim/issues/460)].
 - Neotest: Disable ansi colour coding in output to ensure output can be parsed.
 - `Rustc unpretty`: Support Windows.
+- Auto-detect the `rustc` edition.
+  This deprecates the `vim.g.rustaceanvim.tools.rustc.edition` option
+  in favour of `vim.g.rustaceanvim.tools.rustc.default_edition`.
 
 ## [5.1.0] - 2024-07-27
 

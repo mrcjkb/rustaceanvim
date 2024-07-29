@@ -65,7 +65,7 @@ function M.validate(cfg)
   end
   local rustc = tools.rustc
   ok, err = validate('tools.rustc', {
-    edition = { rustc.edition, 'string' },
+    default_edition = { rustc.default_edition, 'string' },
   })
   if not ok then
     return false, err
