@@ -44,6 +44,38 @@ function cargo.get_config_root_dir(config, file_name)
   end
 end
 
+---@param path string The directory to search upward from
+---@return string? cargo_crate_dir
+---@return table? cargo_metadata
+local function get_cargo_metadata(path)
+  ---@diagnostic disable-next-line: missing-fields
+  local cargo_crate_dir = vim.fs.dirname(vim.fs.find({ 'Cargo.toml' }, {
+    upward = true,
+    path = path,
+  })[1])
+  if vim.fn.executable('cargo') ~= 1 then
+    return cargo_crate_dir
+  end
+  local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
+  if cargo_crate_dir ~= nil then
+    cmd[#cmd + 1] = '--manifest-path'
+    cmd[#cmd + 1] = vim.fs.joinpath(cargo_crate_dir, 'Cargo.toml')
+  end
+  local sc = vim
+    .system(cmd, {
+      cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
+    })
+    :wait()
+  if sc.code ~= 0 then
+    return cargo_crate_dir
+  end
+  local ok, cargo_metadata_json = pcall(vim.fn.json_decode, sc.stdout)
+  if ok and cargo_metadata_json then
+    return cargo_crate_dir, cargo_metadata_json
+  end
+  return cargo_crate_dir
+end
+
 ---The default implementation used for `vim.g.rustaceanvim.server.root_dir`
 ---@param file_name string
 ---@return string | nil root_dir
@@ -52,39 +84,8 @@ function cargo.get_root_dir(file_name)
   if not path then
     return nil
   end
-  ---@diagnostic disable-next-line: missing-fields
-  local cargo_crate_dir = vim.fs.dirname(vim.fs.find({ 'Cargo.toml' }, {
-    upward = true,
-    path = path,
-  })[1])
-  ---@type string | nil
-  local cargo_workspace_dir = nil
-  if vim.fn.executable('cargo') == 1 then
-    local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
-    if cargo_crate_dir ~= nil then
-      cmd[#cmd + 1] = '--manifest-path'
-      cmd[#cmd + 1] = vim.fs.joinpath(cargo_crate_dir, 'Cargo.toml')
-    end
-    local cargo_metadata = ''
-    local cm = vim.fn.jobstart(cmd, {
-      on_stdout = function(_, d, _)
-        cargo_metadata = table.concat(d, '\n')
-      end,
-      stdout_buffered = true,
-      cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
-    })
-    if cm > 0 then
-      cm = vim.fn.jobwait({ cm })[1]
-    else
-      cm = -1
-    end
-    if cm == 0 then
-      local ok, cargo_metadata_json = pcall(vim.fn.json_decode, cargo_metadata)
-      if ok and cargo_metadata_json then
-        cargo_workspace_dir = cargo_metadata_json['workspace_root']
-      end
-    end
-  end
+  local cargo_crate_dir, cargo_metadata = get_cargo_metadata(path)
+  local cargo_workspace_dir = cargo_metadata and vim.print(cargo_metadata['workspace_root'])
   return cargo_workspace_dir
     or cargo_crate_dir
     ---@diagnostic disable-next-line: missing-fields
