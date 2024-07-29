@@ -268,9 +268,10 @@ rustaceanvim.crate-graph.Opts                    *rustaceanvim.crate-graph.Opts*
 rustaceanvim.rustc.Opts                                *rustaceanvim.rustc.Opts*
 
     Fields: ~
-        {edition}  (string)
-                             The edition to use. See https://rustc-dev-guide.rust-lang.org/guides/editions.html.
-                             Default '2021'.
+        {default_edition?}  (string)
+                                      The default edition to use if it cannot be auto-detected.
+                                      See https://rustc-dev-guide.rust-lang.org/guides/editions.html.
+                                      Default '2021'.
 
 
 rustaceanvim.lsp.ClientOpts                        *rustaceanvim.lsp.ClientOpts*

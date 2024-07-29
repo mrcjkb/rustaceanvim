@@ -1,6 +1,6 @@
 local M = {}
 
-local config = require('rustaceanvim.config.internal')
+local cargo = require('rustaceanvim.cargo')
 local ui = require('rustaceanvim.ui')
 local api = vim.api
 local ts = vim.treesitter
@@ -139,7 +139,7 @@ function M.rustc_unpretty(level)
     '--crate-type',
     'lib',
     '--edition',
-    config.tools.rustc.edition,
+    cargo.get_rustc_edition(),
     '-Z',
     'unstable-options',
     '-Z',

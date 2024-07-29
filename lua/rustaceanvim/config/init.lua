@@ -156,9 +156,10 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 
 ---@class rustaceanvim.rustc.Opts
 ---
----The edition to use. See https://rustc-dev-guide.rust-lang.org/guides/editions.html.
+---The default edition to use if it cannot be auto-detected.
+---See https://rustc-dev-guide.rust-lang.org/guides/editions.html.
 ---Default '2021'.
----@field edition string
+---@field default_edition? string
 
 ---@class rustaceanvim.lsp.ClientOpts
 ---

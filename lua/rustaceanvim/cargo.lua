@@ -76,6 +76,29 @@ local function get_cargo_metadata(path)
   return cargo_crate_dir
 end
 
+---@param buf_name? string
+---@return string edition
+function cargo.get_rustc_edition(buf_name)
+  local config = require('rustaceanvim.config.internal')
+  ---@diagnostic disable-next-line: undefined-field
+  if config.tools.rustc.edition then
+    vim.deprecate('vim.g.rustaceanvim.config.tools.edition', 'default_edition', '6.0.0', 'rustaceanvim')
+    ---@diagnostic disable-next-line: undefined-field
+    return config.tools.rustc.edition
+  end
+  buf_name = buf_name or vim.api.nvim_buf_get_name(0)
+  local path = vim.fs.dirname(buf_name)
+  local _, cargo_metadata = get_cargo_metadata(path)
+  local default_edition = config.tools.rustc.default_edition
+  if not cargo_metadata then
+    return default_edition
+  end
+  local package = vim.iter(cargo_metadata.packages or {}):find(function(pkg)
+    return type(pkg.edition) == 'string'
+  end)
+  return package and package.edition or default_edition
+end
+
 ---The default implementation used for `vim.g.rustaceanvim.server.root_dir`
 ---@param file_name string
 ---@return string | nil root_dir
@@ -85,8 +108,7 @@ function cargo.get_root_dir(file_name)
     return nil
   end
   local cargo_crate_dir, cargo_metadata = get_cargo_metadata(path)
-  local cargo_workspace_dir = cargo_metadata and vim.print(cargo_metadata['workspace_root'])
-  return cargo_workspace_dir
+  return cargo_metadata and cargo_metadata.workspace_root
     or cargo_crate_dir
     ---@diagnostic disable-next-line: missing-fields
     or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
