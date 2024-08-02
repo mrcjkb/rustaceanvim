@@ -23,17 +23,6 @@ local dap = require('dap')
 
 local M = {}
 
----@deprecated Use require('rustaceanvim.config').get_codelldb_adapter
-function M.get_codelldb_adapter(...)
-  vim.deprecate(
-    "require('rustaceanvim.dap').get_codelldb_adapter",
-    "require('rustaceanvim.config').get_codelldb_adapter",
-    '4.0.0',
-    'rustaceanvim'
-  )
-  return require('rustaceanvim.config').get_codelldb_adapter(...)
-end
-
 local function get_cargo_args_from_runnables_args(runnable_args)
   local cargo_args = runnable_args.cargoArgs
 
