@@ -34,7 +34,10 @@ local M = {
       cwd and { cwd = cwd } or {},
       vim.schedule_wrap(function(sc)
         ---@cast sc vim.SystemCompleted
-        local data = sc.stdout or sc.stderr
+        local data = ([[
+%s
+%s
+]]):format(sc.stdout or '', sc.stderr or '')
         append_qf(data)
       end)
     )
