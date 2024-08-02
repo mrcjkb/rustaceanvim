@@ -8,8 +8,9 @@ local function scroll_qf()
   end
 end
 
-local function append_qf(line)
-  vim.fn.setqflist({}, 'a', { lines = { line } })
+---@param lines string[]
+local function append_qf(lines)
+  vim.fn.setqflist({}, 'a', { lines = { lines } })
   scroll_qf()
 end
 
@@ -38,7 +39,7 @@ local M = {
 %s
 %s
 ]]):format(sc.stdout or '', sc.stderr or '')
-        append_qf(data)
+        append_qf(vim.split(data, '\n'))
       end)
     )
   end,
