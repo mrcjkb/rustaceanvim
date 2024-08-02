@@ -207,7 +207,6 @@ vim.keymap.set(
   You can call them with `require('dap').continue()` or `:DapContinue` once
   they have been loaded. The feature can be disabled by setting
   `vim.g.rustaceanvim.dap.autoload_configurations = false`.
-  It is disabled by default in neovim 0.9, as it can block the UI.
 
   - `:RustLsp debuggables` will only load debug configurations
     created by `rust-analyzer`.

@@ -1,6 +1,6 @@
 ---@toc rustaceanvim.contents
 
----@mod intro Introduction
+---@mod rustaceanvim.intro Introduction
 ---@brief [[
 ---This plugin automatically configures the `rust-analyzer` builtin LSP client
 ---and integrates with other rust tools.
