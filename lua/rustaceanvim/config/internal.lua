@@ -297,7 +297,7 @@ local RustaceanDefaultConfig = {
   --- @class rustaceanvim.dap.Config
   dap = {
     --- @type boolean Whether to autoload nvim-dap configurations when rust-analyzer has attached?
-    autoload_configurations = vim.fn.has('nvim-0.10.0') == 1, -- Compiling the debug build cannot be run asynchronously on Neovim < 0.10
+    autoload_configurations = true,
     --- @type rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable | fun():(rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable)
     adapter = function()
       --- @type rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
