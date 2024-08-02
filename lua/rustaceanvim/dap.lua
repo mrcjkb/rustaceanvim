@@ -1,3 +1,30 @@
+---@mod rustaceanvim.dap
+---@brief [[
+---
+--- The DAP integration requires `nvim-dap` https://github.com/mfussenegger/nvim-dap
+--- (Please read the plugin's documentation, see |dap-adapter|)
+--- and a debug adapter (e.g. `lldb` https://lldb.llvm.org/
+--- or `codelldb` https://github.com/vadimcn/codelldb).
+---
+--- By default, this plugin will silently attempt to autoload |dap-configuration|s
+--- when the LSP client attaches.
+--- You can call them with `require('dap').continue()` or `:DapContinue` once
+--- they have been loaded. The feature can be disabled by setting
+--- `vim.g.rustaceanvim.dap.autoload_configurations = false`.
+---
+--- - `:RustLsp debuggables` will only load debug configurations
+---   created by `rust-analyzer`.
+--- - `require('dap').continue()` will load all Rust debug configurations,
+---   including those specified in a `.vscode/launch.json`
+---   (see |dap-launch.json|)
+---
+--- IMPORTANT: Note that rustaceanvim may only be able to load DAP configurations
+--- when rust-analyzer has finished initializing (which may be after
+--- the client attaches, in large projects). This means that the
+--- DAP configurations may not be loaded immediately upon startup.
+---
+---@brief ]]
+
 local config = require('rustaceanvim.config.internal')
 local shell = require('rustaceanvim.shell')
 local types = require('rustaceanvim.types.internal')
@@ -67,6 +94,7 @@ local function get_rustc_sysroot(callback)
   end)
 end
 
+---@package
 ---@alias rustaceanvim.dap.SourceMap {[string]: string}
 
 ---@param tbl { [string]: string }
@@ -239,6 +267,7 @@ local function handle_configured_options(adapter, args, verbose)
   end
 end
 
+---@package
 ---@param args rustaceanvim.RARunnableArgs
 ---@param verbose? boolean
 ---@param callback? fun(config: rustaceanvim.dap.client.Config)

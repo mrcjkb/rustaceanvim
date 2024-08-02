@@ -1,14 +1,15 @@
 ==============================================================================
 Table of Contents                                        *rustaceanvim.contents*
 
-Introduction ··························································· |intro|
+Introduction ·············································· |rustaceanvim.intro|
  ································································ |rustaceanvim|
 plugin configuration ····································· |rustaceanvim.config|
 LSP configuration utility ························· |rustaceanvim.config.server|
  ························································ |rustaceanvim.neotest|
+ ···························································· |rustaceanvim.dap|
 
 ==============================================================================
-Introduction                                                             *intro*
+Introduction                                                *rustaceanvim.intro*
 
 This plugin automatically configures the `rust-analyzer` builtin LSP client
 and integrates with other rust tools.
@@ -472,6 +473,33 @@ for test discovery and command construction.
 
 Note: If you use this adapter, do not add the neotest-rust adapter
 (another plugin).
+
+
+==============================================================================
+                                                              *rustaceanvim.dap*
+
+
+ The DAP integration requires `nvim-dap` https://github.com/mfussenegger/nvim-dap
+ (Please read the plugin's documentation, see |dap-adapter|)
+ and a debug adapter (e.g. `lldb` https://lldb.llvm.org/
+ or `codelldb` https://github.com/vadimcn/codelldb).
+
+ By default, this plugin will silently attempt to autoload |dap-configuration|s
+ when the LSP client attaches.
+ You can call them with `require('dap').continue()` or `:DapContinue` once
+ they have been loaded. The feature can be disabled by setting
+ `vim.g.rustaceanvim.dap.autoload_configurations = false`.
+
+ - `:RustLsp debuggables` will only load debug configurations
+   created by `rust-analyzer`.
+ - `require('dap').continue()` will load all Rust debug configurations,
+   including those specified in a `.vscode/launch.json`
+   (see |dap-launch.json|)
+
+ IMPORTANT: Note that rustaceanvim may only be able to load DAP configurations
+ when rust-analyzer has finished initializing (which may be after
+ the client attaches, in large projects). This means that the
+ DAP configurations may not be loaded immediately upon startup.
 
 
 vim:tw=78:ts=8:noet:ft=help:norl:

@@ -113,6 +113,13 @@
             luacheck.enable = true;
             editorconfig-checker.enable = true;
             markdownlint.enable = true;
+            docgen = {
+              enable = true;
+              name = "docgen";
+              entry = "${docgen}/bin/docgen";
+              files = "\\.(lua)$";
+              pass_filenames = false;
+            };
           };
         };
 
@@ -130,6 +137,7 @@
               luacheck
               editorconfig-checker
               markdownlint-cli
+              docgen
             ]
             ++ oa.buildInputs;
           doCheck = false;
