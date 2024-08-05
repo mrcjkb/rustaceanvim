@@ -126,6 +126,15 @@ local function check_config(config)
   end
 end
 
+local function is_dap_enabled()
+  if not pcall(require, 'dap') then
+    return false
+  end
+  local rustaceanvim = vim.g.rustaceanvim or {}
+  local opts = type(rustaceanvim) == 'function' and rustaceanvim() or rustaceanvim
+  return vim.tbl_get(opts, 'dap', 'adapter') ~= false
+end
+
 local function check_for_conflicts()
   start('Checking for conflicting plugins')
   require('rustaceanvim.config.check').check_for_lspconfig_conflict(error)
@@ -270,6 +279,9 @@ function health.check()
       Required for debugging features.
     ]],
     })
+  end
+  if adapter == false and is_dap_enabled() then
+    warn('No debug adapter detected. Make sure either lldb or codelldb is available on the path.')
   end
   for _, dep in ipairs(external_dependencies) do
     check_external_dependency(dep)
