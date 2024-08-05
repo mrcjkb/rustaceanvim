@@ -184,6 +184,11 @@ vim.keymap.set(
   :RustLsp[!] debuggables {args[]}?
   :RustLsp[!] debug {args[]}?
   ```
+  Example:
+  1. Press escape
+  2. `:RustLsp debuggables`
+  3. You will be prompted with choice, for example select 1.
+  
   ```lua
   vim.cmd.RustLsp('debug')
   vim.cmd.RustLsp('debuggables')
@@ -202,6 +207,15 @@ vim.keymap.set(
   - A debug adapter (e.g. [`lldb`](https://lldb.llvm.org/)
     or [`codelldb`](https://github.com/vadimcn/codelldb)
 
+  **NB!!!** make sure after install lldb ([`nvim-dap`](https://github.com/mfussenegger/nvim-dap) recommends [lldb-dap](https://lldb.llvm.org/resources/lldbdap.html))
+  add it directly to path. Even though it will work in terminal of your choice
+  For example:
+  **Unix/Linux**
+  `export PATH="$PATH:/path/to/lldb-dap"`
+  **Windows**  
+  Follow [this instructions](https://learn.microsoft.com/en-us/previous-versions/office/developer/sharepoint-2010/ee537574(v=office.14))
+  or set it directly in CMD: `set PATH=%PATH%;C:\your\path\here\`
+  
   By default, this plugin will silently attempt to autoload `nvim-dap`
   configurations when the LSP client attaches.
   You can call them with `require('dap').continue()` or `:DapContinue` once
