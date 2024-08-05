@@ -139,6 +139,7 @@ end
 local function check_tree_sitter()
   start('Checking for tree-sitter parser')
   local has_tree_sitter_rust_parser = #vim.api.nvim_get_runtime_file('parser/rust.so', true) > 0
+    or #vim.api.nvim_get_runtime_file('parser/rust.dll', true) > 0
   if has_tree_sitter_rust_parser then
     ok('tree-sitter parser for Rust detected.')
   else
