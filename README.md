@@ -199,8 +199,8 @@ vim.keymap.set(
 
   - [`nvim-dap`](https://github.com/mfussenegger/nvim-dap)
     (Please read the plugin's documentation).
-  - A debug adapter (e.g. [`lldb`](https://lldb.llvm.org/)
-    or [`codelldb`](https://github.com/vadimcn/codelldb)
+  - A debug adapter (e.g. [`lldb-dap`](https://lldb.llvm.org/resources/lldbdap)
+    or [`codelldb`](https://github.com/vadimcn/codelldb)).
 
   By default, this plugin will silently attempt to autoload `nvim-dap`
   configurations when the LSP client attaches.
