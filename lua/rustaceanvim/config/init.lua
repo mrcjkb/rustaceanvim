@@ -189,7 +189,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---
 ---Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json.
 ---If found, loaded settings will override configured options.
----Default: false
+---Default: true
 ---@field load_vscode_settings? boolean
 ---@see vim.lsp.ClientConfig
 

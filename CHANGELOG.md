@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.0] - 2024-08-05
+
+### Added
+
+- Load rust-analyzer settings from `.vscode/settings.json` by default.
+  Can be disabled by setting `vim.g.rustaceanvim.server.load_vscode_settings`.
+  This was introduced as an experimental feature in version 4.14.0.
+
 ## [5.1.5] - 2024-08-05
 
 ### Fixed
