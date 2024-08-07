@@ -85,11 +85,13 @@ that are specific to rust-analyzer.
 
 ## :inbox_tray: Installation
 
-This plugin is [available on LuaRocks][luarocks-url]:
+### [`rocks.nvim`](https://github.com/nvim-neorocks/rocks.nvim)
 
-[`:Rocks install rustaceanvim`](https://github.com/nvim-neorocks/rocks.nvim)
+```vim
+:Rocks install rustaceanvim
+```
 
-Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
+### [`lazy.nvim`](https://github.com/folke/lazy.nvim)
 
 ```lua
 {
@@ -105,12 +107,11 @@ Example using [`lazy.nvim`](https://github.com/folke/lazy.nvim):
 
 To manually generate documentation, use `:helptags ALL`.
 
->[!NOTE]
->
-> For NixOS users with flakes enabled, this project provides outputs in the
-> form of a package and an overlay; use it as you wish in your NixOS or
-> home-manager configuration.
-> It is also available in `nixpkgs`.
+### Nix
+
+For Nix users with flakes enabled, this project provides outputs in the
+form of a package and an overlay.
+It is also available in `nixpkgs`.
 
 Look at the configuration information below to get started.
 
