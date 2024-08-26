@@ -1,11 +1,11 @@
-{pkgs, ...}:
+{pkgs, vimcats, ...}:
 pkgs.writeShellApplication {
   name = "docgen";
-  runtimeInputs = with pkgs; [
-    lemmy-help
+  runtimeInputs = [
+    vimcats.packages.${pkgs.system}.default
   ];
   text = ''
     mkdir -p doc
-    lemmy-help lua/rustaceanvim/{init,config/init,config/server,neotest/init,dap}.lua > doc/rustaceanvim.txt
+    vimcats lua/rustaceanvim/{init,config/init,config/server,neotest/init,dap}.lua > doc/rustaceanvim.txt
   '';
 }

@@ -11,6 +11,8 @@
     neorocks.url = "github:nvim-neorocks/neorocks";
 
     gen-luarc.url = "github:mrcjkb/nix-gen-luarc-json";
+
+    vimcats.url = "github:mrcjkb/vimcats";
   };
 
   outputs = inputs @ {
@@ -20,6 +22,7 @@
     pre-commit-hooks,
     neorocks,
     gen-luarc,
+    vimcats,
     ...
   }: let
     name = "rustaceanvim";
@@ -42,9 +45,7 @@
         ...
       }: let
         ci-overlay = import ./nix/ci-overlay.nix {
-          inherit
-            self
-            ;
+          inherit self;
           plugin-name = name;
         };
 
@@ -143,7 +144,7 @@
           doCheck = false;
         });
 
-        docgen = pkgs.callPackage ./nix/docgen.nix {};
+        docgen = pkgs.callPackage ./nix/docgen.nix {inherit vimcats;};
       in {
         devShells = {
           default = devShell;
