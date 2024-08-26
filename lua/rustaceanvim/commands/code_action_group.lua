@@ -149,7 +149,7 @@ local function on_code_action_results(results, ctx)
     end
   end
 
-  if #M.state.actions.grouped == 0 and config.tools.code_actions.ui_select_fallback then
+  if vim.tbl_count(M.state.actions.grouped) == 0 and config.tools.code_actions.ui_select_fallback then
     ---@param item action_tuple
     local function format_item(item)
       local title = item[2].title:gsub('\r\n', '\\r\\n')
