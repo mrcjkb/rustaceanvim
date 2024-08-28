@@ -1,4 +1,8 @@
-{pkgs, vimcats, ...}:
+{
+  pkgs,
+  vimcats,
+  ...
+}:
 pkgs.writeShellApplication {
   name = "docgen";
   runtimeInputs = [
