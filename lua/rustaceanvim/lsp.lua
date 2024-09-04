@@ -127,6 +127,16 @@ M.start = function(bufnr)
   lsp_start_config.settings = get_start_settings(bufname, root_dir, client_config)
   configure_file_watcher(lsp_start_config)
 
+  -- rust-analyzer treats settings in initializationOptions specially -- in particular, workspace_discoverConfig
+  -- so copy them to init_options (the vim name)
+  -- so they end up in initializationOptions (the LSP name)
+  -- ... and initialization_options (the rust name) in rust-analyzer's main.rs
+  lsp_start_config.init_options = vim.tbl_deep_extend(
+    'force',
+    lsp_start_config.init_options or {},
+    vim.tbl_get(lsp_start_config.settings, 'rust-analyzer')
+  )
+
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
     if root_dir and not is_in_workspace(client, root_dir) then
