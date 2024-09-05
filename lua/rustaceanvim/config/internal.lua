@@ -42,6 +42,9 @@ local function load_dap_configuration(type)
     request = 'launch',
     stopOnEntry = false,
   }
+  if type == 'lldb' then
+    dap_config.runInTerminal = true
+  end
   ---@diagnostic disable-next-line: different-requires
   local dap = require('dap')
   -- Load configurations from a `launch.json`.
