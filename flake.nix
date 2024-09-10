@@ -121,6 +121,13 @@
               files = "\\.(lua)$";
               pass_filenames = false;
             };
+            doctags = {
+              enable = true;
+              name = "doctags";
+              entry = "${pkgs.neovim-unwrapped}/bin/nvim -c 'helptags doc' +q";
+              files = "\\.(txt)$";
+              pass_filenames = false;
+            };
           };
         };
 
