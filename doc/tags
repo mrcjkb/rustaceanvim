@@ -1,4 +1,4 @@
-M.get_codelldb_adapter	rustaceanvim.txt	/*M.get_codelldb_adapter*
+config.get_codelldb_adapter	rustaceanvim.txt	/*config.get_codelldb_adapter*
 rustaceanvim	rustaceanvim.txt	/*rustaceanvim*
 rustaceanvim.EnvironmentMap	rustaceanvim.txt	/*rustaceanvim.EnvironmentMap*
 rustaceanvim.Executor	rustaceanvim.txt	/*rustaceanvim.Executor*

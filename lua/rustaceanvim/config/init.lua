@@ -44,7 +44,7 @@
 ---
 ---@brief ]]
 
-local M = {}
+local config = {}
 
 ---@type rustaceanvim.Opts | fun():rustaceanvim.Opts | nil
 vim.g.rustaceanvim = vim.g.rustaceanvim
@@ -269,7 +269,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@param codelldb_path string Path to the codelldb executable
 ---@param liblldb_path string Path to the liblldb dynamic library
 ---@return rustaceanvim.dap.server.Config
-function M.get_codelldb_adapter(codelldb_path, liblldb_path)
+function config.get_codelldb_adapter(codelldb_path, liblldb_path)
   return {
     type = 'server',
     port = '${port}',
@@ -281,4 +281,4 @@ function M.get_codelldb_adapter(codelldb_path, liblldb_path)
   }
 end
 
-return M
+return config

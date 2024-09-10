@@ -405,8 +405,8 @@ rustaceanvim.dap.config.requests.custom*rustaceanvim.dap.config.requests.custom*
         
 
 
-                                                        *M.get_codelldb_adapter*
-M.get_codelldb_adapter({codelldb_path}, {liblldb_path})
+                                                   *config.get_codelldb_adapter*
+config.get_codelldb_adapter({codelldb_path}, {liblldb_path})
     For the heroes who want to use it.
 
     Parameters: ~
