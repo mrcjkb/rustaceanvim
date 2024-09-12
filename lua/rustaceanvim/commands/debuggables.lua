@@ -120,7 +120,17 @@ local function add_debuggables_to_nvim_dap(debuggables)
   end
   local rt_dap = require('rustaceanvim.dap')
   dap.configurations.rust = dap.configurations.rust or {}
-  for _, debuggable in pairs(debuggables) do
+  -- To prevent parallel 'cargo build" processes, we
+  -- iterate over the debuggables using a recursive function.
+  -- We can't use vim.system():wait(), because it blocks the UI.
+  local iter = vim.iter(debuggables)
+  ---@type function
+  local go
+  go = function()
+    local debuggable = iter:next()
+    if not debuggable then
+      return
+    end
     rt_dap.start(debuggable.args, false, function(configuration)
       local name = 'Cargo: ' .. build_label(debuggable.args)
       if not _dap_configuration_added[name] then
@@ -128,8 +138,10 @@ local function add_debuggables_to_nvim_dap(debuggables)
         table.insert(dap.configurations.rust, configuration)
         _dap_configuration_added[name] = true
       end
+      go()
     end)
   end
+  pcall(go) -- Ignore stack overflow errors
 end
 
 ---@param debuggables rustaceanvim.RARunnable[]
