@@ -3,8 +3,11 @@
 local server = {}
 
 ---@class rustaceanvim.LoadRASettingsOpts
----@field settings_file_pattern string|nil File name or pattern to search for. Defaults to 'rust-analyzer.json'
----@field default_settings table|nil Default settings to merge the loaded settings into
+---
+---(deprecated) File name or pattern to search for. Defaults to 'rust-analyzer.json'
+---@field settings_file_pattern string|nil
+---Default settings to merge the loaded settings into.
+---@field default_settings table|nil
 
 --- Load rust-analyzer settings from a JSON file,
 --- falling back to the default settings if none is found or if it cannot be decoded.
@@ -43,6 +46,7 @@ function server.load_rust_analyzer_settings(project_root, opts)
   if #results == 0 then
     return default_settings
   end
+  vim.deprecate('rust-analyzer.json', "'.vscode/settings.json' or ':h exrc'", '6.0.0', 'rustaceanvim')
   local config_json = results[1]
   local content = os.read_file(config_json)
   if not content then

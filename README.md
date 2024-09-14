@@ -799,30 +799,15 @@ end
 
 ### How to dynamically load different `rust-analyzer` settings per project
 
-By default, this plugin will look for a `rust-analyzer.json`[^2]
-file in the project root directory, and attempt to load it.
+By default, this plugin will look for a `.vscode/settings.json`[^2]
+file and attempt to load it.
 If the file does not exist, or it can't be decoded,
 the `server.default_settings` will be used.
 
 [^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
       and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/manual.html#configuration).
 
-You can change this behaviour with the `server.settings` config:
-
-```lua
-vim.g.rustaceanvim = {
-  -- ...
-  server = {
-    ---@param project_root string Path to the project root
-    settings = function(project_root)
-      local ra = require('rustaceanvim.config.server')
-      return ra.load_rust_analyzer_settings(project_root, {
-        settings_file_pattern = 'rust-analyzer.json'
-      })
-    end,
-  },
-}
-```
+Another option is to use `:h exrc`.
 
 ## :stethoscope: Troubleshooting
 
