@@ -131,12 +131,34 @@ local function mk_capabilities_if_available(mod_name, callback)
   return {}
 end
 
+---@param modules table
+---@return lsp.ClientCapabilities
+local function mk_capabilities_for_completion(modules)
+  for _, tuple in ipairs(modules) do
+    local available, mod = pcall(require, tuple.mod_name)
+
+    if available and type(mod) == 'table' then
+      local ok, capabilities = pcall(tuple.callback)
+      if ok then
+        return capabilities
+      end
+    end
+  end
+
+  return {}
+end
+
 ---@return lsp.ClientCapabilities
 function server.create_client_capabilities()
   local rs_capabilities = make_rustaceanvim_capabilities()
-  local cmp_capabilities = mk_capabilities_if_available('cmp_nvim_lsp', function(cmp_nvim_lsp)
-    return cmp_nvim_lsp.default_capabilities()
-  end)
+
+  local modules = {
+    { name = 'cmp_nvim_lsp', callback = function (cmp_nvim_lsp) return cmp_nvim_lsp.default_capabilities() end },
+    { name = 'ddc_source_lsp', callback = function (ddc_source_lsp) return ddc_source_lsp.make_client_capabilities() end }
+  }
+
+  local capabilities = mk_capabilities_for_completion(modules)
+
   local selection_range_capabilities = mk_capabilities_if_available('lsp-selection-range', function(lsp_selection_range)
     return lsp_selection_range.update_capabilities {}
   end)
@@ -153,7 +175,7 @@ function server.create_client_capabilities()
   return vim.tbl_deep_extend(
     'force',
     rs_capabilities,
-    cmp_capabilities,
+    capabilities,
     selection_range_capabilities,
     folding_range_capabilities
   )
