@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Deprecate `rust-analyzer.json` in favour of `.vscode/settings.json`
   or `:h exrc`.
+- Adds support for ddc_source_lsp client capabilities for auto import.
 
 ## [5.4.2] - 2024-09-12
 
