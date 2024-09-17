@@ -423,8 +423,9 @@ LSP configuration utility                           *rustaceanvim.config.server*
 rustaceanvim.LoadRASettingsOpts                *rustaceanvim.LoadRASettingsOpts*
 
     Fields: ~
-        {settings_file_pattern}  (string|nil)  File name or pattern to search for. Defaults to 'rust-analyzer.json'
-        {default_settings}       (table|nil)   Default settings to merge the loaded settings into
+        {settings_file_pattern}  (string|nil)
+                                               (deprecated) File name or pattern to search for. Defaults to 'rust-analyzer.json'
+        {default_settings}       (table|nil)   Default settings to merge the loaded settings into.
 
 
                                             *server.load_rust_analyzer_settings*
