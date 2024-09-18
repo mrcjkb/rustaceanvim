@@ -7,6 +7,9 @@ local _ran_once = {}
 
 ---@param result rustaceanvim.internal.RAInitializedStatus
 function M.handler(_, result, ctx, _)
+  if result and result.health and result.health ~= 'ok' then
+    vim.notify_once("rust-analyzer health is not OK. Run 'RustLsp logFile' for details", vim.log.levels.WARN)
+  end
   -- quiescent means the full set of results is ready.
   if not result.quiescent or _ran_once[ctx.client_id] then
     return
