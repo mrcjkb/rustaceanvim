@@ -7,11 +7,21 @@ local _ran_once = {}
 
 ---@param result rustaceanvim.internal.RAInitializedStatus
 function M.handler(_, result, ctx, _)
-  if result and result.health and result.health ~= 'ok' then
-    vim.notify_once("rust-analyzer health is not OK. Run 'RustLsp logFile' for details", vim.log.levels.WARN)
-  end
   -- quiescent means the full set of results is ready.
-  if not result.quiescent or _ran_once[ctx.client_id] then
+  if not result or not result.quiescent then
+    return
+  end
+  -- notify of LSP errors/warnings
+  if result.health and result.health ~= 'ok' then
+    local message = ([[
+rust-analyzer health status is [%s]:
+%s
+Run ':RustLsp logFile' for details.
+]]):format(result.health, result.message or '[unknown error]')
+    vim.notify(message, vim.log.levels.WARN)
+  end
+  -- deduplicate messages.
+  if _ran_once[ctx.client_id] then
     return
   end
   -- rust-analyzer may provide incomplete/empty inlay hints by the time Neovim
