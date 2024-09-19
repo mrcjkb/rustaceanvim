@@ -10,6 +10,7 @@ local RustaceanConfig
 ---@class rustaceanvim.internal.RAInitializedStatus : rustaceanvim.RAInitializedStatus
 ---@field health rustaceanvim.lsp_server_health_status
 ---@field quiescent boolean inactive?
+---@field message string | nil
 ---
 ---@param dap_adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
 ---@return boolean
