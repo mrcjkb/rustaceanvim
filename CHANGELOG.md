@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Features
 
-* **lsp:** `&lt;Plug&gt;` mapping for hover actions ([#510](https://github.com/mrcjkb/rustaceanvim/issues/510)) ([b52bbc4](https://github.com/mrcjkb/rustaceanvim/commit/b52bbc4bb0e50bf7da65b2695e1d602344877858))
+* **lsp:** `<Plug>` mapping for hover actions ([#510](https://github.com/mrcjkb/rustaceanvim/issues/510)) ([b52bbc4](https://github.com/mrcjkb/rustaceanvim/commit/b52bbc4bb0e50bf7da65b2695e1d602344877858))
 
 
 ### Bug Fixes
