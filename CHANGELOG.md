@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.8.0](https://github.com/mrcjkb/rustaceanvim/compare/5.7.0...v5.8.0) (2024-09-20)
+
+
+### Features
+
+* **lsp:** `&lt;Plug&gt;` mapping for hover actions ([#510](https://github.com/mrcjkb/rustaceanvim/issues/510)) ([b52bbc4](https://github.com/mrcjkb/rustaceanvim/commit/b52bbc4bb0e50bf7da65b2695e1d602344877858))
+
+
+### Bug Fixes
+
+* remove luajit requirement ([#512](https://github.com/mrcjkb/rustaceanvim/issues/512)) ([9db87de](https://github.com/mrcjkb/rustaceanvim/commit/9db87deb7b00d64466b56afff645756530db1c03))
+
 ## [5.7.0]
 
 ### Added
