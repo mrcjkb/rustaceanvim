@@ -1,8 +1,12 @@
-name: "Release"
+---
+name: "Push to LuaRocks"
 on:
   push:
     tags:
       - "*"
+  release:
+    types:
+      - created
   pull_request:
 
 jobs:
@@ -12,23 +16,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Fail if changelog entry does not exist
-        if: startsWith(github.ref, 'refs/tags/')
-        run: grep -q "${{ github.ref_name }}" CHANGELOG.md
+        with:
+          fetch-depth: 0 # Required to count the commits
+      - name: Get Version
+        run: echo "LUAROCKS_VERSION=$(git describe --abbrev=0 --tags)" >> $GITHUB_ENV
       - name: LuaRocks Upload
-        uses: nvim-neorocks/luarocks-tag-release@v5
+        uses: nvim-neorocks/luarocks-tag-release@v7
         env:
           LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
         with:
-          test_interpreters: ""
+          version: ${{ env.LUAROCKS_VERSION }}
           detailed_description: |
             This plugin automatically configures the rust-analyzer builtin LSP client
             and integrates with other Rust tools. See the README's #features section
             for more info.
-      - name: GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: ncipollo/release-action@v1
-        with:
-          bodyFile: "CHANGELOG.md"
-          allowUpdates: true
-

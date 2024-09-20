@@ -49,6 +49,5 @@ jobs:
               - [ ] Tests have been added.
               - [ ] Tested manually (Steps to reproduce in PR description).
             - [ ] Updated documentation.
-            - [ ] Updated [CHANGELOG.md](https://github.com/mrcjkb/rustaceanvim/blob/master/CHANGELOG.md)
             `,
             })
