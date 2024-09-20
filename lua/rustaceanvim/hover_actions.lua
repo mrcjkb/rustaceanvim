@@ -30,10 +30,8 @@ end
 -- run the command under the cursor, if the thing under the cursor is not the
 -- command then do nothing
 ---@param ctx table
-local function run_command(ctx)
-  local winnr = vim.api.nvim_get_current_win()
-  local line = vim.api.nvim_win_get_cursor(winnr)[1]
-
+---@param line integer
+local function run_command(ctx, line)
   if line > #_state.commands then
     return
   end
@@ -132,8 +130,13 @@ function M.handler(_, result, ctx)
 
   -- run the command under the cursor
   vim.keymap.set('n', '<CR>', function()
-    run_command(ctx)
+    local line = vim.api.nvim_win_get_cursor(winnr)[1]
+    run_command(ctx, line)
   end, { buffer = bufnr, noremap = true, silent = true })
+  vim.keymap.set('n', '<Plug>RustHoverAction', function()
+    local line = math.max(vim.v.count, 1)
+    run_command(ctx, line)
+  end, { buffer = vim.api.nvim_get_current_buf(), noremap = true, silent = true })
 end
 
 local rl = require('rustaceanvim.rust_analyzer')

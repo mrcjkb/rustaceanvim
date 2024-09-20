@@ -403,6 +403,18 @@ vim.keymap.set(
  By default, this plugin replaces Neovim's built-in hover handler with hover
  actions, so you can also use `vim.lsp.buf.hover()`.
 
+ You can invoke a hover action by switching to the hover window and entering `<CR>`
+ on the respective line, or with a keymap for the `<Plug>RustHoverAction` mapping,
+ which accepts a `<count>` prefix as the (1-based) index of the hover action to invoke.
+ 
+ For example, if you set the following keymap:
+ 
+ ```lua
+ vim.keymap.set('n', '<space>a', '<Plug>RustHoverAction')
+ ```
+ 
+ you can invoke the third hover action with `3<space>a`.
+
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/c7b6c730-4439-47b0-9a75-7ea4e6831f7a)
 
 </details>
