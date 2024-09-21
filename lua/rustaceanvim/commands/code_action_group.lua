@@ -376,7 +376,7 @@ M.state = {
 
 M.code_action_group = function()
   local context = {}
-  context.diagnostics = vim.lsp.diagnostic.get_line_diagnostics()
+  context.diagnostics = require('rustaceanvim.compat').get_line_diagnostics()
   local params = vim.lsp.util.make_range_params()
   params.context = context
 
