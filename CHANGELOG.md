@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.8.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.8.0...v5.8.1) (2024-09-21)
+
+
+### Bug Fixes
+
+* **lsp:** update deprecated API calls ([#514](https://github.com/mrcjkb/rustaceanvim/issues/514)) ([9a36905](https://github.com/mrcjkb/rustaceanvim/commit/9a369055aebd0411a11600f7cfd5c9b39c751eaa))
+
 ## [5.8.0](https://github.com/mrcjkb/rustaceanvim/compare/5.7.0...v5.8.0) (2024-09-20)
 
 
