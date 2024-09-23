@@ -299,24 +299,46 @@ rustaceanvim.lsp.ClientOpts                        *rustaceanvim.lsp.ClientOpts*
         {load_vscode_settings?}  (boolean)
                                                                                                                    Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json.
                                                                                                                    If found, loaded settings will override configured options.
-                                                                                                                   Default: true
+                                                                                                                   Default: `true`
+        {status_notify_level?}   (rustaceanvim.server.status_notify_level)
+                                                                                                                   Server status warning level to notify at.
+                                                                                                                   Default: 'error'
 
-    See: ~
-        |vim.lsp.ClientConfig|
 
+rustaceanvim.server.status_notify_level*rustaceanvim.server.status_notify_level*
 
-rustaceanvim.dap.Opts                                    *rustaceanvim.dap.Opts*
-
-    Fields: ~
-        {autoload_configurations}  (boolean)
-                                              Whether to autoload nvim-dap configurations when rust-analyzer has attached?
-                                              Default: `true`.
+    Type: ~
+        "error"|"warning"|rustaceanvim.disable
 
 
 rustaceanvim.disable                                      *rustaceanvim.disable*
 
     Type: ~
         false
+
+
+rustaceanvim.dap.Opts                                    *rustaceanvim.dap.Opts*
+
+    Fields: ~
+        {autoload_configurations?}    (boolean)
+                                                                                                                                                                                                                             Whether to autoload nvim-dap configurations when rust-analyzer has attached?
+                                                                                                                                                                                                                             Default: `true`
+        {adapter?}                    (rustaceanvim.dap.executable.Config|rustaceanvim.dap.server.Config|rustaceanvim.disable|fun():rustaceanvim.dap.executable.Config|rustaceanvim.dap.server.Config|rustaceanvim.disable)
+                                                                                                                                                                                                                             Defaults to creating the `rt_lldb` adapter, which is a |rustaceanvim.dap.server.Config|
+                                                                                                                                                                                                                             if `codelldb` is detected, and a |rustaceanvim.dap.executable.Config|` if `lldb` is detected.
+                                                                                                                                                                                                                             Set to `false` to disable.
+        {configuration?}              (rustaceanvim.dap.client.Config|rustaceanvim.disable|fun():rustaceanvim.dap.client.Config|rustaceanvim.disable)
+                                                                                                                                                                                                                             Dap client configuration. Defaults to a function that looks for a `launch.json` file
+                                                                                                                                                                                                                             or returns a |rustaceanvim.dap.executable.Config| that launches the `rt_lldb` adapter.
+                                                                                                                                                                                                                             Set to `false` to disable.
+        {add_dynamic_library_paths?}  (boolean|fun():boolean)
+                                                                                                                                                                                                                             Accommodate dynamically-linked targets by passing library paths to lldb.
+                                                                                                                                                                                                                             Default: `true`.
+        {auto_generate_source_map?}   (fun():boolean|boolean)
+                                                                                                                                                                                                                             Whether to auto-generate a source map for the standard library.
+        {load_rust_types?}            (fun():boolean|boolean)
+                                                                                                                                                                                                                             Whether to get Rust types via initCommands (rustlib/etc/lldb_commands, lldb only).
+                                                                                                                                                                                                                             Default: `true`.
 
 
 rustaceanvim.dap.Command                              *rustaceanvim.dap.Command*
