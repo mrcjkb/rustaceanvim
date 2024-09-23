@@ -189,19 +189,28 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---
 ---Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json.
 ---If found, loaded settings will override configured options.
----Default: true
+---Default: `true`
 ---@field load_vscode_settings? boolean
+---
+---Server status warning level to notify at.
+---Default: 'error'
+---@field status_notify_level? rustaceanvim.server.status_notify_level
+---
 ---@see vim.lsp.ClientConfig
+
+---@alias rustaceanvim.server.status_notify_level 'error' | 'warning' | rustaceanvim.disable
+
+---@alias rustaceanvim.disable false
 
 ---@class rustaceanvim.dap.Opts
 ---
 ---Whether to autoload nvim-dap configurations when rust-analyzer has attached?
----Default: `true`.
----@field autoload_configurations boolean
+---Default: `true`
+---@field autoload_configurations? boolean
 ---
 ---Defaults to creating the `rt_lldb` adapter, which is a |rustaceanvim.dap.server.Config|
 ---if `codelldb` is detected, and a |rustaceanvim.dap.executable.Config|` if `lldb` is detected.
--- Set to `false` to disable.
+---Set to `false` to disable.
 ---@field adapter? rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable | fun():(rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable)
 ---
 ---Dap client configuration. Defaults to a function that looks for a `launch.json` file
@@ -219,8 +228,6 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---Whether to get Rust types via initCommands (rustlib/etc/lldb_commands, lldb only).
 ---Default: `true`.
 ---@field load_rust_types? fun():boolean | boolean
-
----@alias rustaceanvim.disable false
 
 ---@alias rustaceanvim.dap.Command string
 

@@ -5,6 +5,22 @@ local M = {}
 ---@type { [integer]: boolean }
 local _ran_once = {}
 
+---@param health rustaceanvim.lsp_server_health_status
+---@return boolean
+local function is_notify_enabled_for(health)
+  if health and health == 'ok' then
+    return false
+  end
+  local notify_level = config.server.status_notify_level
+  if not notify_level then
+    return false
+  end
+  if notify_level == 'error' then
+    return health == 'error'
+  end
+  return true
+end
+
 ---@param result rustaceanvim.internal.RAInitializedStatus
 function M.handler(_, result, ctx, _)
   -- quiescent means the full set of results is ready.
@@ -12,7 +28,7 @@ function M.handler(_, result, ctx, _)
     return
   end
   -- notify of LSP errors/warnings
-  if result.health and result.health ~= 'ok' then
+  if is_notify_enabled_for(result.health) then
     local message = ([[
 rust-analyzer health status is [%s]:
 %s
