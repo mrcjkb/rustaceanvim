@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.9.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.8.1...v5.9.0) (2024-09-23)
+
+
+### Features
+
+* **lsp:** only notify on server status error by default ([#519](https://github.com/mrcjkb/rustaceanvim/issues/519)) ([360ac5c](https://github.com/mrcjkb/rustaceanvim/commit/360ac5c80f299f282cbb1967bbfe5aa1e1c6e66e))
+
 ## [5.8.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.8.0...v5.8.1) (2024-09-21)
 
 
