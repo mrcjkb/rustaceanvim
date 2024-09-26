@@ -25,13 +25,13 @@ body:
   - type: input
     attributes:
       label: "Neovim version (nvim -v)"
-      placeholder: "v0.9.5"
+      placeholder: "v0.10.1"
     validations:
       required: true
   - type: input
     attributes:
       label: "Operating system/version"
-      placeholder: "NixOS 23.11"
+      placeholder: "NixOS 24.05"
     validations:
       required: true
   - type: textarea
@@ -53,6 +53,7 @@ body:
         > - To rule out another plugin causing the issue, please start with a [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
         > - Please refer to the readme's [troubleshooting guide](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#stethoscope-troubleshooting).
         > - Please provide exact (repeatable) steps, including project initialization (if applicable).
+        > - Avoid screenshots when possible, as they are hard to read and (more importantly) don't allow others to copy-and-paste your code.
       placeholder: |
         mkdir -p /tmp/minimal
         NVIM_DATA_MINIMAL=/tmp/minimal NVIM_APP_NAME="nvim-minimal" -u minimal.lua
@@ -78,6 +79,12 @@ body:
       label: "The minimal config used to reproduce this issue."
       description: |
         Run with `nvim -u minimal.lua`
+
+        > [!IMPORTANT]
+        > 
+        > - Reduce your code to the minimum required to reproduce.
+        > - Avoid screenshots when possible, as they are hard to read and (more importantly) don't allow others to copy-and-paste your code.
+
       placeholder: |
         vim.env.LAZY_STDPATH = '.repro'
         load(vim.fn.system('curl -s https://raw.githubusercontent.com/folke/lazy.nvim/main/bootstrap.lua'))()
@@ -86,7 +93,7 @@ body:
           spec = {
             {
               'mrcjkb/rustaceanvim',
-              version = '^4',
+              version = '^5',
               init = function()
                 -- Configure rustaceanvim here
                 vim.g.rustaceanvim = {}
