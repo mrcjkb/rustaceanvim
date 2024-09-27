@@ -33,6 +33,8 @@ function M.handler(_, result, ctx, _)
 rust-analyzer health status is [%s]:
 %s
 Run ':RustLsp logFile' for details.
+To configure or disable rust-analyzer server status notifications,
+see ':h rustaceanvim.lsp.ClientOpts'.
 ]]):format(result.health, result.message or '[unknown error]')
     vim.notify(message, vim.log.levels.WARN)
   end
