@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.10.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.9.0...v5.10.0) (2024-09-27)
+
+
+### Features
+
+* add hint on how to configure/disable server status notifications ([711e25f](https://github.com/mrcjkb/rustaceanvim/commit/711e25fe11b6e72fbeda52d9d81b85a5aa3a81ab))
+
 ## [5.9.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.8.1...v5.9.0) (2024-09-23)
 
 
