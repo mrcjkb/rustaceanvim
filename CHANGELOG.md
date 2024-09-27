@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.10.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.10.0...v5.10.1) (2024-09-27)
+
+
+### Bug Fixes
+
+* **windows:** remove empty file causing git clone to fail ([b7c8171](https://github.com/mrcjkb/rustaceanvim/commit/b7c8171b1a496e20a2906bf74d1a260f802932d3))
+
 ## [5.10.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.9.0...v5.10.0) (2024-09-27)
 
 
