@@ -890,6 +890,12 @@ See [`:h rustaceanvim.mason`](./doc/mason.txt) for details about troubleshooting
 mason.nvim and nvim-lspconfig issues, or configuring rustaceanvim to use
 a rust-analyzer installation that is managed by mason.nvim.
 
+#### I am not seeing diagnostics in a standalone file
+
+rust-analyzer has limited support for standalone files.
+Many diagnostics come from Cargo. If you're not in a Cargo project,
+you won't see any Cargo diagnostics.
+
 ## :link: Related Projects
 
 - [`rouge8/neotest-rust`](https://github.com/rouge8/neotest-rust)
