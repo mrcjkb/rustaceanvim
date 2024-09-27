@@ -22,6 +22,10 @@ body:
           required: false
         - label: I can reproduce the issue with stable Neovim (not a distribution or nightly) and the [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
           required: true
+        - label: This is an issue about rustaceanvim, not rust-analyzer or Neovim.
+          required: true
+        - label: This is [not an issue with autocompletion](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#im-having-issues-with-autocompletion).
+          required: true
   - type: input
     attributes:
       label: "Neovim version (nvim -v)"
