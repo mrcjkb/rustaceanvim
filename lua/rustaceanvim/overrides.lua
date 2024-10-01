@@ -21,12 +21,12 @@ local function parse_snippet(input)
   return ok and tostring(parsed) or parse_snippet_fallback(input)
 end
 
----@param spe? table
-function M.snippet_text_edits_to_text_edits(spe)
-  if type(spe) ~= 'table' then
+---@param text_edits? rustaceanvim.lsp.TextEdit[]
+function M.snippet_text_edits_to_text_edits(text_edits)
+  if type(text_edits) ~= 'table' then
     return
   end
-  for _, value in ipairs(spe) do
+  for _, value in ipairs(text_edits) do
     if value.newText and value.insertTextFormat then
       value.newText = parse_snippet(value.newText)
     end

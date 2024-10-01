@@ -22,6 +22,7 @@ local function is_notify_enabled_for(health)
 end
 
 ---@param result rustaceanvim.internal.RAInitializedStatus
+---@param ctx lsp.HandlerContext
 function M.handler(_, result, ctx, _)
   -- quiescent means the full set of results is ready.
   if not result or not result.quiescent then

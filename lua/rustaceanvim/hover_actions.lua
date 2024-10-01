@@ -59,6 +59,7 @@ local function parse_commands()
   return prompt
 end
 
+---@param ctx lsp.HandlerContext
 function M.handler(_, result, ctx)
   if not (result and result.contents) then
     -- return { 'No information available' }
