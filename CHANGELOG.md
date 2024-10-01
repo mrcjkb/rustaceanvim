@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.11.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.10.1...v5.11.0) (2024-10-01)
+
+
+### Features
+
+* **lsp:** preserve cursor position for move_item command ([#532](https://github.com/mrcjkb/rustaceanvim/issues/532)) ([a07bb0d](https://github.com/mrcjkb/rustaceanvim/commit/a07bb0d256d1f9693ae8fb96dbcc5350b18f2978))
+
 ## [5.10.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.10.0...v5.10.1) (2024-09-27)
 
 
