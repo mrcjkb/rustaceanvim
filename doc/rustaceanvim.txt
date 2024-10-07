@@ -262,7 +262,7 @@ rustaceanvim.crate-graph.Opts                    *rustaceanvim.crate-graph.Opts*
         {enabled_graphviz_backends?}  (string[])
                                                   Override the enabled graphviz backends list, used for input validation and autocompletion.
         {pipe?}                       (string)
-                                                  Overide the pipe symbol in the shell command.
+                                                  Override the pipe symbol in the shell command.
                                                   Useful if using a shell that is not supported by this plugin.
 
 

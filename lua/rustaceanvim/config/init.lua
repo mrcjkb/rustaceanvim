@@ -150,7 +150,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---Override the enabled graphviz backends list, used for input validation and autocompletion.
 ---@field enabled_graphviz_backends? string[]
 ---
----Overide the pipe symbol in the shell command.
+---Override the pipe symbol in the shell command.
 ---Useful if using a shell that is not supported by this plugin.
 ---@field pipe? string
 
