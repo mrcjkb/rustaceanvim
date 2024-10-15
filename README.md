@@ -818,6 +818,7 @@ the `server.default_settings` will be used.
 
 [^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
       and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/manual.html#configuration).
+      Note that JSON5 is currently not supported by Neovim.
 
 Another option is to use `:h exrc`.
 
