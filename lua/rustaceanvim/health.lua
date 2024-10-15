@@ -148,6 +148,25 @@ local function check_tree_sitter()
   end
 end
 
+local function check_json_config()
+  local json = require('rustaceanvim.config.json')
+  if json.is_json_config_loaded() then
+    local errors = json.get_errors()
+    if #errors > 0 then
+      h.warn('.vscode/settings.json failed to load.')
+      vim.iter(errors):each(h.error)
+      return
+    end
+    local warnings = json.get_warnings()
+    if #warnings == 0 then
+      h.ok('.vscode/settings.json loaded without errors.')
+    else
+      h.warn('.vscode/settings.json loaded with warnings.')
+      vim.iter(warnings):each(h.warn)
+    end
+  end
+end
+
 function health.check()
   local types = require('rustaceanvim.types.internal')
   local config = require('rustaceanvim.config.internal')
@@ -281,6 +300,7 @@ function health.check()
   check_config(config)
   check_for_conflicts()
   check_tree_sitter()
+  check_json_config()
 end
 
 return health
