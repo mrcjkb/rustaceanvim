@@ -6,6 +6,7 @@ local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
+local targets = require('rustaceanvim.lsp.targets')
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -249,11 +250,55 @@ M.reload_settings = function(bufnr)
   return clients
 end
 
+---Updates the target architecture setting for the LSP client associated with the given buffer.
+---@param bufnr? number The buffer number, defaults to the current buffer
+---@param target? string The target architecture. Defaults to the current buffer's target if not provided.
+M.set_target_arch = function(bufnr, target)
+  local function update_target(client)
+    -- Get the current target from the client's settings
+    local current_target = client.config.settings
+      and client.config.settings['rust-analyzer']
+      and client.config.settings['rust-analyzer'].cargo
+      and client.config.settings['rust-analyzer'].cargo.target
+
+    if not target then
+      if not current_target then
+        vim.notify('Using default OS target architecture.', vim.log.levels.INFO)
+      else
+        vim.notify('Target architecture is already set to the default OS target.', vim.log.levels.INFO)
+      end
+      return
+    end
+
+    if targets.target_is_valid_rustc_target(target) then
+      client.settings['rust-analyzer'].cargo.target = target
+      client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+      vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
+      return
+    else
+      -- TODO: Log error when logging is implemented
+      vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
+      return
+    end
+  end
+
+  M.restart_impl(bufnr, update_target)
+end
+
 ---Restart the LSP client.
 ---Fails silently if the buffer's filetype is not one of the filetypes specified in the config.
 ---@param bufnr? number The buffer number (optional), defaults to the current buffer
 ---@return number|nil client_id The LSP client ID after restart
 M.restart = function(bufnr)
+  M.restart_impl(bufnr)
+end
+
+---LSP restart ininer implementations
+---@param bufnr? number
+---@param set_target_callback? function(client) Optional callback to run for each client before restarting.
+---@return number|nil client_id
+M.restart_impl = function(bufnr, set_target_callback)
+  -- TODO: handle case for when requested target change is the same as client active active so we don't restart clients unnecessarily
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = M.stop(bufnr)
   local timer, _, _ = vim.uv.new_timer()
@@ -268,6 +313,10 @@ M.restart = function(bufnr)
       if client:is_stopped() then
         stopped_client_count = stopped_client_count + 1
         vim.schedule(function()
+          -- Execute the callback, if provided, for additional actions before restarting
+          if set_target_callback then
+            set_target_callback(client)
+          end
           M.start(bufnr)
         end)
       end
@@ -290,11 +339,13 @@ local RustAnalyzerCmd = {
   stop = 'stop',
   restart = 'restart',
   reload_settings = 'reloadSettings',
+  target = 'target',
 }
 
 local function rust_analyzer_cmd(opts)
   local fargs = opts.fargs
   local cmd = fargs[1]
+  local arch = fargs[2]
   ---@cast cmd RustAnalyzerCmd
   if cmd == RustAnalyzerCmd.start then
     M.start()
@@ -304,12 +355,14 @@ local function rust_analyzer_cmd(opts)
     M.restart()
   elseif cmd == RustAnalyzerCmd.reload_settings then
     M.reload_settings()
+  elseif cmd == RustAnalyzerCmd.target then
+    M.set_target_arch(nil, arch)
   end
 end
 
 vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
   nargs = '+',
-  desc = 'Starts or stops the rust-analyzer LSP client',
+  desc = 'Starts, stops the rust-analyzer LSP client or change target',
   complete = function(arg_lead, cmdline, _)
     local clients = rust_analyzer.get_active_rustaceanvim_clients()
     ---@type RustAnalyzerCmd[]
