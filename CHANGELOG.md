@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.12.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.11.0...v5.12.0) (2024-10-15)
+
+
+### Features
+
+* **config:** health check reports for .vscode/settings.json ([#539](https://github.com/mrcjkb/rustaceanvim/issues/539)) ([cb31013](https://github.com/mrcjkb/rustaceanvim/commit/cb31013a983faec6339d3bf6aad782da8fc7e111))
+
 ## [5.11.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.10.1...v5.11.0) (2024-10-01)
 
 
