@@ -101,7 +101,7 @@ end
 ---@param on_valid function(rustc_targets)
 local function validate_rustc_target(on_valid)
   local on_exit = function(result)
-    -- Use cache if available.
+    -- use cache if available.
     if rustc_targets_cache then
       return on_valid(rustc_targets_cache)
     end
@@ -122,7 +122,7 @@ local function validate_rustc_target(on_valid)
   vim.system({ 'rustc', '--print', 'target-list' }, { text = true }, on_exit)
 end
 
----LSP restart ininer implementations
+---LSP restart internal implementations
 ---@param bufnr? number
 ---@param callback? function(client) Optional callback to run for each client before restarting.
 ---@return number|nil client_id
