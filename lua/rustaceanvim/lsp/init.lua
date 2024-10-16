@@ -7,6 +7,7 @@ local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
 
+---Local rustc targets cache
 local rustc_targets_cache = nil
 
 local function override_apply_text_edits()
