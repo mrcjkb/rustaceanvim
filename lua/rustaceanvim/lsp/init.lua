@@ -94,6 +94,45 @@ local function configure_file_watcher(server_cfg)
   end
 end
 
+---LSP restart ininer implementations
+---@param bufnr? number
+---@param set_target_callback? function(client) Optional callback to run for each client before restarting.
+---@return number|nil client_id
+local function restart(bufnr, set_target_callback)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  local clients = M.stop(bufnr)
+  local timer, _, _ = vim.uv.new_timer()
+  if not timer then
+    -- TODO: Log error when logging is implemented
+    return
+  end
+  local attempts_to_live = 50
+  local stopped_client_count = 0
+  timer:start(200, 100, function()
+    for _, client in ipairs(clients) do
+      if client:is_stopped() then
+        stopped_client_count = stopped_client_count + 1
+        vim.schedule(function()
+          -- Execute the callback, if provided, for additional actions before restarting
+          if set_target_callback then
+            set_target_callback(client)
+          end
+          M.start(bufnr)
+        end)
+      end
+    end
+    if stopped_client_count >= #clients then
+      timer:stop()
+      attempts_to_live = 0
+    elseif attempts_to_live <= 0 then
+      vim.notify('rustaceanvim.lsp: Could not restart all LSP clients.', vim.log.levels.ERROR)
+      timer:stop()
+      attempts_to_live = 0
+    end
+    attempts_to_live = attempts_to_live - 1
+  end)
+end
+
 ---@class rustaceanvim.lsp.StartConfig: rustaceanvim.lsp.ClientConfig
 ---@field root_dir string | nil
 ---@field init_options? table
@@ -256,10 +295,7 @@ end
 M.set_target_arch = function(bufnr, target)
   local function update_target(client)
     -- Get the current target from the client's settings
-    local current_target = client.config.settings
-      and client.config.settings['rust-analyzer']
-      and client.config.settings['rust-analyzer'].cargo
-      and client.config.settings['rust-analyzer'].cargo.target
+    local current_target = vim.tbl_get(client, 'config', 'settings', 'rust-analyzer', 'cargo', 'target')
 
     if not target then
       if not current_target then
@@ -276,13 +312,12 @@ M.set_target_arch = function(bufnr, target)
       vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
       return
     else
-      -- TODO: Log error when logging is implemented
       vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
       return
     end
   end
 
-  M.restart_impl(bufnr, update_target)
+  restart(bufnr, update_target)
 end
 
 ---Restart the LSP client.
@@ -290,47 +325,7 @@ end
 ---@param bufnr? number The buffer number (optional), defaults to the current buffer
 ---@return number|nil client_id The LSP client ID after restart
 M.restart = function(bufnr)
-  M.restart_impl(bufnr)
-end
-
----LSP restart ininer implementations
----@param bufnr? number
----@param set_target_callback? function(client) Optional callback to run for each client before restarting.
----@return number|nil client_id
-M.restart_impl = function(bufnr, set_target_callback)
-  -- TODO: handle case for when requested target change is the same as client active active so we don't restart clients unnecessarily
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = M.stop(bufnr)
-  local timer, _, _ = vim.uv.new_timer()
-  if not timer then
-    -- TODO: Log error when logging is implemented
-    return
-  end
-  local attempts_to_live = 50
-  local stopped_client_count = 0
-  timer:start(200, 100, function()
-    for _, client in ipairs(clients) do
-      if client:is_stopped() then
-        stopped_client_count = stopped_client_count + 1
-        vim.schedule(function()
-          -- Execute the callback, if provided, for additional actions before restarting
-          if set_target_callback then
-            set_target_callback(client)
-          end
-          M.start(bufnr)
-        end)
-      end
-    end
-    if stopped_client_count >= #clients then
-      timer:stop()
-      attempts_to_live = 0
-    elseif attempts_to_live <= 0 then
-      vim.notify('rustaceanvim.lsp: Could not restart all LSP clients.', vim.log.levels.ERROR)
-      timer:stop()
-      attempts_to_live = 0
-    end
-    attempts_to_live = attempts_to_live - 1
-  end)
+  M.restart(bufnr)
 end
 
 ---@enum RustAnalyzerCmd
@@ -362,7 +357,7 @@ end
 
 vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
   nargs = '+',
-  desc = 'Starts, stops the rust-analyzer LSP client or change target',
+  desc = 'Starts, stops the rust-analyzer LSP client or changes the target',
   complete = function(arg_lead, cmdline, _)
     local clients = rust_analyzer.get_active_rustaceanvim_clients()
     ---@type RustAnalyzerCmd[]
