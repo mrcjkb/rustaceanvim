@@ -6,7 +6,8 @@ local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
-local targets = require('rustaceanvim.lsp.targets')
+
+local rustc_targets_cache = nil
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -92,6 +93,31 @@ local function configure_file_watcher(server_cfg)
       },
     })
   end
+end
+
+---Handles retrieving rustc target archs and running on_valid callback
+---to perform certain actions using the retrieved targets.
+---@param on_valid function(rustc_targets)
+local function validate_rustc_target(on_valid)
+  if rustc_targets_cache then
+    return rustc_targets_cache
+  end
+
+  local on_exit = function(result)
+    if result.code ~= 0 then
+      error('Failed to retrieve rustc targets: ' .. result.stderr)
+    end
+
+    rustc_targets_cache = {}
+    for line in result.stdout:gmatch('[^\r\n]+') do
+      rustc_targets_cache[line] = true
+    end
+
+    return on_valid(rustc_targets_cache)
+  end
+
+  -- Call vim.system with on_exit callback to avoid blocking Neovim's event loop.
+  vim.system({ 'rustc', '--print', 'target-list' }, { text = true }, on_exit)
 end
 
 ---LSP restart ininer implementations
@@ -291,10 +317,10 @@ end
 
 ---Updates the target architecture setting for the LSP client associated with the given buffer.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param target? string The target architecture. Defaults to the current buffer's target if not provided.
+---@param target? string The target architecture. Defaults to nil(the current buffer's target if not provided).
 M.set_target_arch = function(bufnr, target)
-  local function update_target(client)
-    -- Get the current target from the client's settings
+  local on_update_target = function(client)
+    -- Get current user's rust-analyzer target
     local current_target = vim.tbl_get(client, 'config', 'settings', 'rust-analyzer', 'cargo', 'target')
 
     if not target then
@@ -306,18 +332,25 @@ M.set_target_arch = function(bufnr, target)
       return
     end
 
-    if targets.target_is_valid_rustc_target(target) then
-      client.settings['rust-analyzer'].cargo.target = target
-      client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-      vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
-      return
-    else
-      vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
-      return
+    ---on_valid callback handles the main functionality in changing system's arch
+    ---by checking if rustc targets contains user's target or if user's provided target is nil.
+    ---Notifies user on unrecognized target arch request
+    local on_valid = function(rustc_tgs)
+      if target == nil or rustc_tgs[target] then
+        client.settings['rust-analyzer'].cargo.target = target
+        client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+        vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
+        return
+      else
+        vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
+        return
+      end
     end
+
+    return validate_rustc_target(on_valid)
   end
 
-  restart(bufnr, update_target)
+  restart(bufnr, on_update_target)
 end
 
 ---Restart the LSP client.
