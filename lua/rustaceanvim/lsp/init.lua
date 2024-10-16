@@ -96,9 +96,9 @@ end
 
 ---LSP restart ininer implementations
 ---@param bufnr? number
----@param set_target_callback? function(client) Optional callback to run for each client before restarting.
+---@param callback? function(client) Optional callback to run for each client before restarting.
 ---@return number|nil client_id
-local function restart(bufnr, set_target_callback)
+local function restart(bufnr, callback)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = M.stop(bufnr)
   local timer, _, _ = vim.uv.new_timer()
@@ -114,8 +114,8 @@ local function restart(bufnr, set_target_callback)
         stopped_client_count = stopped_client_count + 1
         vim.schedule(function()
           -- Execute the callback, if provided, for additional actions before restarting
-          if set_target_callback then
-            set_target_callback(client)
+          if callback then
+            callback(client)
           end
           M.start(bufnr)
         end)
