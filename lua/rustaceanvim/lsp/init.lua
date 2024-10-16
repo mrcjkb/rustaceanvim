@@ -100,11 +100,12 @@ end
 ---to perform certain actions using the retrieved targets.
 ---@param on_valid function(rustc_targets)
 local function validate_rustc_target(on_valid)
-  if rustc_targets_cache then
-    return rustc_targets_cache
-  end
-
   local on_exit = function(result)
+    -- Use cache if available.
+    if rustc_targets_cache then
+      return on_valid(rustc_targets_cache)
+    end
+
     if result.code ~= 0 then
       error('Failed to retrieve rustc targets: ' .. result.stderr)
     end
