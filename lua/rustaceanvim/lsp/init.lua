@@ -103,7 +103,7 @@ local function restart(bufnr, set_target_callback)
   local clients = M.stop(bufnr)
   local timer, _, _ = vim.uv.new_timer()
   if not timer then
-    -- TODO: Log error when logging is implemented
+    vim.notify('Failed to init timer for LSP client restart.', vim.log.levels.ERROR)
     return
   end
   local attempts_to_live = 50
