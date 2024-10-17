@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.13.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.12.0...v5.13.0) (2024-10-17)
+
+
+### Features
+
+* **lsp:** target architecture switching command for `RustAnalyzer` ([#541](https://github.com/mrcjkb/rustaceanvim/issues/541)) ([95715b2](https://github.com/mrcjkb/rustaceanvim/commit/95715b28c87b4cb3a8a38e063e2aa5cd3a8024d7))
+
+
+### Bug Fixes
+
+* remove corrupt file that breaks git clone on windows ([ccff140](https://github.com/mrcjkb/rustaceanvim/commit/ccff14065096c8978c431944f0f0db16db952c7b))
+
 ## [5.12.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.11.0...v5.12.0) (2024-10-15)
 
 
