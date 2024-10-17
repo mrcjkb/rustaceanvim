@@ -16,6 +16,11 @@
 --- ':RustAnalyzer stop' - Stop the LSP client.
 --- ':RustAnalyzer restart' - Restart the LSP client.
 --- ':RustAnalyzer reloadSettings' - Reload settings for the LSP client.
+--- ':RustAnalyzer target <target_arch>' - Set the target architecture for the LSP client.
+
+--- The ':RustAnalyzer target' command can take a valid rustc target,
+--- such as 'wasm32-unknown-unknown', or it can be left empty to set the LSP client
+--- to use the default target architecture for the operating system.
 ---
 ---The ':RustLsp[!]' command is available after the LSP client has initialized.
 ---It accepts the following subcommands:
