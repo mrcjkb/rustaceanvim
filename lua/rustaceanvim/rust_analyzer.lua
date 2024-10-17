@@ -55,7 +55,7 @@ end
 
 ---@param file_path string Search for clients with a root_dir matching this file path
 ---@param method string LSP method name
----@return lsp.Client|nil
+---@return vim.lsp.Client|nil
 M.get_client_for_file = function(file_path, method)
   for _, client in ipairs(M.get_active_rustaceanvim_clients(nil, { method = method })) do
     local root_dir = client.config.root_dir
