@@ -126,12 +126,12 @@ local function with_rustc_target_architectures(callback)
 end
 
 ---LSP restart internal implementations
----@param bufnr? number
+---@param target? string Optional target architecture. Clients with target won't be restarted.
 ---@param callback? fun(client: vim.lsp.Client) Optional callback to run for each client before restarting.
 ---@return number|nil client_id
-local function restart(bufnr, callback)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = M.stop(bufnr)
+local function restart(target, callback)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local clients = M.stop(bufnr, target)
   local timer, _, _ = vim.uv.new_timer()
   if not timer then
     vim.notify('Failed to init timer for LSP client restart.', vim.log.levels.ERROR)
@@ -285,10 +285,11 @@ end
 
 ---Stop the LSP client.
 ---@param bufnr? number The buffer number, defaults to the current buffer
+---@param target? string Optional target architecture. Clients with target won't be stopped.
 ---@return vim.lsp.Client[] clients A list of clients that will be stopped
-M.stop = function(bufnr)
+M.stop = function(bufnr, target)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, { rustc_target = target })
   vim.lsp.stop_client(clients)
   if type(clients) == 'table' then
     ---@cast clients vim.lsp.Client[]
@@ -303,10 +304,9 @@ M.stop = function(bufnr)
 end
 
 ---Reload settings for the LSP client.
----@param bufnr? number The buffer number, defaults to the current buffer
 ---@return vim.lsp.Client[] clients A list of clients that will be have their settings reloaded
-M.reload_settings = function(bufnr)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
+M.reload_settings = function()
+  local bufnr = vim.api.nvim_get_current_buf()
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   ---@cast clients vim.lsp.Client[]
   for _, client in ipairs(clients) do
@@ -320,16 +320,14 @@ M.reload_settings = function(bufnr)
   return clients
 end
 
----Updates the target architecture setting for the LSP client associated with the given buffer.
----@param bufnr? number The buffer number, defaults to the current buffer
----@param target? string The target architecture. Defaults to nil(the current buffer's target if not provided).
-M.set_target_arch = function(bufnr, target)
+---Updates LSP client target architecture setting.
+---@param target? string The target architecture, defaults to nil(the current buffer's target if not provided).
+M.set_target_arch = function(target)
   ---@param client vim.lsp.Client
-  restart(bufnr, function(client)
-    -- Get current user's rust-analyzer target
-    local current_target = vim.tbl_get(client, 'config', 'settings', 'rust-analyzer', 'cargo', 'target')
-
+  restart(target, function(client)
     if not target then
+      -- Get current user's rust-analyzer target
+      local current_target = vim.tbl_get(client, 'config', 'settings', 'rust-analyzer', 'cargo', 'target')
       if not current_target then
         vim.notify('Using default OS target architecture.', vim.log.levels.INFO)
       else
@@ -337,7 +335,6 @@ M.set_target_arch = function(bufnr, target)
       end
       return
     end
-
     with_rustc_target_architectures(function(rustc_targets)
       if target == nil or rustc_targets[target] then
         client.settings['rust-analyzer'].cargo.target = target
@@ -354,10 +351,9 @@ end
 
 ---Restart the LSP client.
 ---Fails silently if the buffer's filetype is not one of the filetypes specified in the config.
----@param bufnr? number The buffer number (optional), defaults to the current buffer
 ---@return number|nil client_id The LSP client ID after restart
-M.restart = function(bufnr)
-  M.restart(bufnr)
+M.restart = function()
+  return restart()
 end
 
 ---@enum RustAnalyzerCmd
@@ -372,7 +368,6 @@ local RustAnalyzerCmd = {
 local function rust_analyzer_cmd(opts)
   local fargs = opts.fargs
   local cmd = fargs[1]
-  local arch = fargs[2]
   ---@cast cmd RustAnalyzerCmd
   if cmd == RustAnalyzerCmd.start then
     M.start()
@@ -383,7 +378,8 @@ local function rust_analyzer_cmd(opts)
   elseif cmd == RustAnalyzerCmd.reload_settings then
     M.reload_settings()
   elseif cmd == RustAnalyzerCmd.target then
-    M.set_target_arch(nil, arch)
+    local target_arch = fargs[2]
+    M.set_target_arch(target_arch)
   end
 end
 
