@@ -7,9 +7,6 @@ local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
 
----Local rustc targets cache
-local rustc_targets_cache = nil
-
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
   ---@diagnostic disable-next-line
@@ -96,42 +93,13 @@ local function configure_file_watcher(server_cfg)
   end
 end
 
----Handles retrieving rustc target architectures and running the passed in callback
----to perform certain actions using the retrieved targets.
----@param callback fun(targets: string[])
-local function with_rustc_target_architectures(callback)
-  if rustc_targets_cache then
-    return callback(rustc_targets_cache)
-  end
-  vim.system(
-    { 'rustc', '--print', 'target-list' },
-    { text = true },
-    ---@param result vim.SystemCompleted
-    function(result)
-      if result.code ~= 0 then
-        error('Failed to retrieve rustc targets: ' .. result.stderr)
-      end
-      rustc_targets_cache = vim.iter(result.stdout:gmatch('[^\r\n]+')):fold(
-        {},
-        ---@param acc table<string, boolean>
-        ---@param target string
-        function(acc, target)
-          acc[target] = true
-          return acc
-        end
-      )
-      return callback(rustc_targets_cache)
-    end
-  )
-end
-
 ---LSP restart internal implementations
----@param target? string|nil Optional target architecture. Clients with target won't be restarted.
+---@param exclude_rustc_target? string Optional target architecture. Clients with target won't be restarted.
 ---@param callback? fun(client: vim.lsp.Client) Optional callback to run for each client before restarting.
 ---@return number|nil client_id
-local function restart(target, callback)
+local function restart(exclude_rustc_target, callback)
   local bufnr = vim.api.nvim_get_current_buf()
-  local clients = M.stop(bufnr, target)
+  local clients = M.stop(bufnr, exclude_rustc_target)
   local timer, _, _ = vim.uv.new_timer()
   if not timer then
     vim.notify('Failed to init timer for LSP client restart.', vim.log.levels.ERROR)
@@ -285,11 +253,11 @@ end
 
 ---Stop the LSP client.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param target_arch? string Optional target architecture. Clients with target won't be stopped.
+---@param exclude_rustc_target? string Optional target architecture. Clients with target won't be stopped.
 ---@return vim.lsp.Client[] clients A list of clients that will be stopped
-M.stop = function(bufnr, target_arch)
+M.stop = function(bufnr, exclude_rustc_target)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, { rustc_target = target_arch })
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, { exclude_rustc_target = exclude_rustc_target })
   vim.lsp.stop_client(clients)
   if type(clients) == 'table' then
     ---@cast clients vim.lsp.Client[]
@@ -321,31 +289,22 @@ M.reload_settings = function()
 end
 
 ---Updates LSP client target architecture setting.
----@param target_arch? string The target architecture, defaults to nil(the current buffer's target if not provided).
+---@param target_arch? string string The target architecture, defaults to the current buffer's target if not provided.
 M.set_target_arch = function(target_arch)
+  -- Load target architectures if not already available
+  if not rust_analyzer.rustc_target_archs or rust_analyzer.os_rustc_target then
+    rust_analyzer.load_target_archs()
+  end
+  target_arch = target_arch or rust_analyzer.os_rustc_target
+  if not rust_analyzer.rustc_target_archs[target_arch] then
+    vim.notify('Invalid target architecture provided: ' .. tostring(target_arch), vim.log.levels.ERROR)
+    return
+  end
   ---@param client vim.lsp.Client
   restart(target_arch, function(client)
-    if not target_arch then
-      -- Get current user's rust-analyzer target
-      local current_target = vim.tbl_get(client, 'config', 'settings', 'rust-analyzer', 'cargo', 'target')
-      if not current_target then
-        vim.notify('Using default OS target architecture.', vim.log.levels.INFO)
-      else
-        vim.notify('Target architecture is already set to the default OS target.', vim.log.levels.INFO)
-      end
-      return
-    end
-    with_rustc_target_architectures(function(rustc_targets)
-      if target_arch == nil or rustc_targets[target_arch] then
-        client.settings['rust-analyzer'].cargo.target = target_arch
-        client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-        vim.notify('Target architecture updated successfully to: ' .. target_arch, vim.log.levels.INFO)
-        return
-      else
-        vim.notify('Invalid target architecture provided: ' .. tostring(target_arch), vim.log.levels.ERROR)
-        return
-      end
-    end)
+    client.settings['rust-analyzer'].cargo.target = target_arch
+    client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+    vim.notify('Target architecture updated successfully to: ' .. target_arch, vim.log.levels.INFO)
   end)
 end
 
@@ -395,6 +354,13 @@ vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
         return command:find(arg_lead) ~= nil
       end, commands)
     end
+  end,
+})
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  once = true,
+  callback = function()
+    rust_analyzer.load_target_archs()
   end,
 })
 
