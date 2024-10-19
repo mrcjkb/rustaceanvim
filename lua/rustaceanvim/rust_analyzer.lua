@@ -5,12 +5,12 @@ local os = require('rustaceanvim.os')
 ---@class rustaceanvim.rust-analyzer.ClientAdapter
 local M = {}
 
----@class RustaceanvimFilter
+---@class GetClientFilter
 ---@field filter? vim.lsp.get_clients.Filter
 ---@field rustc_target? string Optional cargo target to filter rust-analyzer clients
 
 ---@param bufnr number | nil 0 for the current buffer, `nil` for no buffer filter
----@param filter? RustaceanvimFilter
+---@param filter? GetClientFilter
 ---@return vim.lsp.Client[]
 M.get_active_rustaceanvim_clients = function(bufnr, filter)
   ---@type vim.lsp.get_clients.Filter
@@ -21,20 +21,16 @@ M.get_active_rustaceanvim_clients = function(bufnr, filter)
     client_filter.bufnr = bufnr
   end
   local clients = vim.lsp.get_clients(client_filter)
-  -- If a rustc_target is specified, filter the clients further
-  if filter and filter.rustc_target then
-    clients = vim.tbl_filter(function(client)
-      if client.config and client.config.settings then
-        local rust_settings = client.config.settings['rust-analyzer']
-        if rust_settings and rust_settings.cargo and rust_settings.cargo.target then
-          -- Exclude the client if we ever reach here
-          return rust_settings.cargo.target ~= filter.rustc_target
-        end
-      end
-      -- Include the client if we ever reach here
-      return true
-    end, clients)
-  end
+  clients = vim.tbl_filter(function(client)
+    local rust_settings = client.config and client.config.settings and client.config.settings['rust-analyzer']
+    local cargo_target = rust_settings and rust_settings.cargo and rust_settings.cargo.target
+    -- If no filter is provided or filter.rustc_target is nil, include the client only if cargo_target exists
+    if not filter or not filter.rustc_target then
+      return cargo_target ~= nil
+    end
+    -- Include the client if cargo_target differs from filter.rustc_target
+    return cargo_target ~= filter.rustc_target
+  end, clients)
   return clients
 end
 
