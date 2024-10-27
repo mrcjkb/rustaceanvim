@@ -294,7 +294,7 @@ M.reload_settings = function(bufnr)
   return clients
 end
 
----Updates LSP client target architecture setting.
+---Updates the target architecture setting for the LSP client associated with the given buffer.
 ---@param bufnr? number The buffer number, defaults to the current buffer
 ---@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
 M.set_target_arch = function(bufnr, exclude_rustc_target)
@@ -304,10 +304,10 @@ M.set_target_arch = function(bufnr, exclude_rustc_target)
       if rustc_targets[exclude_rustc_target] then
         client.settings['rust-analyzer'].cargo.target = exclude_rustc_target
         client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-        vim.notify('target architecture updated successfully to: ' .. exclude_rustc_target, vim.log.levels.info)
+        vim.notify('Target architecture updated successfully to: ' .. exclude_rustc_target, vim.log.levels.INFO)
         return
       else
-        vim.notify('invalid target architecture provided: ' .. tostring(exclude_rustc_target), vim.log.levels.error)
+        vim.notify('Invalid target architecture provided: ' .. tostring(exclude_rustc_target), vim.log.levels.ERROR)
         return
       end
     end)

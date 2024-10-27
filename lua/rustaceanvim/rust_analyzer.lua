@@ -92,6 +92,7 @@ M.get_client_for_file = function(file_path, method)
     end
   end
 end
+
 ---@param method string LSP method name
 ---@param params table|nil Parameters to send to the server
 M.notify = function(method, params)
