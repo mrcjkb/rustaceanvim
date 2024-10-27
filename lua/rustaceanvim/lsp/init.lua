@@ -96,7 +96,7 @@ end
 
 ---LSP restart internal implementations
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+---@param exclude_rustc_target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
 ---@param callback? fun(client: vim.lsp.Client) Optional callback to run for each client before restarting.
 ---@return number|nil client_id
 local function restart(bufnr, exclude_rustc_target, callback)
@@ -255,7 +255,7 @@ end
 
 ---Stop the LSP client.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+---@param exclude_rustc_target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
 ---@return vim.lsp.Client[] clients A list of clients that will be stopped
 M.stop = function(bufnr, exclude_rustc_target)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
@@ -296,7 +296,7 @@ end
 
 ---Updates the target architecture setting for the LSP client associated with the given buffer.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+---@param exclude_rustc_target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
 M.set_target_arch = function(bufnr, exclude_rustc_target)
   ---@param client vim.lsp.Client
   restart(bufnr, exclude_rustc_target, function(client)
