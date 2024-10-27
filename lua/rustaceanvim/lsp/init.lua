@@ -7,6 +7,9 @@ local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
 
+---Local rustc targets cache
+local rustc_targets_cache = nil
+
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
   ---@diagnostic disable-next-line
@@ -93,8 +96,37 @@ local function configure_file_watcher(server_cfg)
   end
 end
 
+---Handles retrieving rustc target architectures and running the passed in callback
+---to perform certain actions using the retrieved targets.
+---@param callback fun(targets: string[])
+local function with_rustc_target_architectures(callback)
+  if rustc_targets_cache then
+    return callback(rustc_targets_cache)
+  end
+  vim.system(
+    { 'rustc', '--print', 'target-list' },
+    { text = true },
+    ---@param result vim.SystemCompleted
+    function(result)
+      if result.code ~= 0 then
+        error('Failed to retrieve rustc targets: ' .. result.stderr)
+      end
+      rustc_targets_cache = vim.iter(result.stdout:gmatch('[^\r\n]+')):fold(
+        {},
+        ---@param acc table<string, boolean>
+        ---@param target string
+        function(acc, target)
+          acc[target] = true
+          return acc
+        end
+      )
+      return callback(rustc_targets_cache)
+    end
+  )
+end
+
 ---LSP restart internal implementations
----@param exclude_rustc_target? string Optional target architecture. Clients with target won't be restarted.
+---@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
 ---@param callback? fun(client: vim.lsp.Client) Optional callback to run for each client before restarting.
 ---@return number|nil client_id
 local function restart(exclude_rustc_target, callback)
@@ -253,11 +285,14 @@ end
 
 ---Stop the LSP client.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param exclude_rustc_target? string Optional target architecture. Clients with target won't be stopped.
+---@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
 ---@return vim.lsp.Client[] clients A list of clients that will be stopped
 M.stop = function(bufnr, exclude_rustc_target)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, { exclude_rustc_target = exclude_rustc_target })
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(
+    bufnr,
+    { exclude_rustc_target = exclude_rustc_target or DEFAULT_RUSTC_TARGET }
+  )
   vim.lsp.stop_client(clients)
   if type(clients) == 'table' then
     ---@cast clients vim.lsp.Client[]
@@ -289,22 +324,21 @@ M.reload_settings = function()
 end
 
 ---Updates LSP client target architecture setting.
----@param target_arch? string string The target architecture, defaults to the current buffer's target if not provided.
-M.set_target_arch = function(target_arch)
-  -- Load target architectures if not already available
-  if not rust_analyzer.rustc_target_archs or rust_analyzer.os_rustc_target then
-    rust_analyzer.load_target_archs()
-  end
-  target_arch = target_arch or rust_analyzer.os_rustc_target
-  if not rust_analyzer.rustc_target_archs[target_arch] then
-    vim.notify('Invalid target architecture provided: ' .. tostring(target_arch), vim.log.levels.ERROR)
-    return
-  end
+---@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+M.set_target_arch = function(exclude_rustc_target)
   ---@param client vim.lsp.Client
-  restart(target_arch, function(client)
-    client.settings['rust-analyzer'].cargo.target = target_arch
-    client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-    vim.notify('Target architecture updated successfully to: ' .. target_arch, vim.log.levels.INFO)
+  restart(exclude_rustc_target, function(client)
+    with_rustc_target_architectures(function(rustc_targets)
+      if rustc_targets[exclude_rustc_target] then
+        client.settings['rust-analyzer'].cargo.target = exclude_rustc_target
+        client.notify('workspace/didchangeconfiguration', { settings = client.config.settings })
+        vim.notify('target architecture updated successfully to: ' .. exclude_rustc_target, vim.log.levels.info)
+        return
+      else
+        vim.notify('invalid target architecture provided: ' .. tostring(exclude_rustc_target), vim.log.levels.error)
+        return
+      end
+    end)
   end)
 end
 
@@ -354,13 +388,6 @@ vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
         return command:find(arg_lead) ~= nil
       end, commands)
     end
-  end,
-})
-
-vim.api.nvim_create_autocmd('BufEnter', {
-  once = true,
-  callback = function()
-    rust_analyzer.load_target_archs()
   end,
 })
 

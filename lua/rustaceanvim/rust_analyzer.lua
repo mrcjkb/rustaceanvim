@@ -5,20 +5,16 @@ local os = require('rustaceanvim.os')
 ---@class rustaceanvim.rust-analyzer.ClientAdapter
 local M = {}
 
----Local OS rustc target architecture
-M.os_rustc_target_arch = nil
----Local rustc target architectures
-M.rustc_target_archs = nil
+--- Default target value for rustc when no specific target is provided.
+--- Used as a fallback to let rustc determine the appropriate target based on the OS.
+DEFAULT_RUSTC_TARGET = 'OS'
 
-local load_os_rustc_target_arch = function()
-  vim.system(
-    { 'rustc', '-Vv' },
-    { text = true },
-    ---@param result vim.SystemCompleted
-    function(result)
-      if result.code ~= 0 then
-        error('Failed to retrieve OS rustc target: ' .. result.stderr)
-      end
+---Local rustc targets cache
+local rustc_targets_cache = nil
+
+M.load_os_rustc_target = function()
+  vim.system({ 'rustc', '-Vv' }, { text = true }, function(result)
+    if result.code == 0 then
       for line in result.stdout:gmatch('[^\r\n]+') do
         local host = line:match('^host:%s*(.+)$')
         if host then
@@ -27,10 +23,16 @@ local load_os_rustc_target_arch = function()
         end
       end
     end
-  )
+  end)
 end
 
-local load_rustc_target_archs = function()
+---Handles retrieving rustc target architectures and running the passed in callback
+---to perform certain actions using the retrieved targets.
+---@param callback fun(targets: string[])
+M.with_rustc_target_architectures = function(callback)
+  if rustc_targets_cache then
+    return callback(rustc_targets_cache)
+  end
   vim.system(
     { 'rustc', '--print', 'target-list' },
     { text = true },
@@ -39,21 +41,22 @@ local load_rustc_target_archs = function()
       if result.code ~= 0 then
         error('Failed to retrieve rustc targets: ' .. result.stderr)
       end
-      M.rustc_target_archs = vim.iter(result.stdout:gmatch('[^\r\n]+')):fold({}, function(acc, target)
-        acc[target] = true
-        return acc
-      end)
+      rustc_targets_cache = vim.iter(result.stdout:gmatch('[^\r\n]+')):fold(
+        {},
+        ---@param acc table<string, boolean>
+        ---@param target string
+        function(acc, target)
+          acc[target] = true
+          return acc
+        end
+      )
+      return callback(rustc_targets_cache)
     end
   )
 end
 
-M.load_target_archs = function()
-  load_os_rustc_target_arch()
-  load_rustc_target_archs()
-end
-
 ---@class rustaceanvim.lsp.get_clients.Filter: vim.lsp.get_clients.Filter
----@field exclude_rustc_target? string Optional cargo target to filter rust-analyzer clients
+---@field exclude_rustc_target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
 
 ---@param bufnr number | nil 0 for the current buffer, `nil` for no buffer filter
 ---@param filter? rustaceanvim.lsp.get_clients.Filter
@@ -69,16 +72,14 @@ M.get_active_rustaceanvim_clients = function(bufnr, filter)
   local clients = vim.lsp.get_clients(client_filter)
   if filter and filter.exclude_rustc_target then
     clients = vim.tbl_filter(function(client)
-      --Rust analyzer uses nil for default OS target arch in config if not explicitly defined
-      local cargo_target_or_default = vim.tbl_get(client, 'config', 'settings', 'rust-analyzer', 'cargo', 'target')
-        or M.os_rustc_target
-      if cargo_target_or_default ~= filter.exclude_rustc_target then
-        return true
+      local cargo_target = vim.tbl_get(client, 'config', 'settings', 'rust-analyzer', 'cargo', 'target')
+      if filter.exclude_rustc_target == DEFAULT_RUSTC_TARGET and cargo_target == nil then
+        return false
       end
-      vim.notify('Target architecture is already set to the default OS target.', vim.log.levels.INFO)
-      return false
+      return cargo_target ~= filter.exclude_rustc_target
     end, clients)
   end
+
   return clients
 end
 
@@ -127,7 +128,6 @@ M.get_client_for_file = function(file_path, method)
     end
   end
 end
-
 ---@param method string LSP method name
 ---@param params table|nil Parameters to send to the server
 M.notify = function(method, params)
