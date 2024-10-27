@@ -1,6 +1,7 @@
 ---@mod rustaceanvim.rust_analyzer Functions for interacting with rust-analyzer
 
 local os = require('rustaceanvim.os')
+local rustc = require('rustaceanvim.rustc')
 
 ---@class rustaceanvim.rust-analyzer.ClientAdapter
 local M = {}
@@ -37,7 +38,7 @@ M.get_active_rustaceanvim_clients = function(bufnr, filter)
   if filter and filter.exclude_rustc_target then
     clients = vim.tbl_filter(function(client)
       local cargo_target = vim.tbl_get(client, 'config', 'settings', 'rust-analyzer', 'cargo', 'target')
-      if filter.exclude_rustc_target == DEFAULT_RUSTC_TARGET and cargo_target == nil then
+      if filter.exclude_rustc_target == rustc.DEFAULT_RUSTC_TARGET and cargo_target == nil then
         return false
       end
       return cargo_target ~= filter.exclude_rustc_target

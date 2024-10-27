@@ -259,10 +259,7 @@ end
 ---@return vim.lsp.Client[] clients A list of clients that will be stopped
 M.stop = function(bufnr, exclude_rustc_target)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = rust_analyzer.get_active_rustaceanvim_clients(
-    bufnr,
-    { exclude_rustc_target = exclude_rustc_target or DEFAULT_RUSTC_TARGET }
-  )
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, { exclude_rustc_target = exclude_rustc_target })
   vim.lsp.stop_client(clients)
   if type(clients) == 'table' then
     ---@cast clients vim.lsp.Client[]
@@ -296,18 +293,19 @@ end
 
 ---Updates the target architecture setting for the LSP client associated with the given buffer.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param exclude_rustc_target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
-M.set_target_arch = function(bufnr, exclude_rustc_target)
+---@param target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+M.set_target_arch = function(bufnr, target)
+  target = target or rustc.DEFAULT_RUSTC_TARGET
   ---@param client vim.lsp.Client
-  restart(bufnr, exclude_rustc_target, function(client)
+  restart(bufnr, target, function(client)
     rustc.with_rustc_target_architectures(function(rustc_targets)
-      if rustc_targets[exclude_rustc_target] then
-        client.settings['rust-analyzer'].cargo.target = exclude_rustc_target
+      if rustc_targets[target] then
+        client.settings['rust-analyzer'].cargo.target = target
         client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-        vim.notify('Target architecture updated successfully to: ' .. exclude_rustc_target, vim.log.levels.INFO)
+        vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
         return
       else
-        vim.notify('Invalid target architecture provided: ' .. tostring(exclude_rustc_target), vim.log.levels.ERROR)
+        vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
         return
       end
     end)

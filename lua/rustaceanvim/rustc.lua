@@ -2,7 +2,7 @@ local M = {}
 
 --- Default target value for rustc when no specific target is provided.
 --- Used as a fallback to let rustc determine the appropriate target based on the OS.
-DEFAULT_RUSTC_TARGET = 'OS'
+M.DEFAULT_RUSTC_TARGET = 'OS'
 
 ---Local rustc targets cache
 local rustc_targets_cache = nil
