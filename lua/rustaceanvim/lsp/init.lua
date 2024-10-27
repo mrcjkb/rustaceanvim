@@ -6,9 +6,7 @@ local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
-
----Local rustc targets cache
-local rustc_targets_cache = nil
+local rustc = require('rustaceanvim.rustc')
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -96,41 +94,13 @@ local function configure_file_watcher(server_cfg)
   end
 end
 
----Handles retrieving rustc target architectures and running the passed in callback
----to perform certain actions using the retrieved targets.
----@param callback fun(targets: string[])
-local function with_rustc_target_architectures(callback)
-  if rustc_targets_cache then
-    return callback(rustc_targets_cache)
-  end
-  vim.system(
-    { 'rustc', '--print', 'target-list' },
-    { text = true },
-    ---@param result vim.SystemCompleted
-    function(result)
-      if result.code ~= 0 then
-        error('Failed to retrieve rustc targets: ' .. result.stderr)
-      end
-      rustc_targets_cache = vim.iter(result.stdout:gmatch('[^\r\n]+')):fold(
-        {},
-        ---@param acc table<string, boolean>
-        ---@param target string
-        function(acc, target)
-          acc[target] = true
-          return acc
-        end
-      )
-      return callback(rustc_targets_cache)
-    end
-  )
-end
-
 ---LSP restart internal implementations
+---@param bufnr? number The buffer number, defaults to the current buffer
 ---@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
 ---@param callback? fun(client: vim.lsp.Client) Optional callback to run for each client before restarting.
 ---@return number|nil client_id
-local function restart(exclude_rustc_target, callback)
-  local bufnr = vim.api.nvim_get_current_buf()
+local function restart(bufnr, exclude_rustc_target, callback)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = M.stop(bufnr, exclude_rustc_target)
   local timer, _, _ = vim.uv.new_timer()
   if not timer then
@@ -307,9 +277,10 @@ M.stop = function(bufnr, exclude_rustc_target)
 end
 
 ---Reload settings for the LSP client.
+---@param bufnr? number The buffer number, defaults to the current buffer
 ---@return vim.lsp.Client[] clients A list of clients that will be have their settings reloaded
-M.reload_settings = function()
-  local bufnr = vim.api.nvim_get_current_buf()
+M.reload_settings = function(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   ---@cast clients vim.lsp.Client[]
   for _, client in ipairs(clients) do
@@ -324,14 +295,15 @@ M.reload_settings = function()
 end
 
 ---Updates LSP client target architecture setting.
+---@param bufnr? number The buffer number, defaults to the current buffer
 ---@param exclude_rustc_target? string|nil Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
-M.set_target_arch = function(exclude_rustc_target)
+M.set_target_arch = function(bufnr, exclude_rustc_target)
   ---@param client vim.lsp.Client
-  restart(exclude_rustc_target, function(client)
-    with_rustc_target_architectures(function(rustc_targets)
+  restart(bufnr, exclude_rustc_target, function(client)
+    rustc.with_rustc_target_architectures(function(rustc_targets)
       if rustc_targets[exclude_rustc_target] then
         client.settings['rust-analyzer'].cargo.target = exclude_rustc_target
-        client.notify('workspace/didchangeconfiguration', { settings = client.config.settings })
+        client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
         vim.notify('target architecture updated successfully to: ' .. exclude_rustc_target, vim.log.levels.info)
         return
       else
