@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.13.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.13.0...v5.13.1) (2024-10-28)
+
+
+### Performance Improvements
+
+* optimize target_arch switching ([#548](https://github.com/mrcjkb/rustaceanvim/issues/548)) ([6c4c8d8](https://github.com/mrcjkb/rustaceanvim/commit/6c4c8d82db26b9deab655ca4f75f526652a0de8a))
+
 ## [5.13.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.12.0...v5.13.0) (2024-10-17)
 
 
