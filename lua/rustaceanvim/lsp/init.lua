@@ -96,12 +96,12 @@ end
 
 ---LSP restart internal implementations
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param exclude_rustc_target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+---@param filter? rustaceanvim.lsp.get_clients.Filter
 ---@param callback? fun(client: vim.lsp.Client) Optional callback to run for each client before restarting.
 ---@return number|nil client_id
-local function restart(bufnr, exclude_rustc_target, callback)
+local function restart(bufnr, filter, callback)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = M.stop(bufnr, exclude_rustc_target)
+  local clients = M.stop(bufnr, filter)
   local timer, _, _ = vim.uv.new_timer()
   if not timer then
     vim.notify('Failed to init timer for LSP client restart.', vim.log.levels.ERROR)
@@ -255,11 +255,11 @@ end
 
 ---Stop the LSP client.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param exclude_rustc_target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+---@param filter? rustaceanvim.lsp.get_clients.Filter
 ---@return vim.lsp.Client[] clients A list of clients that will be stopped
-M.stop = function(bufnr, exclude_rustc_target)
+M.stop = function(bufnr, filter)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, { exclude_rustc_target = exclude_rustc_target })
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, filter)
   vim.lsp.stop_client(clients)
   if type(clients) == 'table' then
     ---@cast clients vim.lsp.Client[]
@@ -293,11 +293,11 @@ end
 
 ---Updates the target architecture setting for the LSP client associated with the given buffer.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@param target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+---@param target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to set
 M.set_target_arch = function(bufnr, target)
   target = target or rustc.DEFAULT_RUSTC_TARGET
   ---@param client vim.lsp.Client
-  restart(bufnr, target, function(client)
+  restart(bufnr, { exclude_rustc_target = target }, function(client)
     rustc.with_rustc_target_architectures(function(rustc_targets)
       if rustc_targets[target] then
         client.settings['rust-analyzer'].cargo.target = target
