@@ -299,8 +299,18 @@ function NeotestAdapter.build_spec(run_args)
   table.insert(args, insert_pos, '--no-fail-fast')
   table.insert(args, insert_pos, '--color=never')
   if is_cargo_test then
-    -- cargo test needs to pass --color=never to the test runner too
-    table.insert(args, '--color=never')
+    -- filter args at any position
+    local filtered = vim.tbl_filter(function(v)
+      return string.match(v, '^--color=')
+    end, runnable.args.cargoArgs)
+
+    if not vim.tbl_isempty(filtered) then
+      -- add first occurrence of filter argument contain --color
+      table.insert(args, filtered[0])
+    else
+      -- cargo test needs to pass --color=never to the test runner too
+      table.insert(args, '--color=never')
+    end
   end
   ---@type rustaceanvim.neotest.RunSpec
   ---@diagnostic disable-next-line: missing-fields
