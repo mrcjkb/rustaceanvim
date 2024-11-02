@@ -149,6 +149,7 @@ vim.keymap.set(
     -- or vim.lsp.buf.codeAction() if you don't want grouping.
   end,
   { silent = true, buffer = bufnr }
+)
 vim.keymap.set(
   "n", 
   "K",  -- Override Neovim's built-in hover keymap with rustaceanvim's hover actions
