@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.13.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.13.1...v5.13.2) (2024-11-09)
+
+
+### Bug Fixes
+
+* work around bug in Nushell on Windows ([#564](https://github.com/mrcjkb/rustaceanvim/issues/564)) ([59f15ef](https://github.com/mrcjkb/rustaceanvim/commit/59f15efe7fcc6be5de57319764911849597f92a3))
+
 ## [5.13.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.13.0...v5.13.1) (2024-10-28)
 
 
