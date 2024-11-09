@@ -44,7 +44,7 @@ end
 ---@param path string
 ---@return string
 function M.make_cd_command(path)
-  return ('cd "%s"'):format(path)
+  return ("cd '%s'"):format(path)
 end
 
 ---@param command string
