@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.14.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.13.2...v5.14.0) (2024-11-10)
+
+
+### Features
+
+* **lsp:** allow overriding server command via `rust-analzyer.server.path` setting ([#567](https://github.com/mrcjkb/rustaceanvim/issues/567)) ([7a8665b](https://github.com/mrcjkb/rustaceanvim/commit/7a8665bdf891ec00277704fd4a5b719587ca9082))
+
 ## [5.13.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.13.1...v5.13.2) (2024-11-09)
 
 
