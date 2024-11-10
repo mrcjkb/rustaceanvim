@@ -199,8 +199,19 @@ M.start = function(bufnr)
   end
 
   local rust_analyzer_cmd = types.evaluate(client_config.cmd)
-  if #rust_analyzer_cmd == 0 or vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
-    vim.notify('rust-analyzer binary not found.', vim.log.levels.ERROR)
+  -- special case: rust-analyzer has a `rust-analyzer.server.path` config option
+  -- that allows you to override the path via .vscode/settings.json
+  local server_path = vim.tbl_get(lsp_start_config.settings, 'rust-analyzer', 'server', 'path')
+  if type(server_path) == 'string' then
+    rust_analyzer_cmd[1] = server_path
+    --
+  end
+  if #rust_analyzer_cmd == 0 then
+    vim.notify('rust-analyzer command is not set!', vim.log.levels.ERROR)
+    return
+  end
+  if vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
+    vim.notify(('%s is not executable'):format(rust_analyzer_cmd[1]), vim.log.levels.ERROR)
     return
   end
   ---@cast rust_analyzer_cmd string[]
