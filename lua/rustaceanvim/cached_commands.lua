@@ -43,6 +43,7 @@ M.execute_last_debuggable = function(executableArgsOverride)
       args.executableArgs = executableArgsOverride
     end
     local rt_dap = require('rustaceanvim.dap')
+    ---@diagnostic disable-next-line: invisible
     rt_dap.start(args)
   else
     local debuggables = require('rustaceanvim.commands.debuggables')

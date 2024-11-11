@@ -1,3 +1,5 @@
+---@diagnostic disable: deprecated, duplicate-doc-alias
+
 ---@mod rustaceanvim.compat compativility layer for
 ---API calls that are deprecated or removed in nvim nightly
 
@@ -13,6 +15,17 @@ function compat.get_line_diagnostics()
   end
   ---@diagnostic disable-next-line: deprecated
   return vim.lsp.diagnostic.get_line_diagnostics()
+end
+
+---@param location lsp.Location|lsp.LocationLink
+---@param offset_encoding 'utf-8'|'utf-16'|'utf-32'?
+---@return boolean `true` if the jump succeeded
+function compat.show_document(location, offset_encoding)
+  local show_document = vim.lsp.show_document
+  if not show_document then
+    vim.lsp.util.jump_to_location(location, offset_encoding)
+  end
+  return show_document(location, offset_encoding, { focus = true })
 end
 
 return compat

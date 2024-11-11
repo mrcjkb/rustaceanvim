@@ -273,6 +273,7 @@ function NeotestAdapter.build_spec(run_args)
     local dap = require('rustaceanvim.dap')
     overrides.sanitize_command_for_debugging(runnable.args.cargoArgs)
     local future = nio.control.future()
+    ---@diagnostic disable-next-line: invisible
     dap.start(runnable.args, false, function(strategy)
       future.set(strategy)
     end, function(err)

@@ -86,6 +86,7 @@ local function dap_run(args)
   local rt_dap = require('rustaceanvim.dap')
   local ok, dap = pcall(require, 'dap')
   if ok then
+    ---@diagnostic disable-next-line: invisible
     rt_dap.start(args, true, dap.run)
     local cached_commands = require('rustaceanvim.cached_commands')
     cached_commands.set_last_debuggable(args)
@@ -131,6 +132,7 @@ local function add_debuggables_to_nvim_dap(debuggables)
     if not debuggable then
       return
     end
+    ---@diagnostic disable-next-line: invisible
     rt_dap.start(debuggable.args, false, function(configuration)
       local name = 'Cargo: ' .. build_label(debuggable.args)
       if not _dap_configuration_added[name] then

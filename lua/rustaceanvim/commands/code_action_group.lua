@@ -15,7 +15,7 @@ local M = {}
 ---@field arguments? any[]
 
 ---@param action rustaceanvim.RACodeAction | rustaceanvim.RACommand
----@param client lsp.Client
+---@param client vim.lsp.Client
 ---@param ctx table
 function M.apply_action(action, client, ctx)
   if action.edit then

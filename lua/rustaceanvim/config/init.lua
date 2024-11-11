@@ -253,7 +253,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@alias rustaceanvim.dap.adapter.types.executable "executable"
 ---@alias rustaceanvim.dap.adapter.types.server "server"
 
----@class rustaceanvim.dap.client.Config: Configuration
+---@class rustaceanvim.dap.client.Config: dap.Configuration
 ---@field type string The dap adapter to use
 ---@field name string
 ---@field request rustaceanvim.dap.config.requests.launch | rustaceanvim.dap.config.requests.attach | rustaceanvim.dap.config.requests.custom The type of dap session
