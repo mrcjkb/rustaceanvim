@@ -315,6 +315,7 @@ function M.start(args, verbose, callback, on_error)
         ---@param value string
         :map(function(value)
           local is_json, artifact = pcall(vim.fn.json_decode, value)
+          ---@diagnostic disable-next-line: redundant-return-value
           return is_json, artifact
         end)
         ---@param is_json boolean

@@ -1,5 +1,6 @@
 ---@type rustaceanvim.Config
 local config = require('rustaceanvim.config.internal')
+local compat = require('rustaceanvim.compat')
 
 if not vim.g.loaded_rustaceanvim then
   require('rustaceanvim.config.check').check_for_lspconfig_conflict(vim.schedule_wrap(function(warn)
@@ -22,7 +23,7 @@ if not vim.g.loaded_rustaceanvim then
   vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
     local client = vim.lsp.get_client_by_id(ctx.client_id)
     if client then
-      vim.lsp.util.jump_to_location(command.arguments[1], client.offset_encoding)
+      compat.show_document(command.arguments[1], client.offset_encoding)
     end
   end
 
@@ -37,6 +38,7 @@ if not vim.g.loaded_rustaceanvim then
     local cached_commands = require('rustaceanvim.cached_commands')
     cached_commands.set_last_debuggable(args)
     local rt_dap = require('rustaceanvim.dap')
+    ---@diagnostic disable-next-line: invisible
     rt_dap.start(args)
   end
 

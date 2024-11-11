@@ -10,7 +10,7 @@ end
 
 ---@param lines string[]
 local function append_qf(lines)
-  vim.fn.setqflist({}, 'a', { lines = { lines } })
+  vim.fn.setqflist({}, 'a', { lines = lines })
   scroll_qf()
 end
 

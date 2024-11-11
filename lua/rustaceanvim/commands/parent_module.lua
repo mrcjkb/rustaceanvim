@@ -1,6 +1,7 @@
 local M = {}
 
 local rl = require('rustaceanvim.rust_analyzer')
+local compat = require('rustaceanvim.compat')
 
 local function get_params()
   return vim.lsp.util.make_position_params(0, nil)
@@ -20,7 +21,7 @@ local function handler(_, result, ctx)
 
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   if client then
-    vim.lsp.util.jump_to_location(location, client.offset_encoding)
+    compat.show_document(location, client.offset_encoding)
   end
 end
 

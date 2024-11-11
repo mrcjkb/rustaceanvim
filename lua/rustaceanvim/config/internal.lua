@@ -44,6 +44,7 @@ local function load_dap_configuration(type)
     stopOnEntry = false,
   }
   if type == 'lldb' then
+    ---@diagnostic disable-next-line: inject-field
     dap_config.runInTerminal = true
   end
   ---@diagnostic disable-next-line: different-requires

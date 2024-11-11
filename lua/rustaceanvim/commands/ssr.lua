@@ -5,8 +5,11 @@ local M = {}
 local function get_opts(query, visual_mode)
   local opts = vim.lsp.util.make_position_params()
   local range = (visual_mode and vim.lsp.util.make_given_range_params() or vim.lsp.util.make_range_params()).range
+  ---@diagnostic disable-next-line: inject-field
   opts.query = query
+  ---@diagnostic disable-next-line: inject-field
   opts.parseOnly = false
+  ---@diagnostic disable-next-line: inject-field
   opts.selections = { range }
   return opts
 end
