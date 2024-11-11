@@ -20,4 +20,3 @@ jobs:
         with:
           release-type: simple
           token: ${{ secrets.PAT }}
-          config-file: .github/workflows/release-please-config.json
