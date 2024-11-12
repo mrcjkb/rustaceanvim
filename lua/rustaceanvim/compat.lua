@@ -23,7 +23,7 @@ end
 function compat.show_document(location, offset_encoding)
   local show_document = vim.lsp.show_document
   if not show_document then
-    vim.lsp.util.jump_to_location(location, offset_encoding)
+    return vim.lsp.util.jump_to_location(location, offset_encoding)
   end
   return show_document(location, offset_encoding, { focus = true })
 end
