@@ -298,7 +298,6 @@ function NeotestAdapter.build_spec(run_args)
   local is_cargo_test = args[1] == 'test'
   local insert_pos = is_cargo_test and 2 or 3
   table.insert(args, insert_pos, '--no-fail-fast')
-  table.insert(args, insert_pos, '--color=never')
   if is_cargo_test then
     -- cargo test needs to pass --color=never to the test runner too
     table.insert(args, '--color=never')
