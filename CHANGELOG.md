@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.15.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.14.1...v5.15.0) (2024-11-18)
+
+
+### Features
+
+* **lsp:** pass `client_id` to `on_initialized` ([#584](https://github.com/mrcjkb/rustaceanvim/issues/584)) ([900c6c5](https://github.com/mrcjkb/rustaceanvim/commit/900c6c5214b0fcec9a71309d7b05186bbaa3fa48))
+
 ## [5.14.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.14.0...v5.14.1) (2024-11-12)
 
 
