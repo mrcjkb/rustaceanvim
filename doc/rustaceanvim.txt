@@ -156,35 +156,35 @@ rustaceanvim.tools.Opts                                *rustaceanvim.tools.Opts*
 
     Fields: ~
         {executor?}                          (rustaceanvim.Executor|rustaceanvim.executor_alias)
-                                                                                                       The executor to use for runnables/debuggables
+                                                                                                               The executor to use for runnables/debuggables
         {test_executor?}                     (rustaceanvim.Executor|rustaceanvim.test_executor_alias)
-                                                                                                       The executor to use for runnables that are tests / testables
+                                                                                                               The executor to use for runnables that are tests / testables
         {crate_test_executor?}               (rustaceanvim.Executor|rustaceanvim.test_executor_alias)
-                                                                                                       The executor to use for runnables that are crate test suites (--all-targets)
+                                                                                                               The executor to use for runnables that are crate test suites (--all-targets)
         {cargo_override?}                    (string)
-                                                                                                       Set this to override the 'cargo' command for runnables, debuggables (etc., e.g. to 'cross').
-                                                                                                       If set, this takes precedence over 'enable_nextest'.
+                                                                                                               Set this to override the 'cargo' command for runnables, debuggables (etc., e.g. to 'cross').
+                                                                                                               If set, this takes precedence over 'enable_nextest'.
         {enable_nextest?}                    (boolean)
-                                                                                                       Whether to enable nextest. If enabled, `cargo test` commands will be transformed to `cargo nextest run` commands.
-                                                                                                       Defaults to `true` if cargo-nextest is detected. Ignored if `cargo_override` is set.
+                                                                                                               Whether to enable nextest. If enabled, `cargo test` commands will be transformed to `cargo nextest run` commands.
+                                                                                                               Defaults to `true` if cargo-nextest is detected. Ignored if `cargo_override` is set.
         {enable_clippy?}                     (boolean)
-                                                                                                       Whether to enable clippy checks on save if a clippy installation is detected.
-                                                                                                       Default: `true`
-        {on_initialized?}                    (fun(health:rustaceanvim.RAInitializedStatus))
-                                                                                                       Function that is invoked when the LSP server has finished initializing
+                                                                                                               Whether to enable clippy checks on save if a clippy installation is detected.
+                                                                                                               Default: `true`
+        {on_initialized?}                    (fun(health:rustaceanvim.RAInitializedStatus,client_id:integer))
+                                                                                                               Function that is invoked when the LSP server has finished initializing
         {reload_workspace_from_cargo_toml?}  (boolean)
-                                                                                                       Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
-        {hover_actions?}                     (rustaceanvim.hover-actions.Opts)                         Options for hover actions
-        {code_actions?}                      (rustaceanvim.code-action.Opts)                           Options for code actions
+                                                                                                               Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
+        {hover_actions?}                     (rustaceanvim.hover-actions.Opts)                                 Options for hover actions
+        {code_actions?}                      (rustaceanvim.code-action.Opts)                                   Options for code actions
         {float_win_config?}                  (rustaceanvim.FloatWinConfig)
-                                                                                                       Options applied to floating windows.
-                                                                                                       See |api-win_config|.
+                                                                                                               Options applied to floating windows.
+                                                                                                               See |api-win_config|.
         {create_graph?}                      (rustaceanvim.crate-graph.Opts)
-                                                                                                       Options for showing the crate graph based on graphviz and the dot
+                                                                                                               Options for showing the crate graph based on graphviz and the dot
         {open_url?}                          (fun(url:string):nil)
-                                                                                                       If set, overrides how to open URLs
+                                                                                                               If set, overrides how to open URLs
         {rustc?}                             (rustaceanvim.rustc.Opts)
-                                                                                                       Options for `rustc`
+                                                                                                               Options for `rustc`
 
 
 rustaceanvim.Executor                                    *rustaceanvim.Executor*

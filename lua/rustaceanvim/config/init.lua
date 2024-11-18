@@ -78,7 +78,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field enable_clippy? boolean
 ---
 ---Function that is invoked when the LSP server has finished initializing
----@field on_initialized? fun(health:rustaceanvim.RAInitializedStatus)
+---@field on_initialized? fun(health:rustaceanvim.RAInitializedStatus, client_id:integer)
 ---
 ---Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
 ---@field reload_workspace_from_cargo_toml? boolean
