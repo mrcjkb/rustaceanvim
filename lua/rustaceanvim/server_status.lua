@@ -58,7 +58,7 @@ see ':h rustaceanvim.lsp.ClientOpts'.
   end
   -- Load user on_initialized
   if config.tools.on_initialized then
-    config.tools.on_initialized(result)
+    config.tools.on_initialized(result, ctx.client_id)
   end
   if config.dap.autoload_configurations then
     require('rustaceanvim.commands.debuggables').add_dap_debuggables()

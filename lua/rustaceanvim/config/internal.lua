@@ -106,7 +106,7 @@ local RustaceanDefaultConfig = {
 
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
-    ---@type fun(health:rustaceanvim.RAInitializedStatus) | nil
+    ---@type fun(health:rustaceanvim.RAInitializedStatus,client_id:integer) | nil
     on_initialized = nil,
 
     --- automatically call RustReloadWorkspace when writing to a Cargo.toml file.

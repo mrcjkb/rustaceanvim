@@ -170,7 +170,7 @@ rustaceanvim.tools.Opts                                *rustaceanvim.tools.Opts*
         {enable_clippy?}                     (boolean)
                                                                                                        Whether to enable clippy checks on save if a clippy installation is detected.
                                                                                                        Default: `true`
-        {on_initialized?}                    (fun(health:rustaceanvim.RAInitializedStatus))
+        {on_initialized?}                    (fun(health:rustaceanvim.RAInitializedStatus,client_id:integer))
                                                                                                        Function that is invoked when the LSP server has finished initializing
         {reload_workspace_from_cargo_toml?}  (boolean)
                                                                                                        Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
