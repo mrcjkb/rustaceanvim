@@ -2,6 +2,7 @@
 
 local os = require('rustaceanvim.os')
 local rustc = require('rustaceanvim.rustc')
+local compat = require('rustaceanvim.compat')
 
 ---@class rustaceanvim.rust-analyzer.ClientAdapter
 local M = {}
@@ -60,7 +61,7 @@ M.any_buf_request = function(method, params, handler)
   end
   -- No buffer found. Try any client.
   for _, client in ipairs(M.get_active_rustaceanvim_clients(nil, { method = method })) do
-    client.request(method, params, handler, 0)
+    compat.client_request(client, method, params, handler, 0)
   end
 end
 
@@ -76,7 +77,7 @@ M.buf_request = function(bufnr, method, params, handler)
   end
   local client_found = false
   for _, client in ipairs(M.get_active_rustaceanvim_clients(bufnr, { method = method })) do
-    client.request(method, params, handler, bufnr)
+    compat.client_request(client, method, params, handler, 0)
     client_found = true
   end
   return client_found
@@ -99,7 +100,7 @@ end
 M.notify = function(method, params)
   local client_found = false
   for _, client in ipairs(M.get_active_rustaceanvim_clients(0, { method = method })) do
-    client.notify(method, params)
+    compat.client_notify(client, method, params)
     client_found = true
   end
   if not client_found then

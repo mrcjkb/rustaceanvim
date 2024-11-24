@@ -7,6 +7,7 @@ local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
 local rustc = require('rustaceanvim.rustc')
+local compat = require('rustaceanvim.compat')
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -114,7 +115,7 @@ local function restart(bufnr, filter, callback)
   local stopped_client_count = 0
   timer:start(200, 100, function()
     for _, client in ipairs(clients) do
-      if client:is_stopped() then
+      if compat.client_is_stopped(client) then
         stopped_client_count = stopped_client_count + 1
         vim.schedule(function()
           -- Execute the callback, if provided, for additional actions before restarting
@@ -307,7 +308,7 @@ M.reload_settings = function(bufnr)
     local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.config.root_dir, config.server)
     ---@diagnostic disable-next-line: inject-field
     client.settings = settings
-    client.notify('workspace/didChangeConfiguration', {
+    compat.client_notify(client, 'workspace/didChangeConfiguration', {
       settings = client.settings,
     })
   end
@@ -326,7 +327,7 @@ M.set_target_arch = function(bufnr, target)
         local ra = client.config.settings['rust-analyzer']
         ra.cargo = ra.cargo or {}
         ra.cargo.target = target
-        client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+        compat.client_notify(client, 'workspace/didChangeConfiguration', { settings = client.config.settings })
         vim.schedule(function()
           vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
         end)

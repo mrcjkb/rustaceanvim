@@ -2,16 +2,6 @@ local M = {}
 
 ---@alias lsp_move_items_params { textDocument: lsp_text_document, range: lsp_range, direction: 'Up' | 'Down' }
 
----@param up boolean
----@return lsp_move_items_params
-local function get_params(up)
-  local direction = up and 'Up' or 'Down'
-  local params = vim.lsp.util.make_range_params()
-  params.direction = direction
-
-  return params
-end
-
 ---@param prev_text_edit rustaceanvim.lsp.TextEdit
 ---@param text_edit rustaceanvim.lsp.TextEdit
 local function text_edit_line_range_diff(prev_text_edit, text_edit)
@@ -55,11 +45,18 @@ local function handler(_, text_edits, ctx)
   vim.api.nvim_win_set_cursor(0, cursor)
 end
 
-local rl = require('rustaceanvim.rust_analyzer')
-
 -- Sends the request to rust-analyzer to move the item and handle the response
-function M.move_item(up)
-  rl.buf_request(0, 'experimental/moveItem', get_params(up or false), handler)
+---@param direction 'Up' | 'Down'
+function M.move_item(direction)
+  local ra = require('rustaceanvim.rust_analyzer')
+  local clients = ra.get_active_rustaceanvim_clients(0)
+  if #clients == 0 then
+    return
+  end
+  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding)
+  ---@diagnostic disable-next-line: inject-field
+  params.direction = direction
+  ra.buf_request(0, 'experimental/moveItem', params, handler)
 end
 
 return M.move_item

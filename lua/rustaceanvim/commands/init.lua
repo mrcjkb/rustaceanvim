@@ -159,9 +159,13 @@ local rustlsp_command_tbl = {
   },
   joinLines = {
     impl = function(_, opts)
+      local cmds = require('rustaceanvim.commands.join_lines')
       ---@cast opts vim.api.keyset.user_command
-      local visual_mode = opts.range and opts.range ~= 0 or false
-      require('rustaceanvim.commands.join_lines')(visual_mode)
+      if opts.range and opts.range ~= 0 then
+        cmds.join_lines_visual()
+      else
+        cmds.join_lines()
+      end
     end,
   },
   moveItem = {
@@ -171,9 +175,9 @@ local rustlsp_command_tbl = {
         return
       end
       if args[1] == 'down' then
-        require('rustaceanvim.commands.move_item')()
+        require('rustaceanvim.commands.move_item')('Down')
       elseif args[1] == 'up' then
-        require('rustaceanvim.commands.move_item')(true)
+        require('rustaceanvim.commands.move_item')('Up')
       else
         vim.notify(
           'moveItem: unexpected argument: ' .. vim.inspect(args) .. " expected 'up' or 'down'",
@@ -203,9 +207,13 @@ local rustlsp_command_tbl = {
   ssr = {
     impl = function(args, opts)
       ---@cast opts vim.api.keyset.user_command
-      local visual_mode = opts.range and opts.range > 0 or false
       local query = args and #args > 0 and table.concat(args, ' ') or nil
-      require('rustaceanvim.commands.ssr')(query, visual_mode)
+      local cmds = require('rustaceanvim.commands.ssr')
+      if opts.range and opts.range > 0 then
+        cmds.ssr_visual(query)
+      else
+        cmds.ssr(query)
+      end
     end,
   },
   reloadWorkspace = {

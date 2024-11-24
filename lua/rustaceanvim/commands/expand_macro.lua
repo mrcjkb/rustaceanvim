@@ -3,8 +3,9 @@ local ui = require('rustaceanvim.ui')
 local M = {}
 
 ---@return lsp_position_params
-local function get_params()
-  return vim.lsp.util.make_position_params()
+---@param offset_encoding 'utf-8'|'utf-16'|'utf-32'
+local function get_params(offset_encoding)
+  return vim.lsp.util.make_position_params(0, offset_encoding)
 end
 
 ---@type integer | nil
@@ -70,11 +71,14 @@ local function handler(_, result)
   ui.resize(true, '-25')
 end
 
-local rl = require('rustaceanvim.rust_analyzer')
-
 --- Sends the request to rust-analyzer to expand the macro under the cursor
 function M.expand_macro()
-  rl.buf_request(0, 'rust-analyzer/expandMacro', get_params(), handler)
+  local ra = require('rustaceanvim.rust_analyzer')
+  local clients = ra.get_active_rustaceanvim_clients(0)
+  if #clients == 0 then
+    return
+  end
+  ra.buf_request(0, 'rust-analyzer/expandMacro', get_params(clients[1].offset_encoding), handler)
 end
 
 return M.expand_macro
