@@ -311,10 +311,8 @@ M.set_target_arch = function(bufnr, target)
   restart(bufnr, { exclude_rustc_target = target }, function(client)
     rustc.with_rustc_target_architectures(function(rustc_targets)
       if rustc_targets[target] then
-        -- NOTE: It is not guaranteed that the 'cargo' subkey exists (atleast rustaceanvim does
-        -- not configure it by default).
         local ra = client.config.settings['rust-analyzer']
-        ra.cargo = ra.cargo or {} -- Initialize the cargo subkey if necessary
+        ra.cargo = ra.cargo or {}
         ra.cargo.target = target
         client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
         vim.schedule(function()
