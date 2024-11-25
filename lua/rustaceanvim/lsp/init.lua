@@ -353,7 +353,7 @@ local function rust_analyzer_cmd(opts)
     M.reload_settings()
   elseif cmd == RustAnalyzerCmd.target then
     local target_arch = fargs[2]
-    M.set_target_arch(target_arch)
+    M.set_target_arch(nil, target_arch)
   end
 end
 
