@@ -311,12 +311,18 @@ M.set_target_arch = function(bufnr, target)
   restart(bufnr, { exclude_rustc_target = target }, function(client)
     rustc.with_rustc_target_architectures(function(rustc_targets)
       if rustc_targets[target] then
-        client.settings['rust-analyzer'].cargo.target = target
+        local ra = client.config.settings['rust-analyzer']
+        ra.cargo = ra.cargo or {}
+        ra.cargo.target = target
         client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-        vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
+        vim.schedule(function()
+          vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
+        end)
         return
       else
-        vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
+        vim.schedule(function()
+          vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
+        end)
         return
       end
     end)
@@ -353,7 +359,7 @@ local function rust_analyzer_cmd(opts)
     M.reload_settings()
   elseif cmd == RustAnalyzerCmd.target then
     local target_arch = fargs[2]
-    M.set_target_arch(target_arch)
+    M.set_target_arch(nil, target_arch)
   end
 end
 
