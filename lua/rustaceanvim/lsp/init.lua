@@ -317,10 +317,14 @@ M.set_target_arch = function(bufnr, target)
         ra.cargo = ra.cargo or {} -- Initialize the cargo subkey if necessary
         ra.cargo.target = target
         client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-        vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
+        vim.schedule(function()
+          vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
+        end)
         return
       else
-        vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
+        vim.schedule(function()
+          vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
+        end)
         return
       end
     end)
