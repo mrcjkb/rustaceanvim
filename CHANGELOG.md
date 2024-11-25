@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.15.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.0...v5.15.1) (2024-11-25)
+
+
+### Bug Fixes
+
+* expose `target` scommand in `:RustAnalyzer` command completion ([#589](https://github.com/mrcjkb/rustaceanvim/issues/589)) ([b4e35d5](https://github.com/mrcjkb/rustaceanvim/commit/b4e35d5b18b77f0304c2949941ad75644cb9ce23))
+
 ## [5.15.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.14.1...v5.15.0) (2024-11-18)
 
 
