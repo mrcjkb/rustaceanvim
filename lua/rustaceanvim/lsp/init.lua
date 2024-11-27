@@ -104,10 +104,13 @@ local function restart(bufnr, filter, callback)
   local clients = M.stop(bufnr, filter)
   local timer, _, _ = vim.uv.new_timer()
   if not timer then
-    vim.notify('Failed to init timer for LSP client restart.', vim.log.levels.ERROR)
+    vim.schedule(function()
+      vim.notify('rustaceanvim.lsp: Failed to initialise timer for LSP client restart.', vim.log.levels.ERROR)
+    end)
     return
   end
-  local attempts_to_live = 50
+  local max_attempts = 50
+  local attempts_to_live = max_attempts
   local stopped_client_count = 0
   timer:start(200, 100, function()
     for _, client in ipairs(clients) do
@@ -126,7 +129,12 @@ local function restart(bufnr, filter, callback)
       timer:stop()
       attempts_to_live = 0
     elseif attempts_to_live <= 0 then
-      vim.notify('rustaceanvim.lsp: Could not restart all LSP clients.', vim.log.levels.ERROR)
+      vim.schedule(function()
+        vim.notify(
+          ('rustaceanvim.lsp: Could not restart all LSP clients after %d attempts.'):format(max_attempts),
+          vim.log.levels.ERROR
+        )
+      end)
       timer:stop()
       attempts_to_live = 0
     end
@@ -207,11 +215,15 @@ M.start = function(bufnr)
     --
   end
   if #rust_analyzer_cmd == 0 then
-    vim.notify('rust-analyzer command is not set!', vim.log.levels.ERROR)
+    vim.schedule(function()
+      vim.notify('rust-analyzer command is not set!', vim.log.levels.ERROR)
+    end)
     return
   end
   if vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
-    vim.notify(('%s is not executable'):format(rust_analyzer_cmd[1]), vim.log.levels.ERROR)
+    vim.schedule(function()
+      vim.notify(('%s is not executable'):format(rust_analyzer_cmd[1]), vim.log.levels.ERROR)
+    end)
     return
   end
   ---@cast rust_analyzer_cmd string[]
