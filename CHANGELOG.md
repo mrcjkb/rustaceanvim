@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.15.3](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.2...v5.15.3) (2024-11-27)
+
+
+### Bug Fixes
+
+* **lsp:** schedule notification if lsp restart times out ([1f97e08](https://github.com/mrcjkb/rustaceanvim/commit/1f97e08765a6149f87abe3aad6c8d03d9884a628))
+
 ## [5.15.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.1...v5.15.2) (2024-11-25)
 
 
