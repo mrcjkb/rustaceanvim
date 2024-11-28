@@ -317,7 +317,8 @@ end
 ---Updates the target architecture setting for the LSP client associated with the given buffer.
 ---@param bufnr? number The buffer number, defaults to the current buffer
 ---@param target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to set
-M.set_target_arch = function(bufnr, target)
+---@param on_restart? fun(successful: boolean) Optional callback to run when the client has been restarted. success indicates if the client was restarted successfully.
+M.set_target_arch = function(bufnr, target, on_restart)
   target = target or rustc.DEFAULT_RUSTC_TARGET
   ---@param client vim.lsp.Client
   restart(bufnr, { exclude_rustc_target = target }, function(client)
@@ -327,14 +328,14 @@ M.set_target_arch = function(bufnr, target)
         ra.cargo = ra.cargo or {}
         ra.cargo.target = target
         client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-        vim.schedule(function()
-          vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
-        end)
+        if on_restart then
+          on_restart(true)
+        end
         return
       else
-        vim.schedule(function()
-          vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
-        end)
+        if on_restart then
+          on_restart(false)
+        end
         return
       end
     end)
@@ -371,7 +372,15 @@ local function rust_analyzer_cmd(opts)
     M.reload_settings()
   elseif cmd == RustAnalyzerCmd.target then
     local target_arch = fargs[2]
-    M.set_target_arch(nil, target_arch)
+    M.set_target_arch(nil, target_arch, function(successful)
+      vim.schedule(function()
+        if successful then
+          vim.notify('Target architecture updated successfully to: ' .. target_arch, vim.log.levels.INFO)
+        else
+          vim.notify('Invalid target architecture provided: ' .. tostring(target_arch), vim.log.levels.ERROR)
+        end
+      end)
+    end)
   end
 end
 
