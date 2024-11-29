@@ -1,17 +1,14 @@
 local M = {}
 
----@param query string
----@param visual_mode boolean
-local function get_opts(query, visual_mode)
-  local opts = vim.lsp.util.make_position_params()
-  local range = (visual_mode and vim.lsp.util.make_given_range_params() or vim.lsp.util.make_range_params()).range
-  ---@diagnostic disable-next-line: inject-field
-  opts.query = query
-  ---@diagnostic disable-next-line: inject-field
-  opts.parseOnly = false
-  ---@diagnostic disable-next-line: inject-field
-  opts.selections = { range }
-  return opts
+local ra = require('rustaceanvim.rust_analyzer')
+
+---@params table
+---@query string
+---@param range table
+local function modify_params(params, query, range)
+  params.query = query
+  params.parseOnly = false
+  params.selections = { range }
 end
 
 local function handler(err, result, ctx)
@@ -26,19 +23,36 @@ local function handler(err, result, ctx)
   end
 end
 
-local rl = require('rustaceanvim.rust_analyzer')
-
----@param query string | nil
----@param visual_mode boolean
-function M.ssr(query, visual_mode)
+---@param query? string
+---@param make_range_params fun(bufnr: integer, offset_encoding: string):{ range: table }
+local function ssr(query, make_range_params)
+  local clients = ra.get_active_rustaceanvim_clients(0)
+  if #clients == 0 then
+    return
+  end
+  local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding)
+  local range = make_range_params(0, clients[1].offset_encoding).range
   if not query then
     vim.ui.input({ prompt = 'Enter query: ' }, function(input)
       query = input
     end)
   end
+  modify_params(params, query, range)
   if query then
-    rl.buf_request(0, 'experimental/ssr', get_opts(query, visual_mode), handler)
+    ra.buf_request(0, 'experimental/ssr', params, handler)
   end
 end
 
-return M.ssr
+---@param query? string
+M.ssr = function(query)
+  ssr(query, vim.lsp.util.make_range_params)
+end
+
+---@param query string | nil
+function M.ssr_visual(query)
+  ssr(query, function(winnr, offset_encoding)
+    return vim.lsp.util.make_given_range_params(nil, nil, winnr, offset_encoding)
+  end)
+end
+
+return M

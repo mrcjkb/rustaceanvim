@@ -3,10 +3,6 @@ local lsp_util = vim.lsp.util
 
 local M = {}
 
-local function get_params()
-  return lsp_util.make_position_params(0, nil)
-end
-
 ---@class rustaceanvim.hover_actions.State
 local _state = {
   ---@type integer
@@ -140,11 +136,15 @@ function M.handler(_, result, ctx)
   end, { buffer = vim.api.nvim_get_current_buf(), noremap = true, silent = true })
 end
 
-local rl = require('rustaceanvim.rust_analyzer')
-
 --- Sends the request to rust-analyzer to get hover actions and handle it
 function M.hover_actions()
-  rl.buf_request(0, 'textDocument/hover', get_params(), M.handler)
+  local ra = require('rustaceanvim.rust_analyzer')
+  local clients = ra.get_active_rustaceanvim_clients(0)
+  if #clients == 0 then
+    return
+  end
+  local params = lsp_util.make_position_params(0, clients[1].offset_encoding)
+  ra.buf_request(0, 'textDocument/hover', params, M.handler)
 end
 
 return M
