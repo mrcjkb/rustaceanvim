@@ -328,9 +328,6 @@ M.set_target_arch = function(bufnr, target)
         ra.cargo = ra.cargo or {}
         ra.cargo.target = target
         compat.client_notify(client, 'workspace/didChangeConfiguration', { settings = client.config.settings })
-        vim.schedule(function()
-          vim.notify('Target architecture updated successfully to: ' .. target, vim.log.levels.INFO)
-        end)
         return
       else
         vim.schedule(function()
