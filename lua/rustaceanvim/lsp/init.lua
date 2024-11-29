@@ -167,7 +167,14 @@ M.start = function(bufnr)
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = cargo.get_config_root_dir(client_config, bufname)
   if not root_dir then
-    --- No project root found. Start in detached/standalone mode.
+    vim.notify(
+      [[
+rustaceanvim:
+No project root found.
+Starting rust-analyzer client in detached/standalone mode (with reduced functionality).
+]],
+      vim.log.levels.INFO
+    )
     root_dir = vim.fs.dirname(bufname)
     lsp_start_config.init_options = { detachedFiles = { bufname } }
   end
