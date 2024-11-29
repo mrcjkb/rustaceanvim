@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.15.4](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.3...v5.15.4) (2024-11-29)
+
+
+### Bug Fixes
+
+* **lsp/nightly:** avoid deprecations with no alternative in stable (╯°□°)╯︵ ┻━┻ ([#587](https://github.com/mrcjkb/rustaceanvim/issues/587)) ([f116a55](https://github.com/mrcjkb/rustaceanvim/commit/f116a555d3d30d2aabf74f1e5f1c1b2b377e6516))
+* **lsp:** remove info notification when switching target architecture ([7a565dc](https://github.com/mrcjkb/rustaceanvim/commit/7a565dce677278a83419e01ecd630d135590dfe2))
+
 ## [5.15.3](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.2...v5.15.3) (2024-11-27)
 
 
