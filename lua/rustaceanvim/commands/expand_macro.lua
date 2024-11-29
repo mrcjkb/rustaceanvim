@@ -2,12 +2,6 @@ local ui = require('rustaceanvim.ui')
 
 local M = {}
 
----@return lsp_position_params
----@param offset_encoding 'utf-8'|'utf-16'|'utf-32'
-local function get_params(offset_encoding)
-  return vim.lsp.util.make_position_params(0, offset_encoding)
-end
-
 ---@type integer | nil
 local latest_buf_id = nil
 
@@ -78,7 +72,8 @@ function M.expand_macro()
   if #clients == 0 then
     return
   end
-  ra.buf_request(0, 'rust-analyzer/expandMacro', get_params(clients[1].offset_encoding), handler)
+  local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8')
+  ra.buf_request(0, 'rust-analyzer/expandMacro', params, handler)
 end
 
 return M.expand_macro

@@ -191,7 +191,7 @@ function M.get_runnable_at_cursor_position(runnables)
     return
   end
   ---@type lsp.Position
-  local position = vim.lsp.util.make_position_params(0, clients[1].offset_encoding).position
+  local position = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8').position
   ---@type integer|nil, integer|nil
   local choice, fallback
   for idx, runnable in ipairs(runnables) do

@@ -12,7 +12,7 @@ local function modify_params(params)
 end
 
 local function handler(_, result, ctx)
-  vim.lsp.util.apply_text_edits(result, ctx.bufnr, vim.lsp.get_client_by_id(ctx.client_id).offset_encoding)
+  vim.lsp.util.apply_text_edits(result, ctx.bufnr, vim.lsp.get_client_by_id(ctx.client_id).offset_encoding or 'utf-8')
 end
 
 local ra = require('rustaceanvim.rust_analyzer')
@@ -24,7 +24,7 @@ function M.join_lines_visual()
   if #clients == 0 then
     return
   end
-  local params = modify_params(vim.lsp.util.make_given_range_params(nil, nil, 0, clients[1].offset_encoding))
+  local params = modify_params(vim.lsp.util.make_given_range_params(nil, nil, 0, clients[1].offset_encoding or 'utf-8'))
   ra.buf_request(0, 'experimental/joinLines', params, handler)
 end
 
@@ -35,7 +35,7 @@ function M.join_lines()
   if #clients == 0 then
     return
   end
-  local params = modify_params(vim.lsp.util.make_range_params(0, clients[1].offset_encoding))
+  local params = modify_params(vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8'))
   ra.buf_request(0, 'experimental/joinLines', params, handler)
 end
 

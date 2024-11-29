@@ -48,7 +48,7 @@ function M.hover_range()
   if #clients == 0 then
     return
   end
-  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding)
+  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
   ---@diagnostic disable-next-line: inject-field
   params.position = get_visual_selected_range()
   params.range = nil

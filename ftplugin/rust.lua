@@ -23,7 +23,7 @@ if not vim.g.loaded_rustaceanvim then
   vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
     local client = vim.lsp.get_client_by_id(ctx.client_id)
     if client then
-      compat.show_document(command.arguments[1], client.offset_encoding)
+      compat.show_document(command.arguments[1], client.offset_encoding or 'utf-8')
     end
   end
 

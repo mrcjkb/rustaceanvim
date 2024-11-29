@@ -30,7 +30,7 @@ function M.syntax_tree()
   if #clients == 0 then
     return
   end
-  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding)
+  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
   ra.buf_request(0, 'rust-analyzer/syntaxTree', params, handler)
 end
 

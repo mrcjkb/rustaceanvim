@@ -46,7 +46,7 @@ function M.viewIR(level)
   if #clients == 0 then
     return
   end
-  local position_params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding)
+  local position_params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8')
   rl.buf_request(0, 'rust-analyzer/view' .. level, position_params, function(...)
     return handler(level, ...)
   end)

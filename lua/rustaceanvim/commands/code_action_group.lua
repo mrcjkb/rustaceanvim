@@ -20,7 +20,7 @@ local M = {}
 ---@param ctx table
 function M.apply_action(action, client, ctx)
   if action.edit then
-    vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
+    vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding or 'utf-8')
   end
   if action.command then
     local command = type(action.command) == 'table' and action.command or action
@@ -383,7 +383,7 @@ M.code_action_group = function()
   if #clients == 0 then
     return
   end
-  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding)
+  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
   ---@diagnostic disable-next-line: inject-field
   params.context = context
 

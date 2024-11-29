@@ -15,7 +15,7 @@ local function override_apply_text_edits()
   vim.lsp.util.apply_text_edits = function(edits, bufnr, offset_encoding)
     local overrides = require('rustaceanvim.overrides')
     overrides.snippet_text_edits_to_text_edits(edits)
-    old_func(edits, bufnr, offset_encoding)
+    old_func(edits, bufnr, offset_encoding or 'utf-8')
   end
 end
 

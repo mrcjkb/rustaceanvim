@@ -41,7 +41,11 @@ local function handler(_, text_edits, ctx)
   local cursor = extract_cursor_position(text_edits)
   local overrides = require('rustaceanvim.overrides')
   overrides.snippet_text_edits_to_text_edits(text_edits)
-  vim.lsp.util.apply_text_edits(text_edits, ctx.bufnr, vim.lsp.get_client_by_id(ctx.client_id).offset_encoding)
+  vim.lsp.util.apply_text_edits(
+    text_edits,
+    ctx.bufnr,
+    vim.lsp.get_client_by_id(ctx.client_id).offset_encoding or 'utf-8'
+  )
   vim.api.nvim_win_set_cursor(0, cursor)
 end
 
@@ -53,7 +57,7 @@ function M.move_item(direction)
   if #clients == 0 then
     return
   end
-  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding)
+  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
   ---@diagnostic disable-next-line: inject-field
   params.direction = direction
   ra.buf_request(0, 'experimental/moveItem', params, handler)

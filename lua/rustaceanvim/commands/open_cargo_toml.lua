@@ -15,7 +15,7 @@ local function handler(_, result, ctx)
 
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   if client then
-    compat.show_document(result, client.offset_encoding)
+    compat.show_document(result, client.offset_encoding or 'utf-8')
   end
 end
 

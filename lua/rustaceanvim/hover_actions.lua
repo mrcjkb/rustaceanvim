@@ -143,7 +143,7 @@ function M.hover_actions()
   if #clients == 0 then
     return
   end
-  local params = lsp_util.make_position_params(0, clients[1].offset_encoding)
+  local params = lsp_util.make_position_params(0, clients[1].offset_encoding or 'utf-8')
   ra.buf_request(0, 'textDocument/hover', params, M.handler)
 end
 

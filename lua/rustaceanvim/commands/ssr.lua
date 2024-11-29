@@ -19,7 +19,7 @@ local function handler(err, result, ctx)
 
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   if client then
-    vim.lsp.util.apply_workspace_edit(result, client.offset_encoding)
+    vim.lsp.util.apply_workspace_edit(result, client.offset_encoding or 'utf-8')
   end
 end
 
@@ -30,8 +30,8 @@ local function ssr(query, make_range_params)
   if #clients == 0 then
     return
   end
-  local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding)
-  local range = make_range_params(0, clients[1].offset_encoding).range
+  local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8')
+  local range = make_range_params(0, clients[1].offset_encoding or 'utf-8').range
   if not query then
     vim.ui.input({ prompt = 'Enter query: ' }, function(input)
       query = input
@@ -51,7 +51,7 @@ end
 ---@param query string | nil
 function M.ssr_visual(query)
   ssr(query, function(winnr, offset_encoding)
-    return vim.lsp.util.make_given_range_params(nil, nil, winnr, offset_encoding)
+    return vim.lsp.util.make_given_range_params(nil, nil, winnr, offset_encoding or 'utf-8')
   end)
 end
 

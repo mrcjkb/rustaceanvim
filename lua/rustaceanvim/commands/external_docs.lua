@@ -9,7 +9,7 @@ function M.open_external_docs()
   ra.buf_request(
     0,
     'experimental/externalDocs',
-    vim.lsp.util.make_position_params(0, clients[1].offset_encoding),
+    vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8'),
     function(_, url)
       if url then
         local config = require('rustaceanvim.config.internal')
