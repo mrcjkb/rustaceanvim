@@ -197,7 +197,7 @@ M.start = function(bufnr)
           removed = {},
         },
       }
-      client.rpc.notify('workspace/didChangeWorkspaceFolders', params)
+      compat.client_notify(client, 'workspace/didChangeWorkspaceFolders', params)
       if not client.workspace_folders then
         client.workspace_folders = {}
       end
