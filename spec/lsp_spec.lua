@@ -1,8 +1,13 @@
--- load RustAnalyzer command
-require('rustaceanvim.lsp')
-
 local stub = require('luassert.stub')
 describe('LSP client API', function()
+  vim.g.rustaceanvim = {
+    server = {
+      -- Prevent start in detached mode
+      root_dir = vim.fn.tempname(),
+    },
+  }
+  -- load RustAnalyzer command
+  require('rustaceanvim.lsp')
   local RustaceanConfig = require('rustaceanvim.config.internal')
   local Types = require('rustaceanvim.types.internal')
   local ra_bin = Types.evaluate(RustaceanConfig.server.cmd)[1]
