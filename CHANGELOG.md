@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.16.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.4...v5.16.0) (2024-12-02)
+
+
+### Features
+
+* **lsp:** info log when starting client in standalone mode ([0362314](https://github.com/mrcjkb/rustaceanvim/commit/03623143c2cd9fa54c9769702c458b087c5b9863))
+
+
+### Bug Fixes
+
+* **lsp:** fall back to default offset encoding if not set ([4ac7a3c](https://github.com/mrcjkb/rustaceanvim/commit/4ac7a3c6cca9e393229651cc90733afbdc7c6395))
+
 ## [5.15.4](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.3...v5.15.4) (2024-11-29)
 
 
