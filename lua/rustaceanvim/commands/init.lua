@@ -77,6 +77,11 @@ local rustlsp_command_tbl = {
       return { 'cycle', 'current' }
     end,
   },
+  relatedDiagnostics = {
+    impl = function()
+      require('rustaceanvim.commands.diagnostic').related_diagnostics()
+    end,
+  },
   renderDiagnostic = {
     impl = function(args)
       local subcmd = args[1] or 'cycle'

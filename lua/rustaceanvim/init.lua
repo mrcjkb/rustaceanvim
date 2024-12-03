@@ -58,6 +58,9 @@
 ---            - If called with |current|:
 ---              Searches for diagnostics only in the
 ---              current cursor line.
+--- 'relatedDiagnostics' - Jump to diagnostics that are related to the one under the cursor.
+---                        If more than one diagnostic is found, this will populate and open
+---                        the quickfix list.
 --- 'openCargo' - Open the Cargo.toml file for the current package.
 --- 'openDocs' - Open docs.rs documentation for the symbol under the cursor.
 --- 'parentModule' - Open the current module's parent module.
