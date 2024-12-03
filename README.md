@@ -507,6 +507,26 @@ vim.keymap.set(
 
 <details>
   <summary>
+	<b>Jump to related diagnostics</b>
+  </summary>
+
+  Sometimes, rust-analyzer provides related diagnostics in multiple locations.
+  Using the `relatedDiagnostics` subcommand, you can navigate between them.
+  If a diagnostic has more than one related diagnostic, this will populate the quickfix list.
+
+  ```vim
+  :RustLsp relatedDiagnostics
+  ```
+  ```lua
+  vim.cmd.RustLsp('relatedDiagnostics')
+  ```
+
+![](https://github.com/user-attachments/assets/26695f41-2d9d-4250-82fa-fea867fd9432)
+
+</details>
+
+<details>
+  <summary>
 	<b>Open Cargo.toml</b>
   </summary>
   
