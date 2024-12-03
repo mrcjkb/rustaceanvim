@@ -1,10 +1,163 @@
-<!-- markdownlint-disable MD024 -->
+<!-- markdownlint-disable -->
 # Changelog
 
 All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [5.16.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.4...v5.16.0) (2024-12-02)
+
+
+### Features
+
+* **lsp:** info log when starting client in standalone mode ([0362314](https://github.com/mrcjkb/rustaceanvim/commit/03623143c2cd9fa54c9769702c458b087c5b9863))
+
+
+### Bug Fixes
+
+* **lsp:** fall back to default offset encoding if not set ([4ac7a3c](https://github.com/mrcjkb/rustaceanvim/commit/4ac7a3c6cca9e393229651cc90733afbdc7c6395))
+
+## [5.15.4](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.3...v5.15.4) (2024-11-29)
+
+
+### Bug Fixes
+
+* **lsp/nightly:** avoid deprecations with no alternative in stable (╯°□°)╯︵ ┻━┻ ([#587](https://github.com/mrcjkb/rustaceanvim/issues/587)) ([f116a55](https://github.com/mrcjkb/rustaceanvim/commit/f116a555d3d30d2aabf74f1e5f1c1b2b377e6516))
+* **lsp:** remove info notification when switching target architecture ([7a565dc](https://github.com/mrcjkb/rustaceanvim/commit/7a565dce677278a83419e01ecd630d135590dfe2))
+
+## [5.15.3](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.2...v5.15.3) (2024-11-27)
+
+
+### Bug Fixes
+
+* **lsp:** schedule notification if lsp restart times out ([1f97e08](https://github.com/mrcjkb/rustaceanvim/commit/1f97e08765a6149f87abe3aad6c8d03d9884a628))
+
+## [5.15.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.1...v5.15.2) (2024-11-25)
+
+
+### Bug Fixes
+
+* various `:RustAnalyzer target` regressions ([#591](https://github.com/mrcjkb/rustaceanvim/issues/591)) ([4f62c30](https://github.com/mrcjkb/rustaceanvim/commit/4f62c30d80a52ea41a4c0d1f12195aa01c89c2eb))
+
+## [5.15.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.15.0...v5.15.1) (2024-11-25)
+
+
+### Bug Fixes
+
+* expose `target` scommand in `:RustAnalyzer` command completion ([#589](https://github.com/mrcjkb/rustaceanvim/issues/589)) ([b4e35d5](https://github.com/mrcjkb/rustaceanvim/commit/b4e35d5b18b77f0304c2949941ad75644cb9ce23))
+
+## [5.15.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.14.1...v5.15.0) (2024-11-18)
+
+
+### Features
+
+* **lsp:** pass `client_id` to `on_initialized` ([#584](https://github.com/mrcjkb/rustaceanvim/issues/584)) ([900c6c5](https://github.com/mrcjkb/rustaceanvim/commit/900c6c5214b0fcec9a71309d7b05186bbaa3fa48))
+
+## [5.14.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.14.0...v5.14.1) (2024-11-12)
+
+
+### Bug Fixes
+
+* compatibility with nvim-nightly ([0b40190](https://github.com/mrcjkb/rustaceanvim/commit/0b401909394d15898e4a8fcf959f74cbcba5d3ca))
+
+## [5.14.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.13.2...v5.14.0) (2024-11-10)
+
+
+### Features
+
+* **lsp:** allow overriding server command via `rust-analzyer.server.path` setting ([#567](https://github.com/mrcjkb/rustaceanvim/issues/567)) ([7a8665b](https://github.com/mrcjkb/rustaceanvim/commit/7a8665bdf891ec00277704fd4a5b719587ca9082))
+
+## [5.13.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.13.1...v5.13.2) (2024-11-09)
+
+
+### Bug Fixes
+
+* work around bug in Nushell on Windows ([#564](https://github.com/mrcjkb/rustaceanvim/issues/564)) ([59f15ef](https://github.com/mrcjkb/rustaceanvim/commit/59f15efe7fcc6be5de57319764911849597f92a3))
+
+## [5.13.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.13.0...v5.13.1) (2024-10-28)
+
+
+### Performance Improvements
+
+* optimize target_arch switching ([#548](https://github.com/mrcjkb/rustaceanvim/issues/548)) ([6c4c8d8](https://github.com/mrcjkb/rustaceanvim/commit/6c4c8d82db26b9deab655ca4f75f526652a0de8a))
+
+## [5.13.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.12.0...v5.13.0) (2024-10-17)
+
+
+### Features
+
+* **lsp:** target architecture switching command for `RustAnalyzer` ([#541](https://github.com/mrcjkb/rustaceanvim/issues/541)) ([95715b2](https://github.com/mrcjkb/rustaceanvim/commit/95715b28c87b4cb3a8a38e063e2aa5cd3a8024d7))
+
+
+### Bug Fixes
+
+* remove corrupt file that breaks git clone on windows ([ccff140](https://github.com/mrcjkb/rustaceanvim/commit/ccff14065096c8978c431944f0f0db16db952c7b))
+
+## [5.12.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.11.0...v5.12.0) (2024-10-15)
+
+
+### Features
+
+* **config:** health check reports for .vscode/settings.json ([#539](https://github.com/mrcjkb/rustaceanvim/issues/539)) ([cb31013](https://github.com/mrcjkb/rustaceanvim/commit/cb31013a983faec6339d3bf6aad782da8fc7e111))
+
+## [5.11.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.10.1...v5.11.0) (2024-10-01)
+
+
+### Features
+
+* **lsp:** preserve cursor position for move_item command ([#532](https://github.com/mrcjkb/rustaceanvim/issues/532)) ([a07bb0d](https://github.com/mrcjkb/rustaceanvim/commit/a07bb0d256d1f9693ae8fb96dbcc5350b18f2978))
+
+## [5.10.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.10.0...v5.10.1) (2024-09-27)
+
+
+### Bug Fixes
+
+* **windows:** remove empty file causing git clone to fail ([b7c8171](https://github.com/mrcjkb/rustaceanvim/commit/b7c8171b1a496e20a2906bf74d1a260f802932d3))
+
+## [5.10.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.9.0...v5.10.0) (2024-09-27)
+
+
+### Features
+
+* add hint on how to configure/disable server status notifications ([711e25f](https://github.com/mrcjkb/rustaceanvim/commit/711e25fe11b6e72fbeda52d9d81b85a5aa3a81ab))
+
+## [5.9.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.8.1...v5.9.0) (2024-09-23)
+
+
+### Features
+
+* **lsp:** only notify on server status error by default ([#519](https://github.com/mrcjkb/rustaceanvim/issues/519)) ([360ac5c](https://github.com/mrcjkb/rustaceanvim/commit/360ac5c80f299f282cbb1967bbfe5aa1e1c6e66e))
+
+## [5.8.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.8.0...v5.8.1) (2024-09-21)
+
+
+### Bug Fixes
+
+* **lsp:** update deprecated API calls ([#514](https://github.com/mrcjkb/rustaceanvim/issues/514)) ([9a36905](https://github.com/mrcjkb/rustaceanvim/commit/9a369055aebd0411a11600f7cfd5c9b39c751eaa))
+
+## [5.8.0](https://github.com/mrcjkb/rustaceanvim/compare/5.7.0...v5.8.0) (2024-09-20)
+
+
+### Features
+
+* **lsp:** `<Plug>` mapping for hover actions ([#510](https://github.com/mrcjkb/rustaceanvim/issues/510)) ([b52bbc4](https://github.com/mrcjkb/rustaceanvim/commit/b52bbc4bb0e50bf7da65b2695e1d602344877858))
+
+
+### Bug Fixes
+
+* remove luajit requirement ([#512](https://github.com/mrcjkb/rustaceanvim/issues/512)) ([9db87de](https://github.com/mrcjkb/rustaceanvim/commit/9db87deb7b00d64466b56afff645756530db1c03))
+
+## [5.7.0]
+
+### Added
+
+- LSP: More information in unhealthy rust-analyzer notifications.
+  Thanks [@edevil](https://github.com/edevil)!
+
+## [5.6.0] - 2024-09-18
+
+### Added
+
+- LSP: Notify if rust-analyzer is not healthy.
 
 ## Unreleased
 

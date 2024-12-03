@@ -2,15 +2,7 @@
 
 local health = {}
 
-local h = vim.health or require('health')
----@diagnostic disable-next-line: deprecated
-local start = h.start or h.report_start
----@diagnostic disable-next-line: deprecated
-local ok = h.ok or h.report_ok
----@diagnostic disable-next-line: deprecated
-local error = h.error or h.report_error
----@diagnostic disable-next-line: deprecated
-local warn = h.warn or h.report_warn
+local h = vim.health
 
 ---@class rustaceanvim.LuaDependency
 ---@field module string The name of a module
@@ -43,11 +35,11 @@ local lua_dependencies = {
 ---@param dep rustaceanvim.LuaDependency
 local function check_lua_dependency(dep)
   if pcall(require, dep.module) then
-    ok(dep.url .. ' installed.')
+    h.ok(dep.url .. ' installed.')
     return
   end
   if dep.optional() then
-    warn(('%s not installed. %s %s'):format(dep.module, dep.info, dep.url))
+    h.warn(('%s not installed. %s %s'):format(dep.module, dep.info, dep.url))
   else
     error(('Lua dependency %s not found: %s'):format(dep.module, dep.url))
   end
@@ -88,14 +80,14 @@ local function check_external_dependency(dep)
     local mb_version_len = version_or_err
       and (mb_version_newline_idx and mb_version_newline_idx - 1 or version_or_err:len())
     version_or_err = version_or_err and version_or_err:sub(0, mb_version_len) or '(unknown version)'
-    ok(('%s: found %s'):format(dep.name, version_or_err))
+    h.ok(('%s: found %s'):format(dep.name, version_or_err))
     if dep.extra_checks_if_installed then
       dep.extra_checks_if_installed(binary)
     end
     return
   end
   if dep.optional() then
-    warn(([[
+    h.warn(([[
       %s: not found.
       Install %s for extended capabilities.
       %s
@@ -114,13 +106,13 @@ end
 
 ---@param config rustaceanvim.Config
 local function check_config(config)
-  start('Checking config')
+  h.start('Checking config')
   if vim.g.rustaceanvim and not config.was_g_rustaceanvim_sourced then
     error('vim.g.rustaceanvim is set, but it was sourced after rustaceanvim was initialized.')
   end
   local valid, err = require('rustaceanvim.config.check').validate(config)
   if valid then
-    ok('No errors found in config.')
+    h.ok('No errors found in config.')
   else
     error(err or '' .. vim.g.rustaceanvim and '' or ' This looks like a plugin bug!')
   end
@@ -136,23 +128,42 @@ local function is_dap_enabled()
 end
 
 local function check_for_conflicts()
-  start('Checking for conflicting plugins')
+  h.start('Checking for conflicting plugins')
   require('rustaceanvim.config.check').check_for_lspconfig_conflict(error)
   if package.loaded['rustaceanvim.neotest'] ~= nil and package.loaded['neotest-rust'] ~= nil then
     error('rustaceanvim.neotest and neotest-rust are both loaded. This is likely a conflict.')
     return
   end
-  ok('No conflicting plugins detected.')
+  h.ok('No conflicting plugins detected.')
 end
 
 local function check_tree_sitter()
-  start('Checking for tree-sitter parser')
+  h.start('Checking for tree-sitter parser')
   local has_tree_sitter_rust_parser = #vim.api.nvim_get_runtime_file('parser/rust.so', true) > 0
     or #vim.api.nvim_get_runtime_file('parser/rust.dll', true) > 0
   if has_tree_sitter_rust_parser then
-    ok('tree-sitter parser for Rust detected.')
+    h.ok('tree-sitter parser for Rust detected.')
   else
-    warn("No tree-sitter parser for Rust detected. Required by 'Rustc unpretty' command.")
+    h.warn("No tree-sitter parser for Rust detected. Required by 'Rustc unpretty' command.")
+  end
+end
+
+local function check_json_config()
+  local json = require('rustaceanvim.config.json')
+  if json.is_json_config_loaded() then
+    local errors = json.get_errors()
+    if #errors > 0 then
+      h.warn('.vscode/settings.json failed to load.')
+      vim.iter(errors):each(h.error)
+      return
+    end
+    local warnings = json.get_warnings()
+    if #warnings == 0 then
+      h.ok('.vscode/settings.json loaded without errors.')
+    else
+      h.warn('.vscode/settings.json loaded with warnings.')
+      vim.iter(warnings):each(h.warn)
+    end
   end
 end
 
@@ -160,12 +171,12 @@ function health.check()
   local types = require('rustaceanvim.types.internal')
   local config = require('rustaceanvim.config.internal')
 
-  start('Checking for Lua dependencies')
+  h.start('Checking for Lua dependencies')
   for _, dep in ipairs(lua_dependencies) do
     check_lua_dependency(dep)
   end
 
-  start('Checking external dependencies')
+  h.start('Checking external dependencies')
 
   local adapter = types.evaluate(config.dap.adapter)
   ---@cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | boolean
@@ -207,7 +218,7 @@ function health.check()
       extra_checks_if_not_installed = function()
         local bin = get_rust_analyzer_binary()
         if vim.fn.executable(bin) == 1 then
-          warn("rust-analyzer wrapper detected. Run 'rustup component add rust-analyzer' to install rust-analyzer.")
+          h.warn("rust-analyzer wrapper detected. Run 'rustup component add rust-analyzer' to install rust-analyzer.")
         end
       end,
     },
@@ -281,7 +292,7 @@ function health.check()
     })
   end
   if adapter == false and is_dap_enabled() then
-    warn('No debug adapter detected. Make sure either lldb or codelldb is available on the path.')
+    h.warn('No debug adapter detected. Make sure either lldb or codelldb is available on the path.')
   end
   for _, dep in ipairs(external_dependencies) do
     check_external_dependency(dep)
@@ -289,6 +300,7 @@ function health.check()
   check_config(config)
   check_for_conflicts()
   check_tree_sitter()
+  check_json_config()
 end
 
 return health

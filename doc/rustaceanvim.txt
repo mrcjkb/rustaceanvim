@@ -24,6 +24,10 @@ Commands:
  ':RustAnalyzer stop' - Stop the LSP client.
  ':RustAnalyzer restart' - Restart the LSP client.
  ':RustAnalyzer reloadSettings' - Reload settings for the LSP client.
+ ':RustAnalyzer target <target_arch>' - Set the target architecture for the LSP client.
+ The ':RustAnalyzer target' command can take a valid rustc target,
+ such as 'wasm32-unknown-unknown', or it can be left empty to set the LSP client
+ to use the default target architecture for the operating system.
 
 The ':RustLsp[!]' command is available after the LSP client has initialized.
 It accepts the following subcommands:
@@ -152,35 +156,35 @@ rustaceanvim.tools.Opts                                *rustaceanvim.tools.Opts*
 
     Fields: ~
         {executor?}                          (rustaceanvim.Executor|rustaceanvim.executor_alias)
-                                                                                                       The executor to use for runnables/debuggables
+                                                                                                               The executor to use for runnables/debuggables
         {test_executor?}                     (rustaceanvim.Executor|rustaceanvim.test_executor_alias)
-                                                                                                       The executor to use for runnables that are tests / testables
+                                                                                                               The executor to use for runnables that are tests / testables
         {crate_test_executor?}               (rustaceanvim.Executor|rustaceanvim.test_executor_alias)
-                                                                                                       The executor to use for runnables that are crate test suites (--all-targets)
+                                                                                                               The executor to use for runnables that are crate test suites (--all-targets)
         {cargo_override?}                    (string)
-                                                                                                       Set this to override the 'cargo' command for runnables, debuggables (etc., e.g. to 'cross').
-                                                                                                       If set, this takes precedence over 'enable_nextest'.
+                                                                                                               Set this to override the 'cargo' command for runnables, debuggables (etc., e.g. to 'cross').
+                                                                                                               If set, this takes precedence over 'enable_nextest'.
         {enable_nextest?}                    (boolean)
-                                                                                                       Whether to enable nextest. If enabled, `cargo test` commands will be transformed to `cargo nextest run` commands.
-                                                                                                       Defaults to `true` if cargo-nextest is detected. Ignored if `cargo_override` is set.
+                                                                                                               Whether to enable nextest. If enabled, `cargo test` commands will be transformed to `cargo nextest run` commands.
+                                                                                                               Defaults to `true` if cargo-nextest is detected. Ignored if `cargo_override` is set.
         {enable_clippy?}                     (boolean)
-                                                                                                       Whether to enable clippy checks on save if a clippy installation is detected.
-                                                                                                       Default: `true`
-        {on_initialized?}                    (fun(health:rustaceanvim.RAInitializedStatus))
-                                                                                                       Function that is invoked when the LSP server has finished initializing
+                                                                                                               Whether to enable clippy checks on save if a clippy installation is detected.
+                                                                                                               Default: `true`
+        {on_initialized?}                    (fun(health:rustaceanvim.RAInitializedStatus,client_id:integer))
+                                                                                                               Function that is invoked when the LSP server has finished initializing
         {reload_workspace_from_cargo_toml?}  (boolean)
-                                                                                                       Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
-        {hover_actions?}                     (rustaceanvim.hover-actions.Opts)                         Options for hover actions
-        {code_actions?}                      (rustaceanvim.code-action.Opts)                           Options for code actions
+                                                                                                               Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
+        {hover_actions?}                     (rustaceanvim.hover-actions.Opts)                                 Options for hover actions
+        {code_actions?}                      (rustaceanvim.code-action.Opts)                                   Options for code actions
         {float_win_config?}                  (rustaceanvim.FloatWinConfig)
-                                                                                                       Options applied to floating windows.
-                                                                                                       See |api-win_config|.
+                                                                                                               Options applied to floating windows.
+                                                                                                               See |api-win_config|.
         {create_graph?}                      (rustaceanvim.crate-graph.Opts)
-                                                                                                       Options for showing the crate graph based on graphviz and the dot
+                                                                                                               Options for showing the crate graph based on graphviz and the dot
         {open_url?}                          (fun(url:string):nil)
-                                                                                                       If set, overrides how to open URLs
+                                                                                                               If set, overrides how to open URLs
         {rustc?}                             (rustaceanvim.rustc.Opts)
-                                                                                                       Options for `rustc`
+                                                                                                               Options for `rustc`
 
 
 rustaceanvim.Executor                                    *rustaceanvim.Executor*
@@ -262,7 +266,7 @@ rustaceanvim.crate-graph.Opts                    *rustaceanvim.crate-graph.Opts*
         {enabled_graphviz_backends?}  (string[])
                                                   Override the enabled graphviz backends list, used for input validation and autocompletion.
         {pipe?}                       (string)
-                                                  Overide the pipe symbol in the shell command.
+                                                  Override the pipe symbol in the shell command.
                                                   Useful if using a shell that is not supported by this plugin.
 
 
@@ -299,24 +303,46 @@ rustaceanvim.lsp.ClientOpts                        *rustaceanvim.lsp.ClientOpts*
         {load_vscode_settings?}  (boolean)
                                                                                                                    Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json.
                                                                                                                    If found, loaded settings will override configured options.
-                                                                                                                   Default: true
+                                                                                                                   Default: `true`
+        {status_notify_level?}   (rustaceanvim.server.status_notify_level)
+                                                                                                                   Server status warning level to notify at.
+                                                                                                                   Default: 'error'
 
-    See: ~
-        |vim.lsp.ClientConfig|
 
+rustaceanvim.server.status_notify_level*rustaceanvim.server.status_notify_level*
 
-rustaceanvim.dap.Opts                                    *rustaceanvim.dap.Opts*
-
-    Fields: ~
-        {autoload_configurations}  (boolean)
-                                              Whether to autoload nvim-dap configurations when rust-analyzer has attached?
-                                              Default: `true`.
+    Type: ~
+        "error"|"warning"|rustaceanvim.disable
 
 
 rustaceanvim.disable                                      *rustaceanvim.disable*
 
     Type: ~
         false
+
+
+rustaceanvim.dap.Opts                                    *rustaceanvim.dap.Opts*
+
+    Fields: ~
+        {autoload_configurations?}    (boolean)
+                                                                                                                                                                                                                             Whether to autoload nvim-dap configurations when rust-analyzer has attached?
+                                                                                                                                                                                                                             Default: `true`
+        {adapter?}                    (rustaceanvim.dap.executable.Config|rustaceanvim.dap.server.Config|rustaceanvim.disable|fun():rustaceanvim.dap.executable.Config|rustaceanvim.dap.server.Config|rustaceanvim.disable)
+                                                                                                                                                                                                                             Defaults to creating the `rt_lldb` adapter, which is a |rustaceanvim.dap.server.Config|
+                                                                                                                                                                                                                             if `codelldb` is detected, and a |rustaceanvim.dap.executable.Config|` if `lldb` is detected.
+                                                                                                                                                                                                                             Set to `false` to disable.
+        {configuration?}              (rustaceanvim.dap.client.Config|rustaceanvim.disable|fun():rustaceanvim.dap.client.Config|rustaceanvim.disable)
+                                                                                                                                                                                                                             Dap client configuration. Defaults to a function that looks for a `launch.json` file
+                                                                                                                                                                                                                             or returns a |rustaceanvim.dap.executable.Config| that launches the `rt_lldb` adapter.
+                                                                                                                                                                                                                             Set to `false` to disable.
+        {add_dynamic_library_paths?}  (boolean|fun():boolean)
+                                                                                                                                                                                                                             Accommodate dynamically-linked targets by passing library paths to lldb.
+                                                                                                                                                                                                                             Default: `true`.
+        {auto_generate_source_map?}   (fun():boolean|boolean)
+                                                                                                                                                                                                                             Whether to auto-generate a source map for the standard library.
+        {load_rust_types?}            (fun():boolean|boolean)
+                                                                                                                                                                                                                             Whether to get Rust types via initCommands (rustlib/etc/lldb_commands, lldb only).
+                                                                                                                                                                                                                             Default: `true`.
 
 
 rustaceanvim.dap.Command                              *rustaceanvim.dap.Command*
@@ -366,7 +392,7 @@ rustaceanvim.dap.adapter.types.server    *rustaceanvim.dap.adapter.types.server*
 
 
                                                 *rustaceanvim.dap.client.Config*
-rustaceanvim.dap.client.Config : Configuration
+rustaceanvim.dap.client.Config : dap.Configuration
 
     Fields: ~
         {type}           (string)                                                                                                                   The dap adapter to use
@@ -423,8 +449,9 @@ LSP configuration utility                           *rustaceanvim.config.server*
 rustaceanvim.LoadRASettingsOpts                *rustaceanvim.LoadRASettingsOpts*
 
     Fields: ~
-        {settings_file_pattern}  (string|nil)  File name or pattern to search for. Defaults to 'rust-analyzer.json'
-        {default_settings}       (table|nil)   Default settings to merge the loaded settings into
+        {settings_file_pattern}  (string|nil)
+                                               (deprecated) File name or pattern to search for. Defaults to 'rust-analyzer.json'
+        {default_settings}       (table|nil)   Default settings to merge the loaded settings into.
 
 
                                             *server.load_rust_analyzer_settings*

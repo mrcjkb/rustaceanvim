@@ -10,6 +10,7 @@ local RustaceanConfig
 ---@class rustaceanvim.internal.RAInitializedStatus : rustaceanvim.RAInitializedStatus
 ---@field health rustaceanvim.lsp_server_health_status
 ---@field quiescent boolean inactive?
+---@field message string | nil
 ---
 ---@param dap_adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
 ---@return boolean
@@ -43,6 +44,7 @@ local function load_dap_configuration(type)
     stopOnEntry = false,
   }
   if type == 'lldb' then
+    ---@diagnostic disable-next-line: inject-field
     dap_config.runInTerminal = true
   end
   ---@diagnostic disable-next-line: different-requires
@@ -104,7 +106,7 @@ local RustaceanDefaultConfig = {
 
     --- callback to execute once rust-analyzer is done initializing the workspace
     --- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
-    ---@type fun(health:rustaceanvim.RAInitializedStatus) | nil
+    ---@type fun(health:rustaceanvim.RAInitializedStatus, client_id:integer) | nil
     on_initialized = nil,
 
     --- automatically call RustReloadWorkspace when writing to a Cargo.toml file.
@@ -294,6 +296,8 @@ local RustaceanDefaultConfig = {
     },
     ---@type boolean Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json.
     load_vscode_settings = true,
+    ---@type rustaceanvim.server.status_notify_level
+    status_notify_level = 'error',
   },
 
   --- debugging stuff

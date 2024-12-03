@@ -1,5 +1,7 @@
 local M = {}
 
+local compat = require('rustaceanvim.compat')
+
 local function get_params()
   return {
     textDocument = vim.lsp.util.make_text_document_params(0),
@@ -13,7 +15,7 @@ local function handler(_, result, ctx)
 
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   if client then
-    vim.lsp.util.jump_to_location(result, client.offset_encoding)
+    compat.show_document(result, client.offset_encoding or 'utf-8')
   end
 end
 

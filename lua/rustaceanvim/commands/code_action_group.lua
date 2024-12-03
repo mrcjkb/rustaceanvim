@@ -1,5 +1,6 @@
 local ui = require('rustaceanvim.ui')
 local config = require('rustaceanvim.config.internal')
+local compat = require('rustaceanvim.compat')
 local M = {}
 
 ---@class rustaceanvim.RACodeAction
@@ -15,11 +16,11 @@ local M = {}
 ---@field arguments? any[]
 
 ---@param action rustaceanvim.RACodeAction | rustaceanvim.RACommand
----@param client lsp.Client
+---@param client vim.lsp.Client
 ---@param ctx table
 function M.apply_action(action, client, ctx)
   if action.edit then
-    vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
+    vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding or 'utf-8')
   end
   if action.command then
     local command = type(action.command) == 'table' and action.command or action
@@ -47,7 +48,7 @@ function M.on_user_choice(action_tuple, ctx)
     return
   end
   if not action.edit and type(code_action_provider) == 'table' and code_action_provider.resolveProvider then
-    client.request('codeAction/resolve', action, function(err, resolved_action)
+    compat.client_request(client, 'codeAction/resolve', action, function(err, resolved_action)
       ---@cast resolved_action rustaceanvim.RACodeAction|rustaceanvim.RACommand
       if err then
         vim.notify(err.code .. ': ' .. err.message, vim.log.levels.ERROR)
@@ -376,8 +377,14 @@ M.state = {
 
 M.code_action_group = function()
   local context = {}
-  context.diagnostics = vim.lsp.diagnostic.get_line_diagnostics()
-  local params = vim.lsp.util.make_range_params()
+  context.diagnostics = require('rustaceanvim.compat').get_line_diagnostics()
+  local ra = require('rustaceanvim.rust_analyzer')
+  local clients = ra.get_active_rustaceanvim_clients(0)
+  if #clients == 0 then
+    return
+  end
+  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
+  ---@diagnostic disable-next-line: inject-field
   params.context = context
 
   vim.lsp.buf_request_all(0, 'textDocument/codeAction', params, function(results)

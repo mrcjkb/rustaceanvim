@@ -150,6 +150,14 @@ vim.keymap.set(
   end,
   { silent = true, buffer = bufnr }
 )
+vim.keymap.set(
+  "n", 
+  "K",  -- Override Neovim's built-in hover keymap with rustaceanvim's hover actions
+  function()
+    vim.cmd.RustLsp({'hover', 'actions'})
+  end,
+  { silent = true, buffer = bufnr }
+)
 ```
 
 >[!TIP]
@@ -402,6 +410,18 @@ vim.keymap.set(
 
  By default, this plugin replaces Neovim's built-in hover handler with hover
  actions, so you can also use `vim.lsp.buf.hover()`.
+
+ You can invoke a hover action by switching to the hover window and entering `<CR>`
+ on the respective line, or with a keymap for the `<Plug>RustHoverAction` mapping,
+ which accepts a `<count>` prefix as the (1-based) index of the hover action to invoke.
+ 
+ For example, if you set the following keymap:
+ 
+ ```lua
+ vim.keymap.set('n', '<space>a', '<Plug>RustHoverAction')
+ ```
+ 
+ you can invoke the third hover action with `3<space>a`.
 
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/c7b6c730-4439-47b0-9a75-7ea4e6831f7a)
 
@@ -806,6 +826,7 @@ the `server.default_settings` will be used.
 
 [^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
       and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/manual.html#configuration).
+      Note that JSON5 is currently not supported by Neovim.
 
 Another option is to use `:h exrc`.
 
@@ -877,6 +898,12 @@ Issues with (auto)completion either come from another plugin or rust-analzyer.
 See [`:h rustaceanvim.mason`](./doc/mason.txt) for details about troubleshooting
 mason.nvim and nvim-lspconfig issues, or configuring rustaceanvim to use
 a rust-analyzer installation that is managed by mason.nvim.
+
+#### I am not seeing diagnostics in a standalone file
+
+rust-analyzer has limited support for standalone files.
+Many diagnostics come from Cargo. If you're not in a Cargo project,
+you won't see any Cargo diagnostics.
 
 ## :link: Related Projects
 

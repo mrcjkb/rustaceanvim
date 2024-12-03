@@ -6,6 +6,8 @@ local rust_analyzer = require('rustaceanvim.rust_analyzer')
 local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
+local rustc = require('rustaceanvim.rustc')
+local compat = require('rustaceanvim.compat')
 
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
@@ -13,11 +15,11 @@ local function override_apply_text_edits()
   vim.lsp.util.apply_text_edits = function(edits, bufnr, offset_encoding)
     local overrides = require('rustaceanvim.overrides')
     overrides.snippet_text_edits_to_text_edits(edits)
-    old_func(edits, bufnr, offset_encoding)
+    old_func(edits, bufnr, offset_encoding or 'utf-8')
   end
 end
 
----@param client lsp.Client
+---@param client vim.lsp.Client
 ---@param root_dir string
 ---@return boolean
 local function is_in_workspace(client, root_dir)
@@ -93,6 +95,54 @@ local function configure_file_watcher(server_cfg)
   end
 end
 
+---LSP restart internal implementations
+---@param bufnr? number The buffer number, defaults to the current buffer
+---@param filter? rustaceanvim.lsp.get_clients.Filter
+---@param callback? fun(client: vim.lsp.Client) Optional callback to run for each client before restarting.
+---@return number|nil client_id
+local function restart(bufnr, filter, callback)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  local clients = M.stop(bufnr, filter)
+  local timer, _, _ = vim.uv.new_timer()
+  if not timer then
+    vim.schedule(function()
+      vim.notify('rustaceanvim.lsp: Failed to initialise timer for LSP client restart.', vim.log.levels.ERROR)
+    end)
+    return
+  end
+  local max_attempts = 50
+  local attempts_to_live = max_attempts
+  local stopped_client_count = 0
+  timer:start(200, 100, function()
+    for _, client in ipairs(clients) do
+      if compat.client_is_stopped(client) then
+        stopped_client_count = stopped_client_count + 1
+        vim.schedule(function()
+          -- Execute the callback, if provided, for additional actions before restarting
+          if callback then
+            callback(client)
+          end
+          M.start(bufnr)
+        end)
+      end
+    end
+    if stopped_client_count >= #clients then
+      timer:stop()
+      attempts_to_live = 0
+    elseif attempts_to_live <= 0 then
+      vim.schedule(function()
+        vim.notify(
+          ('rustaceanvim.lsp: Could not restart all LSP clients after %d attempts.'):format(max_attempts),
+          vim.log.levels.ERROR
+        )
+      end)
+      timer:stop()
+      attempts_to_live = 0
+    end
+    attempts_to_live = attempts_to_live - 1
+  end)
+end
+
 ---@class rustaceanvim.lsp.StartConfig: rustaceanvim.lsp.ClientConfig
 ---@field root_dir string | nil
 ---@field init_options? table
@@ -117,7 +167,14 @@ M.start = function(bufnr)
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = cargo.get_config_root_dir(client_config, bufname)
   if not root_dir then
-    --- No project root found. Start in detached/standalone mode.
+    vim.notify(
+      [[
+rustaceanvim:
+No project root found.
+Starting rust-analyzer client in detached/standalone mode (with reduced functionality).
+]],
+      vim.log.levels.INFO
+    )
     root_dir = vim.fs.dirname(bufname)
     lsp_start_config.init_options = { detachedFiles = { bufname } }
   end
@@ -147,7 +204,7 @@ M.start = function(bufnr)
           removed = {},
         },
       }
-      client.rpc.notify('workspace/didChangeWorkspaceFolders', params)
+      compat.client_notify(client, 'workspace/didChangeWorkspaceFolders', params)
       if not client.workspace_folders then
         client.workspace_folders = {}
       end
@@ -158,8 +215,23 @@ M.start = function(bufnr)
   end
 
   local rust_analyzer_cmd = types.evaluate(client_config.cmd)
-  if #rust_analyzer_cmd == 0 or vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
-    vim.notify('rust-analyzer binary not found.', vim.log.levels.ERROR)
+  -- special case: rust-analyzer has a `rust-analyzer.server.path` config option
+  -- that allows you to override the path via .vscode/settings.json
+  local server_path = vim.tbl_get(lsp_start_config.settings, 'rust-analyzer', 'server', 'path')
+  if type(server_path) == 'string' then
+    rust_analyzer_cmd[1] = server_path
+    --
+  end
+  if #rust_analyzer_cmd == 0 then
+    vim.schedule(function()
+      vim.notify('rust-analyzer command is not set!', vim.log.levels.ERROR)
+    end)
+    return
+  end
+  if vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
+    vim.schedule(function()
+      vim.notify(('%s is not executable'):format(rust_analyzer_cmd[1]), vim.log.levels.ERROR)
+    end)
     return
   end
   ---@cast rust_analyzer_cmd string[]
@@ -214,18 +286,19 @@ end
 
 ---Stop the LSP client.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@return table[] clients A list of clients that will be stopped
-M.stop = function(bufnr)
+---@param filter? rustaceanvim.lsp.get_clients.Filter
+---@return vim.lsp.Client[] clients A list of clients that will be stopped
+M.stop = function(bufnr, filter)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, filter)
   vim.lsp.stop_client(clients)
   if type(clients) == 'table' then
-    ---@cast clients lsp.Client[]
+    ---@cast clients vim.lsp.Client[]
     for _, client in ipairs(clients) do
       server_status.reset_client_state(client.id)
     end
   else
-    ---@cast clients lsp.Client
+    ---@cast clients vim.lsp.Client
     server_status.reset_client_state(clients.id)
   end
   return clients
@@ -233,55 +306,51 @@ end
 
 ---Reload settings for the LSP client.
 ---@param bufnr? number The buffer number, defaults to the current buffer
----@return table[] clients A list of clients that will be have their settings reloaded
+---@return vim.lsp.Client[] clients A list of clients that will be have their settings reloaded
 M.reload_settings = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
-  ---@cast clients lsp.Client[]
+  ---@cast clients vim.lsp.Client[]
   for _, client in ipairs(clients) do
     local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.config.root_dir, config.server)
     ---@diagnostic disable-next-line: inject-field
     client.settings = settings
-    client.notify('workspace/didChangeConfiguration', {
+    compat.client_notify(client, 'workspace/didChangeConfiguration', {
       settings = client.settings,
     })
   end
   return clients
 end
 
+---Updates the target architecture setting for the LSP client associated with the given buffer.
+---@param bufnr? number The buffer number, defaults to the current buffer
+---@param target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to set
+M.set_target_arch = function(bufnr, target)
+  target = target or rustc.DEFAULT_RUSTC_TARGET
+  ---@param client vim.lsp.Client
+  restart(bufnr, { exclude_rustc_target = target }, function(client)
+    rustc.with_rustc_target_architectures(function(rustc_targets)
+      if rustc_targets[target] then
+        local ra = client.config.settings['rust-analyzer']
+        ra.cargo = ra.cargo or {}
+        ra.cargo.target = target
+        compat.client_notify(client, 'workspace/didChangeConfiguration', { settings = client.config.settings })
+        return
+      else
+        vim.schedule(function()
+          vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
+        end)
+        return
+      end
+    end)
+  end)
+end
+
 ---Restart the LSP client.
 ---Fails silently if the buffer's filetype is not one of the filetypes specified in the config.
----@param bufnr? number The buffer number (optional), defaults to the current buffer
 ---@return number|nil client_id The LSP client ID after restart
-M.restart = function(bufnr)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = M.stop(bufnr)
-  local timer, _, _ = vim.uv.new_timer()
-  if not timer then
-    -- TODO: Log error when logging is implemented
-    return
-  end
-  local attempts_to_live = 50
-  local stopped_client_count = 0
-  timer:start(200, 100, function()
-    for _, client in ipairs(clients) do
-      if client:is_stopped() then
-        stopped_client_count = stopped_client_count + 1
-        vim.schedule(function()
-          M.start(bufnr)
-        end)
-      end
-    end
-    if stopped_client_count >= #clients then
-      timer:stop()
-      attempts_to_live = 0
-    elseif attempts_to_live <= 0 then
-      vim.notify('rustaceanvim.lsp: Could not restart all LSP clients.', vim.log.levels.ERROR)
-      timer:stop()
-      attempts_to_live = 0
-    end
-    attempts_to_live = attempts_to_live - 1
-  end)
+M.restart = function()
+  return restart()
 end
 
 ---@enum RustAnalyzerCmd
@@ -290,6 +359,7 @@ local RustAnalyzerCmd = {
   stop = 'stop',
   restart = 'restart',
   reload_settings = 'reloadSettings',
+  target = 'target',
 }
 
 local function rust_analyzer_cmd(opts)
@@ -304,16 +374,19 @@ local function rust_analyzer_cmd(opts)
     M.restart()
   elseif cmd == RustAnalyzerCmd.reload_settings then
     M.reload_settings()
+  elseif cmd == RustAnalyzerCmd.target then
+    local target_arch = fargs[2]
+    M.set_target_arch(nil, target_arch)
   end
 end
 
 vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
   nargs = '+',
-  desc = 'Starts or stops the rust-analyzer LSP client',
+  desc = 'Starts, stops the rust-analyzer LSP client or changes the target',
   complete = function(arg_lead, cmdline, _)
     local clients = rust_analyzer.get_active_rustaceanvim_clients()
     ---@type RustAnalyzerCmd[]
-    local commands = #clients == 0 and { 'start' } or { 'stop', 'restart', 'reloadSettings' }
+    local commands = #clients == 0 and { 'start' } or { 'stop', 'restart', 'reloadSettings', 'target' }
     if cmdline:match('^RustAnalyzer%s+%w*$') then
       return vim.tbl_filter(function(command)
         return command:find(arg_lead) ~= nil

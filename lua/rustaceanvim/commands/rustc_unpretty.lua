@@ -51,6 +51,7 @@ local function get_vim_range(range, buf)
     -- Use the value of the last col of the previous row instead.
     erow = erow - 1
     if not buf or buf == 0 then
+      ---@diagnostic disable-next-line: assign-type-mismatch
       ecol = vim.fn.col { erow, '$' } - 1
     else
       ecol = #vim.api.nvim_buf_get_lines(buf, erow - 1, erow, false)[1]

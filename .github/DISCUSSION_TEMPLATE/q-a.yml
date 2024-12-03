@@ -1,0 +1,104 @@
+---
+labels: [Question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your interest in rustaceanvim 🦀
+        Please follow these instructions, fill every question, and do every step. 🙏
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checked other resources
+      description: Please confirm and check all the following options.
+      options:
+        - label: This is not a bug report or feature request (Please use [issues](https://github.com/mrcjkb/rustaceanvim/issues/new/choose) for those).
+          required: true
+        - label: This is a question about rustaceanvim, not rust-analyzer or Neovim.
+          required: true
+        - label: This is [not a question about autocompletion](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#im-having-issues-with-autocompletion).
+          required: true
+        - label: I have read the README.
+          required: true
+        - label: I have read the [FAQ](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#left_speech_bubble-faq).
+          required: true
+        - label: I have searched for a solution using `:h rustaceanvim`.
+          required: true
+        - label: I have searched [existing discussions](https://github.com/mrcjkb/rustaceanvim/discussions).
+          required: true
+        - label: I have searched the existing issues/discussions of other plugins related to this question (if applicable).
+          required: false
+        - label: I have searched the [existing rust-analyzer discussions](https://github.com/rust-lang/rust-analyzer/discussions) (if applicable).
+          required: false
+        - label: I have added a very descriptive title to this question.
+          required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        What is the problem, question, or error?
+
+        Write a short description explaining what you are doing, what you expect to happen, and what is currently happening.
+      placeholder: |
+        * I'm trying to use the `rustaceanvim` plugin to do X.
+        * I expect to see Y.
+        * Instead, it does Z.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example Code
+      description: |
+        Please add a self-contained, [minimal, reproducible, example](https://stackoverflow.com/help/minimal-reproducible-example) with your use case.
+        You can use [the minimal config as a template](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
+        
+        If a maintainer can copy it, run it, and see it right away, there's a much higher chance that you'll be able to get help.
+        
+        > [!IMPORTANT]
+        > 
+        > - Reduce your code to the minimum required to reproduce the issue if possible. This makes it much easier for others to help you.
+        > - Avoid screenshots when possible, as they are hard to read and (more importantly) don't allow others to copy-and-paste your code.
+
+      placeholder: |
+        vim.env.LAZY_STDPATH = '.repro'
+        load(vim.fn.system('curl -s https://raw.githubusercontent.com/folke/lazy.nvim/main/bootstrap.lua'))()
+
+        require('lazy.minit').repro {
+          spec = {
+            {
+              'mrcjkb/rustaceanvim',
+              version = '^5',
+              init = function()
+                -- Configure rustaceanvim here
+                vim.g.rustaceanvim = {}
+              end,
+              lazy = false,
+            },
+          },
+        }
+        -- do anything else you need to do to reproduce the issue
+      render: lua
+    validations:
+      required: true 
+  - type: input
+    attributes:
+      label: "Neovim version (nvim -v)"
+      placeholder: "v0.10.1"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "Operating system/version"
+      placeholder: "NixOS 24.05"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Output of :checkhealth rustaceanvim"
+      render: "console"
+      placeholder: |
+        Please paste the output here, as it may contain important information for debugging.
+    validations:
+      required: true

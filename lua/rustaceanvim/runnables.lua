@@ -185,8 +185,13 @@ end
 ---@param runnables rustaceanvim.RARunnable
 ---@return integer | nil choice
 function M.get_runnable_at_cursor_position(runnables)
+  local ra = require('rustaceanvim.rust_analyzer')
+  local clients = ra.get_active_rustaceanvim_clients(0)
+  if #clients == 0 then
+    return
+  end
   ---@type lsp.Position
-  local position = vim.lsp.util.make_position_params().position
+  local position = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8').position
   ---@type integer|nil, integer|nil
   local choice, fallback
   for idx, runnable in ipairs(runnables) do

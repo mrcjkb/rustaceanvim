@@ -310,32 +310,34 @@ function M.start(args, verbose, callback, on_error)
     end
     vim.schedule(function()
       local executables = {}
-      for value in output:gmatch('([^\n]*)\n?') do
-        local is_json, artifact = pcall(vim.fn.json_decode, value)
-        if not is_json then
-          goto loop_end
-        end
-
-        -- only process artifact if it's valid json object and it is a compiler artifact
-        if type(artifact) ~= 'table' or artifact.reason ~= 'compiler-artifact' then
-          goto loop_end
-        end
-
-        local is_binary = vim.list_contains(artifact.target.crate_types, 'bin')
-        local is_build_script = vim.list_contains(artifact.target.kind, 'custom-build')
-        local is_test = ((artifact.profile.test == true) and (artifact.executable ~= nil))
-          or vim.list_contains(artifact.target.kind, 'test')
-        -- only add executable to the list if we want a binary debug and it is a binary
-        -- or if we want a test debug and it is a test
-        if
-          (cargo_args[1] == 'build' and is_binary and not is_build_script)
-          or (cargo_args[1] == 'test' and is_test)
-        then
-          table.insert(executables, artifact.executable)
-        end
-
-        ::loop_end::
-      end
+      vim
+        .iter(output:gmatch('([^\n]*)\n?'))
+        ---@param value string
+        :map(function(value)
+          local is_json, artifact = pcall(vim.fn.json_decode, value)
+          ---@diagnostic disable-next-line: redundant-return-value
+          return is_json, artifact
+        end)
+        ---@param is_json boolean
+        :filter(function(is_json, artifact)
+          -- only process artifact if it's valid json object and it is a compiler artifact
+          return is_json and type(artifact) == 'table' and artifact.reason == 'compiler-artifact'
+        end)
+        ---@param artifact table
+        :each(function(_, artifact)
+          local is_binary = vim.list_contains(artifact.target.crate_types, 'bin')
+          local is_build_script = vim.list_contains(artifact.target.kind, 'custom-build')
+          local is_test = ((artifact.profile.test == true) and (artifact.executable ~= nil))
+            or vim.list_contains(artifact.target.kind, 'test')
+          -- only add executable to the list if we want a binary debug and it is a binary
+          -- or if we want a test debug and it is a test
+          if
+            (cargo_args[1] == 'build' and is_binary and not is_build_script)
+            or (cargo_args[1] == 'test' and is_test)
+          then
+            table.insert(executables, artifact.executable)
+          end
+        end)
       -- only 1 executable is allowed for debugging - error out if zero or many were found
       if #executables <= 0 then
         on_error('No compilation artifacts found.')

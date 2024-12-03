@@ -2,11 +2,6 @@ local ui = require('rustaceanvim.ui')
 
 local M = {}
 
----@return lsp_range_params
-local function get_params()
-  return vim.lsp.util.make_range_params()
-end
-
 ---@type integer | nil
 local latest_buf_id = nil
 
@@ -29,9 +24,14 @@ local function handler(_, result)
   ui.resize(true, '-25')
 end
 
-local rl = require('rustaceanvim.rust_analyzer')
 function M.syntax_tree()
-  rl.buf_request(0, 'rust-analyzer/syntaxTree', get_params(), handler)
+  local ra = require('rustaceanvim.rust_analyzer')
+  local clients = ra.get_active_rustaceanvim_clients(0)
+  if #clients == 0 then
+    return
+  end
+  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
+  ra.buf_request(0, 'rust-analyzer/syntaxTree', params, handler)
 end
 
 return M.syntax_tree
