@@ -459,7 +459,7 @@ function M.related_diagnostics()
     end)
   else
     vim.fn.setqflist({}, ' ', { title = 'related diagnostics', items = quickfix_entries })
-    vim.cmd.botright and vim.cmd.botright('copen') or vim.cmd.copen()
+    type(vim.cmd.botright) == 'function' and vim.cmd.botright('copen') or vim.cmd.copen()
   end
 end
 
