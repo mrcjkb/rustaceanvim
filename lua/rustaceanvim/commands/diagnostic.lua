@@ -73,6 +73,7 @@ function M.explain_error()
     vim.notify('No explainable errors found.', vim.log.levels.INFO)
     return
   end
+  close_hover()
   local win_id = vim.api.nvim_get_current_win()
   local opts = {
     cursor_position = vim.api.nvim_win_get_cursor(win_id),
@@ -128,15 +129,11 @@ function M.explain_error()
     table.insert(float_preview_lines, 1, '---')
     table.insert(float_preview_lines, 1, '1. Open in split')
     vim.schedule(function()
-      close_hover()
       local bufnr, winnr = vim.lsp.util.open_floating_preview(
         float_preview_lines,
         'markdown',
         vim.tbl_extend('keep', config.tools.float_win_config, {
-          focus = false,
-          focusable = true,
           focus_id = 'rustc-explain-error',
-          close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
         })
       )
       _window_state.float_winnr = winnr
@@ -203,15 +200,11 @@ function M.explain_error_current_line()
     table.insert(float_preview_lines, 1, '---')
     table.insert(float_preview_lines, 1, '1. Open in split')
     vim.schedule(function()
-      close_hover()
       local bufnr, winnr = vim.lsp.util.open_floating_preview(
         float_preview_lines,
         'markdown',
         vim.tbl_extend('keep', config.tools.float_win_config, {
-          focus = false,
-          focusable = true,
           focus_id = 'rustc-explain-error',
-          close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
         })
       )
       _window_state.float_winnr = winnr
@@ -252,15 +245,11 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
   table.insert(float_preview_lines, 1, '---')
   table.insert(float_preview_lines, 1, '1. Open in split')
   vim.schedule(function()
-    close_hover()
     local bufnr, winnr = vim.lsp.util.open_floating_preview(
       float_preview_lines,
-      '',
+      'plaintext',
       vim.tbl_extend('keep', config.tools.float_win_config, {
-        focus = false,
-        focusable = true,
         focus_id = 'ra-render-diagnostic',
-        close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
       })
     )
     vim.api.nvim_create_autocmd('WinEnter', {
@@ -322,6 +311,7 @@ function M.render_diagnostic()
     vim.notify('No renderable diagnostics found.', vim.log.levels.INFO)
     return
   end
+  close_hover()
   local win_id = vim.api.nvim_get_current_win()
   local opts = {
     cursor_position = vim.api.nvim_win_get_cursor(win_id),
