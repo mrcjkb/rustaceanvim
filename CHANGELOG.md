@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.18.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.17.1...v5.18.0) (2024-12-08)
+
+
+### Features
+
+* **diagnostics:** focus preview window when invoking commands again with `current` argument ([#607](https://github.com/mrcjkb/rustaceanvim/issues/607)) ([a7bb78c](https://github.com/mrcjkb/rustaceanvim/commit/a7bb78c73a317db7faf53641dc23c8ac34ba8225))
+
+
+### Bug Fixes
+
+* **neotest:** prevent coloured output when using cargo-nextest ([#610](https://github.com/mrcjkb/rustaceanvim/issues/610)) ([87a7b0b](https://github.com/mrcjkb/rustaceanvim/commit/87a7b0b651c61a4946ee9d69c1b7afcc679bdfa3))
+
 ## [5.17.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.17.0...v5.17.1) (2024-12-04)
 
 
