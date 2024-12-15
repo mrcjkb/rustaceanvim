@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.19.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.18.0...v5.19.0) (2024-12-15)
+
+
+### Features
+
+* **lsp:** auto-register `blink.cmp` client capabilities ([#616](https://github.com/mrcjkb/rustaceanvim/issues/616)) ([056078b](https://github.com/mrcjkb/rustaceanvim/commit/056078bed1039deda44f59185acee07c37f3dc3b))
+
 ## [5.18.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.17.1...v5.18.0) (2024-12-08)
 
 
