@@ -134,6 +134,9 @@ end
 ---@return lsp.ClientCapabilities
 function server.create_client_capabilities()
   local rs_capabilities = make_rustaceanvim_capabilities()
+  local blink_capabilities = mk_capabilities_if_available('blink.cmp', function(blink)
+    return blink.get_lsp_capabilities()
+  end)
   local cmp_capabilities = mk_capabilities_if_available('cmp_nvim_lsp', function(cmp_nvim_lsp)
     return cmp_nvim_lsp.default_capabilities()
   end)
@@ -153,6 +156,7 @@ function server.create_client_capabilities()
   return vim.tbl_deep_extend(
     'force',
     rs_capabilities,
+    blink_capabilities,
     cmp_capabilities,
     selection_range_capabilities,
     folding_range_capabilities
