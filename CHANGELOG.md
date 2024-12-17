@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.19.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.19.1...v5.19.2) (2024-12-17)
+
+
+### Bug Fixes
+
+* **commands/relatedDiagnostics:** error opening quickfix list in nightly ([aff6748](https://github.com/mrcjkb/rustaceanvim/commit/aff6748b6013b003cb4c4ecde988ea9e3a84554b))
+
 ## [5.19.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.19.0...v5.19.1) (2024-12-17)
 
 
