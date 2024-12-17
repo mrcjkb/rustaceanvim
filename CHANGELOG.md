@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.19.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.19.0...v5.19.1) (2024-12-17)
+
+
+### Bug Fixes
+
+* **neotest:** prevent running multiple tests when running a single test with cargo-nextest ([#619](https://github.com/mrcjkb/rustaceanvim/issues/619)) ([152d1e7](https://github.com/mrcjkb/rustaceanvim/commit/152d1e7a25f30309dee993915b8811340c46203b))
+
 ## [5.19.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.18.0...v5.19.0) (2024-12-15)
 
 
