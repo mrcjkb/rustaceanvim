@@ -49,7 +49,6 @@ function M.try_nextest_transform(args)
     table.remove(args, #args)
   end
   local nextest_unsupported_flags = {
-    '--exact',
     '--show-output',
   }
   local indexes_to_remove_reverse_order = {}

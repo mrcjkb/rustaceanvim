@@ -24,6 +24,7 @@ local lua_dependencies = {
 
 ---@class rustaceanvim.ExternalDependency
 ---@field name string Name of the dependency
+---@field required_version_spec? string Version range spec. See `vim.version.range()`
 ---@field get_binaries fun():string[] Function that returns the binaries to check for
 ---@field is_installed? fun(bin: string):boolean Default: `vim.fn.executable(bin) == 1`
 ---@field optional fun():boolean Function that returns whether the dependency is optional
@@ -62,6 +63,13 @@ local check_installed = function(dep)
         handle:close()
         if error_msg then
           return false, binary, error_msg
+        end
+        if dep.required_version_spec then
+          local version_range = vim.version.range(dep.required_version_spec)
+          if version_range and not version_range:has(binary_version) then
+            local msg = 'Unsuported version. Required ' .. dep.required_version_spec .. ', but found ' .. binary_version
+            return false, binary, msg
+          end
         end
         return true, binary, binary_version
       end
@@ -265,6 +273,22 @@ function health.check()
       url = '',
       info = [[
       Set in the config to override the 'cargo' command for debugging and testing.
+    ]],
+    })
+  elseif config.tools.enable_nextest then
+    table.insert(external_dependencies, {
+      name = 'cargo-nextest',
+      required_version_spec = '>=0.9.81',
+      get_binaries = function()
+        return { 'cargo-nextest' }
+      end,
+      optional = function()
+        return false
+      end,
+      url = '[cargo-nextest](https://nexte.st)',
+      info = [[
+      Next generation test runner for Rust projects.
+      Optional dependency, required if the 'tools.enable_nextest' option is set.
     ]],
     })
   end
