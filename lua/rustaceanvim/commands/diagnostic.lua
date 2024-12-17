@@ -449,11 +449,7 @@ function M.related_diagnostics()
     end)
   else
     vim.fn.setqflist({}, ' ', { title = 'related diagnostics', items = quickfix_entries })
-    if vim.cmd.botright then
-      vim.cmd.botright('copen')
-    else
-      vim.cmd.copen()
-    end
+    vim.cmd([[ botright copen ]])
   end
 end
 
