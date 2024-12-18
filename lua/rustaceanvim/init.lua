@@ -38,6 +38,17 @@
 ---                         `args[]` allows you to override the executable's arguments.
 --- 'expandMacro' - Expand macros recursively.
 --- 'moveItem {up|down}' - Move items up or down.
+--- 'codeAction' - Sometimes, rust-analyzer groups code actions by category,
+---                which is not supported by Neovim's built-in |vim.lsp.buf.codeAction|.
+---                This command provides a command with a UI that does.
+---                If you set the option `vim.g.rustaceanvim.tools.code_actions.ui_select_fallback`
+---                to `true` (defaults to `false`), it will fall back to |vim.ui.select|
+---                if there are no grouped code actions.
+---
+---                The default keymaps are `<CR>` to confirm a code action and `q` or `<Esc>` to cancel
+---                a selection.
+---                You can modify these by defining `<Plug>rustaceanvim.code_action.confirm` or
+---                `<Plug>rustaceanvim.code_action.quit` mappings.
 --- 'hover {actions|range}' - Hover actions, or hover over visually selected range.
 --- 'explainError {cycle?|current?}' - Display a hover window with explanations form the Rust error index.
 ---            - If called with |cycle| or no args:

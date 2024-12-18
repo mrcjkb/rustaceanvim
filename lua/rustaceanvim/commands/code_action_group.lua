@@ -86,7 +86,7 @@ local function compute_width(action_tuples, is_group)
   return { width = width + 5 }
 end
 
-local function on_primary_enter_press()
+local function on_primary_confirm()
   if M.state.secondary.winnr then
     vim.api.nvim_set_current_win(M.state.secondary.winnr)
     return
@@ -194,10 +194,61 @@ local function on_code_action_results(results, ctx)
 
   vim.api.nvim_buf_set_lines(M.state.primary.bufnr, 0, 1, false, {})
 
-  vim.keymap.set('n', '<CR>', on_primary_enter_press, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+  -- Search for user keymaps
 
-  vim.keymap.set('n', 'q', on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
-  vim.keymap.set('n', '<Esc>', on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+  ---@class rustaceanvim.code_action_group.set_user_keymaps
+  ---@field confirm boolean
+  ---@field quit boolean
+
+  ---@class rustaceanvim.api.keyset.keymap: vim.api.keyset.keymap
+  ---@field rhs string
+
+  ---@type rustaceanvim.code_action_group.set_user_keymaps
+  local user_keymaps = vim
+    .iter(vim.api.nvim_get_keymap('n'))
+    :map(function(keymap)
+      return keymap.rhs
+    end)
+    :filter(function(rhs)
+      return type(rhs) == 'string' and vim.startswith(rhs, '<Plug>')
+    end)
+    :fold(
+      {},
+      ---@param acc rustaceanvim.code_action_group.set_user_keymaps
+      ---@param rhs string
+      function(acc, rhs)
+        if type(rhs) ~= 'string' then
+          return acc
+        end
+        return {
+          confirm = acc.confirm or rhs:find('rustaceanvim%.code_action%.confirm') ~= nil,
+          quit = acc.quit or rhs:find('rustaceanvim%.code_action%.quit') ~= nil,
+        }
+      end
+    )
+
+  if user_keymaps.confirm then
+    vim.keymap.set(
+      'n',
+      '<Plug>rustaceanvim.code_action.confirm',
+      on_primary_confirm,
+      { buffer = M.state.primary.bufnr, noremap = true, silent = true }
+    )
+  else
+    vim.keymap.set('n', '<CR>', on_primary_confirm, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+  end
+
+  if user_keymaps.quit then
+    vim.keymap.set(
+      'n',
+      '<Plug>rustaceanvim.code_action.quit',
+      on_primary_quit,
+      { buffer = M.state.primary.bufnr, noremap = true, silent = true }
+    )
+  else
+    vim.keymap.set('n', 'q', on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+    vim.keymap.set('n', '<Esc>', on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+  end
 
   M.codeactionify_window_buffer(M.state.primary.winnr, M.state.primary.bufnr)
 

@@ -387,6 +387,15 @@ vim.keymap.set(
  to `true` (defaults to `false`), it will fall back to `vim.ui.select`
  if there are no grouped code actions.
 
+ The default keymaps are `<CR>` to confirm a code action and `q` or `<Esc>` to cancel
+ a selection.
+ You can modify these by defining `<Plug>rustaceanvim.code_action.confirm` or
+ `<Plug>rustaceanvim.code_action.quit` mappings, for example:
+
+  ```lua
+  vim.keymap.set('n', '<C-y>', '<Plug>rustaceanvim.code_action.confirm')
+  ```
+
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/866d3cb1-8e56-4380-8c03-812386441f47)
 
 </details>
