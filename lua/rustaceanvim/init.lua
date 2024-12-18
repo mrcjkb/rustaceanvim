@@ -50,6 +50,12 @@
 ---                You can modify these by defining `<Plug>rustaceanvim.code_action.confirm` or
 ---                `<Plug>rustaceanvim.code_action.quit` mappings.
 --- 'hover {actions|range}' - Hover actions, or hover over visually selected range.
+---               You can invoke a hover action by switching to the hover window and entering `<CR>`
+---               on the respective line, or with a keymap for the `<Plug>RustHoverAction` mapping,
+---               which accepts a `<count>` prefix as the (1-based) index of the hover action to invoke.
+---
+---               For example, if you set the keymap: `vim.keymap.set('n', '<space>a', '<Plug>RustHoverAction')`,
+---               you can invoke the third hover action with `3<space>a`.
 --- 'explainError {cycle?|current?}' - Display a hover window with explanations form the Rust error index.
 ---            - If called with |cycle| or no args:
 ---              Like |vim.diagnostic.goto_next|,

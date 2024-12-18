@@ -33,6 +33,39 @@ function M.apply_action(action, client, ctx)
   end
 end
 
+---@class rustaceanvim.code_action_group.set_user_keymaps
+---@field confirm boolean
+---@field quit boolean
+
+---@class rustaceanvim.api.keyset.keymap: vim.api.keyset.keymap
+---@field rhs string
+
+---@return rustaceanvim.code_action_group.set_user_keymaps
+local function search_for_user_keymaps()
+  return vim
+    .iter(vim.api.nvim_get_keymap('n'))
+    :map(function(keymap)
+      return keymap.rhs
+    end)
+    :filter(function(rhs)
+      return type(rhs) == 'string' and vim.startswith(rhs, '<Plug>')
+    end)
+    :fold(
+      {},
+      ---@param acc rustaceanvim.code_action_group.set_user_keymaps
+      ---@param rhs string
+      function(acc, rhs)
+        if type(rhs) ~= 'string' then
+          return acc
+        end
+        return {
+          confirm = acc.confirm or rhs:find('rustaceanvim%.code_action%.confirm') ~= nil,
+          quit = acc.quit or rhs:find('rustaceanvim%.code_action%.quit') ~= nil,
+        }
+      end
+    )
+end
+
 ---@alias action_tuple { [1]: number, [2]: rustaceanvim.RACodeAction|rustaceanvim.RACommand }
 
 ---@param action_tuple action_tuple | nil
@@ -194,38 +227,7 @@ local function on_code_action_results(results, ctx)
 
   vim.api.nvim_buf_set_lines(M.state.primary.bufnr, 0, 1, false, {})
 
-  -- Search for user keymaps
-
-  ---@class rustaceanvim.code_action_group.set_user_keymaps
-  ---@field confirm boolean
-  ---@field quit boolean
-
-  ---@class rustaceanvim.api.keyset.keymap: vim.api.keyset.keymap
-  ---@field rhs string
-
-  ---@type rustaceanvim.code_action_group.set_user_keymaps
-  local user_keymaps = vim
-    .iter(vim.api.nvim_get_keymap('n'))
-    :map(function(keymap)
-      return keymap.rhs
-    end)
-    :filter(function(rhs)
-      return type(rhs) == 'string' and vim.startswith(rhs, '<Plug>')
-    end)
-    :fold(
-      {},
-      ---@param acc rustaceanvim.code_action_group.set_user_keymaps
-      ---@param rhs string
-      function(acc, rhs)
-        if type(rhs) ~= 'string' then
-          return acc
-        end
-        return {
-          confirm = acc.confirm or rhs:find('rustaceanvim%.code_action%.confirm') ~= nil,
-          quit = acc.quit or rhs:find('rustaceanvim%.code_action%.quit') ~= nil,
-        }
-      end
-    )
+  local user_keymaps = search_for_user_keymaps()
 
   if user_keymaps.confirm then
     vim.keymap.set(
@@ -281,7 +283,7 @@ function M.codeactionify_window_buffer(winnr, bufnr)
   vim.wo[winnr].cul = true
 end
 
-local function on_secondary_enter_press()
+local function on_secondary_confirm()
   local line = vim.api.nvim_win_get_cursor(M.state.secondary.winnr)[1]
   local active_group = nil
 
@@ -370,10 +372,40 @@ function M.on_cursor_move()
 
       M.codeactionify_window_buffer(M.state.secondary.winnr, M.state.secondary.bufnr)
 
-      vim.keymap.set('n', '<CR>', on_secondary_enter_press, { buffer = M.state.secondary.bufnr })
+      local user_keymaps = search_for_user_keymaps()
 
-      vim.keymap.set('n', 'q', on_secondary_quit, { buffer = M.state.secondary.bufnr })
+      if user_keymaps.confirm then
+        vim.keymap.set(
+          'n',
+          '<Plug>rustaceanvim.code_action.confirm',
+          on_secondary_confirm,
+          { buffer = M.state.secondary.bufnr, noremap = true, silent = true }
+        )
+      else
+        vim.keymap.set(
+          'n',
+          '<CR>',
+          on_secondary_confirm,
+          { buffer = M.state.secondary.bufnr, noremap = true, silent = true }
+        )
+      end
 
+      if user_keymaps.quit then
+        vim.keymap.set(
+          'n',
+          '<Plug>rustaceanvim.code_action.quit',
+          on_secondary_quit,
+          { buffer = M.state.secondary.bufnr, noremap = true, silent = true }
+        )
+      else
+        vim.keymap.set('n', 'q', on_secondary_quit, { buffer = M.state.secondary.bufnr, noremap = true, silent = true })
+        vim.keymap.set(
+          'n',
+          '<Esc>',
+          on_secondary_quit,
+          { buffer = M.state.secondary.bufnr, noremap = true, silent = true }
+        )
+      end
       return
     end
 
