@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.20.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.19.2...v5.20.0) (2024-12-24)
+
+
+### Features
+
+* **lsp:** auto-connect to ra-multiplex if running ([b394709](https://github.com/mrcjkb/rustaceanvim/commit/b394709bb65d074ec9985c244d1eded19f6130f7))
+
+
+### Bug Fixes
+
+* **lsp:** don't eagerly evaluate `server.cmd` ([7a1511b](https://github.com/mrcjkb/rustaceanvim/commit/7a1511b58eed4d0753e6830c07a15a483ea4428b))
+
 ## [5.19.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.19.1...v5.19.2) (2024-12-17)
 
 
