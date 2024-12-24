@@ -29,6 +29,7 @@ rustaceanvim.lsp.ClientOpts	rustaceanvim.txt	/*rustaceanvim.lsp.ClientOpts*
 rustaceanvim.lsp_server_health_status	rustaceanvim.txt	/*rustaceanvim.lsp_server_health_status*
 rustaceanvim.mason	mason.txt	/*rustaceanvim.mason*
 rustaceanvim.neotest	rustaceanvim.txt	/*rustaceanvim.neotest*
+rustaceanvim.ra_multiplex.Opts	rustaceanvim.txt	/*rustaceanvim.ra_multiplex.Opts*
 rustaceanvim.rustc.Opts	rustaceanvim.txt	/*rustaceanvim.rustc.Opts*
 rustaceanvim.test_executor_alias	rustaceanvim.txt	/*rustaceanvim.test_executor_alias*
 rustaceanvim.tools.Opts	rustaceanvim.txt	/*rustaceanvim.tools.Opts*

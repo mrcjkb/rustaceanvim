@@ -184,16 +184,6 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
   lsp_start_config.settings = get_start_settings(bufname, root_dir, client_config)
   configure_file_watcher(lsp_start_config)
 
-  -- rust-analyzer treats settings in initializationOptions specially -- in particular, workspace_discoverConfig
-  -- so copy them to init_options (the vim name)
-  -- so they end up in initializationOptions (the LSP name)
-  -- ... and initialization_options (the rust name) in rust-analyzer's main.rs
-  lsp_start_config.init_options = vim.tbl_deep_extend(
-    'force',
-    lsp_start_config.init_options or {},
-    vim.tbl_get(lsp_start_config.settings, 'rust-analyzer')
-  )
-
   -- Check if a client is already running and add the workspace folder if necessary.
   for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
     if root_dir and not is_in_workspace(client, root_dir) then
@@ -215,6 +205,26 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
   end
 
   local rust_analyzer_cmd = types.evaluate(client_config.cmd)
+
+  local ra_multiplex = lsp_start_config.ra_multiplex
+  if ra_multiplex.enable then
+    local ok, running_ra_multiplex = pcall(function()
+      local result = vim.system({ 'pgrep', 'ra-multiplex' }):wait().code
+      return result == 0
+    end)
+    if ok and running_ra_multiplex then
+      rust_analyzer_cmd = vim.lsp.rpc.connect(ra_multiplex.host, ra_multiplex.port)
+      local ra_settings = lsp_start_config.settings['rust-analyzer'] or {}
+      ra_settings.lspMux = ra_settings.lspMux
+        or {
+          version = '1',
+          method = 'connect',
+          server = 'rust-analyzer',
+        }
+      lsp_start_config.settings['rust-analyzer'] = ra_settings
+    end
+  end
+
   -- special case: rust-analyzer has a `rust-analyzer.server.path` config option
   -- that allows you to override the path via .vscode/settings.json
   local server_path = vim.tbl_get(lsp_start_config.settings, 'rust-analyzer', 'server', 'path')
@@ -287,7 +297,17 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     end
   end
 
-  return vim.lsp.start(lsp_start_config)
+  -- rust-analyzer treats settings in initializationOptions specially -- in particular, workspace_discoverConfig
+  -- so copy them to init_options (the vim name)
+  -- so they end up in initializationOptions (the LSP name)
+  -- ... and initialization_options (the rust name) in rust-analyzer's main.rs
+  lsp_start_config.init_options = vim.tbl_deep_extend(
+    'force',
+    lsp_start_config.init_options or {},
+    vim.tbl_get(lsp_start_config.settings, 'rust-analyzer')
+  )
+
+  return vim.lsp.start(vim.print(lsp_start_config))
 end
 
 ---Stop the LSP client.
@@ -337,7 +357,8 @@ M.set_target_arch = function(bufnr, target)
   restart(bufnr, { exclude_rustc_target = target }, function(client)
     rustc.with_rustc_target_architectures(function(rustc_targets)
       if rustc_targets[target] then
-        local ra = client.config.settings['rust-analyzer']
+        local ra = client.config.settings['rust-analyzer'] or {}
+        ---@diagnostic disable-next-line: inject-field
         ra.cargo = ra.cargo or {}
         ra.cargo.target = target
         compat.client_notify(client, 'workspace/didChangeConfiguration', { settings = client.config.settings })
