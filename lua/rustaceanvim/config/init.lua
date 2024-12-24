@@ -168,7 +168,9 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field auto_attach? boolean | fun(bufnr: integer):boolean
 ---
 ---Command and arguments for starting rust-analyzer
----@field cmd? string[] | fun():string[]
+---Can be a list of arguments, a function that returns a list of arguments,
+---or a function that returns an LSP RPC client factory (see |vim.lsp.rpc.connect|).
+---@field cmd? string[] | fun():(string[]|fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.PublicClient)
 ---
 ---The directory to use for the attached LSP.
 ---Can be a function, which may return nil if no server should attach.

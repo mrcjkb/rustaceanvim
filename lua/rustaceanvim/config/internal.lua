@@ -262,11 +262,15 @@ local RustaceanDefaultConfig = {
         return false
       end
       local cmd = types.evaluate(RustaceanConfig.server.cmd)
+      if type(cmd) == 'function' then
+        -- This could be a function that connects via a TCP socket, so we don't want to evaluate it.
+        return true
+      end
       ---@cast cmd string[]
       local rs_bin = cmd[1]
       return vim.fn.executable(rs_bin) == 1
     end,
-    ---@type string[] | fun():string[]
+    ---@type string[] | fun():(string[]|fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.PublicClient)
     cmd = function()
       return { 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
     end,
