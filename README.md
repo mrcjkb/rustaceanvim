@@ -741,6 +741,18 @@ by setting the rust-analyzer
 
 </details>
 
+<details>
+  <summary>
+	<b>ra-multiplex</b>
+  </summary>
+
+  On Linux and MacOS, rustaceanvim can auto-detect and connect to a
+  running [ra-multiplex](https://github.com/pr2502/ra-multiplex) server.
+  By default, it will try to do so automatically if the `vim.g.rustaceanvim.server.cmd` 
+  option is unset.
+  See also `:h rustaceanvim.ra_multiplex`.
+
+</details>
 <!-- markdownlint-restore -->
 
 ## :gear: Advanced configuration

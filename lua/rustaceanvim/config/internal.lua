@@ -7,6 +7,9 @@ local server_config = require('rustaceanvim.config.server')
 
 local RustaceanConfig
 
+local rustaceanvim = vim.g.rustaceanvim or {}
+local rustaceanvim_opts = type(rustaceanvim) == 'function' and rustaceanvim() or rustaceanvim
+
 ---@class rustaceanvim.internal.RAInitializedStatus : rustaceanvim.RAInitializedStatus
 ---@field health rustaceanvim.lsp_server_health_status
 ---@field quiescent boolean inactive?
@@ -278,6 +281,15 @@ local RustaceanDefaultConfig = {
     ---@type string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
     root_dir = cargo.get_root_dir,
 
+    ra_multiplex = {
+      ---@type boolean
+      enable = vim.tbl_get(rustaceanvim_opts, 'server', 'cmd') == nil,
+      ---@type string
+      host = '127.0.0.1',
+      ---@type integer
+      port = 27631,
+    },
+
     --- standalone file support
     --- setting it to false may improve startup time
     ---@type boolean
@@ -393,20 +405,23 @@ local RustaceanDefaultConfig = {
   -- debug info
   was_g_rustaceanvim_sourced = vim.g.rustaceanvim ~= nil,
 }
-local rustaceanvim = vim.g.rustaceanvim or {}
-local opts = type(rustaceanvim) == 'function' and rustaceanvim() or rustaceanvim
 for _, executor in pairs { 'executor', 'test_executor', 'crate_test_executor' } do
-  if opts.tools and opts.tools[executor] and type(opts.tools[executor]) == 'string' then
-    opts.tools[executor] = assert(executors[opts.tools[executor]], 'Unknown RustaceanExecutor')
+  if
+    rustaceanvim_opts.tools
+    and rustaceanvim_opts.tools[executor]
+    and type(rustaceanvim_opts.tools[executor]) == 'string'
+  then
+    rustaceanvim_opts.tools[executor] =
+      assert(executors[rustaceanvim_opts.tools[executor]], 'Unknown RustaceanExecutor')
   end
 end
 
 ---@type rustaceanvim.Config
-RustaceanConfig = vim.tbl_deep_extend('force', {}, RustaceanDefaultConfig, opts)
+RustaceanConfig = vim.tbl_deep_extend('force', {}, RustaceanDefaultConfig, rustaceanvim_opts)
 
 -- Override user dap.adapter config in a backward compatible way
-if opts.dap and opts.dap.adapter then
-  local user_adapter = opts.dap.adapter
+if rustaceanvim_opts.dap and rustaceanvim_opts.dap.adapter then
+  local user_adapter = rustaceanvim_opts.dap.adapter
   local default_adapter = types.evaluate(RustaceanConfig.dap.adapter)
   if
     type(user_adapter) == 'table'

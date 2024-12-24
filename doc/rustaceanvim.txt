@@ -296,6 +296,8 @@ rustaceanvim.lsp.ClientOpts                        *rustaceanvim.lsp.ClientOpts*
                                                                                                                               The directory to use for the attached LSP.
                                                                                                                               Can be a function, which may return nil if no server should attach.
                                                                                                                               The second argument contains the default implementation, which can be used for fallback behavior.
+        {ra_multiplex?}          (rustaceanvim.ra_multiplex.Opts)
+                                                                                                                              Options for connecting to ra-multiplex.
         {settings?}              (table|fun(project_root:string|nil,default_settings:table):table)
                                                                                                                               Setting passed to rust-analyzer.
                                                                                                                               Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table.
@@ -312,6 +314,22 @@ rustaceanvim.lsp.ClientOpts                        *rustaceanvim.lsp.ClientOpts*
         {status_notify_level?}   (rustaceanvim.server.status_notify_level)
                                                                                                                               Server status warning level to notify at.
                                                                                                                               Default: 'error'
+
+
+rustaceanvim.ra_multiplex.Opts                  *rustaceanvim.ra_multiplex.Opts*
+
+    Fields: ~
+        {enable?}  (boolean)
+                              Whether to enable ra-multiplex auto-discovery.
+                              Default: `true` if `server.cmd` is not set, otherwise `false`.
+                              If enabled, rustaceanvim will try to detect if an ra-multiplex server is running
+                              and connect to it (Linux and MacOS only).
+                              If auto-discovery does not work, you can set `server.cmd` to a function that
+                              returns an LSP RPC client factory (see |vim.lsp.rpc.connect|).
+        {host?}    (string)
+                              The host to connect to. Default: '127.0.0.1'
+        {port?}    (integer)
+                              The port to connect to. Default: 27631
 
 
 rustaceanvim.server.status_notify_level*rustaceanvim.server.status_notify_level*
