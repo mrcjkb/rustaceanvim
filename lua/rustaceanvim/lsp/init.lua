@@ -219,20 +219,26 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
   -- that allows you to override the path via .vscode/settings.json
   local server_path = vim.tbl_get(lsp_start_config.settings, 'rust-analyzer', 'server', 'path')
   if type(server_path) == 'string' then
-    rust_analyzer_cmd[1] = server_path
+    if type(rust_analyzer_cmd) == 'table' then
+      rust_analyzer_cmd[1] = server_path
+    else
+      rust_analyzer_cmd = { server_path }
+    end
     --
   end
-  if #rust_analyzer_cmd == 0 then
-    vim.schedule(function()
-      vim.notify('rust-analyzer command is not set!', vim.log.levels.ERROR)
-    end)
-    return
-  end
-  if vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
-    vim.schedule(function()
-      vim.notify(('%s is not executable'):format(rust_analyzer_cmd[1]), vim.log.levels.ERROR)
-    end)
-    return
+  if type(rust_analyzer_cmd) == 'table' then
+    if #rust_analyzer_cmd == 0 then
+      vim.schedule(function()
+        vim.notify('rust-analyzer command is not set!', vim.log.levels.ERROR)
+      end)
+      return
+    end
+    if vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
+      vim.schedule(function()
+        vim.notify(('%s is not executable'):format(rust_analyzer_cmd[1]), vim.log.levels.ERROR)
+      end)
+      return
+    end
   end
   ---@cast rust_analyzer_cmd string[]
   lsp_start_config.cmd = rust_analyzer_cmd
@@ -362,7 +368,7 @@ local RustAnalyzerCmd = {
   target = 'target',
 }
 
-local function rust_analyzer_cmd(opts)
+local function rust_analyzer_user_cmd(opts)
   local fargs = opts.fargs
   local cmd = fargs[1]
   ---@cast cmd RustAnalyzerCmd
@@ -380,7 +386,7 @@ local function rust_analyzer_cmd(opts)
   end
 end
 
-vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_cmd, {
+vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_user_cmd, {
   nargs = '+',
   desc = 'Starts, stops the rust-analyzer LSP client or changes the target',
   complete = function(arg_lead, cmdline, _)
