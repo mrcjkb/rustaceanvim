@@ -2,16 +2,20 @@
 labels: [Ideas]
 body:
 
-  - type: markdown
+  - type: checkboxes
+    id: checks
     attributes:
-      value: |
-        > [!IMPORTANT]
-        >
-        > Before requesting:
-        > 
-        > - Search [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement).
-        > - If you are reporting a bug, please use the [correct form](https://github.com/mrcjkb/rustaceanvim/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml).
-
+      label: Checked other resources
+      description: Please confirm and check all the following options.
+      options:
+        - label: This is not a bug report or a question (Please use [issues](https://github.com/mrcjkb/rustaceanvim/issues/new/choose) for those).
+          required: true
+        - label: I have searched [existing discussions](https://github.com/mrcjkb/rustaceanvim/discussions/categories/ideas).
+          required: true
+        - label: I have searched [existing issues](https://github.com/mrcjkb/rustaceanvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement).
+          required: true
+        - label: I have added a very descriptive title to this feature request.
+          required: true
   - type: textarea
     attributes:
       label: "Feature description"
