@@ -1,6 +1,5 @@
-name: Feature request
-description: Request an enhancement for rustaceanvim
-labels: [enhancement]
+---
+labels: [Ideas]
 body:
 
   - type: markdown
