@@ -908,6 +908,11 @@ As Neovim >= 0.10 supports inlay hints natively,
 I have removed the code from this plugin.
 See [`:h lsp-inlay_hint`](https://neovim.io/doc/user/lsp.html#lsp-inlay_hint)).
 
+#### Can I display inlay hints to the end of the line?
+
+You can use the [`nvim-lsp-endhints`](https://github.com/chrisgrieser/nvim-lsp-endhints)
+plugin.
+
 #### How to enable auto completion?
 
 As of [#ff097f2091e7a970e5b12960683b4dade5563040](https://github.com/neovim/neovim/pull/27339),
