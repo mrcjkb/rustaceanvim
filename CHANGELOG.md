@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.22.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.21.0...v5.22.0) (2025-01-02)
+
+
+### Features
+
+* **lsp/codeAction:** make float window keymaps configurable ([#644](https://github.com/mrcjkb/rustaceanvim/issues/644)) ([17f8654](https://github.com/mrcjkb/rustaceanvim/commit/17f8654d8f0913314f635ba4bd955715d6fadd44))
+
 ## [5.21.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.20.1...v5.21.0) (2025-01-02)
 
 
