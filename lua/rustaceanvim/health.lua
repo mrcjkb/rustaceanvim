@@ -94,14 +94,8 @@ local function check_external_dependency(dep)
     end
     return
   end
-  if dep.optional() then
-    h.warn(([[
-      %s: not found.
-      Install %s for extended capabilities.
-      %s
-      ]]):format(dep.name, dep.url, dep.info))
-  else
-    error(([[
+  if not dep.optional() then
+    h.error(([[
       %s: not found: %s
       rustaceanvim requires %s.
       %s
@@ -229,6 +223,26 @@ function health.check()
           h.warn("rust-analyzer wrapper detected. Run 'rustup component add rust-analyzer' to install rust-analyzer.")
         end
       end,
+    },
+    {
+      name = 'ra-multiplex',
+      get_binaries = function()
+        return { 'ra-multiplex' }
+      end,
+      is_installed = function(bin)
+        if type(vim.system) == 'function' then
+          local success = pcall(function()
+            vim.system { bin, '--version' }
+          end)
+          return success
+        end
+        return vim.fn.executable(bin) == 1
+      end,
+      optional = function()
+        return true
+      end,
+      url = '[ra-multiplex](https://github.com/pr2502/ra-multiplex)',
+      info = 'Multiplex server for rust-analyzer.',
     },
     {
       name = 'Cargo',
