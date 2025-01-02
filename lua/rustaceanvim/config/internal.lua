@@ -102,7 +102,7 @@ local RustaceanDefaultConfig = {
     cargo_override = nil,
 
     ---@type boolean
-    enable_nextest = true,
+    enable_nextest = vim.fn.executable('cargo-nextest') == 1,
 
     ---@type boolean
     enable_clippy = true,
