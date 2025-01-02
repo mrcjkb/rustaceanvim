@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.21.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.20.1...v5.21.0) (2025-01-02)
+
+
+### Features
+
+* **health:** check for optional ra-multiplex dependency ([f855920](https://github.com/mrcjkb/rustaceanvim/commit/f8559209f4234827904611f3a575f74e9923190e))
+
+
+### Bug Fixes
+
+* **health:** don't error if cargo-nextest isn't found ([618f274](https://github.com/mrcjkb/rustaceanvim/commit/618f274837ae4b620ebf7ab4beff728eb8684d13))
+
 ## [5.20.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.20.0...v5.20.1) (2024-12-24)
 
 
