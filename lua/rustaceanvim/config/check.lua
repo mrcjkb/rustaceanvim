@@ -55,6 +55,23 @@ function M.validate(cfg)
   if not ok then
     return false, err
   end
+  local code_actions = tools.code_actions
+  ok, err = validate('tools.code_actions', {
+    group_icon = { code_actions.group_icon, 'string' },
+    ui_select_fallback = { code_actions.ui_select_fallback, 'boolean' },
+    keys = { code_actions.keys, 'table' },
+  })
+  if not ok then
+    return false, err
+  end
+  local keys = code_actions.keys
+  ok, err = validate('tools.code_actions.keys', {
+    confirm = { keys.confirm, { 'table', 'string' } },
+    quit = { keys.quit, { 'table', 'string' } },
+  })
+  if not ok then
+    return false, err
+  end
   local float_win_config = tools.float_win_config
   ok, err = validate('tools.float_win_config', {
     auto_focus = { float_win_config.auto_focus, 'boolean' },

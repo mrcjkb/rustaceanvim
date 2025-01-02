@@ -250,10 +250,22 @@ rustaceanvim.code-action.Opts                    *rustaceanvim.code-action.Opts*
 
     Fields: ~
         {group_icon?}          (string)
-                                          Text appended to a group action
+                                                                Text appended to a group action
         {ui_select_fallback?}  (boolean)
-                                          Whether to fall back to `vim.ui.select` if there are no grouped code actions.
-                                          Default: `false`
+                                                                Whether to fall back to `vim.ui.select` if there are no grouped code actions.
+                                                                Default: `false`
+        {keys}                 (rustaceanvim.code-action.Keys)
+
+
+rustaceanvim.code-action.Keys                    *rustaceanvim.code-action.Keys*
+
+    Fields: ~
+        {confirm?}  (string|string[])
+                                       The key or keys with which to confirm a code action
+                                       Default: `"<CR>"`.
+        {quit?}     (string)
+                                       The key or keys with which to close a code action window
+                                       Default: `{ "q", "<Esc>" }`.
 
 
 rustaceanvim.lsp_server_health_status    *rustaceanvim.lsp_server_health_status*

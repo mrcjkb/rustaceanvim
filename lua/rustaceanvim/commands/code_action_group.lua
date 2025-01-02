@@ -3,6 +3,11 @@ local config = require('rustaceanvim.config.internal')
 local compat = require('rustaceanvim.compat')
 local M = {}
 
+local confirm_keys = config.tools.code_actions.keys.confirm
+local quit_keys = config.tools.code_actions.keys.quit
+confirm_keys = type(confirm_keys) == 'table' and confirm_keys or { confirm_keys }
+quit_keys = type(quit_keys) == 'table' and quit_keys or { quit_keys }
+
 ---@class rustaceanvim.RACodeAction
 ---@field kind string
 ---@field group? string
@@ -194,10 +199,12 @@ local function on_code_action_results(results, ctx)
 
   vim.api.nvim_buf_set_lines(M.state.primary.bufnr, 0, 1, false, {})
 
-  vim.keymap.set('n', '<CR>', on_primary_enter_press, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
-
-  vim.keymap.set('n', 'q', on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
-  vim.keymap.set('n', '<Esc>', on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+  vim.iter(confirm_keys):each(function(key)
+    vim.keymap.set('n', key, on_primary_enter_press, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+  end)
+  vim.iter(quit_keys):each(function(key)
+    vim.keymap.set('n', key, on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+  end)
 
   M.codeactionify_window_buffer(M.state.primary.winnr, M.state.primary.bufnr)
 
@@ -318,10 +325,12 @@ function M.on_cursor_move()
       vim.api.nvim_buf_set_lines(M.state.secondary.bufnr, 0, 1, false, {})
 
       M.codeactionify_window_buffer(M.state.secondary.winnr, M.state.secondary.bufnr)
-
-      vim.keymap.set('n', '<CR>', on_secondary_enter_press, { buffer = M.state.secondary.bufnr })
-
-      vim.keymap.set('n', 'q', on_secondary_quit, { buffer = M.state.secondary.bufnr })
+      vim.iter(confirm_keys):each(function(key)
+        vim.keymap.set('n', key, on_secondary_enter_press, { buffer = M.state.secondary.bufnr })
+      end)
+      vim.iter(quit_keys):each(function(key)
+        vim.keymap.set('n', key, on_secondary_quit, { buffer = M.state.secondary.bufnr })
+      end)
 
       return
     end

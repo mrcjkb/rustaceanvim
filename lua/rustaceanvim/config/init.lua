@@ -130,6 +130,18 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---Whether to fall back to `vim.ui.select` if there are no grouped code actions.
 ---Default: `false`
 ---@field ui_select_fallback? boolean
+---
+---@field keys rustaceanvim.code-action.Keys
+
+---@class rustaceanvim.code-action.Keys
+---
+---The key or keys with which to confirm a code action
+---Default: `"<CR>"`.
+---@field confirm? string | string[]
+---
+---The key or keys with which to close a code action window
+---Default: `{ "q", "<Esc>" }`.
+---@field quit? string
 
 ---@alias rustaceanvim.lsp_server_health_status 'ok' | 'warning' | 'error'
 
