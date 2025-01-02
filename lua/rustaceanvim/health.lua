@@ -204,13 +204,10 @@ function health.check()
         return { get_rust_analyzer_binary() }
       end,
       is_installed = function(bin)
-        if type(vim.system) == 'function' then
-          local success = pcall(function()
-            vim.system { bin, '--version' }
-          end)
-          return success
-        end
-        return vim.fn.executable(bin) == 1
+        local success = pcall(function()
+          vim.system { bin, '--version' }
+        end)
+        return success
       end,
       optional = function()
         return false
@@ -230,13 +227,10 @@ function health.check()
         return { 'ra-multiplex' }
       end,
       is_installed = function(bin)
-        if type(vim.system) == 'function' then
-          local success = pcall(function()
-            vim.system { bin, '--version' }
-          end)
-          return success
-        end
-        return vim.fn.executable(bin) == 1
+        local success = pcall(function()
+          vim.system { bin, '--version' }
+        end)
+        return success
       end,
       optional = function()
         return true
