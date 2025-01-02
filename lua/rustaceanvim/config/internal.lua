@@ -134,6 +134,14 @@ local RustaceanDefaultConfig = {
       --- whether to fall back to `vim.ui.select` if there are no grouped code actions
       ---@type boolean
       ui_select_fallback = false,
+
+      ---@class rustaceanvim.internal.code_action.Keys
+      keys = {
+        ---@type string | string[]
+        confirm = { '<CR>' },
+        ---@type string | string[]
+        quit = { 'q', '<Esc>' },
+      },
     },
 
     --- options same as lsp hover

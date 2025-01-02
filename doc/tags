@@ -7,6 +7,7 @@ rustaceanvim.FloatWinConfig	rustaceanvim.txt	/*rustaceanvim.FloatWinConfig*
 rustaceanvim.LoadRASettingsOpts	rustaceanvim.txt	/*rustaceanvim.LoadRASettingsOpts*
 rustaceanvim.Opts	rustaceanvim.txt	/*rustaceanvim.Opts*
 rustaceanvim.RAInitializedStatus	rustaceanvim.txt	/*rustaceanvim.RAInitializedStatus*
+rustaceanvim.code-action.Keys	rustaceanvim.txt	/*rustaceanvim.code-action.Keys*
 rustaceanvim.code-action.Opts	rustaceanvim.txt	/*rustaceanvim.code-action.Opts*
 rustaceanvim.config	rustaceanvim.txt	/*rustaceanvim.config*
 rustaceanvim.config.server	rustaceanvim.txt	/*rustaceanvim.config.server*
