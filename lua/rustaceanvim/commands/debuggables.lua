@@ -137,6 +137,12 @@ local function add_debuggables_to_nvim_dap(debuggables)
       local name = 'Cargo: ' .. build_label(debuggable.args)
       if not _dap_configuration_added[name] then
         configuration.name = name
+        if configuration.initCommands == nil then
+          configuration.initCommands = {}
+        end
+        if config.dap.init_commands ~= nil then
+          table.insert(configuration.initCommands, config.dap.init_commands)
+        end
         table.insert(dap.configurations.rust, configuration)
         _dap_configuration_added[name] = true
       end

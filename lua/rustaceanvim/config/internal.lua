@@ -409,6 +409,8 @@ local RustaceanDefaultConfig = {
       local type = is_codelldb_adapter(adapter) and 'codelldb' or 'lldb'
       return load_dap_configuration(type)
     end,
+    ---@type string?
+    init_commands = nil,
   },
   -- debug info
   was_g_rustaceanvim_sourced = vim.g.rustaceanvim ~= nil,
