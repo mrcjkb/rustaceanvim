@@ -917,10 +917,12 @@ Neovim has built-in completion based on the `triggerCharacters` sent by
 language servers.
 Omni completion is also available for a more traditional `vim`-like completion experience.
 
-For more extensible and complex autocompletion setups you need a plugin such as [`nvim-cmp`](https://github.com/hrsh7th/nvim-cmp)
-and a LSP completion source like [`cmp-nvim-lsp`](https://github.com/hrsh7th/cmp-nvim-lsp).
+For more extensible and complex autocompletion setups,
+you need a plugin such as [`nvim-cmp`](https://github.com/hrsh7th/nvim-cmp)
+and a LSP completion source like [`cmp-nvim-lsp`](https://github.com/hrsh7th/cmp-nvim-lsp),
+or you may use [`blink.cmp`](https://github.com/saghen/blink.cmp).
 This plugin will automatically register the necessary client capabilities
-if you have `cmp-nvim-lsp` installed.
+if you have either `cmp-nvim-lsp` or `blink.cmp` installed.
 
 #### I'm having issues with (auto)completion
 
