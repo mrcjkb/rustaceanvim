@@ -261,6 +261,9 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---Whether to get Rust types via initCommands (rustlib/etc/lldb_commands, lldb only).
 ---Default: `true`.
 ---@field load_rust_types? fun():boolean | boolean
+---
+---Extra initCommand to apply to all debuggable targets
+---@field init_commands? string
 
 ---@alias rustaceanvim.dap.Command string
 
