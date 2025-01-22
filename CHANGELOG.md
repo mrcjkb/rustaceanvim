@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.23.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.22.0...v5.23.0) (2025-01-22)
+
+
+### Features
+
+* **lsp:** preliminary support for `vim.lsp.config` ([#660](https://github.com/mrcjkb/rustaceanvim/issues/660)) ([00dedc6](https://github.com/mrcjkb/rustaceanvim/commit/00dedc6ab8dffee547b0bbb721feec18c3fd892b))
+
+
+### Bug Fixes
+
+* **health:** .vscode settings reported as loaded if .vscode/ is empty ([#662](https://github.com/mrcjkb/rustaceanvim/issues/662)) ([88298cd](https://github.com/mrcjkb/rustaceanvim/commit/88298cd17d3063a3536fa73a7b7378f67ff41183))
+
 ## [5.22.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.21.0...v5.22.0) (2025-01-02)
 
 
