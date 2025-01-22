@@ -50,7 +50,7 @@ function server.load_rust_analyzer_settings(project_root, opts)
   local config_json = results[1]
   local content = os.read_file(config_json)
   if not content then
-    vim.notify('Could not read ' .. config_json, vim.log.levels.WARNING)
+    vim.notify('Could not read ' .. config_json, vim.log.levels.WARN)
     return default_settings
   end
   local json = require('rustaceanvim.config.json')
