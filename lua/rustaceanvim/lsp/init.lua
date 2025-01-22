@@ -9,6 +9,8 @@ local os = require('rustaceanvim.os')
 local rustc = require('rustaceanvim.rustc')
 local compat = require('rustaceanvim.compat')
 
+local ra_client_name = 'rust-analyzer'
+
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
   ---@diagnostic disable-next-line
@@ -162,7 +164,8 @@ end
 M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local client_config = config.server
+  local ra_config = type(vim.lsp.config) == 'table' and vim.lsp.config[ra_client_name] or {}
+  local client_config = vim.tbl_deep_extend('force', config.server, ra_config)
   ---@type rustaceanvim.lsp.StartConfig
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
   local root_dir = cargo.get_config_root_dir(client_config, bufname)
@@ -252,7 +255,7 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
   end
   ---@cast rust_analyzer_cmd string[]
   lsp_start_config.cmd = rust_analyzer_cmd
-  lsp_start_config.name = 'rust-analyzer'
+  lsp_start_config.name = ra_client_name
   lsp_start_config.filetypes = { 'rust' }
 
   local custom_handlers = {}
