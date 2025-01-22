@@ -11,7 +11,7 @@
     <br />
     <a href="https://github.com/mrcjkb/rustaceanvim/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml">Report Bug</a>
     ·
-    <a href="https://github.com/mrcjkb/rustaceanvim/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml">Request Feature</a>
+    <a href="https://github.com/mrcjkb/rustaceanvim/discussions/new?category=ideas">Request Feature</a>
     ·
     <a href="https://github.com/mrcjkb/rustaceanvim/discussions/new?category=q-a">Ask Question</a>
   </p>
