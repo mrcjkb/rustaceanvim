@@ -10,6 +10,15 @@ local RustaceanConfig
 local rustaceanvim = vim.g.rustaceanvim or {}
 local rustaceanvim_opts = type(rustaceanvim) == 'function' and rustaceanvim() or rustaceanvim
 
+---Wrapper around |vim.fn.exepath()| that returns the binary if no path is found.
+---@param binary string
+---@return string the full path to the executable or `binary` if no path is found.
+---@see vim.fn.exepath()
+local function exepath_or_binary(binary)
+  local exe_path = vim.fn.exepath(binary)
+  return #exe_path > 0 and exe_path or binary
+end
+
 ---@class rustaceanvim.internal.RAInitializedStatus : rustaceanvim.RAInitializedStatus
 ---@field health rustaceanvim.lsp_server_health_status
 ---@field quiescent boolean inactive?
@@ -283,7 +292,7 @@ local RustaceanDefaultConfig = {
     end,
     ---@type string[] | fun():(string[]|fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.PublicClient)
     cmd = function()
-      return { 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
+      return { exepath_or_binary('rust-analyzer'), '--log-file', RustaceanConfig.server.logfile }
     end,
 
     ---@type string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
