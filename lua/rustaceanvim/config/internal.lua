@@ -283,7 +283,7 @@ local RustaceanDefaultConfig = {
     end,
     ---@type string[] | fun():(string[]|fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.PublicClient)
     cmd = function()
-      return { 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
+      return { vim.fn.exepath('rust-analyzer') or 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
     end,
 
     ---@type string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
