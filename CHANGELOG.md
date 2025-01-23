@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.23.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.23.0...v5.23.1) (2025-01-23)
+
+
+### Bug Fixes
+
+* **lsp/windows:** unable to find rust-analyzer executable binary ([#665](https://github.com/mrcjkb/rustaceanvim/issues/665)) ([9694dfd](https://github.com/mrcjkb/rustaceanvim/commit/9694dfd9d3b4a7a1e9b7b649c38f0e937d413ed3))
+
 ## [5.23.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.22.0...v5.23.0) (2025-01-22)
 
 
