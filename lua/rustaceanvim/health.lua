@@ -6,7 +6,8 @@ local h = vim.health
 
 ---@class rustaceanvim.LuaDependency
 ---@field module string The name of a module
----@field optional fun():boolean Function that returns whether the dependency is optional
+---@field is_optional fun():boolean Function that returns whether the dependency is optional
+---@field is_enabled fun():boolean Function that returns whether the dependency is enabled
 ---@field url string URL (markdown)
 ---@field info string Additional information
 
@@ -14,8 +15,11 @@ local h = vim.health
 local lua_dependencies = {
   {
     module = 'dap',
-    optional = function()
+    is_optional = function()
       return true
+    end,
+    is_enabled = function()
+      return not require('rustaceanvim.config.internal').dap.disable
     end,
     url = '[mfussenegger/nvim-dap](https://github.com/mfussenegger/nvim-dap)',
     info = 'Needed for debugging features',
@@ -39,10 +43,12 @@ local function check_lua_dependency(dep)
     h.ok(dep.url .. ' installed.')
     return
   end
-  if dep.optional() then
-    h.warn(('%s not installed. %s %s'):format(dep.module, dep.info, dep.url))
-  else
-    error(('Lua dependency %s not found: %s'):format(dep.module, dep.url))
+  if dep.is_enabled() then
+    if dep.is_optional() then
+      h.warn(('%s not installed. %s %s'):format(dep.module, dep.info, dep.url))
+    else
+      error(('Lua dependency %s not found: %s'):format(dep.module, dep.url))
+    end
   end
 end
 
