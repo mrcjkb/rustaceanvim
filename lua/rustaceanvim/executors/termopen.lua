@@ -30,7 +30,7 @@ local M = {
     vim.keymap.set('n', '<Esc>', '<CMD>q<CR>', { buffer = latest_buf_id, noremap = true })
 
     -- run the command
-    vim.fn.termopen(full_command)
+    vim.fn.jobstart(full_command, { term = true })
 
     -- when the buffer is closed, set the latest buf id to nil else there are
     -- some edge cases with the id being sit but a buffer not being open
