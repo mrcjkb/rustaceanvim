@@ -1,3 +1,8 @@
+if vim.fn.has('nvim-0.10') ~= 1 then
+  vim.notify_once('rustaceanvim requires Neovim 0.10 or above', vim.log.levels.ERROR)
+  return
+end
+
 local fname = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':t')
 if fname ~= 'Cargo.toml' then
   return

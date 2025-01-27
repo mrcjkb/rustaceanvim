@@ -1,3 +1,8 @@
+if vim.fn.has('nvim-0.10') ~= 1 then
+  vim.notify_once('rustaceanvim requires Neovim 0.10 or above', vim.log.levels.ERROR)
+  return
+end
+
 ---@type rustaceanvim.Config
 local config = require('rustaceanvim.config.internal')
 local compat = require('rustaceanvim.compat')
