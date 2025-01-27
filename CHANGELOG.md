@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.24.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.23.1...v5.24.0) (2025-01-27)
+
+
+### Features
+
+* **health:** don't warn if nvim-dap is not configured ([630c8b0](https://github.com/mrcjkb/rustaceanvim/commit/630c8b09b3e97c31830c39f3b58a067209d11cb3))
+* notify if using an unsupported Nvim version ([f571a59](https://github.com/mrcjkb/rustaceanvim/commit/f571a596d64a814ff6cb2e1907e4a57bbc5b9291))
+
+
+### Bug Fixes
+
+* **dap:** remove deprecated function call ([5d993d3](https://github.com/mrcjkb/rustaceanvim/commit/5d993d3ce8860120afcdc43bf92bf113eca3ddaf))
+
 ## [5.23.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.23.0...v5.23.1) (2025-01-23)
 
 
