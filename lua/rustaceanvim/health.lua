@@ -304,7 +304,7 @@ function health.check()
       get_binaries = function()
         return { 'cargo-nextest' }
       end,
-      optional = function()
+      is_optional = function()
         return false
       end,
       url = '[cargo-nextest](https://nexte.st)',
@@ -327,7 +327,7 @@ function health.check()
           return { 'codelldb', adapter.executable.command }
         end
       end,
-      optional = function()
+      is_optional = function()
         return true
       end,
       url = '[lldb](https://lldb.llvm.org/)',
