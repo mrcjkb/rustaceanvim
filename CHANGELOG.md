@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.24.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.0...v5.24.1) (2025-01-28)
+
+
+### Bug Fixes
+
+* **dap:** validate custom DAP client configs ([#670](https://github.com/mrcjkb/rustaceanvim/issues/670)) ([ca7e678](https://github.com/mrcjkb/rustaceanvim/commit/ca7e67866918e32a72e536c5097e80f9e2670bf6))
+
 ## [5.24.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.23.1...v5.24.0) (2025-01-27)
 
 
