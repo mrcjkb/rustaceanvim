@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.24.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.1...v5.24.2) (2025-01-28)
+
+
+### Bug Fixes
+
+* **health:** correct method names in external_deps section ([#672](https://github.com/mrcjkb/rustaceanvim/issues/672)) ([b545d4f](https://github.com/mrcjkb/rustaceanvim/commit/b545d4f488ae4dcb20c47c56ec5a0c1e2e2b7993))
+
 ## [5.24.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.0...v5.24.1) (2025-01-28)
 
 
