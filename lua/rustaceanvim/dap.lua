@@ -368,6 +368,20 @@ function M.start(args, verbose, callback, on_error)
       local final_config = local_config ~= false and vim.deepcopy(local_config) or vim.deepcopy(dap_config)
       --- @cast final_config rustaceanvim.dap.client.Config
 
+      local err
+      ok, err = pcall(vim.validate, {
+        type = { final_config.type, 'string' },
+        name = { final_config.name, 'string' },
+        request = { final_config.request, 'string' },
+      })
+      if not ok then
+        on_error(([[
+DAP client config validation failed.
+%s
+If you have specified a custom configuration, see ":h rustaceanvim.dap.client.Config".
+]]):format(err))
+        return
+      end
       if dap.adapters[final_config.type] == nil then
         on_error('No adapter exists named "' .. final_config.type .. '". See ":h dap-adapter" for more information')
         return
