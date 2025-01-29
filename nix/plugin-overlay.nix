@@ -43,6 +43,7 @@ in {
     };
 
   rustaceanvim = final.vimPlugins.rustaceanvim;
+  rustaceanvim-dev = final.vimPlugins.rustaceanvim;
 
   codelldb = final.vscode-extensions.vadimcn.vscode-lldb.adapter;
 }
