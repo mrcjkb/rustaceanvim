@@ -29,8 +29,15 @@ local M = {
     -- close the buffer when escape is pressed :)
     vim.keymap.set('n', '<Esc>', '<CMD>q<CR>', { buffer = latest_buf_id, noremap = true })
 
+    -- TODO(0.11): Replace with vim.fn.jobstart(full_command, { term = true })
     -- run the command
-    vim.fn.jobstart(full_command, { term = true })
+    ---@diagnostic disable-next-line: deprecated
+    if type(vim.fn.termopen) == 'function' then
+      ---@diagnostic disable-next-line: deprecated
+      vim.fn.termopen(full_command)
+    else
+      vim.fn.jobstart(full_command, { term = true })
+    end
 
     -- when the buffer is closed, set the latest buf id to nil else there are
     -- some edge cases with the id being sit but a buffer not being open
