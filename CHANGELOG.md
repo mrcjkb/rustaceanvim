@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.24.3](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.2...v5.24.3) (2025-01-31)
+
+
+### Reverts
+
+* **termopen:** replace termopen with jobstart ([#675](https://github.com/mrcjkb/rustaceanvim/issues/675)) ([2d32201](https://github.com/mrcjkb/rustaceanvim/commit/2d32201afa2390ef2a2f97f33f82b5ae8992447c))
+
 ## [5.24.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.1...v5.24.2) (2025-01-28)
 
 
