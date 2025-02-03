@@ -362,7 +362,7 @@ local RustaceanDefaultConfig = {
           host = '127.0.0.1',
           port = '${port}',
           executable = {
-            command = 'codelldb',
+            command = exepath_or_binary('codelldb'),
             args = { '--port', '${port}' },
           },
         }
@@ -376,7 +376,7 @@ local RustaceanDefaultConfig = {
         ---@cast result rustaceanvim.dap.executable.Config
         result = {
           type = 'executable',
-          command = command,
+          command = exepath_or_binary(command),
           name = 'lldb',
         }
       end
