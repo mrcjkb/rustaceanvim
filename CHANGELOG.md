@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.24.4](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.3...v5.24.4) (2025-02-03)
+
+
+### Bug Fixes
+
+* **config/dap:** use absolute path to debug adapter if available ([#679](https://github.com/mrcjkb/rustaceanvim/issues/679)) ([96f6ac9](https://github.com/mrcjkb/rustaceanvim/commit/96f6ac93e9b2516c6606495e6b056bbaa3c1e916))
+
 ## [5.24.3](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.2...v5.24.3) (2025-01-31)
 
 
