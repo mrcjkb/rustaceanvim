@@ -271,6 +271,13 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---Whether to get Rust types via initCommands (rustlib/etc/lldb_commands, lldb only).
 ---Default: `true`.
 ---@field load_rust_types? fun():boolean | boolean
+---
+---Some extra executable args of `cargo` for debugging.
+---By default the executable args could be like: `{ "tests::basic_tests", "--exact", "--show-output" }`,
+---and you can append some extra args to it by modifying this opt, like `cargo_executable_args = { "--nocapture" }`
+---then the final args is `{ "tests::basic_tests", "--exact", "--show-output", "--nocapture" }`
+---Default: {}
+---@field cargo_executable_args? fun():string[] | string[]
 
 ---@alias rustaceanvim.dap.Command string
 

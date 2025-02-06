@@ -185,6 +185,24 @@ end
 ---@param executableArgsOverride? string[]
 function M.debuggables(executableArgsOverride)
   runnables_request(mk_handler(function(debuggables)
+
+    local extra_exec_args_opt = config.dap.cargo_executable_args
+    if extra_exec_args_opt ~= nil then
+        local args = {}
+        if type(extra_exec_args_opt) == "function" then
+            args = extra_exec_args_opt()
+        elseif type(extra_exec_args_opt) == "table" then
+            args = extra_exec_args_opt
+        end
+        if #args > 0 then
+            for _, debuggable in ipairs(debuggables) do
+                for _, arg in ipairs(args) do
+                    table.insert(debuggable.args.executableArgs, arg)
+                end
+            end
+        end
+    end
+
     ui_select_debuggable(debuggables, executableArgsOverride)
   end))
 end
