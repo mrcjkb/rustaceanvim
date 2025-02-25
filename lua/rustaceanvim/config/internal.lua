@@ -344,7 +344,12 @@ local RustaceanDefaultConfig = {
       local has_mason, mason_registry = pcall(require, 'mason-registry')
       if has_mason and mason_registry.is_installed('codelldb') then
         local codelldb_package = mason_registry.get_package('codelldb')
-        local mason_codelldb_path = vim.fs.joinpath(codelldb_package:get_install_path(), 'extension')
+        local mason_codelldb_path
+        if require('mason.version').MAJOR_VERSION > 1 then
+          mason_codelldb_path = vim.fs.joinpath(vim.fn.expand('$MASON'), 'packages', codelldb_package.name, 'extension')
+        else
+          mason_codelldb_path = vim.fs.joinpath(codelldb_package:get_install_path(), 'extension')
+        end
         local codelldb_path = vim.fs.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
         local liblldb_path = vim.fs.joinpath(mason_codelldb_path, 'lldb', 'lib', 'liblldb')
         local shell = require('rustaceanvim.shell')
