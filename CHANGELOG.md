@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.25.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.4...v5.25.0) (2025-02-25)
+
+
+### Features
+
+* add mason v2.x support ([#687](https://github.com/mrcjkb/rustaceanvim/issues/687)) ([a04505c](https://github.com/mrcjkb/rustaceanvim/commit/a04505cf5d4fb87e62a1a456da74021e1aebdab3))
+
 ## [5.24.4](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.3...v5.24.4) (2025-02-03)
 
 
