@@ -286,7 +286,7 @@ local RustaceanDefaultConfig = {
       return { 'rust-analyzer', '--log-file', RustaceanConfig.server.logfile }
     end,
 
-    ---@type string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
+    ---@type string | fun(filename: string, callback: fun(root_dir: string|nil), default: fun(filename: string):string|nil)
     root_dir = cargo.get_root_dir,
 
     ra_multiplex = {
