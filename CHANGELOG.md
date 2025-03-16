@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.25.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.25.0...v5.25.1) (2025-03-16)
+
+
+### Bug Fixes
+
+* **dap:** set `sourceLanguages` when using `codelldb` ([#698](https://github.com/mrcjkb/rustaceanvim/issues/698)) ([83ebcd7](https://github.com/mrcjkb/rustaceanvim/commit/83ebcd7bbc03c05f3c2bc96ff9857549cf20811e))
+
 ## [5.25.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.24.4...v5.25.0) (2025-02-25)
 
 
