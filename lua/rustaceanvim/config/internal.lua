@@ -54,6 +54,7 @@ local function load_dap_configuration(type)
     type = type,
     request = 'launch',
     stopOnEntry = false,
+    sourceLanguages = type == 'codelldb' and { 'rust' },
   }
   if type == 'lldb' then
     ---@diagnostic disable-next-line: inject-field
