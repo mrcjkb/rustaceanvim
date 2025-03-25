@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.25.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.25.1...v5.25.2) (2025-03-25)
+
+
+### Bug Fixes
+
+* **lsp:** FlyCheck request params ([#702](https://github.com/mrcjkb/rustaceanvim/issues/702)) ([d85cb81](https://github.com/mrcjkb/rustaceanvim/commit/d85cb81402b48df2f2f4be4e61d276df4bf480f3))
+
 ## [5.25.1](https://github.com/mrcjkb/rustaceanvim/compare/v5.25.0...v5.25.1) (2025-03-16)
 
 
