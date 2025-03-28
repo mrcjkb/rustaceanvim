@@ -1,4 +1,18 @@
+local config = require('rustaceanvim.config.internal')
+local lsp_util = vim.lsp.util
+
 local M = {}
+
+---@class rustaceanvim.hover_range.State
+local _state = {
+  ---@type integer
+  winnr = nil,
+}
+
+local function close_hover()
+  local ui = require('rustaceanvim.ui')
+  ui.close_win(_state.winnr)
+end
 
 -- Converts a tuple of range coordinates into LSP's position argument
 ---@param row1 integer
@@ -42,6 +56,58 @@ local function get_visual_selected_range()
   return make_lsp_position(row1, math.min(col1, col2), row1, math.max(col1, col2))
 end
 
+---@type lsp.Handler
+local function handler(_, result, _)
+  if not (result and result.contents) then
+    return
+  end
+
+  local markdown_lines = lsp_util.convert_input_to_markdown_lines(result.contents, {})
+
+  if vim.tbl_isempty(markdown_lines) then
+    return
+  end
+
+  -- NOTE: This is for backward compatibility
+  local win_opt = vim.tbl_deep_extend('force', config.tools.float_win_config, config.tools.hover_actions)
+
+  local bufnr, winnr = lsp_util.open_floating_preview(
+    markdown_lines,
+    'markdown',
+    vim.tbl_extend('keep', win_opt, {
+      focusable = true,
+      focus_id = 'rust-analyzer-hover-range',
+      close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
+    })
+  )
+
+  if win_opt.auto_focus then
+    vim.api.nvim_set_current_win(winnr)
+  end
+
+  if _state.winnr ~= nil then
+    return
+  end
+
+  -- update the window number here so that we can map escape to close even
+  -- when there are no actions, update the rest of the state later
+  _state.winnr = winnr
+  vim.keymap.set('n', 'q', close_hover, { buffer = bufnr, noremap = true, silent = true })
+  vim.keymap.set('n', '<Esc>', close_hover, { buffer = bufnr, noremap = true, silent = true })
+
+  vim.api.nvim_buf_attach(bufnr, false, {
+    on_detach = function()
+      _state.winnr = nil
+    end,
+  })
+
+  -- makes more sense in a dropdown-ish ui
+  vim.wo[winnr].cursorline = true
+
+  -- explicitly disable signcolumn
+  vim.wo[winnr].signcolumn = 'no'
+end
+
 function M.hover_range()
   local ra = require('rustaceanvim.rust_analyzer')
   local clients = ra.get_active_rustaceanvim_clients(0)
@@ -52,7 +118,7 @@ function M.hover_range()
   ---@diagnostic disable-next-line: inject-field
   params.position = get_visual_selected_range()
   params.range = nil
-  ra.buf_request(0, 'textDocument/hover', params)
+  ra.buf_request(0, 'textDocument/hover', params, handler)
 end
 
 return M.hover_range
