@@ -81,8 +81,17 @@ local function handler(_, result, _)
     })
   )
 
+  vim.api.nvim_create_autocmd('WinEnter', {
+    callback = function()
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+    end,
+    buffer = bufnr,
+  })
+
   if win_opt.auto_focus then
     vim.api.nvim_set_current_win(winnr)
+
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
   end
 
   if _state.winnr ~= nil then
