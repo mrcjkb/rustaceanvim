@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.26.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.25.3...v5.26.0) (2025-03-31)
+
+
+### Features
+
+* **range_hover:** switch to normal when the floating window is focused ([8cb8aee](https://github.com/mrcjkb/rustaceanvim/commit/8cb8aeee6ed514ac1228780f661aea5b6dad416c))
+
+
+### Bug Fixes
+
+* **hover_range:** missing border ([a706d03](https://github.com/mrcjkb/rustaceanvim/commit/a706d03e50020aa7a1a6babd159f9fe97402f192))
+
 ## [5.25.3](https://github.com/mrcjkb/rustaceanvim/compare/v5.25.2...v5.25.3) (2025-03-31)
 
 
