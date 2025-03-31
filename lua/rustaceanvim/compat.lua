@@ -21,7 +21,7 @@ end
 ---@param offset_encoding 'utf-8'|'utf-16'|'utf-32'?
 ---@return boolean `true` if the jump succeeded
 function compat.show_document(location, offset_encoding)
-  local show_document = vim.lsp.show_document
+  local show_document = vim.lsp.util.show_document
   if not show_document then
     return vim.lsp.util.jump_to_location(location, offset_encoding or 'utf-8')
   end
