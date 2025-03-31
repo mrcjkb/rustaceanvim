@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.25.3](https://github.com/mrcjkb/rustaceanvim/compare/v5.25.2...v5.25.3) (2025-03-31)
+
+
+### Bug Fixes
+
+* broken syntaxTree command ([#713](https://github.com/mrcjkb/rustaceanvim/issues/713)) ([100efff](https://github.com/mrcjkb/rustaceanvim/commit/100efff79c1882f598f2d910a7cd2503c7943506))
+* deprecation warning on go to definition hover action (nvim 0.11) ([#711](https://github.com/mrcjkb/rustaceanvim/issues/711)) ([b1faa06](https://github.com/mrcjkb/rustaceanvim/commit/b1faa063e09c4ef8f100b05ad0c30b63af7df43f))
+
 ## [5.25.2](https://github.com/mrcjkb/rustaceanvim/compare/v5.25.1...v5.25.2) (2025-03-25)
 
 
