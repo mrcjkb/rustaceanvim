@@ -651,6 +651,8 @@ by setting the rust-analyzer
   <summary>
 	<b>View syntax tree</b>
   </summary>
+
+  Requires rust-analyzer >= 2025-01-20.
   
   ```vim
   :RustLsp syntaxTree
