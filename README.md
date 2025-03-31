@@ -897,7 +897,7 @@ until you can reproduce it.
 
 For issues related to rust-analyzer
 (e.g. LSP features not working), see also
-[the rust-analyzer troubleshooting guide](https://rust-analyzer.github.io/manual.html#troubleshooting).
+[the rust-analyzer troubleshooting guide](https://rust-analyzer.github.io/book/troubleshooting.html).
 
 ### :left_speech_bubble: FAQ
 
