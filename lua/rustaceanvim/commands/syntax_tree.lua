@@ -5,6 +5,7 @@ local M = {}
 ---@type integer | nil
 local latest_buf_id = nil
 
+---@param result string
 local function parse_lines(result)
   local ret = {}
 
@@ -15,7 +16,13 @@ local function parse_lines(result)
   return ret
 end
 
-local function handler(_, result)
+local function handler(err, result)
+  err = vim.tbl_get(err or {}, 'message')
+  if err or result == nil then
+    err = 'rust-analyzer: ' .. (err or 'rust-analyzer/viewSyntaxTree failed [unknown error]')
+    vim.notify(err, vim.log.levels.ERROR)
+    return
+  end
   ui.delete_buf(latest_buf_id)
   latest_buf_id = vim.api.nvim_create_buf(false, true)
   ui.split(true, latest_buf_id)
@@ -31,7 +38,7 @@ function M.syntax_tree()
     return
   end
   local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
-  ra.buf_request(0, 'rust-analyzer/syntaxTree', params, handler)
+  ra.buf_request(0, 'rust-analyzer/viewSyntaxTree', params, handler)
 end
 
 return M.syntax_tree
