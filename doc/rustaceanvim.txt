@@ -332,7 +332,7 @@ rustaceanvim.lsp.ClientOpts                        *rustaceanvim.lsp.ClientOpts*
         {settings?}              (table|fun(project_root:string|nil,default_settings:table):table)
                                                                                                                               Setting passed to rust-analyzer.
                                                                                                                               Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table.
-                                                                                                                              See https://rust-analyzer.github.io/manual.html#configuration.
+                                                                                                                              See https://rust-analyzer.github.io/book/configuration.html.
         {standalone?}            (boolean)
                                                                                                                               Standalone file support (enabled by default).
                                                                                                                               Disabling it may improve rust-analyzer's startup time.
@@ -521,7 +521,7 @@ server.load_rust_analyzer_settings({project_root}, {opts})
         (table)  server_settings
 
     See: ~
-        |https://rust-analyzer.github.io/manual.html#configuration|
+        |https://rust-analyzer.github.io/book/configuration.html|
 
 
 server.create_client_capabilities()          *server.create_client_capabilities*
