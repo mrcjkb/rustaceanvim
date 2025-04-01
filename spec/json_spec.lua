@@ -69,7 +69,7 @@ describe('Decode rust-analyzer settings from json', function()
       [[
 Ignored field 'rust-analyzer.checkOnSave' of invalid type 'table': { "cargo", "check", "-p", "service_b", "--message-format=json" }
 Please refer to the rust-analyzer documentation at
-https://rust-analyzer.github.io/manual.html#rust-analyzer.checkOnSave
+https://rust-analyzer.github.io/book/rust-analyzer.checkOnSave
 ]],
     }, json.get_warnings())
   end)

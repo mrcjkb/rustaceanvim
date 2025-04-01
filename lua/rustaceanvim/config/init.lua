@@ -204,7 +204,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---
 ---Setting passed to rust-analyzer.
 ---Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table.
----See https://rust-analyzer.github.io/manual.html#configuration.
+---See https://rust-analyzer.github.io/book/configuration.
 ---@field settings? table | fun(project_root:string|nil, default_settings: table):table
 ---
 ---Standalone file support (enabled by default).

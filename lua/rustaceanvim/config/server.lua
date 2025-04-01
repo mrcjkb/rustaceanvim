@@ -14,7 +14,7 @@ local server = {}
 ---@param project_root string|nil The project root
 ---@param opts rustaceanvim.LoadRASettingsOpts|nil
 ---@return table server_settings
----@see https://rust-analyzer.github.io/manual.html#configuration
+---@see https://rust-analyzer.github.io/book/configuration
 function server.load_rust_analyzer_settings(project_root, opts)
   local config = require('rustaceanvim.config.internal')
   local os = require('rustaceanvim.os')

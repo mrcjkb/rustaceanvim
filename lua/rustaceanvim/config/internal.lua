@@ -323,7 +323,7 @@ local RustaceanDefaultConfig = {
     --- @type table
     default_settings = {
       --- options to send to rust-analyzer
-      --- See: https://rust-analyzer.github.io/manual.html#configuration
+      --- See: https://rust-analyzer.github.io/book/configuration
       --- @type table
       ['rust-analyzer'] = {},
     },

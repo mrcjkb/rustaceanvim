@@ -763,7 +763,7 @@ To modify the default configuration, set `vim.g.rustaceanvim`.
   You may need to run `:helptags ALL` if the documentation has not been installed.
 - The default configuration [can be found here (see `RustaceanDefaultConfig`)](./lua/rustaceanvim/config/internal.lua).
 - For detailed descriptions of the language server configs,
-  see the [`rust-analyzer` documentation](https://rust-analyzer.github.io/book/configuration.html).
+  see the [`rust-analyzer` documentation](https://rust-analyzer.github.io/book/configuration).
 
 You only need to specify the keys
 that you want to be changed, because defaults
@@ -856,7 +856,7 @@ If the file does not exist, or it can't be decoded,
 the `server.default_settings` will be used.
 
 [^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
-      and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/book/configuration.html).
+      and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/book/configuration).
       Note that JSON5 is currently not supported by Neovim.
 
 Another option is to use `:h exrc`.

@@ -24,7 +24,7 @@ local function tbl_set(field_name, tbl, keys, value)
     add_warning(([[
 Ignored field '%s' of invalid type '%s': %s
 Please refer to the rust-analyzer documentation at
-https://rust-analyzer.github.io/manual.html#%s
+https://rust-analyzer.github.io/book/%s
 ]]):format(field_name, type(value), vim.inspect(value), field_name))
     return
   end
