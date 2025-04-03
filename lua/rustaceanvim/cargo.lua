@@ -127,21 +127,21 @@ function cargo.get_config_root_dir(config, file_name, callback)
   end
 end
 
----@param buf_name? string
----@return string edition
-function cargo.get_rustc_edition(buf_name)
+---@param callback fun(edition: string)
+function cargo.get_rustc_edition(callback)
   local config = require('rustaceanvim.config.internal')
-  buf_name = buf_name or vim.api.nvim_buf_get_name(0)
+  local buf_name = vim.api.nvim_buf_get_name(0)
   local path = vim.fs.dirname(buf_name)
-  local _, cargo_metadata = get_cargo_metadata(path)
-  local default_edition = config.tools.rustc.default_edition
-  if not cargo_metadata then
-    return default_edition
-  end
-  local package = vim.iter(cargo_metadata.packages or {}):find(function(pkg)
-    return type(pkg.edition) == 'string'
+  get_cargo_metadata(path, function(_, cargo_metadata)
+    local default_edition = config.tools.rustc.default_edition
+    if not cargo_metadata then
+      return callback(default_edition)
+    end
+    local pkg = vim.iter(cargo_metadata.packages or {}):find(function(p)
+      return type(p.edition) == 'string'
+    end)
+    return callback(pkg and pkg.edition or default_edition)
   end)
-  return package and package.edition or default_edition
 end
 
 return cargo
