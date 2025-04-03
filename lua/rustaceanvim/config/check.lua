@@ -99,7 +99,7 @@ function M.validate(cfg)
     cmd = { server.cmd, { 'function', 'table' } },
     standalone = { server.standalone, 'boolean' },
     settings = { server.settings, { 'function', 'table' }, true },
-    root_dir = { server.root_dir, { 'function', 'string' } },
+    root_dir = { server.root_dir, { 'nil', 'function', 'string' } },
   })
   if not ok then
     return false, err

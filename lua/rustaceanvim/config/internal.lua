@@ -1,5 +1,4 @@
 local types = require('rustaceanvim.types.internal')
-local cargo = require('rustaceanvim.cargo')
 local config = require('rustaceanvim.config')
 local executors = require('rustaceanvim.executors')
 local os = require('rustaceanvim.os')
@@ -285,8 +284,9 @@ local RustaceanDefaultConfig = {
       return { exepath_or_binary('rust-analyzer'), '--log-file', RustaceanConfig.server.logfile }
     end,
 
-    ---@type string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
-    root_dir = cargo.get_root_dir,
+    --- Defaults to `nil`, which means rustaceanvim will use the built-in async root directory detection
+    ---@type nil | string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
+    root_dir = nil,
 
     ra_multiplex = {
       ---@type boolean
