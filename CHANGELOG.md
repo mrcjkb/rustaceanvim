@@ -4,6 +4,30 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.26.0...v6.0.0) (2025-04-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **lsp:** don't auto-register LSP client capabilities
+* drop `config.tools.edition` config
+* drop support for `rust-analyzer.json`
+* drop nvim 0.10 support
+
+### Features
+
+* drop `config.tools.edition` config ([cff0267](https://github.com/mrcjkb/rustaceanvim/commit/cff0267426acfe0e6adeadd24f6d6f3e4731c2ad))
+* drop nvim 0.10 support ([161360c](https://github.com/mrcjkb/rustaceanvim/commit/161360c2291c6d013e57f965b9d1c89bb80af783))
+* drop support for `rust-analyzer.json` ([1fcb991](https://github.com/mrcjkb/rustaceanvim/commit/1fcb9912df57c2f9dfa9e6b2b1c98816bd8108cd))
+* **lsp:** configure rust-analyzer on the fly ([fc82520](https://github.com/mrcjkb/rustaceanvim/commit/fc825201a4d909b62ac3d2eec814b4feadd8801e))
+* **lsp:** don't auto-register LSP client capabilities ([b2ab7de](https://github.com/mrcjkb/rustaceanvim/commit/b2ab7de24ec74c1e6864df85972a1213065a9ddc))
+
+
+### Performance Improvements
+
+* async `rustc unpretty` command ([7b835e3](https://github.com/mrcjkb/rustaceanvim/commit/7b835e3ab2ba76b3892a79a7305451666ad16429))
+* **lsp:** default to async root directory detection ([7c66c1b](https://github.com/mrcjkb/rustaceanvim/commit/7c66c1b56d5590321971cfb859db7b1e5d45d55d))
+
 ## [5.26.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.25.3...v5.26.0) (2025-03-31)
 
 
