@@ -17,6 +17,10 @@
 --- ':RustAnalyzer restart' - Restart the LSP client.
 --- ':RustAnalyzer reloadSettings' - Reload settings for the LSP client.
 --- ':RustAnalyzer target <target_arch>' - Set the target architecture for the LSP client.
+--- ':RustAnalyzer config <lua_table>' - Configure rust-analyzer on the fly.
+---                                      Takes a Lua table as an argument.
+---                                      Example: `:RustAnalyzer config { checkOnSave = false }`
+---                                      WARNING: This command does not validate the Lua config table.
 
 --- The ':RustAnalyzer target' command can take a valid rustc target,
 --- such as 'wasm32-unknown-unknown', or it can be left empty to set the LSP client
