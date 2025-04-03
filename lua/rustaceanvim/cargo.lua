@@ -3,6 +3,84 @@ local os = require('rustaceanvim.os')
 
 local cargo = {}
 
+---@param path string The directory to search upward from
+---@param callback? fun(cargo_crate_dir: string?, cargo_metadata: table?) If `nil`, this function runs synchronously
+---@return string? cargo_crate_dir (if `callback ~= nil` and successful)
+---@return table? cargo_metadata (if `callback ~= nil` and successful)
+local function get_cargo_metadata(path, callback)
+  ---@diagnostic disable-next-line: missing-fields
+  local cargo_crate_dir = vim.fs.dirname(vim.fs.find({ 'Cargo.toml' }, {
+    upward = true,
+    path = path,
+  })[1])
+  if vim.fn.executable('cargo') ~= 1 then
+    return callback and callback(cargo_crate_dir) or cargo_crate_dir
+  end
+  local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
+  if cargo_crate_dir ~= nil then
+    cmd[#cmd + 1] = '--manifest-path'
+    cmd[#cmd + 1] = vim.fs.joinpath(cargo_crate_dir, 'Cargo.toml')
+  end
+
+  ---@param sc vim.SystemCompleted
+  local function on_exit(sc)
+    if sc.code ~= 0 then
+      return callback and callback(cargo_crate_dir) or cargo_crate_dir
+    end
+    local ok, cargo_metadata_json = pcall(vim.fn.json_decode, sc.stdout)
+    if ok and cargo_metadata_json then
+      return callback and callback(cargo_crate_dir, cargo_metadata_json) or cargo_crate_dir, cargo_metadata_json
+    end
+    return callback and callback(cargo_crate_dir) or cargo_crate_dir
+  end
+
+  if callback then
+    vim.uv.fs_stat(path, function(_, stat)
+      vim.system(cmd, {
+        cwd = stat and path or cargo_crate_dir or vim.fn.getcwd(),
+      }, on_exit)
+    end)
+  else
+    local sc = vim
+      .system(cmd, {
+        cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
+      })
+      :wait()
+    return on_exit(sc)
+  end
+end
+
+---The default implementation used for `vim.g.rustaceanvim.server.root_dir`
+---@param file_name string
+---@param callback? fun(root_dir: string | nil) If `nil`, this function runs synchronously
+---@return string | nil root_dir (if `callback ~= nil` and successful)
+local function default_get_root_dir(file_name, callback)
+  local path = file_name:find('%.rs$') and vim.fs.dirname(file_name) or file_name
+  if not path then
+    return nil
+  end
+
+  ---@param cargo_crate_dir? string
+  ---@param cargo_metadata? table
+  ---@return string | nil root_dir
+  local function root_dir(cargo_crate_dir, cargo_metadata)
+    return cargo_metadata and cargo_metadata.workspace_root
+      or cargo_crate_dir
+      or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
+        upward = true,
+        path = path,
+      })[1])
+  end
+  if callback then
+    get_cargo_metadata(path, function(cargo_crate_dir, cargo_metadata)
+      callback(root_dir(cargo_crate_dir, cargo_metadata))
+    end)
+  else
+    local cargo_crate_dir, cargo_metadata = get_cargo_metadata(path)
+    return root_dir(cargo_crate_dir, cargo_metadata)
+  end
+end
+
 ---Checks if there is an active client for file_name and returns its root directory if found.
 ---@param file_name string
 ---@return string | nil root_dir The root directory of the active client for file_name (if there is one)
@@ -29,51 +107,24 @@ end
 ---client root is found, returns the result of evaluating `config.root_dir`.
 ---@param config rustaceanvim.lsp.ClientConfig
 ---@param file_name string
+---@param callback? fun(root_dir: string?) If `nil`, this function runs synchronously
 ---@return string | nil root_dir
-function cargo.get_config_root_dir(config, file_name)
+function cargo.get_config_root_dir(config, file_name, callback)
   local reuse_active = get_mb_active_client_root(file_name)
   if reuse_active then
     return reuse_active
   end
-
-  local config_root_dir = config.root_dir
-  if type(config_root_dir) == 'function' then
-    return config_root_dir(file_name, cargo.get_root_dir)
+  if type(config.root_dir) == 'function' then
+    local root_dir = config.root_dir(file_name, default_get_root_dir)
+    return callback and callback(root_dir) or root_dir
+  elseif type(config.root_dir) == 'string' then
+    local root_dir = config.root_dir
+    ---@cast root_dir string
+    return callback and callback(root_dir) or root_dir
   else
-    return config_root_dir
+    callback = callback and vim.schedule_wrap(callback)
+    return default_get_root_dir(file_name, callback)
   end
-end
-
----@param path string The directory to search upward from
----@return string? cargo_crate_dir
----@return table? cargo_metadata
-local function get_cargo_metadata(path)
-  ---@diagnostic disable-next-line: missing-fields
-  local cargo_crate_dir = vim.fs.dirname(vim.fs.find({ 'Cargo.toml' }, {
-    upward = true,
-    path = path,
-  })[1])
-  if vim.fn.executable('cargo') ~= 1 then
-    return cargo_crate_dir
-  end
-  local cmd = { 'cargo', 'metadata', '--no-deps', '--format-version', '1' }
-  if cargo_crate_dir ~= nil then
-    cmd[#cmd + 1] = '--manifest-path'
-    cmd[#cmd + 1] = vim.fs.joinpath(cargo_crate_dir, 'Cargo.toml')
-  end
-  local sc = vim
-    .system(cmd, {
-      cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
-    })
-    :wait()
-  if sc.code ~= 0 then
-    return cargo_crate_dir
-  end
-  local ok, cargo_metadata_json = pcall(vim.fn.json_decode, sc.stdout)
-  if ok and cargo_metadata_json then
-    return cargo_crate_dir, cargo_metadata_json
-  end
-  return cargo_crate_dir
 end
 
 ---@param buf_name? string
@@ -97,24 +148,6 @@ function cargo.get_rustc_edition(buf_name)
     return type(pkg.edition) == 'string'
   end)
   return package and package.edition or default_edition
-end
-
----The default implementation used for `vim.g.rustaceanvim.server.root_dir`
----@param file_name string
----@return string | nil root_dir
-function cargo.get_root_dir(file_name)
-  local path = file_name:find('%.rs$') and vim.fs.dirname(file_name) or file_name
-  if not path then
-    return nil
-  end
-  local cargo_crate_dir, cargo_metadata = get_cargo_metadata(path)
-  return cargo_metadata and cargo_metadata.workspace_root
-    or cargo_crate_dir
-    ---@diagnostic disable-next-line: missing-fields
-    or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
-      upward = true,
-      path = path,
-    })[1])
 end
 
 return cargo

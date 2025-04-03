@@ -159,7 +159,6 @@ end
 
 --- Start or attach the LSP client
 ---@param bufnr? number The buffer number (optional), defaults to the current buffer
----@return integer|nil client_id The LSP client ID
 M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
@@ -167,145 +166,142 @@ M.start = function(bufnr)
   local client_config = vim.tbl_deep_extend('force', config.server, ra_config)
   ---@type rustaceanvim.lsp.StartConfig
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
-  local root_dir = cargo.get_config_root_dir(client_config, bufname)
-  if not root_dir then
-    vim.notify(
-      [[
+  cargo.get_config_root_dir(client_config, bufname, function(root_dir)
+    if not root_dir then
+      vim.notify(
+        [[
 rustaceanvim:
 No project root found.
 Starting rust-analyzer client in detached/standalone mode (with reduced functionality).
 ]],
-      vim.log.levels.INFO
-    )
-    root_dir = vim.fs.dirname(bufname)
-    lsp_start_config.init_options = { detachedFiles = { bufname } }
-  end
-  root_dir = os.normalize_path_on_windows(root_dir)
-  lsp_start_config.root_dir = root_dir
-
-  lsp_start_config.settings = get_start_settings(bufname, root_dir, client_config)
-  configure_file_watcher(lsp_start_config)
-
-  -- Check if a client is already running and add the workspace folder if necessary.
-  for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
-    if root_dir and not is_in_workspace(client, root_dir) then
-      local workspace_folder = { uri = vim.uri_from_fname(root_dir), name = root_dir }
-      local params = {
-        event = {
-          added = { workspace_folder },
-          removed = {},
-        },
-      }
-      client:notify('workspace/didChangeWorkspaceFolders', params)
-      if not client.workspace_folders then
-        client.workspace_folders = {}
-      end
-      table.insert(client.workspace_folders, workspace_folder)
-      vim.lsp.buf_attach_client(bufnr, client.id)
-      return
+        vim.log.levels.INFO
+      )
+      root_dir = vim.fs.dirname(bufname)
+      lsp_start_config.init_options = { detachedFiles = { bufname } }
     end
-  end
+    root_dir = os.normalize_path_on_windows(root_dir)
+    lsp_start_config.root_dir = root_dir
 
-  local rust_analyzer_cmd = types.evaluate(client_config.cmd)
+    lsp_start_config.settings = get_start_settings(bufname, root_dir, client_config)
+    configure_file_watcher(lsp_start_config)
 
-  local ra_multiplex = lsp_start_config.ra_multiplex
-  if ra_multiplex.enable then
-    local ok, running_ra_multiplex = pcall(function()
-      local result = vim.system({ 'pgrep', 'ra-multiplex' }):wait().code
-      return result == 0
-    end)
-    if ok and running_ra_multiplex then
-      rust_analyzer_cmd = vim.lsp.rpc.connect(ra_multiplex.host, ra_multiplex.port)
-      local ra_settings = lsp_start_config.settings['rust-analyzer'] or {}
-      ra_settings.lspMux = ra_settings.lspMux
-        or {
-          version = '1',
-          method = 'connect',
-          server = 'rust-analyzer',
+    -- Check if a client is already running and add the workspace folder if necessary.
+    for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
+      if root_dir and not is_in_workspace(client, root_dir) then
+        local workspace_folder = { uri = vim.uri_from_fname(root_dir), name = root_dir }
+        local params = {
+          event = {
+            added = { workspace_folder },
+            removed = {},
+          },
         }
-      lsp_start_config.settings['rust-analyzer'] = ra_settings
+        client:notify('workspace/didChangeWorkspaceFolders', params)
+        if not client.workspace_folders then
+          client.workspace_folders = {}
+        end
+        table.insert(client.workspace_folders, workspace_folder)
+        vim.lsp.buf_attach_client(bufnr, client.id)
+        return
+      end
     end
-  end
 
-  -- special case: rust-analyzer has a `rust-analyzer.server.path` config option
-  -- that allows you to override the path via .vscode/settings.json
-  local server_path = vim.tbl_get(lsp_start_config.settings, 'rust-analyzer', 'server', 'path')
-  if type(server_path) == 'string' then
+    local rust_analyzer_cmd = types.evaluate(client_config.cmd)
+
+    local ra_multiplex = lsp_start_config.ra_multiplex
+    if ra_multiplex.enable then
+      local ok, running_ra_multiplex = pcall(function()
+        local result = vim.system({ 'pgrep', 'ra-multiplex' }):wait().code
+        return result == 0
+      end)
+      if ok and running_ra_multiplex then
+        rust_analyzer_cmd = vim.lsp.rpc.connect(ra_multiplex.host, ra_multiplex.port)
+        local ra_settings = lsp_start_config.settings['rust-analyzer'] or {}
+        ra_settings.lspMux = ra_settings.lspMux
+          or {
+            version = '1',
+            method = 'connect',
+            server = 'rust-analyzer',
+          }
+        lsp_start_config.settings['rust-analyzer'] = ra_settings
+      end
+    end
+
+    -- special case: rust-analyzer has a `rust-analyzer.server.path` config option
+    -- that allows you to override the path via .vscode/settings.json
+    local server_path = vim.tbl_get(lsp_start_config.settings, 'rust-analyzer', 'server', 'path')
+    if type(server_path) == 'string' then
+      if type(rust_analyzer_cmd) == 'table' then
+        rust_analyzer_cmd[1] = server_path
+      else
+        rust_analyzer_cmd = { server_path }
+      end
+      --
+    end
     if type(rust_analyzer_cmd) == 'table' then
-      rust_analyzer_cmd[1] = server_path
-    else
-      rust_analyzer_cmd = { server_path }
-    end
-    --
-  end
-  if type(rust_analyzer_cmd) == 'table' then
-    if #rust_analyzer_cmd == 0 then
-      vim.schedule(function()
+      if #rust_analyzer_cmd == 0 then
         vim.notify('rust-analyzer command is not set!', vim.log.levels.ERROR)
-      end)
-      return
-    end
-    if vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
-      vim.schedule(function()
+        return
+      end
+      if vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
         vim.notify(('%s is not executable'):format(rust_analyzer_cmd[1]), vim.log.levels.ERROR)
+        return
+      end
+    end
+    ---@cast rust_analyzer_cmd string[]
+    lsp_start_config.cmd = rust_analyzer_cmd
+    lsp_start_config.name = ra_client_name
+    lsp_start_config.filetypes = { 'rust' }
+
+    local custom_handlers = {}
+    custom_handlers['experimental/serverStatus'] = server_status.handler
+
+    lsp_start_config.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_config.handlers or {})
+
+    local commands = require('rustaceanvim.commands')
+    local old_on_init = lsp_start_config.on_init
+    lsp_start_config.on_init = function(...)
+      override_apply_text_edits()
+      commands.create_rust_lsp_command()
+      if type(old_on_init) == 'function' then
+        old_on_init(...)
+      end
+    end
+
+    local old_on_attach = lsp_start_config.on_attach
+    lsp_start_config.on_attach = function(...)
+      if type(old_on_attach) == 'function' then
+        old_on_attach(...)
+      end
+      if config.dap.autoload_configurations then
+        -- When switching projects, there might be new debuggables (#466)
+        require('rustaceanvim.commands.debuggables').add_dap_debuggables()
+      end
+    end
+
+    local old_on_exit = lsp_start_config.on_exit
+    lsp_start_config.on_exit = function(...)
+      override_apply_text_edits()
+      -- on_exit runs in_fast_event
+      vim.schedule(function()
+        commands.delete_rust_lsp_command()
       end)
-      return
+      if type(old_on_exit) == 'function' then
+        old_on_exit(...)
+      end
     end
-  end
-  ---@cast rust_analyzer_cmd string[]
-  lsp_start_config.cmd = rust_analyzer_cmd
-  lsp_start_config.name = ra_client_name
-  lsp_start_config.filetypes = { 'rust' }
 
-  local custom_handlers = {}
-  custom_handlers['experimental/serverStatus'] = server_status.handler
+    -- rust-analyzer treats settings in initializationOptions specially -- in particular, workspace_discoverConfig
+    -- so copy them to init_options (the vim name)
+    -- so they end up in initializationOptions (the LSP name)
+    -- ... and initialization_options (the rust name) in rust-analyzer's main.rs
+    lsp_start_config.init_options = vim.tbl_deep_extend(
+      'force',
+      lsp_start_config.init_options or {},
+      vim.tbl_get(lsp_start_config.settings, 'rust-analyzer')
+    )
 
-  lsp_start_config.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_config.handlers or {})
-
-  local commands = require('rustaceanvim.commands')
-  local old_on_init = lsp_start_config.on_init
-  lsp_start_config.on_init = function(...)
-    override_apply_text_edits()
-    commands.create_rust_lsp_command()
-    if type(old_on_init) == 'function' then
-      old_on_init(...)
-    end
-  end
-
-  local old_on_attach = lsp_start_config.on_attach
-  lsp_start_config.on_attach = function(...)
-    if type(old_on_attach) == 'function' then
-      old_on_attach(...)
-    end
-    if config.dap.autoload_configurations then
-      -- When switching projects, there might be new debuggables (#466)
-      require('rustaceanvim.commands.debuggables').add_dap_debuggables()
-    end
-  end
-
-  local old_on_exit = lsp_start_config.on_exit
-  lsp_start_config.on_exit = function(...)
-    override_apply_text_edits()
-    -- on_exit runs in_fast_event
-    vim.schedule(function()
-      commands.delete_rust_lsp_command()
-    end)
-    if type(old_on_exit) == 'function' then
-      old_on_exit(...)
-    end
-  end
-
-  -- rust-analyzer treats settings in initializationOptions specially -- in particular, workspace_discoverConfig
-  -- so copy them to init_options (the vim name)
-  -- so they end up in initializationOptions (the LSP name)
-  -- ... and initialization_options (the rust name) in rust-analyzer's main.rs
-  lsp_start_config.init_options = vim.tbl_deep_extend(
-    'force',
-    lsp_start_config.init_options or {},
-    vim.tbl_get(lsp_start_config.settings, 'rust-analyzer')
-  )
-
-  return vim.lsp.start(lsp_start_config)
+    return vim.lsp.start(lsp_start_config)
+  end)
 end
 
 ---Stop the LSP client.
