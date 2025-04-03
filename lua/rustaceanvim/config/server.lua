@@ -40,14 +40,8 @@ function server.load_rust_analyzer_settings(_, opts)
 end
 
 ---@return lsp.ClientCapabilities
-local function make_rustaceanvim_capabilities()
+function server.create_client_capabilities()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
-
-  if vim.fn.has('nvim-0.10.0') == 1 then
-    -- snippets
-    -- This will also be added if cmp_nvim_lsp is detected.
-    capabilities.textDocument.completion.completionItem.snippetSupport = true
-  end
 
   -- send actions with hover request
   capabilities.experimental = {
@@ -76,57 +70,12 @@ local function make_rustaceanvim_capabilities()
     table.insert(experimental_commands, 'rust-analyzer.debugSingle')
   end
 
+  ---@diagnostic disable-next-line: inject-field
   capabilities.experimental.commands = {
     commands = experimental_commands,
   }
 
   return capabilities
-end
-
----@param mod_name string
----@param callback fun(mod: table): lsp.ClientCapabilities
----@return lsp.ClientCapabilities
-local function mk_capabilities_if_available(mod_name, callback)
-  local available, mod = pcall(require, mod_name)
-  if available and type(mod) == 'table' then
-    local ok, capabilities = pcall(callback, mod)
-    if ok then
-      return capabilities
-    end
-  end
-  return {}
-end
-
----@return lsp.ClientCapabilities
-function server.create_client_capabilities()
-  local rs_capabilities = make_rustaceanvim_capabilities()
-  local blink_capabilities = mk_capabilities_if_available('blink.cmp', function(blink)
-    return blink.get_lsp_capabilities()
-  end)
-  local cmp_capabilities = mk_capabilities_if_available('cmp_nvim_lsp', function(cmp_nvim_lsp)
-    return cmp_nvim_lsp.default_capabilities()
-  end)
-  local selection_range_capabilities = mk_capabilities_if_available('lsp-selection-range', function(lsp_selection_range)
-    return lsp_selection_range.update_capabilities {}
-  end)
-  local folding_range_capabilities = mk_capabilities_if_available('ufo', function(_)
-    return {
-      textDocument = {
-        foldingRange = {
-          dynamicRegistration = false,
-          lineFoldingOnly = true,
-        },
-      },
-    }
-  end)
-  return vim.tbl_deep_extend(
-    'force',
-    rs_capabilities,
-    blink_capabilities,
-    cmp_capabilities,
-    selection_range_capabilities,
-    folding_range_capabilities
-  )
 end
 
 return server

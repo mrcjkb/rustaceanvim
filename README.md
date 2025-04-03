@@ -797,8 +797,12 @@ vim.g.rustaceanvim = {
 
 > [!TIP]
 >
-> `vim.g.rustaceanvim` can also be a function that returns
-> a table.
+> - `vim.g.rustaceanvim` can also be a function that returns
+>   a table.
+>
+> - You can also use `:h vim.lsp.config` to configure `vim.g.rustaceanvim.server`
+>   options.
+>   For example, `vim.lsp.config("*", {})` or `vim.lsp.config("rust-analyzer", {})`.
 
 ### Using `codelldb` for debugging
 
