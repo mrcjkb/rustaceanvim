@@ -306,8 +306,8 @@ local RustaceanDefaultConfig = {
     logfile = vim.fn.tempname() .. '-rust-analyzer.log',
 
     ---@type table | (fun(project_root:string|nil, default_settings: table|nil):table) -- The rust-analyzer settings or a function that creates them.
-    settings = function(project_root, default_settings)
-      return server_config.load_rust_analyzer_settings(project_root, { default_settings = default_settings })
+    settings = function(_, default_settings)
+      return server_config.load_rust_analyzer_settings(_, { default_settings = default_settings })
     end,
 
     --- @type table
