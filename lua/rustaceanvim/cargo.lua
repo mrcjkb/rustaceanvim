@@ -131,12 +131,6 @@ end
 ---@return string edition
 function cargo.get_rustc_edition(buf_name)
   local config = require('rustaceanvim.config.internal')
-  ---@diagnostic disable-next-line: undefined-field
-  if config.tools.rustc.edition then
-    vim.deprecate('vim.g.rustaceanvim.config.tools.edition', 'default_edition', '6.0.0', 'rustaceanvim')
-    ---@diagnostic disable-next-line: undefined-field
-    return config.tools.rustc.edition
-  end
   buf_name = buf_name or vim.api.nvim_buf_get_name(0)
   local path = vim.fs.dirname(buf_name)
   local _, cargo_metadata = get_cargo_metadata(path)
