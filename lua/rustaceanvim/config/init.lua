@@ -55,10 +55,10 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field tools? rustaceanvim.tools.Opts
 ---
 ---Language server client options.
----In Neovim >= 0.11 (nightly), these can also be set using |vim.lsp.config()| for "rust-analyzer".
+---These can also be set using |vim.lsp.config()| for "rust-analyzer" or "*".
 ---If both the `server` table and a `vim.lsp.config["rust-analyzer"]` are defined,
----the |vim.lsp.config()| settings are merged into the `server` table, taking precedence over
----existing settings.
+---rustaceanvim merges |vim.lsp.config()| settings into the `server` table,
+---giving them precedence over existing settings.
 ---@field server? rustaceanvim.lsp.ClientOpts
 ---
 ---Debug adapter options
