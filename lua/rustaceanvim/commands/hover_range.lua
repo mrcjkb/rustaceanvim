@@ -68,13 +68,12 @@ local function handler(_, result, _)
     return
   end
 
-  -- NOTE: This is for backward compatibility
-  local win_opt = vim.tbl_deep_extend('force', config.tools.float_win_config, config.tools.hover_actions)
+  local float_win_config = config.tools.float_win_config
 
   local bufnr, winnr = lsp_util.open_floating_preview(
     markdown_lines,
     'markdown',
-    vim.tbl_extend('keep', win_opt, {
+    vim.tbl_extend('keep', float_win_config, {
       focusable = true,
       focus_id = 'rust-analyzer-hover-range',
       close_events = { 'CursorMoved', 'BufHidden', 'InsertCharPre' },
@@ -88,7 +87,7 @@ local function handler(_, result, _)
     buffer = bufnr,
   })
 
-  if win_opt.auto_focus then
+  if float_win_config.auto_focus then
     vim.api.nvim_set_current_win(winnr)
 
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)

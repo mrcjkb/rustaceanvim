@@ -1,7 +1,5 @@
 local M = {}
 
-local compat = require('rustaceanvim.compat')
-
 local function handler(_, result, ctx)
   if result == nil or vim.tbl_isempty(result) then
     vim.notify("Can't find parent module.", vim.log.levels.ERROR)
@@ -16,7 +14,7 @@ local function handler(_, result, ctx)
 
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   if client then
-    compat.show_document(location, client.offset_encoding or 'utf-8')
+    vim.lsp.util.show_document(location, client.offset_encoding or 'utf-8')
   end
 end
 

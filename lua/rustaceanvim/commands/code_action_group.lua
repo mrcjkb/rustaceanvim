@@ -1,6 +1,5 @@
 local ui = require('rustaceanvim.ui')
 local config = require('rustaceanvim.config.internal')
-local compat = require('rustaceanvim.compat')
 local M = {}
 
 local confirm_keys = config.tools.code_actions.keys.confirm
@@ -53,7 +52,7 @@ function M.on_user_choice(action_tuple, ctx)
     return
   end
   if not action.edit and type(code_action_provider) == 'table' and code_action_provider.resolveProvider then
-    compat.client_request(client, 'codeAction/resolve', action, function(err, resolved_action)
+    client:request('codeAction/resolve', action, function(err, resolved_action)
       ---@cast resolved_action rustaceanvim.RACodeAction|rustaceanvim.RACommand
       if err then
         vim.notify(err.code .. ': ' .. err.message, vim.log.levels.ERROR)
@@ -385,8 +384,11 @@ M.state = {
 }
 
 M.code_action_group = function()
-  local context = {}
-  context.diagnostics = require('rustaceanvim.compat').get_line_diagnostics()
+  local context = {
+    diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(0, {
+      lnum = vim.api.nvim_win_get_cursor(0)[1] - 1,
+    })),
+  }
   local ra = require('rustaceanvim.rust_analyzer')
   local clients = ra.get_active_rustaceanvim_clients(0)
   if #clients == 0 then

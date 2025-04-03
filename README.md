@@ -66,8 +66,13 @@ that are specific to rust-analyzer.
 
 ### Required
 
-- `neovim >= 0.10`
+- `neovim >= 0.11`
 - [`rust-analyzer`](https://rust-analyzer.github.io/)
+
+> [!NOTE]
+>
+> For versions that are compatible with older Neovim versions,
+> see previous major version bumps in [the changelog](./CHANGELOG.md).
 
 ### Optional
 
@@ -96,7 +101,7 @@ that are specific to rust-analyzer.
 ```lua
 {
   'mrcjkb/rustaceanvim',
-  version = '^5', -- Recommended
+  version = '^6', -- Recommended
   lazy = false, -- This plugin is already lazy
 }
 ```
@@ -264,13 +269,10 @@ vim.keymap.set(
 	<b>Testables and failed test diagnostics</b>
   </summary>
 
-  If you are using Neovim >= 0.10, you can set the `vim.g.rustaceanvim.tools.test_executor`
-  option to `'background'`, and this plugin will run tests in the background,
-  parse the results, and - if possible - display failed tests as diagnostics.
+  If you set the `vim.g.rustaceanvim.tools.test_executor` option to `'background'`,
+  this plugin will run tests in the background, parse the results,
+  and - if possible - display failed tests as diagnostics.
 
-  This is also possible in Neovim 0.9, but tests won't be run in the background,
-  and will block the UI.
-  
   ```vim
   :RustLsp[!] testables {args[]}?
   ```

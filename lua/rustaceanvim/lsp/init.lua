@@ -7,7 +7,6 @@ local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
 local rustc = require('rustaceanvim.rustc')
-local compat = require('rustaceanvim.compat')
 
 local ra_client_name = 'rust-analyzer'
 
@@ -117,7 +116,7 @@ local function restart(bufnr, filter, callback)
   local stopped_client_count = 0
   timer:start(200, 100, function()
     for _, client in ipairs(clients) do
-      if compat.client_is_stopped(client) then
+      if client:is_stopped() then
         stopped_client_count = stopped_client_count + 1
         vim.schedule(function()
           -- Execute the callback, if provided, for additional actions before restarting
@@ -164,7 +163,7 @@ end
 M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local ra_config = type(vim.lsp.config) == 'table' and vim.lsp.config[ra_client_name] or {}
+  local ra_config = vim.lsp.config[ra_client_name] or {}
   local client_config = vim.tbl_deep_extend('force', config.server, ra_config)
   ---@type rustaceanvim.lsp.StartConfig
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
@@ -197,7 +196,7 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
           removed = {},
         },
       }
-      compat.client_notify(client, 'workspace/didChangeWorkspaceFolders', params)
+      client:notify('workspace/didChangeWorkspaceFolders', params)
       if not client.workspace_folders then
         client.workspace_folders = {}
       end
@@ -260,10 +259,6 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
 
   local custom_handlers = {}
   custom_handlers['experimental/serverStatus'] = server_status.handler
-
-  if config.tools.hover_actions.replace_builtin_hover then
-    custom_handlers['textDocument/hover'] = require('rustaceanvim.hover_actions').handler
-  end
 
   lsp_start_config.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_config.handlers or {})
 
@@ -344,7 +339,7 @@ M.reload_settings = function(bufnr)
     local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.config.root_dir, config.server)
     ---@diagnostic disable-next-line: inject-field
     client.settings = settings
-    compat.client_notify(client, 'workspace/didChangeConfiguration', {
+    client:notify('workspace/didChangeConfiguration', {
       settings = client.settings,
     })
   end
@@ -364,7 +359,7 @@ M.set_target_arch = function(bufnr, target)
         ---@diagnostic disable-next-line: inject-field
         ra.cargo = ra.cargo or {}
         ra.cargo.target = target
-        compat.client_notify(client, 'workspace/didChangeConfiguration', { settings = client.config.settings })
+        client:notify('workspace/didChangeConfiguration', { settings = client.config.settings })
         return
       else
         vim.schedule(function()

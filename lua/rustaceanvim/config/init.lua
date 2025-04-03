@@ -92,7 +92,6 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---
 ---Automatically call `RustReloadWorkspace` when writing to a Cargo.toml file
 ---@field reload_workspace_from_cargo_toml? boolean
----@field hover_actions? rustaceanvim.hover-actions.Opts Options for hover actions
 ---@field code_actions? rustaceanvim.code-action.Opts Options for code actions
 ---
 ---Options applied to floating windows.
@@ -125,12 +124,6 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@alias rustaceanvim.executor_alias 'termopen' | 'quickfix' | 'toggleterm' | 'vimux'
 
 ---@alias rustaceanvim.test_executor_alias rustaceanvim.executor_alias | 'background' | 'neotest'
-
----@class rustaceanvim.hover-actions.Opts
----
----Whether to replace Neovim's built-in `vim.lsp.buf.hover` with hover actions.
----Default: `true`
----@field replace_builtin_hover? boolean
 
 ---@class rustaceanvim.code-action.Opts
 ---

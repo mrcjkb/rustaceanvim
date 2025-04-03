@@ -48,13 +48,6 @@ function M.validate(cfg)
   if not ok then
     return false, err
   end
-  local hover_actions = tools.hover_actions
-  ok, err = validate('tools.hover_actions', {
-    replace_builtin_hover = { hover_actions.replace_builtin_hover, 'boolean' },
-  })
-  if not ok then
-    return false, err
-  end
   local code_actions = tools.code_actions
   ok, err = validate('tools.code_actions', {
     group_icon = { code_actions.group_icon, 'string' },

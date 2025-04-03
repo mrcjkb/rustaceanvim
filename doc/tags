@@ -24,7 +24,6 @@ rustaceanvim.dap.executable.Config	rustaceanvim.txt	/*rustaceanvim.dap.executabl
 rustaceanvim.dap.server.Config	rustaceanvim.txt	/*rustaceanvim.dap.server.Config*
 rustaceanvim.disable	rustaceanvim.txt	/*rustaceanvim.disable*
 rustaceanvim.executor_alias	rustaceanvim.txt	/*rustaceanvim.executor_alias*
-rustaceanvim.hover-actions.Opts	rustaceanvim.txt	/*rustaceanvim.hover-actions.Opts*
 rustaceanvim.intro	rustaceanvim.txt	/*rustaceanvim.intro*
 rustaceanvim.lsp.ClientOpts	rustaceanvim.txt	/*rustaceanvim.lsp.ClientOpts*
 rustaceanvim.lsp_server_health_status	rustaceanvim.txt	/*rustaceanvim.lsp_server_health_status*

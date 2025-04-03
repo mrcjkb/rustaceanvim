@@ -125,16 +125,6 @@ local RustaceanDefaultConfig = {
     ---@type boolean
     reload_workspace_from_cargo_toml = true,
 
-    --- options same as lsp hover
-    ---@see vim.lsp.util.open_floating_preview
-    ---@class rustaceanvim.hover-actions.Config
-    hover_actions = {
-
-      --- whether to replace Neovim's built-in `vim.lsp.buf.hover`.
-      ---@type boolean
-      replace_builtin_hover = true,
-    },
-
     code_actions = {
       --- text appended to a group action
       ---@type string
