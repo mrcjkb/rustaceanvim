@@ -1,11 +1,10 @@
-if vim.fn.has('nvim-0.10') ~= 1 then
-  vim.notify_once('rustaceanvim requires Neovim 0.10 or above', vim.log.levels.ERROR)
+if vim.fn.has('nvim-0.11') ~= 1 then
+  vim.notify_once('rustaceanvim requires Neovim 0.11 or above', vim.log.levels.ERROR)
   return
 end
 
 ---@type rustaceanvim.Config
 local config = require('rustaceanvim.config.internal')
-local compat = require('rustaceanvim.compat')
 
 if not vim.g.loaded_rustaceanvim then
   require('rustaceanvim.config.check').check_for_lspconfig_conflict(vim.schedule_wrap(function(warn)
@@ -28,7 +27,7 @@ if not vim.g.loaded_rustaceanvim then
   vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
     local client = vim.lsp.get_client_by_id(ctx.client_id)
     if client then
-      compat.show_document(command.arguments[1], client.offset_encoding or 'utf-8')
+      vim.lsp.util.show_document(command.arguments[1], client.offset_encoding or 'utf-8')
     end
   end
 

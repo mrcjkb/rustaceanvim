@@ -1,5 +1,5 @@
-if vim.fn.has('nvim-0.10') ~= 1 then
-  vim.notify_once('rustaceanvim requires Neovim 0.10 or above', vim.log.levels.ERROR)
+if vim.fn.has('nvim-0.11') ~= 1 then
+  vim.notify_once('rustaceanvim requires Neovim 0.11 or above', vim.log.levels.ERROR)
   return
 end
 
