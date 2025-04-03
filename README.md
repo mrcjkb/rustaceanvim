@@ -754,6 +754,26 @@ by setting the rust-analyzer
   See also `:h rustaceanvim.ra_multiplex`.
 
 </details>
+
+<details>
+  <summary>
+	<b>Configure rust-analyzer on the fly</b>
+  </summary>
+
+  You can configure rust-analyzer on the fly using the `:RustAnalyzer config` subcommand.
+  The command takes a Lua table as an argument (it does not validate it!).
+
+  For example:
+  
+  ```vim
+  :RustAnalyzer config { checkOnSave = false }
+  ```
+  ```lua
+  vim.cmd.RustAnalyzer { 'config', '{ checkOnSave = false }' }
+  ```
+
+  See also: [`rust-analyzer` configuration](https://rust-analyzer.github.io/book/configuration).
+</details>
 <!-- markdownlint-restore -->
 
 ## :gear: Advanced configuration
