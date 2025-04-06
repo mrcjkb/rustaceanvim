@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.0...v6.0.1) (2025-04-06)
+
+
+### Bug Fixes
+
+* regression in root directory detection ([#725](https://github.com/mrcjkb/rustaceanvim/issues/725)) ([fa2ddb5](https://github.com/mrcjkb/rustaceanvim/commit/fa2ddb5ef8408383a3b7efad0d10f6d1c14b2abd))
+
 ## [6.0.0](https://github.com/mrcjkb/rustaceanvim/compare/v5.26.0...v6.0.0) (2025-04-03)
 
 
