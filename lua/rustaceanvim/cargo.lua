@@ -30,6 +30,11 @@ local function get_cargo_metadata(path, callback)
     local ok, cargo_metadata_json = pcall(vim.fn.json_decode, sc.stdout)
     if ok and cargo_metadata_json then
       return callback and callback(cargo_crate_dir, cargo_metadata_json) or cargo_crate_dir, cargo_metadata_json
+    else
+      vim.notify(
+        "rustaceanvim: Could not decode 'cargo metadata' output:\n" .. (cargo_metadata_json or 'unown error'),
+        vim.log.levels.WARN
+      )
     end
     return callback and callback(cargo_crate_dir) or cargo_crate_dir
   end
@@ -38,7 +43,7 @@ local function get_cargo_metadata(path, callback)
     vim.uv.fs_stat(path, function(_, stat)
       vim.system(cmd, {
         cwd = stat and path or cargo_crate_dir or vim.fn.getcwd(),
-      }, on_exit)
+      }, vim.schedule_wrap(on_exit))
     end)
   else
     local sc = vim
@@ -112,7 +117,7 @@ end
 function cargo.get_config_root_dir(config, file_name, callback)
   local reuse_active = get_mb_active_client_root(file_name)
   if reuse_active then
-    return reuse_active
+    return callback and callback(reuse_active) or reuse_active
   end
   if type(config.root_dir) == 'function' then
     local root_dir = config.root_dir(file_name, default_get_root_dir)
@@ -122,7 +127,6 @@ function cargo.get_config_root_dir(config, file_name, callback)
     ---@cast root_dir string
     return callback and callback(root_dir) or root_dir
   else
-    callback = callback and vim.schedule_wrap(callback)
     return default_get_root_dir(file_name, callback)
   end
 end
