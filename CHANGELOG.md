@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.2](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.1...v6.0.2) (2025-04-08)
+
+
+### Bug Fixes
+
+* **lsp:** client attach issue when loading vim session script ([#728](https://github.com/mrcjkb/rustaceanvim/issues/728)) ([c3bc1fe](https://github.com/mrcjkb/rustaceanvim/commit/c3bc1fe0ca58e0ac66bc28e333dd03145dd33e3b))
+
 ## [6.0.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.0...v6.0.1) (2025-04-06)
 
 
