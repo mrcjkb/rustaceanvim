@@ -42,7 +42,7 @@ local function get_cargo_metadata(path, callback)
   if callback then
     vim.uv.fs_stat(path, function(_, stat)
       vim.system(cmd, {
-        cwd = stat and path or cargo_crate_dir or vim.fn.getcwd(),
+        cwd = stat and path or cargo_crate_dir or vim.uv.cwd(),
       }, vim.schedule_wrap(on_exit))
     end)
   else
