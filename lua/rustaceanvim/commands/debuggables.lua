@@ -203,13 +203,15 @@ function M.add_dap_debuggables()
   -- Defer, because rust-analyzer may not be ready yet
   runnables_request(mk_handler(add_debuggables_to_nvim_dap))
   local timer = vim.uv.new_timer()
-  timer:start(
-    2000,
-    0,
-    vim.schedule_wrap(function()
-      runnables_request(mk_handler(add_debuggables_to_nvim_dap))
-    end)
-  )
+  if timer ~= nil then
+    timer:start(
+      2000,
+      0,
+      vim.schedule_wrap(function()
+        runnables_request(mk_handler(add_debuggables_to_nvim_dap))
+      end)
+    )
+  end
 end
 
 return M
