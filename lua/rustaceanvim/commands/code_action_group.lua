@@ -39,16 +39,18 @@ function M.apply_action(action, client, ctx)
   end
 end
 
----@alias action_tuple { [1]: rustaceanvim.RACodeAction|rustaceanvim.RACommand, [2]: lsp.HandlerContext }
+---@class rustaceanvim.CodeActionItem
+---@field action rustaceanvim.RACodeAction|rustaceanvim.RACommand
+---@field ctx lsp.HandlerContext
 
----@param action_tuple action_tuple | nil
+---@param action_item rustaceanvim.CodeActionItem | nil
 ---@param ctx lsp.HandlerContext
-function M.on_user_choice(action_tuple, ctx)
-  if not action_tuple then
+function M.on_user_choice(action_item, ctx)
+  if not action_item then
     return
   end
   local client = vim.lsp.get_client_by_id(ctx.client_id)
-  local action = action_tuple[1]
+  local action = action_item.action
   local code_action_provider = client and client.server_capabilities.codeActionProvider
   if not client then
     return
@@ -70,14 +72,14 @@ end
 ---@class rustaceanvim.CodeActionWindowGeometry
 ---@field width integer
 
----@param action_tuples action_tuple[]
+---@param action_items rustaceanvim.CodeActionItem[]
 ---@param is_group boolean
 ---@return rustaceanvim.CodeActionWindowGeometry
-local function compute_width(action_tuples, is_group)
+local function compute_width(action_items, is_group)
   local width = 0
 
-  for _, value in pairs(action_tuples) do
-    local action = value[1]
+  for _, value in pairs(action_items) do
+    local action = value.action
     local text = action.title
 
     if is_group and action.group then
@@ -101,7 +103,7 @@ local function on_primary_enter_press()
   local line = vim.api.nvim_win_get_cursor(M.state.secondary.winnr or 0)[1]
 
   for _, value in ipairs(M.state.actions.ungrouped) do
-    if value[1].idx == line then
+    if value.action.idx == line then
       M.on_user_choice(value, M.state.ctx)
     end
   end
@@ -122,30 +124,30 @@ local function on_code_action_results(results, ctx)
   local cur_win = vim.api.nvim_get_current_win()
   M.state.ctx = ctx
 
-  ---@type action_tuple[]
-  local action_tuples = {}
+  ---@type rustaceanvim.CodeActionItem[]
+  local action_items = {}
   for _, result in ipairs(results) do
     for _, action in ipairs(result.result or {}) do
-      table.insert(action_tuples, { action, ctx })
+      table.insert(action_items, { action = action, ctx = ctx })
     end
   end
-  if #action_tuples == 0 then
+  if #action_items == 0 then
     vim.notify('No code actions available', vim.log.levels.INFO)
     return
   end
 
-  M.state.primary.geometry = compute_width(action_tuples, true)
-  ---@alias grouped_actions_tbl { actions: action_tuple[], idx: integer | nil }
+  M.state.primary.geometry = compute_width(action_items, true)
+  ---@alias grouped_actions_tbl { actions: rustaceanvim.CodeActionItem[], idx: integer | nil }
   ---@class rustaceanvim.PartitionedActions
   M.state.actions = {
     ---@type table<string, grouped_actions_tbl>
     grouped = {},
-    ---@type action_tuple[]
+    ---@type rustaceanvim.CodeActionItem[]
     ungrouped = {},
   }
 
-  for _, value in ipairs(action_tuples) do
-    local action = value[1]
+  for _, value in ipairs(action_items) do
+    local action = value.action
     -- Some clippy lints may have newlines in them
     action.title = string.gsub(action.title, '[\n\r]+', ' ')
     if action.group then
@@ -159,9 +161,9 @@ local function on_code_action_results(results, ctx)
   end
 
   if vim.tbl_count(M.state.actions.grouped) == 0 and config.tools.code_actions.ui_select_fallback then
-    ---@param item action_tuple
+    ---@param item rustaceanvim.CodeActionItem
     local function format_item(item)
-      local title = item[1].title:gsub('\r\n', '\\r\\n')
+      local title = item.action.title:gsub('\r\n', '\\r\\n')
       return title:gsub('\n', '\\n')
     end
     local select_opts = {
@@ -194,8 +196,8 @@ local function on_code_action_results(results, ctx)
   end
 
   for _, value in pairs(M.state.actions.ungrouped) do
-    local action = value[1]
-    value[1].idx = idx
+    local action = value.action
+    action.idx = idx
     vim.api.nvim_buf_set_lines(M.state.primary.bufnr, -1, -1, false, { action.title })
     idx = idx + 1
   end
@@ -242,6 +244,7 @@ end
 
 local function on_secondary_enter_press()
   local line = vim.api.nvim_win_get_cursor(M.state.secondary.winnr)[1]
+  ---@type grouped_actions_tbl | nil
   local active_group = nil
 
   for _, value in pairs(M.state.actions.grouped) do
@@ -253,7 +256,7 @@ local function on_secondary_enter_press()
 
   if active_group then
     for _, value in pairs(active_group.actions) do
-      if value[2].idx == line then
+      if value.action.idx == line then
         M.on_user_choice(value, M.state.ctx)
       end
     end
@@ -319,7 +322,7 @@ function M.on_cursor_move()
 
       local idx = 1
       for _, inner_value in pairs(value.actions) do
-        local action = inner_value[1]
+        local action = inner_value.action
         action.idx = idx
         vim.api.nvim_buf_set_lines(M.state.secondary.bufnr, -1, -1, false, { action.title })
         idx = idx + 1
@@ -358,7 +361,7 @@ M.state = {
   actions = {
     ---@type grouped_actions_tbl[]
     grouped = {},
-    ---@type action_tuple[]
+    ---@type rustaceanvim.CodeActionItem[]
     ungrouped = {},
   },
   ---@type number | nil
