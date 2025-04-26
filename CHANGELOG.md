@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.5](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.4...v6.0.5) (2025-04-26)
+
+
+### Bug Fixes
+
+* **ui:** use Nvim 0.11 codeaction table structure (continued) ([#741](https://github.com/mrcjkb/rustaceanvim/issues/741)) ([44f6aa7](https://github.com/mrcjkb/rustaceanvim/commit/44f6aa76b3da6c527d8fd6b65b3ec7cc9a25f2b3))
+
 ## [6.0.4](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.3...v6.0.4) (2025-04-26)
 
 
