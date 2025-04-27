@@ -240,11 +240,23 @@ end
 function M.runnables(executableArgsOverride, opts)
   ---@type rustaceanvim.runnables.Opts
   opts = vim.tbl_deep_extend('force', { tests_only = false }, opts or {})
-  vim.lsp.buf_request(0, 'experimental/runnables', get_params(), mk_handler(executableArgsOverride, opts))
+  vim.lsp.buf_request(
+    0,
+    ---@diagnostic disable-next-line: param-type-mismatch
+    'experimental/runnables',
+    get_params(),
+    mk_handler(executableArgsOverride, opts)
+  )
 end
 
 function M.run(executableArgsOverride)
-  vim.lsp.buf_request(0, 'experimental/runnables', get_params(), mk_cursor_position_handler(executableArgsOverride))
+  vim.lsp.buf_request(
+    0,
+    ---@diagnostic disable-next-line: param-type-mismatch
+    'experimental/runnables',
+    get_params(),
+    mk_cursor_position_handler(executableArgsOverride)
+  )
 end
 
 return M
