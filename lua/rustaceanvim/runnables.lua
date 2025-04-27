@@ -1,5 +1,6 @@
 local config = require('rustaceanvim.config.internal')
 local overrides = require('rustaceanvim.overrides')
+local ra = require('rustaceanvim.rust_analyzer')
 
 local M = {}
 
@@ -185,7 +186,6 @@ end
 ---@param runnables rustaceanvim.RARunnable
 ---@return integer | nil choice
 function M.get_runnable_at_cursor_position(runnables)
-  local ra = require('rustaceanvim.rust_analyzer')
   local clients = ra.get_active_rustaceanvim_clients(0)
   if #clients == 0 then
     return
@@ -240,23 +240,11 @@ end
 function M.runnables(executableArgsOverride, opts)
   ---@type rustaceanvim.runnables.Opts
   opts = vim.tbl_deep_extend('force', { tests_only = false }, opts or {})
-  vim.lsp.buf_request(
-    0,
-    ---@diagnostic disable-next-line: param-type-mismatch
-    'experimental/runnables',
-    get_params(),
-    mk_handler(executableArgsOverride, opts)
-  )
+  ra.buf_request(0, 'experimental/runnables', get_params(), mk_handler(executableArgsOverride, opts))
 end
 
 function M.run(executableArgsOverride)
-  vim.lsp.buf_request(
-    0,
-    ---@diagnostic disable-next-line: param-type-mismatch
-    'experimental/runnables',
-    get_params(),
-    mk_cursor_position_handler(executableArgsOverride)
-  )
+  ra.buf_request(0, 'experimental/runnables', get_params(), mk_cursor_position_handler(executableArgsOverride))
 end
 
 return M
