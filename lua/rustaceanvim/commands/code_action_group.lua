@@ -396,8 +396,7 @@ M.code_action_group = function()
       lnum = vim.api.nvim_win_get_cursor(0)[1] - 1,
     })),
   }
-  local ra = require('rustaceanvim.rust_analyzer')
-  local clients = ra.get_active_rustaceanvim_clients(0)
+  local clients = vim.lsp.get_clients { bufnr = 0 }
   if #clients == 0 then
     return
   end
