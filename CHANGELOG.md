@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.6](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.5...v6.0.6) (2025-05-02)
+
+
+### Bug Fixes
+
+* **lsp/codeAcation:** query all clients for encoding params ([0d4fd7e](https://github.com/mrcjkb/rustaceanvim/commit/0d4fd7e6fac3093b4c2ea227d448d999632bd769))
+
 ## [6.0.5](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.4...v6.0.5) (2025-04-26)
 
 
