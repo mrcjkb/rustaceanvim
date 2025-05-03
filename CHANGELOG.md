@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.7](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.6...v6.0.7) (2025-05-03)
+
+
+### Bug Fixes
+
+* **lsp:** `nil` index error ([#746](https://github.com/mrcjkb/rustaceanvim/issues/746)) ([ad305d5](https://github.com/mrcjkb/rustaceanvim/commit/ad305d5b8b01c0c9d6a14f7a9ac8ac0aa5253e3b))
+
 ## [6.0.6](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.5...v6.0.6) (2025-05-02)
 
 
