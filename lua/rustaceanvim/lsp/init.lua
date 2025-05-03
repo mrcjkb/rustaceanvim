@@ -297,7 +297,7 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     lsp_start_config.init_options = vim.tbl_deep_extend(
       'force',
       lsp_start_config.init_options or {},
-      vim.tbl_get(lsp_start_config.settings, 'rust-analyzer')
+      vim.tbl_get(lsp_start_config.settings, 'rust-analyzer') or {}
     )
 
     return vim.lsp.start(lsp_start_config, { bufnr = bufnr })
