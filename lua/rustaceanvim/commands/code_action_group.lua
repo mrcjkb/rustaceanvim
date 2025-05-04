@@ -126,11 +126,10 @@ local function on_code_action_results(results, ctx)
 
   ---@type rustaceanvim.CodeActionItem[]
   local action_items = {}
-  for i = 1, #t do
-    local result = t[i] or {}
-    for _, action in ipairs(result.result or {}) do
-      table.insert(action_items, { action = action, ctx = ctx })
-    end
+  local index = vim.lsp.get_clients({ name = "rust-analyzer" })[1].id
+  for _, action in ipairs(results[index].result or {}) do
+    table.insert(action_items, { action = action, ctx = ctx })
+  end
   end
   if #action_items == 0 then
     vim.notify('No code actions available', vim.log.levels.INFO)
