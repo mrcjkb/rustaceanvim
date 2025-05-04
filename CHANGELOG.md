@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.8](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.7...v6.0.8) (2025-05-04)
+
+
+### Bug Fixes
+
+* **lsp:** codeActions not found if multiple clients are active ([#749](https://github.com/mrcjkb/rustaceanvim/issues/749)) ([c0183df](https://github.com/mrcjkb/rustaceanvim/commit/c0183dfa4ca91232d3fa85871719376d64556b53))
+
 ## [6.0.7](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.6...v6.0.7) (2025-05-03)
 
 
