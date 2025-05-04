@@ -127,7 +127,7 @@ local function on_code_action_results(results, ctx)
   ---@type rustaceanvim.CodeActionItem[]
   local action_items = {}
   for _, result in pairs(results) do
-    for _, action in ipairs(results.result or {}) do
+    for _, action in ipairs(result.result or {}) do
       table.insert(action_items, { action = action, ctx = ctx })
     end
   end
