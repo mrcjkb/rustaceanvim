@@ -36,7 +36,7 @@ local trans = require('rustaceanvim.neotest.trans')
 
 ---@package
 ---@type neotest.Adapter
----@diagnostic disable-next-line
+---@diagnostic disable-next-line missing-fields
 local NeotestAdapter = { name = 'rustaceanvim' }
 
 ---@package

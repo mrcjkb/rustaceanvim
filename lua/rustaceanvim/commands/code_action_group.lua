@@ -287,7 +287,7 @@ function M.cleanup()
     M.state.secondary.clear()
   end
 
-  ---@diagnostic disable-next-line
+  ---@diagnostic disable-next-line missing-fields
   M.state.actions = {}
   M.state.active_group_index = nil
   M.state.ctx = {}
