@@ -13,14 +13,20 @@
 
     neorocks = {
       url = "github:nvim-neorocks/neorocks";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.git-hooks.follows = "git-hooks";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        git-hooks.follows = "git-hooks";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
 
     gen-luarc = {
       url = "github:mrcjkb/nix-gen-luarc-json";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        git-hooks.follows = "git-hooks";
+      };
     };
 
     vimcats = {
@@ -57,12 +63,9 @@
       ];
       imports = [
         git-hooks.flakeModule
-        flake-parts.flakeModules.easyOverlay
       ];
       perSystem = {
         config,
-        self',
-        inputs',
         system,
         pkgs,
         ...
@@ -122,6 +125,7 @@
         pre-commit-check = git-hooks.lib.${system}.run {
           src = self;
           hooks = {
+            statix.enable = true;
             alejandra.enable = true;
             stylua.enable = true;
             luacheck.enable = true;
@@ -147,7 +151,7 @@
         devShell = pkgs.nvim-nightly-tests.overrideAttrs (oa: {
           name = "rustaceanvim devShell";
           shellHook = ''
-            ${pre-commit-check.shellHook}
+            ${config.pre-commit.installationScript}
             ln -fs ${pkgs.luarc-to-json luarc-nightly} .luarc.json
           '';
           buildInputs = with git-hooks.packages.${system};
@@ -176,9 +180,6 @@
             plugin-overlay
           ];
         };
-        # overlayAttrs = {
-        #
-        # }
         devShells = {
           default = devShell;
           inherit devShell;
