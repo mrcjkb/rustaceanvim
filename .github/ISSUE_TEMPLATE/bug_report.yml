@@ -20,7 +20,7 @@ body:
           required: false
         - label: I have searched the [existing rust-analyzer issues](https://github.com/rust-lang/rust-analyzer/issues?q=is%3Aissue+) (if applicable).
           required: false
-        - label: I can reproduce the issue with stable Neovim (not a distribution or nightly) and the [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua).
+        - label: I can reproduce the issue with stable Neovim (not a distribution or nightly) and the [minimal config](https://github.com/mrcjkb/rustaceanvim/blob/master/troubleshooting/minimal.lua). **Do not open issues here if you are using a distro (like LazyVim) to reproduce.**
           required: true
         - label: This is an issue about rustaceanvim, not rust-analyzer or Neovim.
           required: true
