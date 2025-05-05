@@ -5,7 +5,7 @@
 }: final: prev: let
   nvim-nightly = final.neovim-nightly;
 
-  lib = final.lib;
+  inherit (final) lib;
 
   # For manual debugging purposes
   mkNvimMinimal = nvim:
@@ -47,7 +47,6 @@
   mkNeorocksTest = {
     name,
     nvim ? final.neovim-unwrapped,
-    extraPkgs ? [],
   }: let
     nvim-wrapped = final.pkgs.wrapNeovim nvim {
       configure = {

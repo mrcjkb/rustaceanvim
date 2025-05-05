@@ -36,6 +36,7 @@ local trans = require('rustaceanvim.neotest.trans')
 
 ---@package
 ---@type neotest.Adapter
+---@diagnostic disable-next-line missing-fields
 local NeotestAdapter = { name = 'rustaceanvim' }
 
 ---@package
@@ -286,6 +287,7 @@ function NeotestAdapter.build_spec(run_args)
     end
     ---@cast strategy rustaceanvim.dap.client.Config
     ---@type rustaceanvim.neotest.RunSpec
+    ---@diagnostic disable-next-line
     local run_spec = {
       cwd = cwd,
       context = context,

@@ -6,7 +6,6 @@
     rustaceanvim = luaself.callPackage ({
       luaOlder,
       buildLuarocksPackage,
-      lua,
     }:
       buildLuarocksPackage {
         pname = name;
@@ -42,7 +41,7 @@ in {
       };
     };
 
-  rustaceanvim = final.vimPlugins.rustaceanvim;
+  inherit (final.vimPlugins) rustaceanvim;
   rustaceanvim-dev = final.vimPlugins.rustaceanvim;
 
   codelldb = final.vscode-extensions.vadimcn.vscode-lldb.adapter;
