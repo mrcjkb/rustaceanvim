@@ -6,20 +6,36 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
-    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    neorocks.url = "github:nvim-neorocks/neorocks";
+    neorocks = {
+      url = "github:nvim-neorocks/neorocks";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.git-hooks.follows = "git-hooks";
+    };
 
-    gen-luarc.url = "github:mrcjkb/nix-gen-luarc-json";
+    gen-luarc = {
+      url = "github:mrcjkb/nix-gen-luarc-json";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
 
-    vimcats.url = "github:mrcjkb/vimcats";
+    vimcats = {
+      url = "github:mrcjkb/vimcats";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.git-hooks.follows = "git-hooks";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
     self,
     nixpkgs,
     flake-parts,
-    pre-commit-hooks,
+    git-hooks,
     neorocks,
     gen-luarc,
     vimcats,
@@ -37,26 +53,20 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ];
+      imports = [
+        flake-parts.flakeModules.easyOverlay
+      ];
       perSystem = {
         config,
         self',
         inputs',
         system,
+        pkgs,
         ...
       }: let
         ci-overlay = import ./nix/ci-overlay.nix {
           inherit self;
           plugin-name = name;
-        };
-
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [
-            ci-overlay
-            neorocks.overlays.default
-            gen-luarc.overlays.default
-            plugin-overlay
-          ];
         };
 
         luarc-plugins = with pkgs.lua51Packages;
@@ -84,7 +94,7 @@
           ];
         };
 
-        type-check-nightly = pre-commit-hooks.lib.${system}.run {
+        type-check-nightly = git-hooks.lib.${system}.run {
           src = self;
           hooks = {
             lua-ls = {
@@ -94,7 +104,7 @@
           };
         };
 
-        type-check-stable = pre-commit-hooks.lib.${system}.run {
+        type-check-stable = git-hooks.lib.${system}.run {
           src = self;
           hooks = {
             lua-ls = {
@@ -106,7 +116,7 @@
           };
         };
 
-        pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        pre-commit-check = git-hooks.lib.${system}.run {
           src = self;
           hooks = {
             alejandra.enable = true;
@@ -137,8 +147,9 @@
             ${pre-commit-check.shellHook}
             ln -fs ${pkgs.luarc-to-json luarc-nightly} .luarc.json
           '';
-          buildInputs = with pre-commit-hooks.packages.${system};
+          buildInputs = with git-hooks.packages.${system};
             [
+              pkgs.nixd
               alejandra
               lua-language-server
               stylua
@@ -153,6 +164,18 @@
 
         docgen = pkgs.callPackage ./nix/docgen.nix {inherit vimcats;};
       in {
+        _module.args.pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            ci-overlay
+            neorocks.overlays.default
+            gen-luarc.overlays.default
+            plugin-overlay
+          ];
+        };
+        # overlayAttrs = {
+        #
+        # }
         devShells = {
           default = devShell;
           inherit devShell;
