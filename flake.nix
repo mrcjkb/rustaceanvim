@@ -25,9 +25,11 @@
 
     vimcats = {
       url = "github:mrcjkb/vimcats";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.git-hooks.follows = "git-hooks";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        git-hooks.follows = "git-hooks";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
   };
 
@@ -54,6 +56,7 @@
         "aarch64-darwin"
       ];
       imports = [
+        git-hooks.flakeModule
         flake-parts.flakeModules.easyOverlay
       ];
       perSystem = {
