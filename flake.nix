@@ -156,6 +156,7 @@
           '';
           buildInputs = with git-hooks.packages.${system};
             [
+              pkgs.statix
               pkgs.nixd
               alejandra
               lua-language-server
