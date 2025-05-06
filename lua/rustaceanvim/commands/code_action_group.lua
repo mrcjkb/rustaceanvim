@@ -33,8 +33,9 @@ function M.apply_action(action, client, ctx)
     local fn = vim.lsp.commands[command.command]
     if fn then
       fn(command, ctx)
-    else
-      M.execute_command(command)
+    elseif type(command) == 'string' then
+      local tools = config.tools
+      pcall(tools.executor.execute_command, command, {})
     end
   end
 end
