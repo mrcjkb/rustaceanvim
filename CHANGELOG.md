@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.10](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.9...v6.0.10) (2025-05-07)
+
+
+### Bug Fixes
+
+* **lsp/codeAction:** don't try to execute unknown commands ([#756](https://github.com/mrcjkb/rustaceanvim/issues/756)) ([e478454](https://github.com/mrcjkb/rustaceanvim/commit/e478454161c61ef913aa1814372eb8875e077cb0))
+
 ## [6.0.9](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.8...v6.0.9) (2025-05-06)
 
 
