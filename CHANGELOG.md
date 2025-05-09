@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.10...v6.1.0) (2025-05-09)
+
+
+### Features
+
+* **lsp:** add `cycle_prev` arg to `explainError` and `renderDiagnostic` commands ([#761](https://github.com/mrcjkb/rustaceanvim/issues/761)) ([2ad5023](https://github.com/mrcjkb/rustaceanvim/commit/2ad502369ae0499d4f206374378106eb22188661))
+
+
+### Bug Fixes
+
+* **lsp/runnables:** don't override target argument ([#759](https://github.com/mrcjkb/rustaceanvim/issues/759)) ([a386f47](https://github.com/mrcjkb/rustaceanvim/commit/a386f476d6da5aab9ed489b44fe4795d6e7cedbb))
+
 ## [6.0.10](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.9...v6.0.10) (2025-05-07)
 
 
