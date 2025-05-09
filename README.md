@@ -448,11 +448,12 @@ vim.keymap.set(
   over error diagnostics (if they have an error code).
   
   ```vim
-  :RustLsp explainError {cycle?|current?}
+  :RustLsp explainError {cycle?|cycle_prev?|current?}
   ```
   ```lua
   vim.cmd.RustLsp('explainError') -- default to 'cycle'
   vim.cmd.RustLsp({ 'explainError', 'cycle' })
+  vim.cmd.RustLsp({ 'explainError', 'cycle_prev' })
   vim.cmd.RustLsp({ 'explainError', 'current' })
   ```
 
@@ -461,6 +462,10 @@ vim.keymap.set(
     `explainError` will cycle diagnostics,
     starting at the cursor position,
     until it can find a diagnostic with an error code.
+
+  - If called with `cycle_prev`:
+    Like `vim.diagnostic.goto_prev`,
+    searches backwards for a diagnostic with an error code.
     
   - If called with `current`:
     Searches for diagnostics only in the
@@ -482,11 +487,12 @@ vim.keymap.set(
   together.
   
   ```vim
-  :RustLsp renderDiagnostic {cycle?|current?}
+  :RustLsp renderDiagnostic {cycle?|cycle_prev?|current?}
   ```
   ```lua
   vim.cmd.RustLsp('renderDiagnostic') -- defaults to 'cycle'
   vim.cmd.RustLsp({ 'renderDiagnostic', 'cycle' })
+  vim.cmd.RustLsp({ 'renderDiagnostic', 'cycle_prev' })
   vim.cmd.RustLsp({ 'renderDiagnostic', 'current' })
   ```
 
@@ -495,6 +501,10 @@ vim.keymap.set(
     `renderDiagnostic` will cycle diagnostics,
     starting at the cursor position,
     until it can find a diagnostic with rendered data.
+
+  - If called with `cycle_prev`:
+    Like `vim.diagnostic.goto_prev`,
+    searches backwards for a diagnostic with rendered data.
     
   - If called with `current`:
     Searches for diagnostics only in the

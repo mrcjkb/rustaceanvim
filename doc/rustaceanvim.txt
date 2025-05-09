@@ -62,22 +62,28 @@ It accepts the following subcommands:
 
                For example, if you set the keymap: `vim.keymap.set('n', '<space>a', '<Plug>RustHoverAction')`,
                you can invoke the third hover action with `3<space>a`.
- 'explainError {cycle?|current?}' - Display a hover window with explanations form the Rust error index.
+ 'explainError {cycle?|cycle_prev?|current?}' - Display a hover window with explanations form the Rust error index.
             - If called with |cycle| or no args:
               Like |vim.diagnostic.goto_next|,
               |explainError| will cycle diagnostics,
               starting at the cursor position,
               until it can find a diagnostic with an error code.
+            - If called with |cycle_prev|:
+              Like |vim.diagnostic.goto_prev|,
+              searches backwards for a diagnostic with an error code.
             - If called with |current|:
               Searches for diagnostics only in the
               current cursor line.
- 'renderDiagnostic {cycle?|current?}' - Display a hover window with the rendered diagnostic,
+ 'renderDiagnostic {cycle?|cycle_prev?|current?}' - Display a hover window with the rendered diagnostic,
             as displayed during |cargo build|.
             - If called with |cycle| or no args:
               Like |vim.diagnostic.goto_next|,
               |renderDiagnostic| will cycle diagnostics,
               starting at the cursor position,
               until it can find a diagnostic with rendered data.
+            - If called with |cycle_prev|:
+              Like |vim.diagnostic.goto_prev|,
+              searches backwards for a diagnostic with rendered data.
             - If called with |current|:
               Searches for diagnostics only in the
               current cursor line.

@@ -54,7 +54,8 @@ local function set_close_keymaps(bufnr)
   vim.keymap.set('n', '<Esc>', close_hover, { buffer = bufnr, noremap = true, silent = true })
 end
 
-function M.explain_error()
+---@param cycle_diagnostic (fun(opts?: vim.diagnostic.JumpOpts): vim.Diagnostic?)
+function M.explain_error(cycle_diagnostic)
   if vim.fn.executable(rustc) ~= 1 then
     vim.notify('rustc is needed to explain errors.', vim.log.levels.ERROR)
     return
@@ -86,7 +87,7 @@ function M.explain_error()
   ---@type string
   local pos_id = '0'
   repeat
-    diagnostic = vim.diagnostic.get_next(opts)
+    diagnostic = cycle_diagnostic(opts)
     pos_map[pos_id] = diagnostic
     if diagnostic == nil then
       break
@@ -299,7 +300,8 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
   end)
 end
 
-function M.render_diagnostic()
+---@param cycle_diagnostic (fun(opts?: vim.diagnostic.JumpOpts): vim.Diagnostic?)
+function M.render_diagnostic(cycle_diagnostic)
   local diagnostics = vim
     .iter(vim.diagnostic.get(0, {}))
     ---@param diagnostic vim.Diagnostic
@@ -323,7 +325,7 @@ function M.render_diagnostic()
   ---@type string
   local pos_id = '0'
   repeat
-    diagnostic = vim.diagnostic.get_next(opts)
+    diagnostic = cycle_diagnostic(opts)
     pos_map[pos_id] = diagnostic
     if diagnostic == nil then
       break
