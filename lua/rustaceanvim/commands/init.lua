@@ -63,18 +63,20 @@ local rustlsp_command_tbl = {
     impl = function(args)
       local subcmd = args[1] or 'cycle'
       if subcmd == 'cycle' then
-        require('rustaceanvim.commands.diagnostic').explain_error()
+        require('rustaceanvim.commands.diagnostic').explain_error(vim.diagnostic.get_next)
+      elseif subcmd == 'cycle_prev' then
+        require('rustaceanvim.commands.diagnostic').explain_error(vim.diagnostic.get_prev)
       elseif subcmd == 'current' then
         require('rustaceanvim.commands.diagnostic').explain_error_current_line()
       else
         vim.notify(
-          'explainError: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'",
+          'explainError: unknown subcommand: ' .. subcmd .. " expected 'cycle', 'cycle_prev', or 'current'",
           vim.log.levels.ERROR
         )
       end
     end,
     complete = function()
-      return { 'cycle', 'current' }
+      return { 'cycle', 'cycle_prev', 'current' }
     end,
   },
   relatedDiagnostics = {
@@ -86,18 +88,20 @@ local rustlsp_command_tbl = {
     impl = function(args)
       local subcmd = args[1] or 'cycle'
       if subcmd == 'cycle' then
-        require('rustaceanvim.commands.diagnostic').render_diagnostic()
+        require('rustaceanvim.commands.diagnostic').render_diagnostic(vim.diagnostic.get_next)
+      elseif subcmd == 'cycle_prev' then
+        require('rustaceanvim.commands.diagnostic').render_diagnostic(vim.diagnostic.get_prev)
       elseif subcmd == 'current' then
         require('rustaceanvim.commands.diagnostic').render_diagnostic_current_line()
       else
         vim.notify(
-          'renderDiagnostic: unknown subcommand: ' .. subcmd .. " expected 'cycle' or 'current'",
+          'renderDiagnostic: unknown subcommand: ' .. subcmd .. " expected 'cycle', 'cycle_prev', or 'current'",
           vim.log.levels.ERROR
         )
       end
     end,
     complete = function()
-      return { 'cycle', 'current' }
+      return { 'cycle', 'cycle_prev', 'current' }
     end,
   },
   rebuildProcMacros = {
