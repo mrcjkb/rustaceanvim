@@ -139,7 +139,17 @@ function M.apply_exec_args_override(executableArgsOverride, runnables)
   if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
     local unique_runnables = {}
     for _, runnable in pairs(runnables) do
-      runnable.args.executableArgs = executableArgsOverride
+      local args = runnable.args.executableArgs
+      local override_args = {}
+      if #args > 0 and not vim.startswith(args[1], '--') then
+        -- This is a target arg. We want to keep it.
+        override_args = { args[1] }
+        if #args > 1 and args[2] == '--exact' then
+          -- We're matching the target exactly. We should keep this.
+          table.insert(override_args, args[2])
+        end
+      end
+      runnable.args.executableArgs = vim.list_extend(override_args, executableArgsOverride)
       unique_runnables[vim.inspect(runnable)] = runnable
     end
     runnables = vim.tbl_values(unique_runnables)
