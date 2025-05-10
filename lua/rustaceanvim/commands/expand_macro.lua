@@ -60,9 +60,6 @@ local function handler(_, result)
   vim.bo[latest_buf_id].filetype = 'rust'
   -- write the expansion content to the buffer
   vim.api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, parse_lines(result))
-
-  -- make the new buffer smaller
-  ui.resize(true, '-25')
 end
 
 --- Sends the request to rust-analyzer to expand the macro under the cursor
