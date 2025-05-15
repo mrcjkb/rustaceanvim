@@ -36,6 +36,16 @@ General approach to prevent mason-lspconfig from setting up
 `lspconfig.rust_analyzer`:
 
 >lua
+  opts = {
+    automatic_enable = {
+      exclude = { "rust_analyzer" }
+    }
+  }
+<
+
+On mason.nvim below v2.0.0 (or neovim below v0.11.0):
+
+>lua
   require('mason-lspconfig').setup_handlers {
     ['rust_analyzer'] = function() end,
   }
