@@ -27,32 +27,12 @@ the `server.cmd` setting (see |rustaceanvim.config| and |RustaceanLspClientOpts|
     },
   }
 <
+
 Note that mason-lspconfig.nvim, when configured to ensure rust-analyzer is installed,
 assumes you are using the `nvim-lspconfig.rust_analyzer` client.
 Some Neovim distributions will automatically call the client's `setup`
 function, resulting in a conflict with this plugin.
+Make sure you configure mason-lspconfig.nvim not to auto-enable rust-analyzer
+(See |mason-lspconfig.setup()|).
 
-General approach to prevent mason-lspconfig from setting up
-`lspconfig.rust_analyzer`:
-
->lua
-  require('mason-lspconfig').setup_handlers {
-    ['rust_analyzer'] = function() end,
-  }
-<
-
-Using LazyVim:
-
->lua
-  {
-    'neovim/nvim-lspconfig',
-    opts = {
-      setup = {
-        rust_analyzer = function()
-          return true 
-        end,
-      },
-    },
-  }
-<
 vim:tw=78:ts=8:noet:ft=help:norl:
