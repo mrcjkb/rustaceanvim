@@ -253,6 +253,9 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
         focus_id = 'ra-render-diagnostic',
       })
     )
+    vim.bo[bufnr].modifiable = true
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
+    vim.bo[bufnr].modifiable = false
     vim.api.nvim_create_autocmd('WinEnter', {
       callback = function()
         vim.api.nvim_feedkeys(
