@@ -246,6 +246,7 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
   table.insert(float_preview_lines, 1, '---')
   table.insert(float_preview_lines, 1, '1. Open in split')
   vim.schedule(function()
+    -- Create preview buffer with plain text content for setting the right dimensions
     local bufnr, winnr = vim.lsp.util.open_floating_preview(
       float_preview_lines,
       'plaintext',
@@ -253,6 +254,14 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
         focus_id = 'ra-render-diagnostic',
       })
     )
+    -- Clear content of preview buffer
+    vim.bo[bufnr].modifiable = true
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
+    vim.bo[bufnr].modifiable = false
+    -- Send content with ansi color codes to preview buffer
+    local chanid = vim.api.nvim_open_term(bufnr, {})
+    vim.api.nvim_chan_send(chanid, vim.trim('1. Open in split\r\n' .. '---\r\n' .. rendered_diagnostic))
+
     vim.api.nvim_create_autocmd('WinEnter', {
       callback = function()
         vim.api.nvim_feedkeys(
@@ -268,10 +277,6 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
       end,
       buffer = bufnr,
     })
-
-    local chanid = vim.api.nvim_open_term(bufnr, {})
-    vim.api.nvim_chan_send(chanid, vim.trim('1. Open in split\r\n' .. '---\r\n' .. rendered_diagnostic))
-
     _window_state.float_winnr = winnr
     set_close_keymaps(bufnr)
     set_split_open_keymap(bufnr, winnr, function()
