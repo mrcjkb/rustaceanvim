@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.1.0...v6.1.1) (2025-05-18)
+
+
+### Bug Fixes
+
+* **ui/renderDiagnostics:** seemingly empty float window ([#766](https://github.com/mrcjkb/rustaceanvim/issues/766)) ([4079a18](https://github.com/mrcjkb/rustaceanvim/commit/4079a18239987e43f8aea1baaa89e3c2d5031484))
+
 ## [6.1.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.0.10...v6.1.0) (2025-05-09)
 
 
