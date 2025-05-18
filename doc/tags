@@ -20,6 +20,9 @@ rustaceanvim.dap.Opts	rustaceanvim.txt	/*rustaceanvim.dap.Opts*
 rustaceanvim.dap.adapter.types.executable	rustaceanvim.txt	/*rustaceanvim.dap.adapter.types.executable*
 rustaceanvim.dap.adapter.types.server	rustaceanvim.txt	/*rustaceanvim.dap.adapter.types.server*
 rustaceanvim.dap.client.Config	rustaceanvim.txt	/*rustaceanvim.dap.client.Config*
+rustaceanvim.dap.config.requests.attach	rustaceanvim.txt	/*rustaceanvim.dap.config.requests.attach*
+rustaceanvim.dap.config.requests.custom	rustaceanvim.txt	/*rustaceanvim.dap.config.requests.custom*
+rustaceanvim.dap.config.requests.launch	rustaceanvim.txt	/*rustaceanvim.dap.config.requests.launch*
 rustaceanvim.dap.executable.Config	rustaceanvim.txt	/*rustaceanvim.dap.executable.Config*
 rustaceanvim.dap.server.Config	rustaceanvim.txt	/*rustaceanvim.dap.server.Config*
 rustaceanvim.disable	rustaceanvim.txt	/*rustaceanvim.disable*
@@ -31,6 +34,7 @@ rustaceanvim.mason	mason.txt	/*rustaceanvim.mason*
 rustaceanvim.neotest	rustaceanvim.txt	/*rustaceanvim.neotest*
 rustaceanvim.ra_multiplex.Opts	rustaceanvim.txt	/*rustaceanvim.ra_multiplex.Opts*
 rustaceanvim.rustc.Opts	rustaceanvim.txt	/*rustaceanvim.rustc.Opts*
+rustaceanvim.server.status_notify_level	rustaceanvim.txt	/*rustaceanvim.server.status_notify_level*
 rustaceanvim.test_executor_alias	rustaceanvim.txt	/*rustaceanvim.test_executor_alias*
 rustaceanvim.tools.Opts	rustaceanvim.txt	/*rustaceanvim.tools.Opts*
 server.create_client_capabilities	rustaceanvim.txt	/*server.create_client_capabilities*

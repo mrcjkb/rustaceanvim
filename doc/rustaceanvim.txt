@@ -365,7 +365,8 @@ rustaceanvim.ra_multiplex.Opts                  *rustaceanvim.ra_multiplex.Opts*
                               The port to connect to. Default: 27631
 
 
-rustaceanvim.server.status_notify_level*rustaceanvim.server.status_notify_level*
+                                       *rustaceanvim.server.status_notify_level*
+rustaceanvim.server.status_notify_level
 
     Type: ~
         "error"|"warning"|rustaceanvim.disable
@@ -469,19 +470,22 @@ rustaceanvim.EnvironmentMap                        *rustaceanvim.EnvironmentMap*
         table<string,string[]>
 
 
-rustaceanvim.dap.config.requests.launch*rustaceanvim.dap.config.requests.launch*
+                                       *rustaceanvim.dap.config.requests.launch*
+rustaceanvim.dap.config.requests.launch
 
     Type: ~
         
 
 
-rustaceanvim.dap.config.requests.attach*rustaceanvim.dap.config.requests.attach*
+                                       *rustaceanvim.dap.config.requests.attach*
+rustaceanvim.dap.config.requests.attach
 
     Type: ~
         
 
 
-rustaceanvim.dap.config.requests.custom*rustaceanvim.dap.config.requests.custom*
+                                       *rustaceanvim.dap.config.requests.custom*
+rustaceanvim.dap.config.requests.custom
 
     Type: ~
         
