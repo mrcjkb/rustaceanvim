@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.2.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.1.1...v6.2.0) (2025-05-20)
+
+
+### Features
+
+* **lsp/runnables:** support `runnable.args.environment` ([#771](https://github.com/mrcjkb/rustaceanvim/issues/771)) ([5cef949](https://github.com/mrcjkb/rustaceanvim/commit/5cef94906f539a437158d4b0fa45db275fa1854f))
+
 ## [6.1.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.1.0...v6.1.1) (2025-05-18)
 
 
