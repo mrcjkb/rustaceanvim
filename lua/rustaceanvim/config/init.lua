@@ -114,6 +114,8 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---
 ---The buffer from which the executor was invoked.
 ---@field bufnr? integer
+---The environment variables to set for the command.
+---@field env? table<string, string>
 
 ---@class rustaceanvim.FloatWinConfig
 ---@field auto_focus? boolean

@@ -1,6 +1,6 @@
 ---@type rustaceanvim.Executor
 local M = {
-  execute_command = function(command, args, cwd, _)
+  execute_command = function(command, args, cwd, opts)
     local ok, term = pcall(require, 'toggleterm.terminal')
     if not ok then
       vim.schedule(function()
@@ -13,6 +13,7 @@ local M = {
     term.Terminal
       :new({
         dir = cwd,
+        env = opts.env,
         cmd = shell.make_command_from_args(command, args),
         close_on_exit = false,
         on_open = function(t)

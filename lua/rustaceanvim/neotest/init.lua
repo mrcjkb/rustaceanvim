@@ -269,7 +269,7 @@ function NeotestAdapter.build_spec(run_args)
     type = pos.type,
     tree = tree,
   }
-  local exe, args, cwd = require('rustaceanvim.runnables').get_command(runnable)
+  local exe, args, cwd, env = require('rustaceanvim.runnables').get_command(runnable)
   if run_args.strategy == 'dap' then
     local dap = require('rustaceanvim.dap')
     overrides.sanitize_command_for_debugging(runnable.args.cargoArgs)
@@ -313,6 +313,7 @@ function NeotestAdapter.build_spec(run_args)
     command = vim.list_extend({ exe }, args),
     cwd = cwd,
     context = context,
+    env = env,
   }
   return run_spec
 end

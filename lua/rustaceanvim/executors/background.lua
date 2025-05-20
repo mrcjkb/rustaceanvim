@@ -28,7 +28,7 @@ M.execute_command = function(command, args, cwd, opts)
   local notify_prefix = (is_single_test and 'test ' or 'tests ')
   local cmd = vim.list_extend({ command }, args)
   local fname = vim.api.nvim_buf_get_name(opts.bufnr)
-  vim.system(cmd, { cwd = cwd }, function(sc)
+  vim.system(cmd, { cwd = cwd, env = opts.env }, function(sc)
     ---@cast sc vim.SystemCompleted
     if sc.code == 0 then
       local summary = get_test_summary(sc.stdout or '')

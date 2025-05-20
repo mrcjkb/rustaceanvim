@@ -26,6 +26,7 @@ end
 ---@field cargoArgs string[]
 ---@field cargoExtraArgs? string[]
 ---@field executableArgs string[]
+---@field environment? table<string, string>
 
 ---@param option string
 ---@return string
@@ -69,10 +70,12 @@ end
 ---@return string executable
 ---@return string[] args
 ---@return string | nil dir
+---@return table<string, string> | nil env
 function M.get_command(runnable)
   local args = runnable.args
 
   local dir = args.workspaceRoot
+  local env = args.environment
 
   local ret = vim.list_extend({}, args.cargoArgs or {})
   ret = vim.list_extend(ret, args.cargoExtraArgs or {})
@@ -86,7 +89,7 @@ function M.get_command(runnable)
     ret = overrides.try_nextest_transform(ret)
   end
 
-  return config.tools.cargo_override or 'cargo', ret, dir
+  return config.tools.cargo_override or 'cargo', ret, dir, env
 end
 
 ---@param choice integer
@@ -94,6 +97,7 @@ end
 ---@return rustaceanvim.CargoCmd command build command
 ---@return string[] args
 ---@return string|nil dir
+---@return table<string, string> | nil env
 local function getCommand(choice, runnables)
   return M.get_command(runnables[choice])
 end
@@ -108,7 +112,7 @@ function M.run_command(choice, runnables)
 
   local opts = config.tools
 
-  local command, args, cwd = getCommand(choice, runnables)
+  local command, args, cwd, env = getCommand(choice, runnables)
   if not cwd then
     return
   end
@@ -117,10 +121,11 @@ function M.run_command(choice, runnables)
     local test_executor = vim.tbl_contains(args, '--all-targets') and opts.crate_test_executor or opts.test_executor
     test_executor.execute_command(command, args, cwd, {
       bufnr = vim.api.nvim_get_current_buf(),
+      env = env,
       runnable = runnables[choice],
     })
   else
-    opts.executor.execute_command(command, args, cwd)
+    opts.executor.execute_command(command, args, cwd, { env = env })
   end
 end
 
