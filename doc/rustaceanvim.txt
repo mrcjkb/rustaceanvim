@@ -228,7 +228,8 @@ rustaceanvim.ExecutorOpts                            *rustaceanvim.ExecutorOpts*
 
     Fields: ~
         {bufnr?}  (integer)
-                             The buffer from which the executor was invoked.
+                                          The buffer from which the executor was invoked.
+        {env?}    (table<string,string>)  The environment variables to set for the command.
 
 
 rustaceanvim.FloatWinConfig                        *rustaceanvim.FloatWinConfig*

@@ -3,7 +3,7 @@ local latest_buf_id = nil
 
 ---@type rustaceanvim.Executor
 local M = {
-  execute_command = function(command, args, cwd, _)
+  execute_command = function(command, args, cwd, opts)
     local shell = require('rustaceanvim.shell')
     local ui = require('rustaceanvim.ui')
     local commands = {}
@@ -29,7 +29,7 @@ local M = {
     -- close the buffer when escape is pressed :)
     vim.keymap.set('n', '<Esc>', '<CMD>q<CR>', { buffer = latest_buf_id, noremap = true })
 
-    vim.fn.jobstart(full_command, { term = true })
+    vim.fn.jobstart(full_command, { term = true, env = opts.env })
 
     -- when the buffer is closed, set the latest buf id to nil else there are
     -- some edge cases with the id being sit but a buffer not being open

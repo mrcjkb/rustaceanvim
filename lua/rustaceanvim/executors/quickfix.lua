@@ -20,7 +20,7 @@ end
 
 ---@type rustaceanvim.Executor
 local M = {
-  execute_command = function(command, args, cwd, _)
+  execute_command = function(command, args, cwd, opts)
     -- open quickfix
     copen()
     -- go back to the previous window
@@ -32,7 +32,7 @@ local M = {
     local cmd = vim.list_extend({ command }, args)
     vim.system(
       cmd,
-      cwd and { cwd = cwd } or {},
+      { cwd = cwd, env = opts.env },
       vim.schedule_wrap(function(sc)
         ---@cast sc vim.SystemCompleted
         local data = ([[
