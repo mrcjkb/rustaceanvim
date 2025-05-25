@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.3.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.2.0...v6.3.0) (2025-05-25)
+
+
+### Features
+
+* compatibility with nvim nightly 0.12.0-dev-434 ([b611281](https://github.com/mrcjkb/rustaceanvim/commit/b611281b3e2d9c5f92733f13603990b12160896d))
+
 ## [6.2.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.1.1...v6.2.0) (2025-05-20)
 
 
