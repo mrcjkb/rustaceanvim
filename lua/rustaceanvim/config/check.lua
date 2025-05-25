@@ -4,22 +4,22 @@ local types = require('rustaceanvim.types.internal')
 
 local M = {}
 
----@param path string
----@param msg string|nil
----@return string
-local function mk_error_msg(path, msg)
-  return msg and path .. '.' .. msg or path
-end
-
----@param path string The config path
----@param tbl table The table to validate
+---@param name string Argument name
+---@param value unknown Argument value
+---@param validator vim.validate.Validator
+---   - (`string|string[]`): Any value that can be returned from |lua-type()| in addition to
+---     `'callable'`: `'boolean'`, `'callable'`, `'function'`, `'nil'`, `'number'`, `'string'`, `'table'`,
+---     `'thread'`, `'userdata'`.
+---   - (`fun(val:any): boolean, string?`) A function that returns a boolean and an optional
+---     string message.
+---@param optional? boolean Argument is optional (may be omitted)
+---@param message? string message when validation fails
 ---@see vim.validate
 ---@return boolean is_valid
 ---@return string|nil error_message
-local function validate(path, tbl)
-  local prefix = 'Invalid config: '
-  local ok, err = pcall(vim.validate, tbl)
-  return ok or false, prefix .. mk_error_msg(path, err)
+local function validate(name, value, validator, optional, message)
+  local ok, err = pcall(vim.validate, name, value, validator, optional, message)
+  return ok or false, 'Rocks: Invalid config' .. (err and ': ' .. err or '')
 end
 
 ---Validates the config.
@@ -28,118 +28,210 @@ end
 ---@return string|nil error_message
 function M.validate(cfg)
   local ok, err
-  ok, err = validate('rustaceanvim', {
-    tools = { cfg.tools, 'table' },
-    server = { cfg.server, 'table' },
-    dap = { cfg.dap, 'table' },
-  })
-  if not ok then
-    return false, err
-  end
   local tools = cfg.tools
-  local crate_graph = tools.crate_graph
-  ok, err = validate('tools.crate_graph', {
-    backend = { crate_graph.backend, 'string', true },
-    enabled_graphviz_backends = { crate_graph.enabled_graphviz_backends, 'table', true },
-    full = { crate_graph.full, 'boolean' },
-    output = { crate_graph.output, 'string', true },
-    pipe = { crate_graph.pipe, 'string', true },
-  })
+  ok, err = validate('rustaceanvim.tools', tools, 'table')
   if not ok then
     return false, err
   end
+
+  local crate_graph = tools.crate_graph
+  ok, err = validate('rustaceanvim.tools.crate_graph', crate_graph, 'table')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.crate_graph.backend', crate_graph.backend, 'string', true)
+  if not ok then
+    return false, err
+  end
+  ok, err = validate(
+    'rustaceanvim.tools.crate_graph.enabled_graphviz_backends',
+    crate_graph.enabled_graphviz_backends,
+    'table',
+    true
+  )
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.crate_graph.full', crate_graph.full, 'boolean')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.crate_graph.output', crate_graph.output, 'string', true)
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.crate_graph.pipe', crate_graph.pipe, 'string', true)
+  if not ok then
+    return false, err
+  end
+
   local code_actions = tools.code_actions
-  ok, err = validate('tools.code_actions', {
-    group_icon = { code_actions.group_icon, 'string' },
-    ui_select_fallback = { code_actions.ui_select_fallback, 'boolean' },
-    keys = { code_actions.keys, 'table' },
-  })
+  ok, err = validate('rustaceanvim.tools.code_actions', code_actions, 'table')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.code_actions.group_icon', code_actions.group_icon, 'string')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.code_actions.ui_select_fallback', code_actions.ui_select_fallback, 'boolean')
   if not ok then
     return false, err
   end
   local keys = code_actions.keys
-  ok, err = validate('tools.code_actions.keys', {
-    confirm = { keys.confirm, { 'table', 'string' } },
-    quit = { keys.quit, { 'table', 'string' } },
-  })
+  ok, err = validate('rustaceanvim.tools.code_actions.keys', keys, 'table')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.code_actions.keys.confirm', keys.confirm, { 'table', 'string' })
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.code_actions.keys.quit', keys.quit, { 'table', 'string' })
   if not ok then
     return false, err
   end
   local float_win_config = tools.float_win_config
-  ok, err = validate('tools.float_win_config', {
-    auto_focus = { float_win_config.auto_focus, 'boolean' },
-    open_split = { float_win_config.open_split, 'string' },
-  })
+  ok, err = validate('rustaceanvim.tools.float_win_config', float_win_config, 'table')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.float_win_config.auto_focus', float_win_config.auto_focus, 'boolean')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.float_win_config.open_split', float_win_config.open_split, 'string')
   if not ok then
     return false, err
   end
   local rustc = tools.rustc
-  ok, err = validate('tools.rustc', {
-    default_edition = { rustc.default_edition, 'string' },
-  })
+  ok, err = validate('rustaceanvim.tools.rustc', rustc, 'table')
   if not ok then
     return false, err
   end
-  ok, err = validate('tools', {
-    executor = { tools.executor, { 'table', 'string' } },
-    test_executor = { tools.test_executor, { 'table', 'string' } },
-    crate_test_executor = { tools.crate_test_executor, { 'table', 'string' } },
-    cargo_override = { tools.cargo_override, 'string', true },
-    enable_nextest = { tools.enable_nextest, 'boolean' },
-    enable_clippy = { tools.enable_clippy, 'boolean' },
-    on_initialized = { tools.on_initialized, 'function', true },
-    reload_workspace_from_cargo_toml = { tools.reload_workspace_from_cargo_toml, 'boolean' },
-    open_url = { tools.open_url, 'function' },
-  })
+  ok, err = validate('rustaceanvim.tools.rustc.default_edition', rustc.default_edition, 'string')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.executor', tools.executor, { 'table', 'string' })
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.test_executor', tools.test_executor, { 'table', 'string' })
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.crate_test_executor', tools.crate_test_executor, { 'table', 'string' })
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.cargo_override', tools.cargo_override, 'string', true)
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.enable_nextest', tools.enable_nextest, 'boolean')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.enable_clippy', tools.enable_clippy, 'boolean')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.on_initialized', tools.on_initialized, 'function', true)
+  if not ok then
+    return false, err
+  end
+  ok, err =
+    validate('rustaceanvim.tools.reload_workspace_from_cargo_toml', tools.reload_workspace_from_cargo_toml, 'boolean')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.tools.open_url', tools.open_url, 'function', true)
   if not ok then
     return false, err
   end
   local server = cfg.server
-  ok, err = validate('server', {
-    cmd = { server.cmd, { 'function', 'table' } },
-    standalone = { server.standalone, 'boolean' },
-    settings = { server.settings, { 'function', 'table' }, true },
-    root_dir = { server.root_dir, { 'nil', 'function', 'string' } },
-  })
+  ok, err = validate('rustaceanvim.server', server, 'table')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.server.cmd', server.cmd, { 'function', 'table' })
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.server.standalone', server.standalone, 'boolean')
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.server.settings', server.settings, { 'function', 'table' }, true)
+  if not ok then
+    return false, err
+  end
+  ok, err = validate('rustaceanvim.server.root_dir', server.root_dir, { 'function', 'string' }, true)
   if not ok then
     return false, err
   end
   if type(server.settings) == 'table' then
-    ok, err = validate('server.settings', {
-      ['rust-analyzer'] = { server.settings['rust-analyzer'], 'table', true },
-    })
+    ok, err = validate('rustaceanvim.server.settings[rust-analyzer]', server.settings['rust-analyzer'], 'table', true)
     if not ok then
       return false, err
     end
   end
+
   local dap = cfg.dap
+  ok, err = validate('rustaceanvim.dap', dap, 'table')
+  if not ok then
+    return false, err
+  end
+
   local adapter = types.evaluate(dap.adapter)
   if adapter == false then
     ok = true
   elseif adapter.type == 'executable' then
     ---@cast adapter rustaceanvim.dap.executable.Config
-    ok, err = validate('dap.adapter', {
-      command = { adapter.command, 'string' },
-      name = { adapter.name, 'string', true },
-      args = { adapter.args, 'table', true },
-    })
+    ok, err = validate('rustaceanvim.dap.adapter.command [executable]', adapter.command, 'string')
+    if not ok then
+      return false, err
+    end
+    ok, err = validate('rustaceanvim.dap.adapter.name [executable]', adapter.name, 'string', true)
+    if not ok then
+      return false, err
+    end
+    ok, err = validate('rustaceanvim.dap.adapter.args [executable]', adapter.args, 'table', true)
+    if not ok then
+      return false, err
+    end
   elseif adapter.type == 'server' then
     ---@cast adapter rustaceanvim.dap.server.Config
-    ok, err = validate('dap.adapter', {
-      command = { adapter.executable, 'table' },
-      name = { adapter.name, 'string', true },
-      host = { adapter.host, 'string', true },
-      port = { adapter.port, 'string' },
-    })
-    if ok then
-      ok, err = validate('dap.adapter.executable', {
-        command = { adapter.executable.command, 'string' },
-        args = { adapter.executable.args, 'table', true },
-      })
+    local executable = adapter.executable
+    ok, err = validate('rustaceanvim.dap.adapter.executable [server]', executable, 'table')
+    if not ok then
+      return false, err
+    end
+    ok, err = validate('rustaceanvim.dap.adapter.executable.command [server]', executable.command, 'string')
+    if not ok then
+      return false, err
+    end
+    ok, err = validate('rustaceanvim.dap.adapter.executable.args [server]', executable.args, 'table', true)
+    if not ok then
+      return false, err
+    end
+    ok, err = validate('rustaceanvim.dap.adapter.name [server]', adapter.name, 'string', true)
+    if not ok then
+      return false, err
+    end
+    ok, err = validate('rustaceanvim.dap.adapter.host [server]', adapter.host, 'string', true)
+    if not ok then
+      return false, err
+    end
+    ok, err = validate('rustaceanvim.dap.adapter.port [server]', adapter.port, 'string')
+    if not ok then
+      return false, err
     end
   else
     ok = false
-    err = 'dap.adapter: Expected DapExecutableConfig, DapServerConfig or false'
+    err =
+      'rustaceanvim.dap.adapter:\nExpected rustaceanvim.dap.executable.Config, rustaceanvim.dap.server.Config or false'
   end
   if not ok then
     return false, err
