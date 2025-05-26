@@ -23,6 +23,14 @@ I use
 - [`lua-language-server`](https://github.com/sumneko/lua-language-server/wiki/Diagnosis-Report#create-a-report)
   for static type checking.
 
+### Type safety
+
+Lua is incredibly responsive, giving immediate feedback for configuration.
+But its dynamic typing makes Neovim plugins susceptible to unexpected bugs
+at the wrong time.
+To mitigate this, I rely on [LuaCATS annotations](https://luals.github.io/wiki/annotations/),
+which are checked in CI.
+
 ### Running tests
 
 This plugin uses [`busted`](https://lunarmodules.github.io/busted/) for testing.
@@ -34,6 +42,18 @@ envrionments into account (e.g. with/without `rust-analyzer`, `cargo`, ...).
 If you do not use Nix, you can run a basic version of the test suite using
 `luarocks test`.
 For more information, see the [neorocks tutorial](https://github.com/nvim-neorocks/neorocks#without-neolua).
+
+### Vimdoc/tags
+
+This project generates vim help pages from LuaCATS annotations
+in certain Lua files.
+Usually, this is relevant if you are making changes to the
+plugin configuration API.
+If CI fails because documentation needs to be generated,
+you have two options:
+
+- Enter a Nix devShell and run `pre-commit run --all-files`.
+- Or, if you do not use Nix, I can merge and run it for you.
 
 ### Development using Nix
 
@@ -55,8 +75,6 @@ pre-commit run --all
 
 If you use [`direnv`](https://direnv.net/),
 just run `direnv allow` and you will be dropped in this devShell.
-
-## Tests
 
 To run tests locally
 
