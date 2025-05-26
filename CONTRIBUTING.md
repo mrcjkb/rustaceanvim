@@ -5,6 +5,8 @@ Contributions are more than welcome!
 ## Commit messages
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+Please make sure your commits/PR titles have appropriate prefixes
+and scopes.
 
 ## Development
 
