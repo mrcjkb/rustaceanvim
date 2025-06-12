@@ -184,6 +184,7 @@ local function on_code_action_results(results, ctx)
     col = 0,
   })
   vim.wo[primary_winnr].signcolumn = 'no'
+  vim.wo[primary_winnr].foldcolumn = '0'
   M.state.primary.winnr = primary_winnr
 
   local idx = 1
