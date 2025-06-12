@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.3.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.3.0...v6.3.1) (2025-06-12)
+
+
+### Bug Fixes
+
+* **ui:** unset foldcolumn in grouped code actions ([#786](https://github.com/mrcjkb/rustaceanvim/issues/786)) ([fb6f3fd](https://github.com/mrcjkb/rustaceanvim/commit/fb6f3fd69c6d7d1e7f954d8c44c86617392b4c54))
+
 ## [6.3.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.2.0...v6.3.0) (2025-05-25)
 
 
