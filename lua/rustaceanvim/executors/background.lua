@@ -38,7 +38,7 @@ M.execute_command = function(command, args, cwd, opts)
       return
     end
     local output = (sc.stderr or '') .. '\n' .. (sc.stdout or '')
-    local diagnostics = require('rustaceanvim.test').parse_diagnostics(fname, output)
+    local diagnostics = require('rustaceanvim.test').parse_diagnostics(fname, output, opts.bufnr)
     local summary = get_test_summary(sc.stdout or '')
     vim.schedule(function()
       vim.diagnostic.set(diag_namespace, opts.bufnr, diagnostics)
