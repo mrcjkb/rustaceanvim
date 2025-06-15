@@ -354,7 +354,7 @@ function NeotestAdapter.results(spec, strategy_result)
   ---@type table<string,neotest.Error[]>
   local errors_by_test_id = {}
   output_content = output_content:gsub('\r\n', '\n')
-  local diagnostics = require('rustaceanvim.test').parse_diagnostics(context.file, output_content)
+  local diagnostics = require('rustaceanvim.test').parse_diagnostics(context.file, output_content, 0)
   for _, diagnostic in pairs(diagnostics) do
     ---@type neotest.Error
     local err = {
