@@ -60,8 +60,12 @@ end
 ---@param callback? fun(root_dir: string | nil) If `nil`, this function runs synchronously
 ---@return string | nil root_dir (if `callback ~= nil` and successful)
 local function default_get_root_dir(file_name, callback)
-  local path = file_name:find('%.rs$') and vim.fs.dirname(file_name) or file_name
-  if not path then
+  local stat = vim.uv.fs_stat(file_name)
+  if not stat then
+    return nil
+  end
+  local path = stat.type == 'file' and vim.fs.dirname(file_name) or file_name
+  if not path or not vim.uv.fs_stat(path) then
     return nil
   end
 
