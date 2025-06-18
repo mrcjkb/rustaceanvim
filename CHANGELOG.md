@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.3.2](https://github.com/mrcjkb/rustaceanvim/compare/v6.3.1...v6.3.2) (2025-06-18)
+
+
+### Bug Fixes
+
+* error when opening standalone rust file without .rs extension ([#789](https://github.com/mrcjkb/rustaceanvim/issues/789)) ([82d2336](https://github.com/mrcjkb/rustaceanvim/commit/82d2336673b5dd66b9b325132e89d79dcf2a7224))
+
 ## [6.3.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.3.0...v6.3.1) (2025-06-12)
 
 
