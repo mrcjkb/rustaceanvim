@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.3.3](https://github.com/mrcjkb/rustaceanvim/compare/v6.3.2...v6.3.3) (2025-06-27)
+
+
+### Bug Fixes
+
+* **ui:** error when selecting ungrouped code action ([#794](https://github.com/mrcjkb/rustaceanvim/issues/794)) ([64451da](https://github.com/mrcjkb/rustaceanvim/commit/64451daab18f07f919ff8673af9149a51b1668cf))
+
 ## [6.3.2](https://github.com/mrcjkb/rustaceanvim/compare/v6.3.1...v6.3.2) (2025-06-18)
 
 
