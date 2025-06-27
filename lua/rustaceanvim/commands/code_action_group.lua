@@ -1,6 +1,6 @@
 local ui = require('rustaceanvim.ui')
 local config = require('rustaceanvim.config.internal')
-local M = {}
+local _M = {}
 
 local confirm_keys = config.tools.code_actions.keys.confirm
 local quit_keys = config.tools.code_actions.keys.quit
@@ -24,7 +24,7 @@ quit_keys = type(quit_keys) == 'table' and quit_keys or { quit_keys }
 ---@param action rustaceanvim.RACodeAction | rustaceanvim.RACommand
 ---@param client vim.lsp.Client
 ---@param ctx lsp.HandlerContext
-function M.apply_action(action, client, ctx)
+function _M.apply_action(action, client, ctx)
   if action.edit then
     vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding or 'utf-8')
   end
@@ -42,11 +42,11 @@ end
 ---@field ctx lsp.HandlerContext
 
 ---@param action_item rustaceanvim.CodeActionItem | nil
----@param ctx lsp.HandlerContext
-function M.on_user_choice(action_item, ctx)
+function _M.on_user_choice(action_item)
   if not action_item then
     return
   end
+  local ctx = action_item.ctx
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   local action = action_item.action
   local code_action_provider = client and client.server_capabilities.codeActionProvider
@@ -60,10 +60,10 @@ function M.on_user_choice(action_item, ctx)
         vim.notify(err.code .. ': ' .. err.message, vim.log.levels.ERROR)
         return
       end
-      M.apply_action(resolved_action, client, ctx)
+      _M.apply_action(resolved_action, client, ctx)
     end, 0)
   else
-    M.apply_action(action, client, ctx)
+    _M.apply_action(action, client, ctx)
   end
 end
 
@@ -93,24 +93,24 @@ local function compute_width(action_items, is_group)
 end
 
 local function on_primary_enter_press()
-  if M.state.secondary.winnr then
-    vim.api.nvim_set_current_win(M.state.secondary.winnr)
+  if _M.state.secondary.winnr then
+    vim.api.nvim_set_current_win(_M.state.secondary.winnr)
     return
   end
 
-  local line = vim.api.nvim_win_get_cursor(M.state.secondary.winnr or 0)[1]
+  local line = vim.api.nvim_win_get_cursor(_M.state.secondary.winnr or 0)[1]
 
-  for _, value in ipairs(M.state.actions.ungrouped) do
+  for _, value in ipairs(_M.state.actions.ungrouped) do
     if value.action.idx == line then
-      M.on_user_choice(value, M.state.ctx)
+      _M.on_user_choice(value)
     end
   end
 
-  M.cleanup()
+  _M.cleanup()
 end
 
 local function on_primary_quit()
-  M.cleanup()
+  _M.cleanup()
 end
 
 ---@class rustaceanvim.RACodeActionResult
@@ -120,7 +120,6 @@ end
 ---@param ctx lsp.HandlerContext
 local function on_code_action_results(results, ctx)
   local cur_win = vim.api.nvim_get_current_win()
-  M.state.ctx = ctx
 
   ---@type rustaceanvim.CodeActionItem[]
   local action_items = {}
@@ -134,10 +133,10 @@ local function on_code_action_results(results, ctx)
     return
   end
 
-  M.state.primary.geometry = compute_width(action_items, true)
+  _M.state.primary.geometry = compute_width(action_items, true)
   ---@alias grouped_actions_tbl { actions: rustaceanvim.CodeActionItem[], idx: integer | nil }
   ---@class rustaceanvim.PartitionedActions
-  M.state.actions = {
+  _M.state.actions = {
     ---@type table<string, grouped_actions_tbl>
     grouped = {},
     ---@type rustaceanvim.CodeActionItem[]
@@ -149,16 +148,16 @@ local function on_code_action_results(results, ctx)
     -- Some clippy lints may have newlines in them
     action.title = string.gsub(action.title, '[\n\r]+', ' ')
     if action.group then
-      if not M.state.actions.grouped[action.group] then
-        M.state.actions.grouped[action.group] = { actions = {}, idx = nil }
+      if not _M.state.actions.grouped[action.group] then
+        _M.state.actions.grouped[action.group] = { actions = {}, idx = nil }
       end
-      table.insert(M.state.actions.grouped[action.group].actions, value)
+      table.insert(_M.state.actions.grouped[action.group].actions, value)
     else
-      table.insert(M.state.actions.ungrouped, value)
+      table.insert(_M.state.actions.ungrouped, value)
     end
   end
 
-  if vim.tbl_count(M.state.actions.grouped) == 0 and config.tools.code_actions.ui_select_fallback then
+  if vim.tbl_count(_M.state.actions.grouped) == 0 and config.tools.code_actions.ui_select_fallback then
     ---@param item rustaceanvim.CodeActionItem
     local function format_item(item)
       local title = item.action.title:gsub('\r\n', '\\r\\n')
@@ -169,15 +168,15 @@ local function on_code_action_results(results, ctx)
       kind = 'codeaction',
       format_item = format_item,
     }
-    vim.ui.select(M.state.actions.ungrouped, select_opts, M.on_user_choice)
+    vim.ui.select(_M.state.actions.ungrouped, select_opts, _M.on_user_choice)
     return
   end
 
-  M.state.primary.bufnr = vim.api.nvim_create_buf(false, true)
-  local primary_winnr = vim.api.nvim_open_win(M.state.primary.bufnr, true, {
+  _M.state.primary.bufnr = vim.api.nvim_create_buf(false, true)
+  local primary_winnr = vim.api.nvim_open_win(_M.state.primary.bufnr, true, {
     relative = 'cursor',
-    width = M.state.primary.geometry.width,
-    height = vim.tbl_count(M.state.actions.grouped) + vim.tbl_count(M.state.actions.ungrouped),
+    width = _M.state.primary.geometry.width,
+    height = vim.tbl_count(_M.state.actions.grouped) + vim.tbl_count(_M.state.actions.ungrouped),
     focusable = true,
     border = config.tools.float_win_config.border,
     row = 1,
@@ -185,52 +184,52 @@ local function on_code_action_results(results, ctx)
   })
   vim.wo[primary_winnr].signcolumn = 'no'
   vim.wo[primary_winnr].foldcolumn = '0'
-  M.state.primary.winnr = primary_winnr
+  _M.state.primary.winnr = primary_winnr
 
   local idx = 1
-  for key, value in pairs(M.state.actions.grouped) do
+  for key, value in pairs(_M.state.actions.grouped) do
     value.idx = idx
-    vim.api.nvim_buf_set_lines(M.state.primary.bufnr, -1, -1, false, { key .. config.tools.code_actions.group_icon })
+    vim.api.nvim_buf_set_lines(_M.state.primary.bufnr, -1, -1, false, { key .. config.tools.code_actions.group_icon })
     idx = idx + 1
   end
 
-  for _, value in pairs(M.state.actions.ungrouped) do
+  for _, value in pairs(_M.state.actions.ungrouped) do
     local action = value.action
     action.idx = idx
-    vim.api.nvim_buf_set_lines(M.state.primary.bufnr, -1, -1, false, { action.title })
+    vim.api.nvim_buf_set_lines(_M.state.primary.bufnr, -1, -1, false, { action.title })
     idx = idx + 1
   end
 
-  vim.api.nvim_buf_set_lines(M.state.primary.bufnr, 0, 1, false, {})
+  vim.api.nvim_buf_set_lines(_M.state.primary.bufnr, 0, 1, false, {})
 
   vim.iter(confirm_keys):each(function(key)
-    vim.keymap.set('n', key, on_primary_enter_press, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+    vim.keymap.set('n', key, on_primary_enter_press, { buffer = _M.state.primary.bufnr, noremap = true, silent = true })
   end)
   vim.iter(quit_keys):each(function(key)
-    vim.keymap.set('n', key, on_primary_quit, { buffer = M.state.primary.bufnr, noremap = true, silent = true })
+    vim.keymap.set('n', key, on_primary_quit, { buffer = _M.state.primary.bufnr, noremap = true, silent = true })
   end)
 
-  M.codeactionify_window_buffer(M.state.primary.winnr, M.state.primary.bufnr)
+  _M.codeactionify_window_buffer(_M.state.primary.winnr, _M.state.primary.bufnr)
 
-  vim.api.nvim_buf_attach(M.state.primary.bufnr, false, {
+  vim.api.nvim_buf_attach(_M.state.primary.bufnr, false, {
     on_detach = function(_, _)
-      M.state.primary.clear()
+      _M.state.primary.clear()
       vim.schedule(function()
-        M.cleanup()
+        _M.cleanup()
         pcall(vim.api.nvim_set_current_win, cur_win)
       end)
     end,
   })
 
   vim.api.nvim_create_autocmd('CursorMoved', {
-    buffer = M.state.primary.bufnr,
-    callback = M.on_cursor_move,
+    buffer = _M.state.primary.bufnr,
+    callback = _M.on_cursor_move,
   })
 
   vim.cmd.redraw()
 end
 
-function M.codeactionify_window_buffer(winnr, bufnr)
+function _M.codeactionify_window_buffer(winnr, bufnr)
   vim.bo[bufnr].modifiable = false
   vim.bo[bufnr].bufhidden = 'delete'
   vim.bo[bufnr].buftype = 'nofile'
@@ -242,12 +241,12 @@ function M.codeactionify_window_buffer(winnr, bufnr)
 end
 
 local function on_secondary_enter_press()
-  local line = vim.api.nvim_win_get_cursor(M.state.secondary.winnr)[1]
+  local line = vim.api.nvim_win_get_cursor(_M.state.secondary.winnr)[1]
   ---@type grouped_actions_tbl | nil
   local active_group = nil
 
-  for _, value in pairs(M.state.actions.grouped) do
-    if value.idx == M.state.active_group_index then
+  for _, value in pairs(_M.state.actions.grouped) do
+    if value.idx == _M.state.active_group_index then
       active_group = value
       break
     end
@@ -256,94 +255,93 @@ local function on_secondary_enter_press()
   if active_group then
     for _, value in pairs(active_group.actions) do
       if value.action.idx == line then
-        M.on_user_choice(value, M.state.ctx)
+        _M.on_user_choice(value)
       end
     end
   end
 
-  M.cleanup()
+  _M.cleanup()
 end
 
 local function on_secondary_quit()
-  local winnr = M.state.secondary.winnr
+  local winnr = _M.state.secondary.winnr
   -- we clear first because if we close the window first, the cursor moved
   -- autocmd of the first buffer gets called which then sees that
   -- M.state.secondary.winnr exists (when it shouldnt because it is closed)
   -- and errors out
-  M.state.secondary.clear()
+  _M.state.secondary.clear()
 
   ui.close_win(winnr)
 end
 
-function M.cleanup()
-  if M.state.primary.winnr then
-    ui.close_win(M.state.primary.winnr)
-    M.state.primary.clear()
+function _M.cleanup()
+  if _M.state.primary.winnr then
+    ui.close_win(_M.state.primary.winnr)
+    _M.state.primary.clear()
   end
 
-  if M.state.secondary.winnr then
-    ui.close_win(M.state.secondary.winnr)
-    M.state.secondary.clear()
+  if _M.state.secondary.winnr then
+    ui.close_win(_M.state.secondary.winnr)
+    _M.state.secondary.clear()
   end
 
   ---@diagnostic disable-next-line missing-fields
-  M.state.actions = {}
-  M.state.active_group_index = nil
-  M.state.ctx = {}
+  _M.state.actions = {}
+  _M.state.active_group_index = nil
 end
 
-function M.on_cursor_move()
-  local line = vim.api.nvim_win_get_cursor(M.state.primary.winnr)[1]
+function _M.on_cursor_move()
+  local line = vim.api.nvim_win_get_cursor(_M.state.primary.winnr)[1]
 
-  for _, value in pairs(M.state.actions.grouped) do
+  for _, value in pairs(_M.state.actions.grouped) do
     if value.idx == line then
-      M.state.active_group_index = line
+      _M.state.active_group_index = line
 
-      if M.state.secondary.winnr then
-        ui.close_win(M.state.secondary.winnr)
-        M.state.secondary.clear()
+      if _M.state.secondary.winnr then
+        ui.close_win(_M.state.secondary.winnr)
+        _M.state.secondary.clear()
       end
 
-      M.state.secondary.geometry = compute_width(value.actions, false)
+      _M.state.secondary.geometry = compute_width(value.actions, false)
 
-      M.state.secondary.bufnr = vim.api.nvim_create_buf(false, true)
-      local secondary_winnr = vim.api.nvim_open_win(M.state.secondary.bufnr, false, {
+      _M.state.secondary.bufnr = vim.api.nvim_create_buf(false, true)
+      local secondary_winnr = vim.api.nvim_open_win(_M.state.secondary.bufnr, false, {
         relative = 'win',
-        win = M.state.primary.winnr,
-        width = M.state.secondary.geometry.width,
+        win = _M.state.primary.winnr,
+        width = _M.state.secondary.geometry.width,
         height = #value.actions,
         focusable = true,
         border = config.tools.float_win_config.border,
         row = line - 2,
-        col = M.state.primary.geometry.width + 1,
+        col = _M.state.primary.geometry.width + 1,
       })
-      M.state.secondary.winnr = secondary_winnr
+      _M.state.secondary.winnr = secondary_winnr
       vim.wo[secondary_winnr].signcolumn = 'no'
 
       local idx = 1
       for _, inner_value in pairs(value.actions) do
         local action = inner_value.action
         action.idx = idx
-        vim.api.nvim_buf_set_lines(M.state.secondary.bufnr, -1, -1, false, { action.title })
+        vim.api.nvim_buf_set_lines(_M.state.secondary.bufnr, -1, -1, false, { action.title })
         idx = idx + 1
       end
 
-      vim.api.nvim_buf_set_lines(M.state.secondary.bufnr, 0, 1, false, {})
+      vim.api.nvim_buf_set_lines(_M.state.secondary.bufnr, 0, 1, false, {})
 
-      M.codeactionify_window_buffer(M.state.secondary.winnr, M.state.secondary.bufnr)
+      _M.codeactionify_window_buffer(_M.state.secondary.winnr, _M.state.secondary.bufnr)
       vim.iter(confirm_keys):each(function(key)
-        vim.keymap.set('n', key, on_secondary_enter_press, { buffer = M.state.secondary.bufnr })
+        vim.keymap.set('n', key, on_secondary_enter_press, { buffer = _M.state.secondary.bufnr })
       end)
       vim.iter(quit_keys):each(function(key)
-        vim.keymap.set('n', key, on_secondary_quit, { buffer = M.state.secondary.bufnr })
+        vim.keymap.set('n', key, on_secondary_quit, { buffer = _M.state.secondary.bufnr })
       end)
 
       return
     end
 
-    if M.state.secondary.winnr then
-      ui.close_win(M.state.secondary.winnr)
-      M.state.secondary.clear()
+    if _M.state.secondary.winnr then
+      ui.close_win(_M.state.secondary.winnr)
+      _M.state.secondary.clear()
     end
   end
 end
@@ -355,8 +353,7 @@ end
 ---@field clear fun()
 
 ---@class rustaceanvim.CodeActionInternalState
-M.state = {
-  ctx = {},
+_M.state = {
   ---@type rustaceanvim.PartitionedActions
   actions = {
     ---@type grouped_actions_tbl[]
@@ -372,9 +369,9 @@ M.state = {
     winnr = nil,
     geometry = nil,
     clear = function()
-      M.state.primary.geometry = nil
-      M.state.primary.bufnr = nil
-      M.state.primary.winnr = nil
+      _M.state.primary.geometry = nil
+      _M.state.primary.bufnr = nil
+      _M.state.primary.winnr = nil
     end,
   },
   ---@type rustaceanvim.CodeActionWindowState
@@ -383,14 +380,14 @@ M.state = {
     winnr = nil,
     geometry = nil,
     clear = function()
-      M.state.secondary.geometry = nil
-      M.state.secondary.bufnr = nil
-      M.state.secondary.winnr = nil
+      _M.state.secondary.geometry = nil
+      _M.state.secondary.bufnr = nil
+      _M.state.secondary.winnr = nil
     end,
   },
 }
 
-M.code_action_group = function()
+_M.code_action_group = function()
   local context = {
     diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(0, {
       lnum = vim.api.nvim_win_get_cursor(0)[1] - 1,
@@ -409,4 +406,4 @@ M.code_action_group = function()
   end)
 end
 
-return M.code_action_group
+return _M.code_action_group
