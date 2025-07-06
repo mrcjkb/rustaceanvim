@@ -16,8 +16,13 @@ local rustc_cmd_name = 'Rustc'
 ---@type rustaceanvim.command_tbl[]
 local rustlsp_command_tbl = {
   codeAction = {
-    impl = function(_)
-      require('rustaceanvim.commands.code_action_group')()
+    impl = function(_, opts)
+      local cmds = require('rustaceanvim.commands.code_action_group')
+      if opts.range and opts.range > 0 then
+        cmds.code_action_group_visual()
+      else
+        cmds.code_action_group()
+      end
     end,
   },
   crateGraph = {

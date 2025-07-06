@@ -1,3 +1,5 @@
+local M = {}
+
 local ui = require('rustaceanvim.ui')
 local config = require('rustaceanvim.config.internal')
 local _M = {}
@@ -387,7 +389,8 @@ _M.state = {
   },
 }
 
-_M.code_action_group = function()
+---@param make_range_params fun(bufnr: integer, offset_encoding: string):{ range: table }
+_M.code_action_group = function(make_range_params)
   local context = {
     diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(0, {
       lnum = vim.api.nvim_win_get_cursor(0)[1] - 1,
@@ -397,7 +400,9 @@ _M.code_action_group = function()
   if #clients == 0 then
     return
   end
-  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
+
+  local params = make_range_params(0, clients[1].offset_encoding)
+
   ---@diagnostic disable-next-line: inject-field
   params.context = context
 
@@ -406,4 +411,14 @@ _M.code_action_group = function()
   end)
 end
 
-return _M.code_action_group
+function M.code_action_group()
+  _M.code_action_group(vim.lsp.util.make_range_params)
+end
+
+function M.code_action_group_visual()
+  _M.code_action_group(function(winnr, offset_encoding)
+    return vim.lsp.util.make_given_range_params(nil, nil, winnr, offset_encoding or 'utf-8')
+  end)
+end
+
+return M
