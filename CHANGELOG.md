@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.4.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.4.0...v6.4.1) (2025-07-10)
+
+
+### Bug Fixes
+
+* **dap:** confusing error when debug adapter not found ([#803](https://github.com/mrcjkb/rustaceanvim/issues/803)) ([91131ac](https://github.com/mrcjkb/rustaceanvim/commit/91131ac1189fed17991a95e24cbc26b5c0b1792c))
+
 ## [6.4.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.3.3...v6.4.0) (2025-07-06)
 
 
