@@ -281,18 +281,24 @@ function NeotestAdapter.build_spec(run_args)
       future.set_error(err)
     end)
     local ok, strategy = pcall(future.wait)
+    local run_spec
     if not ok then
       ---@cast strategy string
       lib.notify(strategy, vim.log.levels.ERROR)
+      run_spec = {
+        cwd = cwd,
+        context = context,
+      }
+    else
+      ---@cast strategy rustaceanvim.dap.client.Config
+      ---@type rustaceanvim.neotest.RunSpec
+      ---@diagnostic disable-next-line
+      run_spec = {
+        cwd = cwd,
+        context = context,
+        strategy = strategy,
+      }
     end
-    ---@cast strategy rustaceanvim.dap.client.Config
-    ---@type rustaceanvim.neotest.RunSpec
-    ---@diagnostic disable-next-line
-    local run_spec = {
-      cwd = cwd,
-      context = context,
-      strategy = strategy,
-    }
     return run_spec
   else
     overrides.undo_debug_sanitize(runnable.args.cargoArgs)
