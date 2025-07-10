@@ -284,7 +284,7 @@ function M.start(args, verbose, callback, on_error)
   local adapter = types.evaluate(config.dap.adapter)
   --- @cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
   if adapter == false then
-    on_error('Debug adapter is not installed or found.')
+    on_error('Debug adapter disabled or not found.')
     return
   end
 
