@@ -52,6 +52,7 @@ function server.create_client_capabilities()
     snippetTextEdit = true,
     codeActionGroup = true,
     ssr = true,
+    localDocs = true,
   }
 
   -- enable auto-import
