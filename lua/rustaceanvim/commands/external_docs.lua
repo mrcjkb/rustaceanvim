@@ -10,7 +10,13 @@ function M.open_external_docs()
     0,
     'experimental/externalDocs',
     vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8'),
-    function(_, url)
+    function(_, response)
+      local url
+      if response['local'] and vim.uv.fs_stat(vim.uri_to_fname(response['local'])) then
+        url = response['local']
+      else
+        url = response.web
+      end
       if url then
         local config = require('rustaceanvim.config.internal')
         config.tools.open_url(url)
