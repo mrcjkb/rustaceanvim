@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.5.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.4.1...v6.5.0) (2025-07-14)
+
+
+### Features
+
+* **lsp:** `experimental/localDocs` support ([#808](https://github.com/mrcjkb/rustaceanvim/issues/808)) ([557a946](https://github.com/mrcjkb/rustaceanvim/commit/557a946776bbb92dfe7dab0e4e9129924442926a))
+
 ## [6.4.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.4.0...v6.4.1) (2025-07-10)
 
 
