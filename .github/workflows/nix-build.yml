@@ -2,6 +2,8 @@ name: "Nix build"
 on:
   pull_request:
   push:
+    branches:
+      - master
   workflow_call:
 jobs:
   checks:
