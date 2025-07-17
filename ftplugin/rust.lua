@@ -27,6 +27,7 @@ if not vim.g.loaded_rustaceanvim then
   vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
     local client = vim.lsp.get_client_by_id(ctx.client_id)
     if client then
+      ---@diagnostic disable-next-line: param-type-mismatch
       vim.lsp.util.show_document(command.arguments[1], client.offset_encoding or 'utf-8')
     end
   end
@@ -38,6 +39,7 @@ if not vim.g.loaded_rustaceanvim then
   vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
     local overrides = require('rustaceanvim.overrides')
     local args = command.arguments[1].args
+    ---@diagnostic disable-next-line: undefined-field
     overrides.sanitize_command_for_debugging(args.cargoArgs)
     local cached_commands = require('rustaceanvim.cached_commands')
     cached_commands.set_last_debuggable(args)
