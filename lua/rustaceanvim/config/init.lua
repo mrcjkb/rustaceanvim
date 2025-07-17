@@ -6,7 +6,7 @@
 ---a `setup` function to work.
 ---
 ---To configure rustaceanvim, set the variable `vim.g.rustaceanvim`,
----which is a `RustaceanOpts` table, in your neovim configuration.
+---which is a |rustaceanvim.Opts| table, in your neovim configuration.
 ---
 ---Example:
 ---
@@ -38,9 +38,9 @@
 ---
 ---Notes:
 ---
---- - `vim.g.rustaceanvim` can also be a function that returns a `rustaceanvim.Opts` table.
---- - `server.settings`, by default, is a function that looks for a `rust-analyzer.json` file
----    in the project root, to load settings from it. It falls back to an empty table.
+--- - `vim.g.rustaceanvim` can also be a function that returns a |rustaceanvim.Opts| table.
+--- - You can also configure rust-analyzer using a `.vscode/settings.json` file
+---   or via |vim.lsp.config| (using the `'rust-analyzer'` key).
 ---
 ---@brief ]]
 
@@ -198,9 +198,16 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field ra_multiplex? rustaceanvim.ra_multiplex.Opts
 ---
 ---Setting passed to rust-analyzer.
----Defaults to a function that looks for a `rust-analyzer.json` file or returns an empty table.
+---By default, this is a function that configures rust-analyzer
+---based on your environment (e.g. based on whether clippy is installed).
+---If you want to keep this behaviour, use the `default_settings` field (see below)
+-- to override defaults.
 ---See https://rust-analyzer.github.io/book/configuration.
 ---@field settings? table | fun(project_root:string|nil, default_settings: table):table
+---
+---The `default_settings` passed as the second argument to the `settings` function (see above).
+---See https://rust-analyzer.github.io/book/configuration.
+---@field default_settings? table
 ---
 ---Standalone file support (enabled by default).
 ---Disabling it may improve rust-analyzer's startup time.
