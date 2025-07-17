@@ -16,8 +16,7 @@ local server = {}
 function server.load_rust_analyzer_settings(_, opts)
   local config = require('rustaceanvim.config.internal')
 
-  local default_opts = { settings_file_pattern = 'rust-analyzer.json' }
-  opts = vim.tbl_deep_extend('force', {}, default_opts, opts or {})
+  opts = opts or {}
   local settings = opts.default_settings or config.server.default_settings
   local use_clippy = config.tools.enable_clippy and vim.fn.executable('cargo-clippy') == 1
   ---@diagnostic disable-next-line: undefined-field
