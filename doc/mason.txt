@@ -1,5 +1,5 @@
+*rustaceanvim.mason*                          mason-lspconfig troubleshooting
 ==============================================================================
-mason-lspconfig troubleshooting                          *rustaceanvim.mason*
 
 This plugin supports automatically detecting mason.nvim codelldb installations,
 but not rust-analyzer.

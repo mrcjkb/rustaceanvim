@@ -1,3 +1,4 @@
+*rustaceanvim.txt*           RustaceanVim - A Neovim plugin for Rust development
 ==============================================================================
 Table of Contents                                        *rustaceanvim.contents*
 
