@@ -959,8 +959,6 @@ For more extensible and complex autocompletion setups,
 you need a plugin such as [`nvim-cmp`](https://github.com/hrsh7th/nvim-cmp)
 and a LSP completion source like [`cmp-nvim-lsp`](https://github.com/hrsh7th/cmp-nvim-lsp),
 or you may use [`blink.cmp`](https://github.com/saghen/blink.cmp).
-This plugin will automatically register the necessary client capabilities
-if you have either `cmp-nvim-lsp` or `blink.cmp` installed.
 
 #### I'm having issues with (auto)completion
 
