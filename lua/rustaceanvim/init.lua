@@ -21,6 +21,7 @@
 ---                                      Takes a Lua table as an argument.
 ---                                      Example: `:RustAnalyzer config { checkOnSave = false }`
 ---                                      WARNING: This command does not validate the Lua config table.
+--- ':RustAnalyzer cfgTest <boolean>' - Enable or disable ![cfg(test)].
 
 --- The ':RustAnalyzer target' command can take a valid rustc target,
 --- such as 'wasm32-unknown-unknown', or it can be left empty to set the LSP client

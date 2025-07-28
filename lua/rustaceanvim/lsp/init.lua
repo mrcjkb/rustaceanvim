@@ -374,6 +374,20 @@ M.set_target_arch = function(bufnr, target)
   end)
 end
 
+---Enable or disable #[cfg(test)] for the LSP client associated with the given buffer.
+---@param bufnr? number The buffer number, defaults to the current buffer
+---@param enabled? boolean Enabled or disabled
+M.set_cfg_test = function(bufnr, enabled)
+  ---@param client vim.lsp.Client
+  restart(bufnr, {}, function(client)
+    local ra = client.config.settings['rust-analyzer'] or {}
+    ---@diagnostic disable-next-line: inject-field
+    ra.cfg = ra.cfg or {}
+    ra.cfg.setTest = enabled
+    client:notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+  end)
+end
+
 ---@param ra_settings table
 function M.set_config(ra_settings)
   local bufnr = vim.api.nvim_get_current_buf()
@@ -397,6 +411,7 @@ local RustAnalyzerCmd = {
   restart = 'restart',
   reload_settings = 'reloadSettings',
   target = 'target',
+  cfg_test = 'cfgTest',
   config = 'config',
 }
 
@@ -415,6 +430,9 @@ local function rust_analyzer_user_cmd(opts)
   elseif cmd == RustAnalyzerCmd.target then
     local target_arch = fargs[1]
     M.set_target_arch(nil, target_arch)
+  elseif cmd == RustAnalyzerCmd.cfg_test then
+    local enabled = fargs[1] == 'true'
+    M.set_cfg_test(nil, enabled)
   elseif cmd == RustAnalyzerCmd.config then
     local ra_settings_str = vim.iter(fargs):join(' ')
     local f = load('return ' .. ra_settings_str)

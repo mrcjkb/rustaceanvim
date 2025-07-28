@@ -32,6 +32,8 @@ Commands:
  The ':RustAnalyzer target' command can take a valid rustc target,
  such as 'wasm32-unknown-unknown', or it can be left empty to set the LSP client
  to use the default target architecture for the operating system.
+ ':RustAnalyzer cfgTest <boolean>' - Enable or disable ![cfg(test)].
+
 
 The ':RustLsp[!]' command is available after the LSP client has initialized.
 It accepts the following subcommands:
