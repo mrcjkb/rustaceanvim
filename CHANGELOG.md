@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.6.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.5.1...v6.6.0) (2025-07-31)
+
+
+### Features
+
+* **vimdoc:** add tags for commands ([#822](https://github.com/mrcjkb/rustaceanvim/issues/822)) ([c7e216e](https://github.com/mrcjkb/rustaceanvim/commit/c7e216ed4a1f96fcf90dff2baeb57793da328925))
+
 ## [6.5.1](https://github.com/mrcjkb/rustaceanvim/compare/v6.5.0...v6.5.1) (2025-07-17)
 
 
