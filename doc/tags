@@ -1,3 +1,6 @@
+:RustAnalyzer	rustaceanvim.txt	/*:RustAnalyzer*
+:RustLsp	rustaceanvim.txt	/*:RustLsp*
+:Rustc	rustaceanvim.txt	/*:Rustc*
 config.get_codelldb_adapter	rustaceanvim.txt	/*config.get_codelldb_adapter*
 rustaceanvim	rustaceanvim.txt	/*rustaceanvim*
 rustaceanvim.EnvironmentMap	rustaceanvim.txt	/*rustaceanvim.EnvironmentMap*
