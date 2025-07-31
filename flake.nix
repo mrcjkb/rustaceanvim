@@ -151,7 +151,7 @@
         devShell = pkgs.nvim-nightly-tests.overrideAttrs (oa: {
           name = "rustaceanvim devShell";
           shellHook = ''
-            ${config.pre-commit.installationScript}
+            ${pre-commit-check.shellHook}
             ln -fs ${pkgs.luarc-to-json luarc-nightly} .luarc.json
           '';
           buildInputs = with git-hooks.packages.${system};

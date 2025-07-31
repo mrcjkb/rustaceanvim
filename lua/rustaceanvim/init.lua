@@ -12,6 +12,7 @@
 ---
 ---Commands:
 ---
+---                                                                 *:RustAnalyzer*
 --- ':RustAnalyzer start' - Start the LSP client.
 --- ':RustAnalyzer stop' - Stop the LSP client.
 --- ':RustAnalyzer restart' - Restart the LSP client.
@@ -26,6 +27,7 @@
 --- such as 'wasm32-unknown-unknown', or it can be left empty to set the LSP client
 --- to use the default target architecture for the operating system.
 ---
+---                                                                      *:RustLsp*
 ---The ':RustLsp[!]' command is available after the LSP client has initialized.
 ---It accepts the following subcommands:
 ---
@@ -108,6 +110,7 @@
 ---              Defaults to `flyCheck run` if called without an argument.
 --- 'logFile' - Open the rust-analyzer log file.
 ---
+---                                                                        *:Rustc*
 ---The ':Rustc' command can be used to interact with rustc.
 ---It accepts the following subcommands:
 ---
