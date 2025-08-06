@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.7.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.6.0...v6.7.0) (2025-08-06)
+
+
+### Features
+
+* **dap:** deprioritise mason.nvim for codelldb detection ([26ed8e4](https://github.com/mrcjkb/rustaceanvim/commit/26ed8e4b1046891cfa8463ec4b0f4b8cd6c98d9f))
+
+
+### Bug Fixes
+
+* **dap:** don't fail to load config if mason.nvim throws an error ([5dcb580](https://github.com/mrcjkb/rustaceanvim/commit/5dcb5801eaf66038abe6f081358a9e555d5525db))
+
 ## [6.6.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.5.1...v6.6.0) (2025-07-31)
 
 
