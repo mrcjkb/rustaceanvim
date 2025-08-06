@@ -332,26 +332,7 @@ local RustaceanDefaultConfig = {
     adapter = function()
       --- @type rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
       local result = false
-      local has_mason, mason_registry = pcall(require, 'mason-registry')
-      if has_mason and mason_registry.is_installed('codelldb') then
-        local codelldb_package = mason_registry.get_package('codelldb')
-        local mason_codelldb_path
-        if require('mason.version').MAJOR_VERSION > 1 then
-          mason_codelldb_path = vim.fs.joinpath(vim.fn.expand('$MASON'), 'packages', codelldb_package.name, 'extension')
-        else
-          mason_codelldb_path = vim.fs.joinpath(codelldb_package:get_install_path(), 'extension')
-        end
-        local codelldb_path = vim.fs.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
-        local liblldb_path = vim.fs.joinpath(mason_codelldb_path, 'lldb', 'lib', 'liblldb')
-        local shell = require('rustaceanvim.shell')
-        if shell.is_windows() then
-          codelldb_path = codelldb_path .. '.exe'
-          liblldb_path = vim.fs.joinpath(mason_codelldb_path, 'lldb', 'bin', 'liblldb.dll')
-        else
-          liblldb_path = liblldb_path .. (shell.is_macos() and '.dylib' or '.so')
-        end
-        result = config.get_codelldb_adapter(codelldb_path, liblldb_path)
-      elseif vim.fn.executable('codelldb') == 1 then
+      if vim.fn.executable('codelldb') == 1 then
         ---@cast result rustaceanvim.dap.server.Config
         result = {
           type = 'server',
@@ -363,18 +344,40 @@ local RustaceanDefaultConfig = {
           },
         }
       else
-        local has_lldb_dap = vim.fn.executable('lldb-dap') == 1
-        local has_lldb_vscode = vim.fn.executable('lldb-vscode') == 1
-        if not has_lldb_dap and not has_lldb_vscode then
-          return result
+        local has_mason, mason_registry = pcall(require, 'mason-registry')
+        if has_mason and mason_registry.is_installed('codelldb') then
+          local codelldb_package = mason_registry.get_package('codelldb')
+          local mason_codelldb_path
+          if require('mason.version').MAJOR_VERSION > 1 then
+            mason_codelldb_path =
+              vim.fs.joinpath(vim.fn.expand('$MASON'), 'packages', codelldb_package.name, 'extension')
+          else
+            mason_codelldb_path = vim.fs.joinpath(codelldb_package:get_install_path(), 'extension')
+          end
+          local codelldb_path = vim.fs.joinpath(mason_codelldb_path, 'adapter', 'codelldb')
+          local liblldb_path = vim.fs.joinpath(mason_codelldb_path, 'lldb', 'lib', 'liblldb')
+          local shell = require('rustaceanvim.shell')
+          if shell.is_windows() then
+            codelldb_path = codelldb_path .. '.exe'
+            liblldb_path = vim.fs.joinpath(mason_codelldb_path, 'lldb', 'bin', 'liblldb.dll')
+          else
+            liblldb_path = liblldb_path .. (shell.is_macos() and '.dylib' or '.so')
+          end
+          result = config.get_codelldb_adapter(codelldb_path, liblldb_path)
+        else
+          local has_lldb_dap = vim.fn.executable('lldb-dap') == 1
+          local has_lldb_vscode = vim.fn.executable('lldb-vscode') == 1
+          if not has_lldb_dap and not has_lldb_vscode then
+            return result
+          end
+          local command = has_lldb_dap and 'lldb-dap' or 'lldb-vscode'
+          ---@cast result rustaceanvim.dap.executable.Config
+          result = {
+            type = 'executable',
+            command = exepath_or_binary(command),
+            name = 'lldb',
+          }
         end
-        local command = has_lldb_dap and 'lldb-dap' or 'lldb-vscode'
-        ---@cast result rustaceanvim.dap.executable.Config
-        result = {
-          type = 'executable',
-          command = exepath_or_binary(command),
-          name = 'lldb',
-        }
       end
       return result
     end,
