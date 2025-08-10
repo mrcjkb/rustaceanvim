@@ -1,0 +1,7 @@
+# profile used to generate junit reports when in nextest mode
+[profile.rustaceanvim.junit]
+path = "junit.xml"
+store-failure-output = true
+store-success-output = true
+
+

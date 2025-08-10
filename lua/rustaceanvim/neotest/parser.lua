@@ -9,9 +9,6 @@ local trans = require('rustaceanvim.neotest.trans')
 ---@param output_content string
 ---@return table<string, neotest.Result> results
 function M.populate_pass_positions(results, context, output_content)
-  -- XXX: match doesn't work here because it needs to
-  -- match on the end of each line
-  -- TODO: Use cargo-nextest's JUnit output in the future?
   local lines = vim.split(output_content, '\n') or {}
   vim
     .iter(lines)

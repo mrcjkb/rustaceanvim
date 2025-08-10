@@ -33,6 +33,24 @@ function M.snippet_text_edits_to_text_edits(text_edits)
   end
 end
 
+local function split_at_delimiter(list, delimiter)
+  local before = {}
+  local after = {}
+  local found_delimiter = false
+
+  for _, value in ipairs(list) do
+    if value == delimiter then
+      found_delimiter = true
+    elseif not found_delimiter then
+      table.insert(before, value)
+    else
+      table.insert(after, value)
+    end
+  end
+
+  return before, after
+end
+
 ---Transforms the args to cargo-nextest args if it is detected.
 ---Mutates command!
 ---@param args string[]
@@ -44,23 +62,46 @@ function M.try_nextest_transform(args)
     args[1] = 'run'
     table.insert(args, 1, 'nextest')
   end
-  if args[#args] == '--nocapture' then
-    table.insert(args, 3, '--nocapture')
-    table.remove(args, #args)
+  local nextest_args, executable_args = split_at_delimiter(args, '--')
+
+  -- specify custom profile for junit output
+  table.insert(nextest_args, '--profile')
+  table.insert(nextest_args, 'rustaceanvim')
+  table.insert(nextest_args, '--config-file')
+  local plugin_config_dir = vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':p:h:h:h')
+  table.insert(nextest_args, plugin_config_dir .. '/nextest.toml')
+
+  -- tranform `-- test_something --exact` into `-E 'test("test_something")'`
+  for i = 1, #executable_args do
+    if executable_args[i] == '--exact' then
+      local test_name = executable_args[i - 1]
+      table.remove(executable_args, i - 1)
+      table.remove(executable_args, i - 1)
+      table.insert(nextest_args, '-E')
+      table.insert(nextest_args, string.format('test(%s)', test_name))
+      break
+    end
   end
+
   local nextest_unsupported_flags = {
     '--show-output',
   }
   local indexes_to_remove_reverse_order = {}
-  for i, arg in ipairs(args) do
+  for i, arg in ipairs(executable_args) do
     if vim.list_contains(nextest_unsupported_flags, arg) then
       table.insert(indexes_to_remove_reverse_order, 1, i)
     end
   end
   for _, i in pairs(indexes_to_remove_reverse_order) do
-    table.remove(args, i)
+    table.remove(executable_args, i)
   end
-  return args
+
+  table.insert(nextest_args, '--')
+  for _, v in ipairs(executable_args) do
+    table.insert(nextest_args, v)
+  end
+  vim.notify(table.concat(nextest_args, ' '), vim.log.levels.WARN)
+  return nextest_args
 end
 
 -- sanitize_command_for_debugging substitutes the command arguments so it can be used to run a
