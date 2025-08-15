@@ -51,6 +51,8 @@ local function split_at_delimiter(list, delimiter)
   return before, after
 end
 
+-- TODO fix single test mode, seems broken
+
 ---Transforms the args to cargo-nextest args if it is detected.
 ---Mutates command!
 ---@param args string[]
@@ -100,7 +102,6 @@ function M.try_nextest_transform(args)
   for _, v in ipairs(executable_args) do
     table.insert(nextest_args, v)
   end
-  vim.notify(table.concat(nextest_args, ' '), vim.log.levels.WARN)
   return nextest_args
 end
 
