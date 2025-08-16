@@ -916,18 +916,25 @@ you can try [minimal.lua](./troubleshooting/minimal.lua).
 nvim -u minimal.lua
 ```
 
-> [!NOTE]
+> [!IMPORTANT]
 >
-> If you use Nix, you can run
-> `nix run "github:mrcjkb/rustaceanvim#nvim-minimal-stable"`.
-> or
-> `nix run "github:mrcjkb/rustaceanvim#nvim-minimal-nightly"`.
+> I strongly recommend against using rust-analyzer managed my mason.nvim,
+> as version mismatches between rust-analyzer and your project toolchain
+> can and most likely will lead to subtle issues.
 
 If you cannot reproduce your issue with a minimal config,
 it may be caused by another plugin,
 or a setting of your plugin manager.
 In this case, add additional plugins and configurations to `minimal.lua`,
 until you can reproduce it.
+Or, bisect your existing plugins and config.
+
+> [!NOTE]
+>
+> If you use Nix, you can run
+> `nix run "github:mrcjkb/rustaceanvim#nvim-minimal-stable"`.
+> or
+> `nix run "github:mrcjkb/rustaceanvim#nvim-minimal-nightly"`.
 
 ### rust-analyzer troubleshooting
 
