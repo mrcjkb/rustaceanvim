@@ -27,27 +27,12 @@ end
 ---@param output_content string
 ---@return table<string, neotest.Result> results
 function M.populate_pass_positions_cargo_test(results, context, output_content)
-  local lines = vim.split(output_content, '\n') or {}
-  vim
-    .iter(lines)
-    ---@param line string
-    :map(function(line)
-      return line:match('PASS%s.*%s(%S+)$') or line:match('test%s(%S+)%s...%sok')
-    end)
-    ---@param result string | nil
-    :filter(function(result)
-      return result ~= nil
-    end)
-    ---@param pos string
-    :map(function(pos)
-      return trans.get_position_id(context.file, pos)
-    end)
-    ---@param pos string
-    :each(function(pos)
-      results[pos] = {
-        status = 'passed',
-      }
-    end)
+  -- NOTE: ignore ANSI character for ok, if present: ^[[32mok^[[0;10m
+  for test_name in output_content:gmatch('\ntest%s+([^\n]-)%s+%.%.%.%s+\x1b?%[?[0-9;]-m?ok\x1b?%[?[0-9;]-m?\r?\n') do
+    results[trans.get_position_id(context.file, test_name)] = {
+      status = 'passed',
+    }
+  end
   return results
 end
 

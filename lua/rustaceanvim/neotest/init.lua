@@ -307,10 +307,6 @@ function NeotestAdapter.build_spec(run_args)
   else
     overrides.undo_debug_sanitize(runnable.args.cargoArgs)
   end
-  if context.is_cargo_test then
-    -- cargo test needs to pass --color=never to the test runner too
-    table.insert(args, '--color=never')
-  end
   local insert_pos = context.is_cargo_test and 2 or 3
   table.insert(args, insert_pos, '--no-fail-fast')
   ---@type rustaceanvim.neotest.RunSpec
@@ -363,7 +359,7 @@ function NeotestAdapter.results(spec, strategy_result)
   local junit_xml = ''
   if context.is_cargo_test then
     output_content = lib.files.read(strategy_result.output)
-    diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(context.file, output_content, 0)
+    diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output_content, 0)
   else
     junit_xml = lib.files.read(context.workspace_root .. '/target/nextest/rustaceanvim/junit.xml')
     diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, 0)

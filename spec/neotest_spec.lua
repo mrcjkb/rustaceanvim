@@ -1,12 +1,27 @@
 local parser = require('rustaceanvim.neotest.parser')
 
 ---@param fixture string
----@param is_cargo_test boolean
-local function run_golden_test(fixture, is_cargo_test)
+local function run_golden_test_cargo(fixture)
   ---@diagnostic disable-next-line: missing-fields
-  local results = parser.populate_pass_positions({}, { file = 'test_file.rs', is_cargo_test = is_cargo_test }, fixture)
+  local results = parser.populate_pass_positions_cargo_test({}, { file = 'test_file.rs' }, fixture)
   assert.same({
-    ['test_file.rs::tests::test_ok'] = {
+    ['test_file.rs::test_ok'] = {
+      status = 'passed',
+    },
+    ['test_file.rs::test_ok2'] = {
+      status = 'passed',
+    },
+  }, results)
+end
+
+local function run_golden_test_nextest(fixture)
+  ---@diagnostic disable-next-line: missing-fields
+  local results = parser.populate_pass_positions_nextest({}, { file = 'test_file.rs' }, fixture)
+  assert.same({
+    ['test_file.rs::test_ok'] = {
+      status = 'passed',
+    },
+    ['test_file.rs::test_ok2'] = {
       status = 'passed',
     },
   }, results)
@@ -17,22 +32,33 @@ describe('rustaceanvim.neotest', function()
     it('passing tests in cargo output', function()
       --
       local fixture = [[
-Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
-     Running unittests src/main.rs (target/debug/deps/rustaceanvim_460_repro-ec3e570a1613a034)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running unittests src/lib.rs (target/debug/deps/rustaceanvim_460_repro-9a70619d0810014e)
 
-running 2 tests
-test tests::test_ok ... ok
-test tests::test_main ... FAILED
+running 0 tests
 
-successes:
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-successes:
-    tests::test_ok
+     Running tests/repro.rs (target/debug/deps/repro-0338237287f12da7)
+
+running 4 tests
+test test_ok ... ok
+test test_external_fail2 ... FAILED
+test test_external_fail ... FAILED
+test test_ok2 ... ok
 
 failures:
 
----- tests::test_main stdout ----
-thread 'tests::test_main' panicked at src/main.rs:9:9:
+---- test_external_fail2 stdout ----
+
+thread 'test_external_fail2' panicked at src/lib.rs:2:5:
+assertion `left == right` failed
+  left: 1
+ right: 2
+
+---- test_external_fail stdout ----
+
+thread 'test_external_fail' panicked at src/lib.rs:2:5:
 assertion `left == right` failed
   left: 1
  right: 2
@@ -40,34 +66,32 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 
 failures:
-    tests::test_main
+    test_external_fail
+    test_external_fail2
 
-test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: FAILED. 2 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-error: test failed, to rerun pass `-p rustaceanvim-460-repro --bin rustaceanvim-460-repro`
-error: 1 target failed:
-    `-p rustaceanvim-460-repro --bin rustaceanvim-460-repro`
-
+error: test failed, to rerun pass `--test repro`
 ]]
-      run_golden_test(fixture, true)
+      run_golden_test_cargo(fixture)
     end)
     it('passing tests in cargo-nextest junit output', function()
       local fixture = [[
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="nextest-run" tests="2" failures="1" errors="0" uuid="cb64a0e2-5dc1-4ef2-89b3-b3ac1b791b58" timestamp="2025-08-10T21:20:53.300+01:00" time="0.005">
-    <testsuite name="rustaceanvim-460-repro::repro" tests="2" disabled="0" errors="0" failures="1">
-        <testcase name="test_ok" classname="rustaceanvim-460-repro::repro" timestamp="2025-08-10T21:20:53.301+01:00" time="0.004">
+<testsuites name="nextest-run" tests="4" failures="2" errors="0" uuid="b884a238-0e2a-499c-b40c-2857d99dbe0f" timestamp="2025-08-15T17:31:44.287+01:00" time="0.006">
+    <testsuite name="rustaceanvim-460-repro::repro" tests="4" disabled="0" errors="0" failures="2">
+        <testcase name="test_ok" classname="rustaceanvim-460-repro::repro" timestamp="2025-08-15T17:31:44.287+01:00" time="0.005">
             <system-out>
 running 1 test
 test test_ok ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
 
 </system-out>
             <system-err></system-err>
         </testcase>
-        <testcase name="test_external_fail" classname="rustaceanvim-460-repro::repro" timestamp="2025-08-10T21:20:53.300+01:00" time="0.005">
-            <failure type="test failure">thread &apos;test_external_fail&apos; panicked at src/lib.rs:2:5:
+        <testcase name="test_external_fail" classname="rustaceanvim-460-repro::repro" timestamp="2025-08-15T17:31:44.287+01:00" time="0.005">
+            <failure message="thread &apos;test_external_fail&apos; panicked at src/lib.rs:2:5" type="test failure">thread &apos;test_external_fail&apos; panicked at src/lib.rs:2:5:
 assertion `left == right` failed
   left: 1
  right: 2
@@ -81,10 +105,47 @@ failures:
 failures:
     test_external_fail
 
-test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
 
 </system-out>
-            <system-err>thread &apos;test_external_fail&apos; panicked at src/lib.rs:2:5:
+            <system-err>
+thread &apos;test_external_fail&apos; panicked at src/lib.rs:2:5:
+assertion `left == right` failed
+  left: 1
+ right: 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+</system-err>
+        </testcase>
+        <testcase name="test_ok2" classname="rustaceanvim-460-repro::repro" timestamp="2025-08-15T17:31:44.287+01:00" time="0.005">
+            <system-out>
+running 1 test
+test test_ok2 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+</system-out>
+            <system-err></system-err>
+        </testcase>
+        <testcase name="test_external_fail2" classname="rustaceanvim-460-repro::repro" timestamp="2025-08-15T17:31:44.287+01:00" time="0.005">
+            <failure message="thread &apos;test_external_fail2&apos; panicked at src/lib.rs:2:5" type="test failure">thread &apos;test_external_fail2&apos; panicked at src/lib.rs:2:5:
+assertion `left == right` failed
+  left: 1
+ right: 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace</failure>
+            <system-out>
+running 1 test
+test test_external_fail2 ... FAILED
+
+failures:
+
+failures:
+    test_external_fail2
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+</system-out>
+            <system-err>
+thread &apos;test_external_fail2&apos; panicked at src/lib.rs:2:5:
 assertion `left == right` failed
   left: 1
  right: 2
@@ -93,8 +154,9 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
         </testcase>
     </testsuite>
 </testsuites>
+
 ]]
-      run_golden_test(fixture, false)
+      run_golden_test_nextest(fixture)
     end)
   end)
 end)

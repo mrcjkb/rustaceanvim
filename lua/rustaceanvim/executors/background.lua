@@ -27,8 +27,6 @@ M.execute_command = function(command, args, cwd, opts)
   local is_single_test = args[1] == 'test'
   local notify_prefix = (is_single_test and 'test ' or 'tests ')
   local cmd = vim.list_extend({ command }, args)
-  local fname = vim.api.nvim_buf_get_name(opts.bufnr)
-  local workspace_root = '' -- TODO this doesn't work due to an import loop: NeotestAdapter.root(cwd or '') or ''
   vim.system(cmd, { cwd = cwd, env = opts.env }, function(sc)
     ---@cast sc vim.SystemCompleted
     if sc.code == 0 then
@@ -39,13 +37,7 @@ M.execute_command = function(command, args, cwd, opts)
       return
     end
     local output = (sc.stderr or '') .. '\n' .. (sc.stdout or '')
-    local diagnostics = require('rustaceanvim.test').parse_diagnostics {
-      file = fname,
-      workspace_root = workspace_root,
-      output = output,
-      bufnr = opts.bufnr,
-      is_cargo_test = true, -- TODO check if this function shoudld use nextest too
-    }
+    local diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output, opts.bufnr)
     local summary = get_test_summary(sc.stdout or '')
     vim.schedule(function()
       vim.diagnostic.set(diag_namespace, opts.bufnr, diagnostics)

@@ -51,8 +51,6 @@ local function split_at_delimiter(list, delimiter)
   return before, after
 end
 
--- TODO fix single test mode, seems broken
-
 ---Transforms the args to cargo-nextest args if it is detected.
 ---Mutates command!
 ---@param args string[]
