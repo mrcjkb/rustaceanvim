@@ -24,7 +24,9 @@ body:
           required: true
         - label: This is an issue about rustaceanvim, not rust-analyzer or Neovim.
           required: true
-        - label: This is [not an issue with autocompletion](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#im-having-issues-with-autocompletion).
+        - label: I am not using mason.nvim to manage my rust-analyzer installation.
+          required: true
+        - label: This is [not an issue with (auto)completion](https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#im-having-issues-with-autocompletion).
           required: true
   - type: input
     attributes:
