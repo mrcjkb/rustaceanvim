@@ -72,8 +72,7 @@ function M.try_nextest_transform(args)
   table.insert(nextest_args, '--profile')
   table.insert(nextest_args, 'rustaceanvim')
   table.insert(nextest_args, '--config-file')
-  local plugin_config_dir = vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':p:h:h:h')
-  table.insert(nextest_args, plugin_config_dir .. '/nextest.toml')
+  table.insert(nextest_args, require('rustaceanvim.cache').nextest_config_path())
 
   -- tranform `-- test_something --exact` into `-E 'test("test_something")'`
   for i = 1, #executable_args do
