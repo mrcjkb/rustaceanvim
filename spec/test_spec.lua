@@ -17,20 +17,20 @@ Location:
     rocks-lib/src/rocks/dependency.rs:62:22
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ]]
-    local fname = 'rocks-lib/src/rocks/dependency.rs'
-    local diagnostics = test.parse_diagnostics(fname, fixture, 0)
+    local diagnostics = test.parse_cargo_test_diagnostics(fixture, 0)
     ---@type rustaceanvim.Diagnostic[]
     local expected = {
       {
         bufnr = 0,
-        lnum = 85,
-        end_lnum = 85,
+        lnum = 86,
+        end_lnum = 86,
         col = 64,
         end_col = 64,
-        message = [[called `Result::unwrap()` on an `Err` value: unexpected end of input while parsing min or version number
+        message = [[
+thread 'rocks::dependency::tests::parse_dependency' panicked at rocks-lib/src/rocks/dependency.rs:86:64:
+called `Result::unwrap()` on an `Err` value: unexpected end of input while parsing min or version number
 Location:
     rocks-lib/src/rocks/dependency.rs:62:22
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ]],
         severity = vim.diagnostic.severity.ERROR,
         source = 'rustaceanvim',
@@ -50,8 +50,7 @@ thread 'tests::failed_math' panicked at 'assertion failed: `(left == right)`
  right: `3`', src/main.rs:16:9
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ]]
-    local fname = 'src/main.rs'
-    local diagnostics = test.parse_diagnostics(fname, fixture, 0)
+    local diagnostics = test.parse_cargo_test_diagnostics(fixture, 0)
     ---@type rustaceanvim.Diagnostic[]
     local expected = {
       {

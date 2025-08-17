@@ -1,3 +1,6 @@
+-- local cargo = require('rustaceanvim.cargo')
+-- local config = require('rustaceanvim.config.internal')
+-- local lib = require('neotest.lib')
 local diag_namespace = vim.api.nvim_create_namespace('rustaceanvim')
 
 ---@param output string
@@ -37,7 +40,16 @@ M.execute_command = function(command, args, cwd, opts)
       return
     end
     local output = (sc.stderr or '') .. '\n' .. (sc.stdout or '')
-    local diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output, opts.bufnr)
+    local diagnostics = {}
+
+    local is_cargo_test = args[1] == 'test'
+    if is_cargo_test then
+      diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output, opts.bufnr)
+    else
+      -- local workspace_root = cargo.get_config_root_dir(config.server, cwd or '')
+      -- local junit_xml = lib.files.read(workspace_root .. '/target/nextest/rustaceanvim/junit.xml')
+      -- diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, 0)
+    end
     local summary = get_test_summary(sc.stdout or '')
     vim.schedule(function()
       vim.diagnostic.set(diag_namespace, opts.bufnr, diagnostics)
