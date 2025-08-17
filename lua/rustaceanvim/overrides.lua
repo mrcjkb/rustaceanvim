@@ -33,12 +33,16 @@ function M.snippet_text_edits_to_text_edits(text_edits)
   end
 end
 
-local function split_at_delimiter(list, delimiter)
+---@param arg_list string[] list of arguments
+---@return string[] runner args
+---@return string[] executable args
+local function partition_executable_args(arg_list)
+  local delimiter = '--'
   local before = {}
   local after = {}
   local found_delimiter = false
 
-  for _, value in ipairs(list) do
+  for _, value in ipairs(arg_list) do
     if value == delimiter then
       found_delimiter = true
     elseif not found_delimiter then
@@ -62,7 +66,7 @@ function M.try_nextest_transform(args)
     args[1] = 'run'
     table.insert(args, 1, 'nextest')
   end
-  local nextest_args, executable_args = split_at_delimiter(args, '--')
+  local nextest_args, executable_args = partition_executable_args(args)
 
   -- specify custom profile for junit output
   table.insert(nextest_args, '--profile')

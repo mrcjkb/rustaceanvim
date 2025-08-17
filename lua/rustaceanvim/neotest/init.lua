@@ -379,19 +379,18 @@ function NeotestAdapter.results(spec, strategy_result)
 
   for _, node in get_file_root(context.tree):iter_nodes() do
     local data = node:data()
-    local found = false
-    for _, diag in pairs(diagnostics) do
+    local failure_diagnostic = vim.iter(diagnostics):find(function(diag)
       if vim.endswith(data.id, diag.test_id) then
         results[data.id] = {
           status = 'failed',
           errors = { line = diag.lnum, message = diag.message },
           short = diag.message,
         }
-        found = true
-        break
+        return true
       end
-    end
-    if not found and data.type == 'test' then
+      return false
+    end)
+    if not failure_diagnostic and data.type == 'test' then
       -- Initialise as skipped. Passed positions will be parsed and set later.
       results[data.id] = {
         status = 'skipped',
