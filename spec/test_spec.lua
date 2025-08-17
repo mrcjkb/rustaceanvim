@@ -16,6 +16,7 @@ called `Result::unwrap()` on an `Err` value: unexpected end of input while parsi
 Location:
     rocks-lib/src/rocks/dependency.rs:62:22
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
 ]]
     local diagnostics = test.parse_cargo_test_diagnostics(fixture, 0)
     ---@type rustaceanvim.Diagnostic[]
@@ -31,6 +32,7 @@ thread 'rocks::dependency::tests::parse_dependency' panicked at rocks-lib/src/ro
 called `Result::unwrap()` on an `Err` value: unexpected end of input while parsing min or version number
 Location:
     rocks-lib/src/rocks/dependency.rs:62:22
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ]],
         severity = vim.diagnostic.severity.ERROR,
         source = 'rustaceanvim',

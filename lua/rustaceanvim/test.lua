@@ -9,7 +9,7 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
   local diagnostics = {}
 
   for failure_content, test_id, lnum, col in
-    output:gmatch("(thread '([^']+)' panicked at [^:]+:(%d+):(%d+):%s-\n.-\n)note: ")
+    output:gmatch("(thread '([^']+)' panicked at [^:]+:(%d+):(%d+):%s-\n.-\n)\n")
   do
     table.insert(diagnostics, {
       bufnr = bufnr,
@@ -26,9 +26,7 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
 
   if #diagnostics == 0 then
     --- Fall back to old format
-    for test_id, message, file, lnum, col in
-      output:gmatch("thread '([^']+)' panicked at '([^']+)', ([^:]+):(%d+):(%d+)")
-    do
+    for test_id, message, _, lnum, col in output:gmatch("thread '([^']+)' panicked at '([^']+)', ([^:]+):(%d+):(%d+)") do
       local diagnostic_lnum = tonumber(lnum) - 1
       local diagnostic_col = tonumber(col) or 0
       ---@type rustaceanvim.Diagnostic
