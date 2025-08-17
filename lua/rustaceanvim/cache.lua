@@ -11,11 +11,7 @@ store-success-output = true
 ---@return string path to nextest.toml file
 function M.nextest_config_path()
   local cache_dir = vim.fs.joinpath(vim.fn.stdpath('cache'), 'rustaceanvim')
-  local config_path = vim.fs.joinpath(cache_dir, 'nextest.toml')
-
-  vim.schedule(function()
-    vim.notify('Creating nextest config file: ' .. config_path)
-  end)
+  local config_path = vim.fs.joinpath(cache_dir, 'nextest_1.toml')
 
   -- Check if file already exists
   local stat = vim.uv.fs_stat(config_path)
