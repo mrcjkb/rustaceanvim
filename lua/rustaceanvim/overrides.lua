@@ -80,8 +80,7 @@ function M.try_nextest_transform(args)
       local test_name = executable_args[i - 1]
       table.remove(executable_args, i - 1)
       table.remove(executable_args, i - 1)
-      table.insert(nextest_args, '-E')
-      table.insert(nextest_args, string.format('test(%s)', test_name))
+      table.insert(nextest_args, test_name)
       break
     end
   end
