@@ -16,7 +16,7 @@ function M.nextest_config_path()
 
   -- Check if file already exists
   local stat = vim.uv.fs_stat(config_path)
-  if stat and stat.type == 'file' then
+  if stat then
     return config_path
   end
 
