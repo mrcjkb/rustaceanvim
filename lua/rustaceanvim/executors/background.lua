@@ -54,7 +54,7 @@ M.execute_command = function(command, args, cwd, opts)
     if is_cargo_test then
       diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output, opts.bufnr)
     else
-      local junit_xml = read_file((cwd or '') .. '/target/nextest/rustaceanvim/junit.xml')
+      local junit_xml = read_file((cwd or vim.fn.getcwd()) .. '/target/nextest/rustaceanvim/junit.xml')
       diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, opts.bufnr)
     end
     local summary = get_test_summary(sc.stdout or '')
