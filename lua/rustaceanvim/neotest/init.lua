@@ -361,7 +361,7 @@ function NeotestAdapter.results(spec, strategy_result)
     output_content = lib.files.read(strategy_result.output)
     diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output_content, 0)
   else
-    junit_xml = lib.files.read(context.workspace_root .. '/target/nextest/rustaceanvim/junit.xml')
+    junit_xml = lib.files.read(vim.fs.joinpath(context.workspace_root or vim.fn.getcwd(), 'target', 'nextest', 'rustaceanvim', 'junit.xml'))
     diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, 0)
   end
 
