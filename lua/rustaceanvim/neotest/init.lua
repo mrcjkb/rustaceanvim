@@ -361,7 +361,9 @@ function NeotestAdapter.results(spec, strategy_result)
     output_content = lib.files.read(strategy_result.output)
     diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output_content, 0)
   else
-    junit_xml = lib.files.read(vim.fs.joinpath(context.workspace_root or vim.fn.getcwd(), 'target', 'nextest', 'rustaceanvim', 'junit.xml'))
+    junit_xml = lib.files.read(
+      vim.fs.joinpath(context.workspace_root or vim.fn.getcwd(), 'target', 'nextest', 'rustaceanvim', 'junit.xml')
+    )
     diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, 0)
   end
 
@@ -380,23 +382,23 @@ function NeotestAdapter.results(spec, strategy_result)
   for _, node in get_file_root(context.tree):iter_nodes() do
     local data = node:data()
     local failure_diagnostic = vim.iter(diagnostics):find(function(diag)
-      if vim.endswith(data.id, diag.test_id) then
-        results[data.id] = {
-          status = 'failed',
-          errors = { line = diag.lnum, message = diag.message },
-          short = diag.message,
-        }
-        return true
-      end
-      return false
+      return vim.endswith(data.id, diag.test_id)
     end)
-    if not failure_diagnostic and data.type == 'test' then
+
+    if failure_diagnostic then
+      results[data.id] = {
+        status = 'failed',
+        errors = { line = failure_diagnostic.lnum, message = failure_diagnostic.message },
+        short = failure_diagnostic.message,
+      }
+    elseif data.type == 'test' then
       -- Initialise as skipped. Passed positions will be parsed and set later.
       results[data.id] = {
         status = 'skipped',
       }
     end
   end
+
   if context.is_cargo_test then
     require('rustaceanvim.neotest.parser').populate_pass_positions_cargo_test(results, context, output_content)
   else

@@ -1,4 +1,3 @@
--- local lib = require('neotest.lib')
 local diag_namespace = vim.api.nvim_create_namespace('rustaceanvim')
 
 ---@param output string
@@ -14,6 +13,7 @@ local M = {}
 ---@class rustaceanvim.Diagnostic: vim.Diagnostic
 ---@field test_id string
 
+---@param path string
 local function read_file(path)
   local open_err, file_fd = vim.uv.fs_open(path, 'r', 438)
   assert(not open_err, open_err)
