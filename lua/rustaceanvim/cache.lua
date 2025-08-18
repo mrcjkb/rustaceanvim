@@ -1,6 +1,7 @@
 local M = {}
 
--- Nextest profile used to generate junit reports (needs to be written to a toml file)
+--- Nextest profile used to generate junit reports (needs to be written to a toml file)
+--- IMPORTANT: When modifying this config, increment the revision suffix in the file name below!
 local NEXTEST_CONFIG = [[# profile used to generate junit reports when in nextest mode
 [profile.rustaceanvim.junit]
 path = "junit.xml"
