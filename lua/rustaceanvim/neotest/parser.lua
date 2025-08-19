@@ -28,7 +28,7 @@ end
 ---@return table<string, neotest.Result> results
 function M.populate_pass_positions_cargo_test(results, context, output_content)
   -- NOTE: ignore ANSI character for ok, if present: ^[[32mok^[[0;10m
-  for test_name in output_content:gmatch('\ntest%s+([^\n]-)%s+%.%.%.%s+\x1b?%[?[0-9;]-m?ok\x1b?%[?[0-9;]-m?\r?\n') do
+  for test_name in output_content:gmatch('\ntest%s+([^\n]-)%s+%.%.%.%s+\27?%[?[0-9;]-m?ok\27?%[?[0-9;]-m?\r?\n') do
     results[trans.get_position_id(context.file, test_name)] = {
       status = 'passed',
     }
