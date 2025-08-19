@@ -417,6 +417,7 @@ local function rust_analyzer_user_cmd(opts)
     M.set_target_arch(nil, target_arch)
   elseif cmd == RustAnalyzerCmd.config then
     local ra_settings_str = vim.iter(fargs):join(' ')
+    ---@diagnostic disable-next-line: param-type-mismatch
     local f = load('return ' .. ra_settings_str)
     ---@diagnostic disable-next-line: param-type-mismatch
     local ok, ra_settings = pcall(f)
