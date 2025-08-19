@@ -402,7 +402,7 @@ function NeotestAdapter.results(spec, strategy_result)
     if failure_diagnostic then
       results[data.id] = {
         status = 'failed',
-        errors = { line = failure_diagnostic.lnum, message = failure_diagnostic.message },
+        errors = { { line = failure_diagnostic.lnum, message = failure_diagnostic.message } },
         short = failure_diagnostic.message,
       }
     elseif data.type == 'test' then
