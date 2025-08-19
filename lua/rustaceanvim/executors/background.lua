@@ -14,14 +14,16 @@ local M = {}
 ---@field test_id string
 
 ---@param path string
+---@return string content
 local function read_file(path)
-  local open_err, file_fd = vim.uv.fs_open(path, 'r', 438)
+  local file_fd, open_err = vim.uv.fs_open(path, 'r', 438)
   assert(not open_err, open_err)
-  ---@diagnostic disable-next-line: param-type-mismatch
-  local stat_err, stat = vim.uv.fs_fstat(file_fd)
+  assert(file_fd, 'expected file descriptor')
+  local stat, stat_err = vim.uv.fs_fstat(file_fd)
   assert(not stat_err, stat_err)
-  ---@diagnostic disable-next-line: need-check-nil, param-type-mismatch, undefined-field
-  local read_err, data = vim.uv.fs_read(file_fd, stat.size, 0)
+  assert(stat, 'expected file stats')
+  local data, read_err = vim.uv.fs_read(file_fd, stat.size, 0)
+  assert(data, 'expected file content')
   assert(not read_err, read_err)
   return data
 end
