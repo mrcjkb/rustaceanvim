@@ -1,4 +1,5 @@
 vim.env.LAZY_STDPATH = '.repro'
+---@diagnostic disable-next-line: param-type-mismatch
 load(vim.fn.system('curl -s https://raw.githubusercontent.com/folke/lazy.nvim/main/bootstrap.lua'))()
 
 require('lazy.minit').repro {
