@@ -354,11 +354,11 @@ function NeotestAdapter.results(spec, strategy_result)
   end
 
   ---@type rustaceanvim.Diagnostic[]
-  local diagnostics = {}
+  local diagnostics
   local output_content = ''
   local junit_xml = ''
   if context.is_cargo_test then
-    local success = false
+    local success
     success, output_content = pcall(function()
       return lib.files.read(strategy_result.output)
     end)
@@ -368,7 +368,7 @@ function NeotestAdapter.results(spec, strategy_result)
     end
     diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output_content, 0)
   else
-    local success = false
+    local success
     success, junit_xml = pcall(function()
       return lib.files.read(
         vim.fs.joinpath(context.workspace_root or vim.fn.getcwd(), 'target', 'nextest', 'rustaceanvim', 'junit.xml')

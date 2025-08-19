@@ -48,8 +48,7 @@ M.execute_command = function(command, args, cwd, opts)
       return
     end
     local output = (sc.stderr or '') .. '\n' .. (sc.stdout or '')
-    local diagnostics = {}
-
+    local diagnostics
     local is_cargo_test = args[1] == 'test'
     if is_cargo_test then
       diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output, opts.bufnr)
