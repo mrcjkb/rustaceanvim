@@ -17,8 +17,10 @@ local M = {}
 local function read_file(path)
   local open_err, file_fd = vim.uv.fs_open(path, 'r', 438)
   assert(not open_err, open_err)
+  ---@diagnostic disable-next-line: param-type-mismatch
   local stat_err, stat = vim.uv.fs_fstat(file_fd)
   assert(not stat_err, stat_err)
+  ---@diagnostic disable-next-line: need-check-nil, param-type-mismatch, undefined-field
   local read_err, data = vim.uv.fs_read(file_fd, stat.size, 0)
   assert(not read_err, read_err)
   return data
@@ -54,6 +56,10 @@ M.execute_command = function(command, args, cwd, opts)
       diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output, opts.bufnr)
     else
       local junit_xml = read_file((cwd or vim.fn.getcwd()) .. '/target/nextest/rustaceanvim/junit.xml')
+      if not junit_xml then
+        vim.notify('Failed to read junit.xml file', vim.log.levels.ERROR)
+        return
+      end
       diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, opts.bufnr)
     end
     local summary = get_test_summary(sc.stdout or '')
