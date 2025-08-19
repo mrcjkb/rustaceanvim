@@ -358,12 +358,26 @@ function NeotestAdapter.results(spec, strategy_result)
   local output_content = ''
   local junit_xml = ''
   if context.is_cargo_test then
-    output_content = lib.files.read(strategy_result.output)
+    local success = false
+    success, output_content = pcall(function()
+      return lib.files.read(strategy_result.output)
+    end)
+    if not success then
+      vim.notify('Failed to read output file', vim.log.levels.ERROR)
+      return results
+    end
     diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output_content, 0)
   else
-    junit_xml = lib.files.read(
-      vim.fs.joinpath(context.workspace_root or vim.fn.getcwd(), 'target', 'nextest', 'rustaceanvim', 'junit.xml')
-    )
+    local success = false
+    success, junit_xml = pcall(function()
+      return lib.files.read(
+        vim.fs.joinpath(context.workspace_root or vim.fn.getcwd(), 'target', 'nextest', 'rustaceanvim', 'junit.xml')
+      )
+    end)
+    if not success then
+      vim.notify('Failed to read junit.xml file', vim.log.levels.ERROR)
+      return results
+    end
     diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, 0)
   end
 
