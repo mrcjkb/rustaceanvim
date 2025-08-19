@@ -1,5 +1,13 @@
 local M = {}
 
+-- Function to escape HTML special characters in a string
+---@param input string The string to escape
+---@return string The escaped string
+---@return integer count
+local function unescape_html(input)
+  return input:gsub('&amp;', '&'):gsub('&lt;', '<'):gsub('&gt;', '>'):gsub('&quot;', '"'):gsub('&apos;', "'")
+end
+
 ---@param output string
 ---@param bufnr integer
 ---@return rustaceanvim.Diagnostic[]
@@ -18,7 +26,7 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
       end_lnum = tonumber(lnum),
       col = tonumber(col),
       end_col = tonumber(col),
-      message = failure_content,
+      message = unescape_html(failure_content),
       source = 'rustaceanvim',
       severity = vim.diagnostic.severity.ERROR,
     })
@@ -37,7 +45,7 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
         end_lnum = diagnostic_lnum,
         col = diagnostic_col,
         end_col = diagnostic_col,
-        message = message,
+        message = unescape_html(message),
         source = 'rustaceanvim',
         severity = vim.diagnostic.severity.ERROR,
       }
@@ -66,7 +74,7 @@ function M.parse_nextest_diagnostics(junit_xml, bufnr)
       end_lnum = tonumber(lnum),
       col = tonumber(col),
       end_col = tonumber(col),
-      message = failure_content,
+      message = unescape_html(failure_content),
       source = 'rustaceanvim',
       severity = vim.diagnostic.severity.ERROR,
     })
