@@ -243,6 +243,8 @@ end
 ---@field pos_id string
 ---@field type neotest.PositionType
 ---@field tree neotest.Tree
+---@field workspace_root string?
+---@field is_cargo_test boolean
 
 ---@package
 ---@param run_args neotest.RunArgs
@@ -263,13 +265,15 @@ function NeotestAdapter.build_spec(run_args)
   if not runnable then
     return
   end
+  local exe, args, cwd, env = require('rustaceanvim.runnables').get_command(runnable)
   local context = {
     file = pos.path,
     pos_id = pos.id,
     type = pos.type,
     tree = tree,
+    workspace_root = NeotestAdapter.root(pos.path),
+    is_cargo_test = args[1] == 'test',
   }
-  local exe, args, cwd, env = require('rustaceanvim.runnables').get_command(runnable)
   if run_args.strategy == 'dap' then
     local dap = require('rustaceanvim.dap')
     overrides.sanitize_command_for_debugging(runnable.args.cargoArgs)
@@ -303,16 +307,8 @@ function NeotestAdapter.build_spec(run_args)
   else
     overrides.undo_debug_sanitize(runnable.args.cargoArgs)
   end
-  local is_cargo_test = args[1] == 'test'
-  local insert_pos = is_cargo_test and 2 or 3
+  local insert_pos = context.is_cargo_test and 2 or 3
   table.insert(args, insert_pos, '--no-fail-fast')
-  if is_cargo_test then
-    -- cargo test needs to pass --color=never to the test runner too
-    table.insert(args, '--color=never')
-  else
-    table.insert(args, 2, '--color')
-    table.insert(args, 3, 'never')
-  end
   ---@type rustaceanvim.neotest.RunSpec
   ---@diagnostic disable-next-line: missing-fields
   local run_spec = {
@@ -349,7 +345,6 @@ function NeotestAdapter.results(spec, strategy_result)
   local context = spec.context
   local ctx_pos_id = context.pos_id
   ---@type string
-  local output_content = lib.files.read(strategy_result.output)
   if strategy_result.code == 0 then
     results[ctx_pos_id] = {
       status = 'passed',
@@ -357,19 +352,35 @@ function NeotestAdapter.results(spec, strategy_result)
     }
     return results
   end
-  ---@type table<string,neotest.Error[]>
-  local errors_by_test_id = {}
-  output_content = output_content:gsub('\r\n', '\n')
-  local diagnostics = require('rustaceanvim.test').parse_diagnostics(context.file, output_content, 0)
-  for _, diagnostic in pairs(diagnostics) do
-    ---@type neotest.Error
-    local err = {
-      line = diagnostic.lnum,
-      message = diagnostic.message,
-    }
-    errors_by_test_id[diagnostic.test_id] = errors_by_test_id[diagnostic.test_id] or {}
-    table.insert(errors_by_test_id[diagnostic.test_id], err)
+
+  ---@type rustaceanvim.Diagnostic[]
+  local diagnostics
+  local output_content = ''
+  local junit_xml = ''
+  if context.is_cargo_test then
+    local success
+    success, output_content = pcall(function()
+      return lib.files.read(strategy_result.output)
+    end)
+    if not success then
+      vim.notify('Failed to read output file', vim.log.levels.ERROR)
+      return results
+    end
+    diagnostics = require('rustaceanvim.test').parse_cargo_test_diagnostics(output_content, 0)
+  else
+    local success
+    success, junit_xml = pcall(function()
+      return lib.files.read(
+        vim.fs.joinpath(context.workspace_root or vim.fn.getcwd(), 'target', 'nextest', 'rustaceanvim', 'junit.xml')
+      )
+    end)
+    if not success then
+      vim.notify('Failed to read junit.xml file', vim.log.levels.ERROR)
+      return results
+    end
+    diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, 0)
   end
+
   if not vim.tbl_contains({ 'file', 'test', 'namespace' }, context.type) then
     return results
   end
@@ -377,26 +388,35 @@ function NeotestAdapter.results(spec, strategy_result)
     status = 'failed',
     output = strategy_result.output,
   }
-  local has_failures = not vim.tbl_isempty(diagnostics)
+
+  if vim.tbl_isempty(diagnostics) then
+    return results -- no failures
+  end
+
   for _, node in get_file_root(context.tree):iter_nodes() do
     local data = node:data()
-    for test_id, errors in pairs(errors_by_test_id) do
-      if vim.endswith(data.id, test_id) then
-        results[data.id] = {
-          status = 'failed',
-          errors = errors,
-          short = output_content,
-        }
-      elseif has_failures and data.type == 'test' then
-        -- Initialise as skipped. Passed positions will be parsed and set later.
-        results[data.id] = {
-          status = 'skipped',
-        }
-      end
+    local failure_diagnostic = vim.iter(diagnostics):find(function(diag)
+      return vim.endswith(data.id, diag.test_id)
+    end)
+
+    if failure_diagnostic then
+      results[data.id] = {
+        status = 'failed',
+        errors = { { line = failure_diagnostic.lnum, message = failure_diagnostic.message } },
+        short = failure_diagnostic.message,
+      }
+    elseif data.type == 'test' then
+      -- Initialise as skipped. Passed positions will be parsed and set later.
+      results[data.id] = {
+        status = 'skipped',
+      }
     end
   end
-  if has_failures then
-    require('rustaceanvim.neotest.parser').populate_pass_positions(results, context, output_content)
+
+  if context.is_cargo_test then
+    require('rustaceanvim.neotest.parser').populate_pass_positions_cargo_test(results, context, output_content)
+  else
+    require('rustaceanvim.neotest.parser').populate_pass_positions_nextest(results, context, junit_xml)
   end
   return results
 end

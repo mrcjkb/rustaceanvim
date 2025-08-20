@@ -6,33 +6,33 @@ local trans = require('rustaceanvim.neotest.trans')
 ---
 ---@param results table<string, neotest.Result>
 ---@param context rustaceanvim.neotest.RunContext
----@param output_content string
+---@param junit_xml string
 ---@return table<string, neotest.Result> results
-function M.populate_pass_positions(results, context, output_content)
-  -- XXX: match doesn't work here because it needs to
-  -- match on the end of each line
-  -- TODO: Use cargo-nextest's JUnit output in the future?
-  local lines = vim.split(output_content, '\n') or {}
-  vim
-    .iter(lines)
-    ---@param line string
-    :map(function(line)
-      return line:match('PASS%s.*%s(%S+)$') or line:match('test%s(%S+)%s...%sok')
-    end)
-    ---@param result string | nil
-    :filter(function(result)
-      return result ~= nil
-    end)
-    ---@param pos string
-    :map(function(pos)
-      return trans.get_position_id(context.file, pos)
-    end)
-    ---@param pos string
-    :each(function(pos)
-      results[pos] = {
+function M.populate_pass_positions_nextest(results, context, junit_xml)
+  for test_name, contents in junit_xml:gmatch('<testcase.-name="([^"]+)".->(.-)</testcase>') do
+    if not contents:match('</failure>') then
+      results[trans.get_position_id(context.file, test_name)] = {
         status = 'passed',
       }
-    end)
+    end
+  end
+
+  return results
+end
+
+---NOTE: This mutates results
+---
+---@param results table<string, neotest.Result>
+---@param context rustaceanvim.neotest.RunContext
+---@param output_content string
+---@return table<string, neotest.Result> results
+function M.populate_pass_positions_cargo_test(results, context, output_content)
+  -- NOTE: ignore ANSI character for ok, if present: ^[[32mok^[[0;10m
+  for test_name in output_content:gmatch('\ntest%s+([^\n]-)%s+%.%.%.%s+\27?%[?[0-9;]-m?ok\27?%[?[0-9;]-m?\r?\n') do
+    results[trans.get_position_id(context.file, test_name)] = {
+      status = 'passed',
+    }
+  end
   return results
 end
 
