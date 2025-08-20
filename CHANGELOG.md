@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.8.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.7.0...v6.8.0) (2025-08-20)
+
+
+### Features
+
+* **tests:** support nextest junit + enable colour output ([#838](https://github.com/mrcjkb/rustaceanvim/issues/838)) ([8491e1b](https://github.com/mrcjkb/rustaceanvim/commit/8491e1be690a135c0cad7ab375fa77f5e9c304a6))
+
 ## [6.7.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.6.0...v6.7.0) (2025-08-06)
 
 
