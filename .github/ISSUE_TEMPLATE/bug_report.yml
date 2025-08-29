@@ -1,20 +1,20 @@
 name: Bug Report
-description: |
-  Report a problem with rustaceanvim
-
-  > [!WARNING]
-  >
-  > **Low effort issues will be closed!**
-  >
-  > Please read the checklist items carefully before marking them as done.
-  > I cannot bisect your plugins and config for you!
+description: Report a problem with rustaceanvim
 labels: [bug]
 body:
 
   - type: checkboxes
     attributes:
       label: Have you read the docs and searched existing issues?
-      description: Please check all of the below that are applicable before submitting an issue.
+      description: |
+        Please check all of the below that are applicable before submitting an issue.
+        
+        > [!WARNING]
+        >
+        > **Low effort issues will be closed!**
+        >
+        > Please read the checklist items carefully before marking them as done.
+        > I cannot bisect your plugins and config for you!
       options:
         - label: I have read [the README's troubleshooting guide](https://github.com/mrcjkb/rustaceanvim/blob/master/README.md#stethoscope-troubleshooting) and FAQ(https://github.com/mrcjkb/rustaceanvim?tab=readme-ov-file#left_speech_bubble-faq).
           required: true
