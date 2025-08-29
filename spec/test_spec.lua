@@ -23,8 +23,8 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
     local expected = {
       {
         bufnr = 0,
-        lnum = 86,
-        end_lnum = 86,
+        lnum = 85,
+        end_lnum = 85,
         col = 64,
         end_col = 64,
         message = [[
