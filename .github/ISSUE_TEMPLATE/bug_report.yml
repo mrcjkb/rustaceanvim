@@ -1,5 +1,13 @@
 name: Bug Report
-description: Report a problem with rustaceanvim
+description: |
+  Report a problem with rustaceanvim
+
+  > [!WARNING]
+  >
+  > **Low effort issues will be closed!**
+  >
+  > Please read the checklist items carefully before marking them as done.
+  > I cannot bisect your plugins and config for you!
 labels: [bug]
 body:
 
