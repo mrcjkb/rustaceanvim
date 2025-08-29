@@ -31,13 +31,15 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
   for failure_content, test_id, lnum, col in
     output:gmatch("(thread '([^']+)' panicked at [^:]+:(%d+):(%d+):%s-\n.-\n)\n")
   do
+    local diagnostic_lnum = tonumber(lnum) - 1
+    local diagnostic_col = tonumber(col) or 0
     table.insert(diagnostics, {
       bufnr = bufnr,
       test_id = test_id,
-      lnum = tonumber(lnum),
-      end_lnum = tonumber(lnum),
-      col = tonumber(col),
-      end_col = tonumber(col),
+      lnum = diagnostic_lnum,
+      end_lnum = diagnostic_lnum,
+      col = diagnostic_col,
+      end_col = diagnostic_col,
       message = remove_ansi_codes(unescape_html(failure_content)),
       source = 'rustaceanvim',
       severity = vim.diagnostic.severity.ERROR,
