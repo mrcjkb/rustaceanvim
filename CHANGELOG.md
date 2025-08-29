@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.9.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.8.0...v6.9.0) (2025-08-29)
+
+
+### Features
+
+* **neotest:** exclude snapbox tests that update ([9394fb6](https://github.com/mrcjkb/rustaceanvim/commit/9394fb652d20209c5b1ef1aece1dfc6b43bc87b3))
+* **test:** remove ansi codes from diagnostics ([0ad4cbd](https://github.com/mrcjkb/rustaceanvim/commit/0ad4cbd4d5e47de3f7f8dabdfe1c07b9236c9035))
+
+
+### Bug Fixes
+
+* **neotest:** positions lost when rust-analyzer returns duplicate namespaces ([558f7c9](https://github.com/mrcjkb/rustaceanvim/commit/558f7c97585b5af249544729f0d577f49304f1f3))
+* **test:** correct diagnostic position ([426b5ed](https://github.com/mrcjkb/rustaceanvim/commit/426b5edb31a3cdd34a390f501a4d221565776632))
+
 ## [6.8.0](https://github.com/mrcjkb/rustaceanvim/compare/v6.7.0...v6.8.0) (2025-08-20)
 
 
