@@ -90,6 +90,8 @@ that are specific to rust-analyzer.
 
 ## :inbox_tray: Installation
 
+[![Packaging status](https://repology.org/badge/vertical-allrepos/lua%3Arustaceanvim.svg?exclude_unsupported=1)](https://repology.org/project/lua%3Arustaceanvim/versions)
+
 ### [`rocks.nvim`](https://github.com/nvim-neorocks/rocks.nvim)
 
 ```vim
