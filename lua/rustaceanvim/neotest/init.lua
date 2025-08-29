@@ -116,7 +116,16 @@ NeotestAdapter.discover_positions = function(file_path)
   end
 
   local max_end_row = 0
-  for _, runnable in pairs(runnables) do
+  for runnable in
+    vim
+      .iter(runnables)
+      ---@param runnable rustaceanvim.RARunnable
+      :filter(function(runnable)
+        -- Exclude snapshot tests that overwrite snapshots
+        local snapshots = vim.tbl_get(runnable, 'args', 'environment', 'SNAPSHOTS')
+        return snapshots ~= 'overwrite'
+      end)
+  do
     local pos = trans.runnable_to_position(file_path, runnable)
     if pos then
       max_end_row = math.max(max_end_row, pos.range[3])
