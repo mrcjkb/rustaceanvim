@@ -2,10 +2,22 @@ local M = {}
 
 -- Function to escape HTML special characters in a string
 ---@param input string The string to escape
----@return string The escaped string
+---@return string input The escaped string
 ---@return integer count
 local function unescape_html(input)
   return input:gsub('&amp;', '&'):gsub('&lt;', '<'):gsub('&gt;', '>'):gsub('&quot;', '"'):gsub('&apos;', "'")
+end
+
+---@param input string The string to remove ansi codes from
+---@return string input
+local function remove_ansi_codes(input)
+  local result = input
+    :gsub('\27%[%d+;%d+;%d+;%d+;%d+m', '')
+    :gsub('\27%[%d+;%d+;%d+;%d+m', '')
+    :gsub('\27%[%d+;%d+;%d+m', '')
+    :gsub('\27%[%d+;%d+m', '')
+    :gsub('\27%[%d+m', '')
+  return result
 end
 
 ---@param output string
@@ -26,7 +38,7 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
       end_lnum = tonumber(lnum),
       col = tonumber(col),
       end_col = tonumber(col),
-      message = unescape_html(failure_content),
+      message = remove_ansi_codes(unescape_html(failure_content)),
       source = 'rustaceanvim',
       severity = vim.diagnostic.severity.ERROR,
     })
@@ -45,7 +57,7 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
         end_lnum = diagnostic_lnum,
         col = diagnostic_col,
         end_col = diagnostic_col,
-        message = unescape_html(message),
+        message = remove_ansi_codes(unescape_html(message)),
         source = 'rustaceanvim',
         severity = vim.diagnostic.severity.ERROR,
       }
@@ -74,7 +86,7 @@ function M.parse_nextest_diagnostics(junit_xml, bufnr)
       end_lnum = tonumber(lnum),
       col = tonumber(col),
       end_col = tonumber(col),
-      message = unescape_html(failure_content),
+      message = remove_ansi_codes(unescape_html(failure_content)),
       source = 'rustaceanvim',
       severity = vim.diagnostic.severity.ERROR,
     })
