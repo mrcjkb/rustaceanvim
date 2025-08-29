@@ -130,15 +130,17 @@ NeotestAdapter.discover_positions = function(file_path)
 
   ---@type { [string]: neotest.Position }
   local tests_by_name = {}
-  ---@type rustaceanvim.neotest.Position[]
+  ---@type table<string, rustaceanvim.neotest.Position>
   local namespaces = {}
   for _, pos in pairs(positions) do
     if pos.type == 'test' then
       tests_by_name[pos.name] = pos
     elseif pos.type == 'namespace' then
-      table.insert(namespaces, pos)
+      namespaces[pos.id] = pos
     end
   end
+  namespaces = vim.tbl_values(namespaces)
+  ---@cast namespaces rustaceanvim.neotest.Position[]
 
   -- sort namespaces by name from longest to shortest
   table.sort(namespaces, function(a, b)
@@ -398,7 +400,6 @@ function NeotestAdapter.results(spec, strategy_result)
     local failure_diagnostic = vim.iter(diagnostics):find(function(diag)
       return vim.endswith(data.id, diag.test_id)
     end)
-
     if failure_diagnostic then
       results[data.id] = {
         status = 'failed',
