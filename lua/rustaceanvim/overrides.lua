@@ -55,17 +55,16 @@ local function partition_executable_args(arg_list)
   return before, after
 end
 
----Transforms the args to cargo-nextest args if it is detected.
----Mutates command!
+---Transforms test args to cargo-nextest args if it is detected.
 ---@param args string[]
-function M.try_nextest_transform(args)
-  if vim.fn.executable('cargo-nextest') ~= 1 then
+---@return string[] args
+function M.maybe_nextest_transform(args)
+  if vim.fn.executable('cargo-nextest') ~= 1 or args[1] ~= 'test' then
     return args
   end
-  if args[1] == 'test' then
-    args[1] = 'run'
-    table.insert(args, 1, 'nextest')
-  end
+  args = vim.deepcopy(args)
+  args[1] = 'run'
+  table.insert(args, 1, 'nextest')
   local nextest_args, executable_args = partition_executable_args(args)
 
   -- specify custom profile for junit output

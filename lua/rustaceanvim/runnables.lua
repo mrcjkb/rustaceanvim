@@ -86,7 +86,7 @@ function M.get_command(runnable)
     and not config.tools.cargo_override
     and not vim.startswith(runnable.label, 'doctest')
   then
-    ret = overrides.try_nextest_transform(ret)
+    ret = overrides.maybe_nextest_transform(ret)
   end
 
   return config.tools.cargo_override or 'cargo', ret, dir, env
