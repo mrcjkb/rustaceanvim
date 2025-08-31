@@ -122,8 +122,7 @@ NeotestAdapter.discover_positions = function(file_path)
       ---@param runnable rustaceanvim.RARunnable
       :filter(function(runnable)
         -- Exclude snapshot tests that overwrite snapshots
-        local snapshots = vim.tbl_get(runnable, 'args', 'environment', 'SNAPSHOTS')
-        return snapshots ~= 'overwrite'
+        return runnable.label:match('Update%sTests') == nil
       end)
   do
     local pos = trans.runnable_to_position(file_path, runnable)
