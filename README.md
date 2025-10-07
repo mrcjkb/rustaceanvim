@@ -996,6 +996,7 @@ you won't see any Cargo diagnostics.
   [`neotest`](https://github.com/nvim-neotest/neotest)
   adapter for Rust, using [`cargo-nextest`](https://nexte.st/).
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
+  Neovim plugin that helps managing crates.io dependencies
 - [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim)
   Geared towards people who prefer manual LSP client configuration.
   Has some features that have not yet
