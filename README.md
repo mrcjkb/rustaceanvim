@@ -988,8 +988,12 @@ you won't see any Cargo diagnostics.
 
 ## :link: Related Projects
 
+- [`cordx56/rustowl`](https://github.com/cordx56/rustowl)
+  Language server to visualize ownership and lifetimes
+  for debugging and optimization.
+  Comes with a Neovim plugin.
 - [`rouge8/neotest-rust`](https://github.com/rouge8/neotest-rust)
-  A [`neotest`](https://github.com/nvim-neotest/neotest)
+  [`neotest`](https://github.com/nvim-neotest/neotest)
   adapter for Rust, using [`cargo-nextest`](https://nexte.st/).
 - [`Saecki/crates.nvim`](https://github.com/Saecki/crates.nvim)
 - [`vxpm/ferris.nvim`](https://github.com/vxpm/ferris.nvim)
