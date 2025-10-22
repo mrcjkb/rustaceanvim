@@ -45,12 +45,47 @@ local function override_tbl_values(tbl, json_key, json_value)
   tbl_set(nil, tbl, keys, json_value)
 end
 
+---@param val string
+---@return string
+local function expand_env_str(val)
+  local out = val
+  while true do
+    local first, second, varname = string.find(out, '%${?([%w_-]+)}?')
+    if varname == nil then break end
+    out = string.sub(out, 0, first - 1) .. (os.getenv(varname) or '') .. string.sub(out, second + 1, -1)
+  end
+  return out
+end
+
+---@param tbl table
+---@return table
+local function expand_table(tbl)
+  for key, value in pairs(tbl) do
+    local valty = type(value)
+    if valty == 'string' then
+      if string.sub(value, 1, 1) == '~' then
+        value = (os.getenv('HOME') or '') .. string.sub(value, 2, -1)
+      end
+      tbl[key] = expand_env_str(value)
+    elseif valty == 'table' then
+      tbl[key] = expand_table(value)
+    end
+  end
+  return tbl
+end
+
 ---@param json_content string
 ---@return table
 function M.silent_decode(json_content)
   warnings = {}
   errors = {}
-  local ok, json_tbl = pcall(vim.json.decode, json_content)
+  local has_json5, json5 = pcall(require, 'json5')
+  local ok, json_tbl = (function()
+    if has_json5 then
+      return pcall(json5.parse, json_content)
+    end
+    return pcall(vim.json.decode, json_content)
+  end)()
   if not ok or type(json_tbl) ~= 'table' then
     add_error(('Failed to decode json: %s'):format(json_tbl or 'unknown error'))
     return {}
@@ -68,6 +103,11 @@ function M.override_with_json_keys(tbl, json_tbl, key_predicate)
   is_json_config_loaded = true
   for json_key, value in pairs(json_tbl) do
     if not key_predicate or key_predicate(json_key) then
+      if type(value) == 'string' then
+        value = expand_env_str(value)
+      elseif type(value) == 'table' then
+        value = expand_table(value)
+      end
       override_tbl_values(tbl, json_key, value)
     end
   end
