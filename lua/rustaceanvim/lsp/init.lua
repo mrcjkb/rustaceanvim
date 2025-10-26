@@ -164,8 +164,9 @@ M.start = function(bufnr)
   local bufname = vim.api.nvim_buf_get_name(bufnr)
   local ra_config = vim.lsp.config[ra_client_name] or {}
   local client_config = vim.tbl_deep_extend('force', config.server, ra_config)
-  ---@type rustaceanvim.lsp.StartConfig
-  local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
+  --NOTE: We deep copy to prevent shared state between rust-analyzer clients
+  local lsp_start_config = vim.deepcopy(client_config)
+  ---@cast lsp_start_config rustaceanvim.lsp.StartConfig
   cargo.get_config_root_dir(client_config, bufname, function(root_dir)
     if not root_dir then
       vim.notify(
