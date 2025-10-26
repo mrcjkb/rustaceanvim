@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.9.4](https://github.com/mrcjkb/rustaceanvim/compare/v6.9.3...v6.9.4) (2025-10-26)
+
+
+### Bug Fixes
+
+* **lsp:** propagate `reuse_client` from config ([#873](https://github.com/mrcjkb/rustaceanvim/issues/873)) ([b926b95](https://github.com/mrcjkb/rustaceanvim/commit/b926b9524dea1e34f50e26a0749ea11c63f9c1c2))
+
 ## [6.9.3](https://github.com/mrcjkb/rustaceanvim/compare/v6.9.2...v6.9.3) (2025-10-26)
 
 
