@@ -156,6 +156,7 @@ end
 ---@field on_init function
 ---@field on_attach function
 ---@field on_exit function
+---@field reuse_client function
 
 --- Start or attach the LSP client
 ---@param bufnr? number The buffer number (optional), defaults to the current buffer
@@ -301,7 +302,10 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
       vim.tbl_get(lsp_start_config.settings, 'rust-analyzer') or {}
     )
 
-    return vim.lsp.start(lsp_start_config, { bufnr = bufnr })
+    return vim.lsp.start(lsp_start_config, {
+      bufnr = bufnr,
+      reuse_client = lsp_start_config.reuse_client,
+    })
   end)
 end
 
