@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.9.6](https://github.com/mrcjkb/rustaceanvim/compare/v6.9.5...v6.9.6) (2025-10-27)
+
+
+### Bug Fixes
+
+* **testables:** support --nocapture when using nextest ([#877](https://github.com/mrcjkb/rustaceanvim/issues/877)) ([ee99f79](https://github.com/mrcjkb/rustaceanvim/commit/ee99f7936289d818d757c94c5b550bdfa037242d))
+
 ## [6.9.5](https://github.com/mrcjkb/rustaceanvim/compare/v6.9.4...v6.9.5) (2025-10-27)
 
 
