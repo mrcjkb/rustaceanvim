@@ -73,7 +73,8 @@ function M.maybe_nextest_transform(args)
   table.insert(nextest_args, '--config-file')
   table.insert(nextest_args, require('rustaceanvim.cache').nextest_config_path())
 
-  -- tranform `-- test_something --exact` into `-E 'test("test_something")'`
+  -- tranform:
+  -- - `-- --exact foo` -> `-- foo`
   for i = 1, #executable_args do
     if executable_args[i] == '--exact' then
       local test_name = executable_args[i - 1]
