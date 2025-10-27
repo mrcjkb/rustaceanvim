@@ -39,8 +39,8 @@
 ---Notes:
 ---
 --- - `vim.g.rustaceanvim` can also be a function that returns a |rustaceanvim.Opts| table.
---- - You can also configure rust-analyzer using a `.vscode/settings.json` file
----   or via |vim.lsp.config| (using the `'rust-analyzer'` key).
+--- - You can also configure the rust-analyzer LSP client using a `.vscode/settings.json` file
+---   or via |vim.lsp.config()| (using the `'rust-analyzer'` key).
 ---
 ---@brief ]]
 
@@ -55,10 +55,13 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---@field tools? rustaceanvim.tools.Opts
 ---
 ---Language server client options.
----These can also be set using |vim.lsp.config()| for "rust-analyzer" or "*".
+---Some fields can also be set using |vim.lsp.config()| for "rust-analyzer" or "*".
 ---If both the `server` table and a `vim.lsp.config["rust-analyzer"]` are defined,
 ---rustaceanvim merges |vim.lsp.config()| settings into the `server` table,
 ---giving them precedence over existing settings.
+---Note that |vim.lsp.config()| expects a |vim.lsp.ClientConfig|.
+---Although you can also pass in |rustaceanvim.lsp.ClientOpts|, doing so is not
+-- officially supported and may not be possible in the future.
 ---@field server? rustaceanvim.lsp.ClientOpts
 ---
 ---Debug adapter options
