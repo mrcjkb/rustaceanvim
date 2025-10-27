@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.9.5](https://github.com/mrcjkb/rustaceanvim/compare/v6.9.4...v6.9.5) (2025-10-27)
+
+
+### Bug Fixes
+
+* **lsp:** config still overwritten by multiple clients ([#875](https://github.com/mrcjkb/rustaceanvim/issues/875)) ([7e2963d](https://github.com/mrcjkb/rustaceanvim/commit/7e2963d0556fe78c8f2765a174518bc114c5b1a5))
+
 ## [6.9.4](https://github.com/mrcjkb/rustaceanvim/compare/v6.9.3...v6.9.4) (2025-10-26)
 
 
