@@ -36,7 +36,7 @@ describe('nextest', function()
       'tests::my_test_target',
       '--',
       'foo',
-      '--exact'
+      '--exact',
     }
     local transformed_args = maybe_nextest_transform(args)
     assert.False(vim.tbl_contains(transformed_args, '--exact'))
@@ -47,9 +47,50 @@ describe('nextest', function()
       'test',
       'tests::my_test_target',
       '--',
-      '--show-output'
+      '--show-output',
     }
     local transformed_args = maybe_nextest_transform(args)
     assert.False(vim.tbl_contains(transformed_args, '--show-output'))
+  end)
+  describe('`-- foo --nocapture` -> `--nocapture -- foo`', function()
+    local args = {
+      'test',
+      'tests::my_test_target',
+      '--',
+      'foo',
+      '--nocapture',
+    }
+    local transformed_args = maybe_nextest_transform(args)
+    assert.are.same({
+      'nextest',
+      'run',
+      'tests::my_test_target',
+      '--profile',
+      'rustaceanvim',
+      '--config-file',
+      require('rustaceanvim.cache').nextest_config_path(),
+      '--nocapture',
+      '--',
+      'foo',
+    }, transformed_args)
+  end)
+  describe('`-- --nocapture` -> `--nocapture`', function()
+    local args = {
+      'test',
+      'tests::my_test_target',
+      '--',
+      '--nocapture',
+    }
+    local transformed_args = maybe_nextest_transform(args)
+    assert.are.same({
+      'nextest',
+      'run',
+      'tests::my_test_target',
+      '--profile',
+      'rustaceanvim',
+      '--config-file',
+      require('rustaceanvim.cache').nextest_config_path(),
+      '--nocapture',
+    }, transformed_args)
   end)
 end)

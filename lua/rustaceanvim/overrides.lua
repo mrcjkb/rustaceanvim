@@ -85,20 +85,34 @@ function M.maybe_nextest_transform(args)
     end
   end
 
+  -- these flags are unsupported by cargo-nextest and should be removed.
+  ---@type table<string, true>
   local nextest_unsupported_flags = {
-    '--show-output',
+    ['--show-output'] = true,
+  }
+  -- cargo test passes these flags to the test executable,
+  -- while cargo-nextest expects them to be passed to the test runner executable.
+  ---@type table<string, true>
+  local move_to_nextest_args_flags = {
+    ['--nocapture'] = true,
   }
   local indexes_to_remove_reverse_order = {}
   for i, arg in ipairs(executable_args) do
-    if vim.list_contains(nextest_unsupported_flags, arg) then
+    if nextest_unsupported_flags[arg] then
       table.insert(indexes_to_remove_reverse_order, 1, i)
+    end
+    if move_to_nextest_args_flags[arg] then
+      table.insert(indexes_to_remove_reverse_order, 1, i)
+      table.insert(nextest_args, arg)
     end
   end
   for _, i in pairs(indexes_to_remove_reverse_order) do
     table.remove(executable_args, i)
   end
 
-  table.insert(nextest_args, '--')
+  if #executable_args > 0 then
+    table.insert(nextest_args, '--')
+  end
   for _, v in ipairs(executable_args) do
     table.insert(nextest_args, v)
   end
