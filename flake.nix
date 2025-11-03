@@ -1,5 +1,5 @@
 {
-  description = "A fork setup-less and lspconfig-free of rust-tools.nvim";
+  description = "Supercharge your Rust experience in Neovim";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -11,14 +11,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    neorocks = {
-      url = "github:nvim-neorocks/neorocks";
-      inputs = {
-        flake-parts.follows = "flake-parts";
-        git-hooks.follows = "git-hooks";
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     gen-luarc = {
       url = "github:mrcjkb/nix-gen-luarc-json";
@@ -44,7 +37,6 @@
     nixpkgs,
     flake-parts,
     git-hooks,
-    neorocks,
     gen-luarc,
     vimcats,
     ...
@@ -65,15 +57,13 @@
         git-hooks.flakeModule
       ];
       perSystem = {
-        config,
         system,
         pkgs,
         ...
       }: let
-        ci-overlay = import ./nix/ci-overlay.nix {
-          inherit self;
-          plugin-name = name;
-        };
+        neovim-nightly = inputs.neovim-nightly-overlay.packages.${system}.default;
+
+        ci-overlay = import ./nix/ci-overlay.nix {inherit neovim-nightly;};
 
         luarc-plugins = with pkgs.lua51Packages;
           [
@@ -85,7 +75,7 @@
           ]);
 
         luarc-nightly = pkgs.mk-luarc {
-          nvim = pkgs.neovim-nightly;
+          nvim = neovim-nightly;
           plugins = luarc-plugins;
         };
 
@@ -148,27 +138,23 @@
           };
         };
 
-        devShell = pkgs.nvim-nightly-tests.overrideAttrs (oa: {
+        devShell = pkgs.mkShell {
           name = "rustaceanvim devShell";
           shellHook = ''
             ${pre-commit-check.shellHook}
-            ln -fs ${pkgs.luarc-to-json luarc-nightly} .luarc.json
           '';
-          buildInputs = with git-hooks.packages.${system};
-            [
-              pkgs.statix
-              pkgs.nixd
-              alejandra
-              lua-language-server
-              stylua
-              luacheck
-              editorconfig-checker
-              markdownlint-cli
-              docgen
-            ]
-            ++ oa.buildInputs;
-          doCheck = false;
-        });
+          buildInputs = with git-hooks.packages.${system}; [
+            pkgs.lux-cli
+            pkgs.statix
+            pkgs.nixd
+            alejandra
+            lua-language-server
+            stylua
+            editorconfig-checker
+            markdownlint-cli
+            docgen
+          ];
+        };
 
         docgen = pkgs.callPackage ./nix/docgen.nix {inherit vimcats;};
       in {
@@ -176,7 +162,6 @@
           inherit system;
           overlays = [
             ci-overlay
-            neorocks.overlays.default
             gen-luarc.overlays.default
             plugin-overlay
           ];
@@ -203,11 +188,6 @@
           inherit
             type-check-stable
             type-check-nightly
-            ;
-          inherit
-            (pkgs)
-            nvim-stable-tests
-            nvim-nightly-tests
             ;
         };
       };

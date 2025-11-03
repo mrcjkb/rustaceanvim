@@ -33,15 +33,9 @@ which are checked in CI.
 
 ### Running tests
 
-This plugin uses [`busted`](https://lunarmodules.github.io/busted/) for testing.
+This plugin uses [`lux`](https://lux.lumen-labs.org) for testing.
 
-The best way to run tests is with Nix (see below),
-because this includes tests that take different
-envrionments into account (e.g. with/without `rust-analyzer`, `cargo`, ...).
-
-If you do not use Nix, you can run a basic version of the test suite using
-`luarocks test`.
-For more information, see the [neorocks tutorial](https://github.com/nvim-neorocks/neorocks#without-neolua).
+Run `lx test` to run the test suite.
 
 ### Vimdoc/tags
 
