@@ -9,8 +9,8 @@
     }:
       buildLuarocksPackage {
         pname = name;
-        version = "scm-1";
-        knownRockspec = "${self}/rustaceanvim-scm-1.rockspec";
+        version = "dev-1";
+        knownRockspec = "${self}/rustaceanvim-dev-1.rockspec";
         src = self;
         disabled = luaOlder "5.1";
       }) {};
