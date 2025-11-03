@@ -1,0 +1,47 @@
+name: Tests
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    name: ${{ matrix.job.target }} - Neovim ${{ matrix.nvim-version }}
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { os: ubuntu-24.04, target: x86_64-linux }
+        nvim-version:
+          - stable
+          - nightly
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install MSVC Compiler Toolchain
+        uses: ilammy/msvc-dev-cmd@v1
+        if: endsWith(matrix.job.target, '-msvc')
+
+      - name: Setup Neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.nvim-version }}
+
+      - name: Install Lux
+        uses: lumen-oss/gh-actions-lux@v1
+        with:
+          version: 0.18.11
+
+      - name: Run tests
+        run: |
+          lx --nvim test
+
+      # TODO: Not stable in Lux yet.
+      # For now, we use Nix for type checking
+      # - name: Type checks
+      #   run: |
+      #     lx --nvim check
+

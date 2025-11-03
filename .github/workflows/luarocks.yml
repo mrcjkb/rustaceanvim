@@ -4,29 +4,22 @@ on:
   push:
     tags:
       - "*"
-  release:
-    types:
-      - created
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   luarocks-release:
-    runs-on: ubuntu-latest
-    name: LuaRocks upload
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Lux
+        uses: lumen-oss/gh-actions-lux@v1
         with:
-          fetch-depth: 0 # Required to count the commits
-      - name: Get Version
-        run: echo "LUAROCKS_VERSION=$(git describe --abbrev=0 --tags)" >> $GITHUB_ENV
-      - name: LuaRocks Upload
-        uses: nvim-neorocks/luarocks-tag-release@v7
+          version: 0.18.11
+
+      - name: Upload
+        run: |
+          lx --nvim upload
         env:
-          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
-        with:
-          version: ${{ env.LUAROCKS_VERSION }}
-          detailed_description: |
-            This plugin automatically configures the rust-analyzer builtin LSP client
-            and integrates with other Rust tools. See the README's #features section
-            for more info.
+          LUX_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}

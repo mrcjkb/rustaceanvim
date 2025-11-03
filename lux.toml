@@ -1,0 +1,18 @@
+package = "rustaceanvim"
+lua = "==5.1"
+
+[source]
+url = "https://github.com/mrcjkb/$(PACKAGE)/archive/refs/tags/v$(VERSION).zip"
+dev = "git+https://github.com/mrcjkb/$(PACKAGE).git"
+
+[description]
+summary = "🦀 Supercharge your Rust experience in Neovim! A heavily modified fork of rust-tools.nvim"
+maintainer = "mrcjkb"
+labels = [ "dap", "debug-adapter-protocol", "language-server-protocol", "lsp", "neovim", "nvim", "plugin", "rust", "rust-analyzer", "rust-lang", "rust-tools" ]
+license = "GPL-2.0-only"
+
+[build]
+type = "builtin"
+
+[test]
+type = "busted-nlua"

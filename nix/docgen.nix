@@ -6,7 +6,7 @@
 pkgs.writeShellApplication {
   name = "docgen";
   runtimeInputs = [
-    vimcats.packages.${pkgs.system}.default
+    vimcats.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
   text = ''
     mkdir -p doc
