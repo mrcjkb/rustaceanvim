@@ -67,30 +67,43 @@ local function get_cargo_args_from_runnables_args(runnable_args)
   return cargo_args
 end
 
----@param callback fun(commit_hash:string)
+---@type string
+local rustc_commit_hash
+
+---@param callback fun(rustc_commit_hash:string)
 local function get_rustc_commit_hash(callback)
+  if rustc_commit_hash then
+    return callback(rustc_commit_hash)
+  end
   vim.system({ 'rustc', '--version', '--verbose' }, nil, function(sc)
     ---@cast sc vim.SystemCompleted
     local result = sc.stdout
     if sc.code ~= 0 or result == nil then
       return
     end
-    local commit_hash = result:match('commit%-hash:%s+([^\n]+)')
-    if not commit_hash then
-      return
+    rustc_commit_hash = result:match('commit%-hash:%s+([^\n]+)')
+    if rustc_commit_hash then
+      callback(rustc_commit_hash)
     end
-    callback(commit_hash)
   end)
 end
 
+---@type string
+local rustc_sysroot
+
+---@param callback fun(rustc_sysroot:string)
 local function get_rustc_sysroot(callback)
+  if rustc_sysroot then
+    return callback(rustc_sysroot)
+  end
   vim.system({ 'rustc', '--print', 'sysroot' }, nil, function(sc)
     ---@cast sc vim.SystemCompleted
     local result = sc.stdout
     if sc.code ~= 0 or result == nil then
       return
     end
-    callback((result:gsub('\n$', '')))
+    rustc_sysroot = result:gsub('\n$', '')
+    callback(rustc_sysroot)
   end)
 end
 
@@ -132,10 +145,10 @@ local function generate_source_map(workspace_root)
     return
   end
   get_rustc_commit_hash(function(commit_hash)
-    get_rustc_sysroot(function(rustc_sysroot)
+    get_rustc_sysroot(function(sysroot)
       local src_path
       for _, src_dir in pairs { 'src', 'rustc-src' } do
-        src_path = vim.fs.joinpath(rustc_sysroot, 'lib', 'rustlib', src_dir, 'rust')
+        src_path = vim.fs.joinpath(sysroot, 'lib', 'rustlib', src_dir, 'rust')
         if vim.uv.fs_stat(src_path) then
           break
         end
@@ -160,8 +173,8 @@ local function get_lldb_commands(workspace_root)
   if not workspace_root or init_commands[workspace_root] then
     return
   end
-  get_rustc_sysroot(function(rustc_sysroot)
-    local script = vim.fs.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_lookup.py')
+  get_rustc_sysroot(function(sysroot)
+    local script = vim.fs.joinpath(sysroot, 'lib', 'rustlib', 'etc', 'lldb_lookup.py')
     if not vim.uv.fs_stat(script) then
       return
     end
