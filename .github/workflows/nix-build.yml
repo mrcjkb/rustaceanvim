@@ -15,7 +15,7 @@ jobs:
       with:
         name: mrcjkb
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - run: nix flake check -L
+    - run: nix flake check -Lv
 
   shell:
     runs-on: ubuntu-latest

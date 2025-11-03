@@ -4,3 +4,4 @@ result-*
 .luarc.json
 .repro
 .pre-commit-config.yaml
+.lux
