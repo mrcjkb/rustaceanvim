@@ -1,10 +1,17 @@
 {
+  "diagnostics": {
+    "enable": true,
+    "disable": [
+      "annotation-usage-error"
+    ]
+  },
   "workspace": {
     "library": [
       "$VIMRUNTIME",
       ".lux/5.1/test_dependencies/5.1/01a3c364614bddff7370223a5a9c4580f8e62d144384148444c518ec5367a59b-mediator_lua@1.1.2-0/src",
       ".lux/5.1/test_dependencies/5.1/287e827f4a088d41bba04af5f61a13614346c16fe8150eb7c4246e67d6fd163e-lua-term@0.8-1/src",
       ".lux/5.1/test_dependencies/5.1/316ac0b30e04e86a253d64886f3b110bd0508267474e6b58a3b973bd6857dbf4-penlight@1.14.0-3/src",
+      ".lux/5.1/test_dependencies/5.1/36c63cd0c043eb0fbc7d5ecd75907926b7136414cef7703dcd5784a61e6a728e-nvim-dap@0.10.0-1/src",
       ".lux/5.1/test_dependencies/5.1/455cd98d50c6191a9685cffcda4ce783efbb957934625e134c39f43bd5df6818-luassert@1.9.0-1/src",
       ".lux/5.1/test_dependencies/5.1/47b12edcdc032232157ace97bddf34bddd17f6f458095885e62bbd602ad9e9ec-luasystem@0.6.3-1/src",
       ".lux/5.1/test_dependencies/5.1/4e9592a499c9ced4f8ce366db9db7d9c0dd1424ea8d4c8c16c1550ea3a61a696-say@1.4.1-3/src",
@@ -12,8 +19,12 @@
       ".lux/5.1/test_dependencies/5.1/6ce29c2c535c40246c386c056f24689344cddb56ec397473931431e6b67694d2-say@1.4.1-3/src",
       ".lux/5.1/test_dependencies/5.1/832fd9862ce671c0c9777855d4c8b19f9ad9c2679fb5466c3a183785a51b76b0-luafilesystem@1.8.0-1/src",
       ".lux/5.1/test_dependencies/5.1/a6c5176043cb3de56336b7de119443dbb3d9e024be1d50e06289ad4b4959a2da-lua_cliargs@3.0.2-1/src",
+      ".lux/5.1/test_dependencies/5.1/acdfde00d122aac481c18c906d483478bb536741beb025becc11782a075d125b-luassert@1.9.0-1/src",
+      ".lux/5.1/test_dependencies/5.1/b54df892b93931d9062f7bb8887a2ae7e6ce116e50d9aca0cf690256d7ac05b6-neotest@5.13.1-1/src",
       ".lux/5.1/test_dependencies/5.1/d85464dc58c62460a1ecb14e6ac773ae615a66a8224b26ceb25d954c6b05ca74-nlua@0.3.2-1/src",
-      ".lux/5.1/test_dependencies/5.1/e4f17b9e67313bbd5e90f425672fc8998dd0bfa43335f7c57ed2de7a799e07a6-dkjson@2.8-1/src"
+      ".lux/5.1/test_dependencies/5.1/de206edd51dbfc1bbe56869d6729cf4a6e6e70e7b2e107093c0f6520c142d79b-nvim-nio@1.10.1-1/src",
+      ".lux/5.1/test_dependencies/5.1/e4f17b9e67313bbd5e90f425672fc8998dd0bfa43335f7c57ed2de7a799e07a6-dkjson@2.8-1/src",
+      ".lux/5.1/test_dependencies/5.1/e6419c49ea30f1be0576a4def3982181470d4f3961a28360a17aa9396db68ff2-plenary.nvim@scm-1/src"
     ]
   }
 }

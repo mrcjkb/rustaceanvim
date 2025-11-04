@@ -16,3 +16,7 @@ type = "builtin"
 
 [test]
 type = "busted-nlua"
+
+[test_dependencies]
+nvim-dap = "0.10.0-1"
+neotest = "5.13.1-1"

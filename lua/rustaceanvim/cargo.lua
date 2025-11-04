@@ -47,10 +47,10 @@ local function get_cargo_metadata(path, callback)
     end)
   else
     local sc = vim
-      .system(cmd, {
-        cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
-      })
-      :wait()
+        .system(cmd, {
+          cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
+        })
+        :wait()
     return on_exit(sc)
   end
 end
@@ -74,11 +74,11 @@ local function default_get_root_dir(file_name, callback)
   ---@return string | nil root_dir
   local function root_dir(cargo_crate_dir, cargo_metadata)
     return cargo_metadata and cargo_metadata.workspace_root
-      or cargo_crate_dir
-      or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
-        upward = true,
-        path = path,
-      })[1])
+        or cargo_crate_dir
+        or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
+          upward = true,
+          path = path,
+        })[1])
   end
   if callback then
     get_cargo_metadata(path, function(cargo_crate_dir, cargo_metadata)
@@ -107,7 +107,8 @@ local function get_mb_active_client_root(file_name)
     item = os.normalize_path_on_windows(item)
     if file_name:sub(1, #item) == item then
       local clients = rust_analyzer.get_active_rustaceanvim_clients()
-      return clients and #clients > 0 and clients[#clients].config.root_dir or nil
+      local client = clients[#clients]
+      return client and client.config.root_dir or nil
     end
   end
 end
