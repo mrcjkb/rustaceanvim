@@ -56,8 +56,11 @@ local function get_visual_selected_range()
   return make_lsp_position(row1, math.min(col1, col2), row1, math.max(col1, col2))
 end
 
----@type lsp.Handler
-local function handler(_, result, _)
+---@param _err lsp.ResponseError?
+---@param result unknown
+---@param _context lsp.HandlerContext
+---@diagnostic disable-next-line: unused-local
+local function handler(_err, result, _context)
   if not (result and result.contents) then
     return
   end

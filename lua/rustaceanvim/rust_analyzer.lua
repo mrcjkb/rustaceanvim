@@ -48,6 +48,13 @@ M.get_active_rustaceanvim_clients = function(bufnr, filter)
   return clients
 end
 
+---@param bufnr number | nil 0 for the current buffer, `nil` for no buffer filter
+---@param filter? rustaceanvim.lsp.get_clients.Filter
+---@return vim.lsp.Client | nil
+M.find_active_rustaceanvim_client = function(bufnr, filter)
+  return M.get_active_rustaceanvim_clients(bufnr, filter)[1]
+end
+
 ---@param method string LSP method name
 ---@param params table|nil Parameters to send to the server
 ---@param handler? lsp.Handler See |lsp-handler|

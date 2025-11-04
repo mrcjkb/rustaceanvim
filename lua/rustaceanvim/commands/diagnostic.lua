@@ -85,14 +85,15 @@ function M.explain_error(cycle_diagnostic)
   end
 
   local diagnostics = vim
-    .iter(vim.diagnostic.get(0, {}))
-    ---@param diagnostic vim.Diagnostic
-    :filter(function(diagnostic)
-      return diagnostic.code ~= nil
-        and diagnostic.source == 'rustc'
-        and diagnostic.severity == vim.diagnostic.severity.ERROR
-    end)
-    :totable()
+      .iter(vim.diagnostic.get(0, {}))
+      :filter(
+      ---@param diagnostic vim.Diagnostic
+        function(diagnostic)
+          return diagnostic.code ~= nil
+              and diagnostic.source == 'rustc'
+              and diagnostic.severity == vim.diagnostic.severity.ERROR
+        end)
+      :totable()
   if #diagnostics == 0 then
     vim.notify('No explainable errors found.', vim.log.levels.INFO)
     return
@@ -185,15 +186,15 @@ function M.explain_error_current_line()
 
   -- get matching diagnostics from current line
   local diagnostics = vim
-    .iter(vim.diagnostic.get(0, {
-      lnum = cursor_position[1] - 1,
-    }))
-    :filter(function(diagnostic)
-      return diagnostic.code ~= nil
-        and diagnostic.source == 'rustc'
-        and diagnostic.severity == vim.diagnostic.severity.ERROR
-    end)
-    :totable()
+      .iter(vim.diagnostic.get(0, {
+        lnum = cursor_position[1] - 1,
+      }))
+      :filter(function(diagnostic)
+        return diagnostic.code ~= nil
+            and diagnostic.source == 'rustc'
+            and diagnostic.severity == vim.diagnostic.severity.ERROR
+      end)
+      :totable()
 
   -- no matching diagnostics on current line
   if #diagnostics == 0 then
@@ -246,7 +247,7 @@ end
 local function render_ansi_code_diagnostic(rendered_diagnostic)
   -- adopted from https://stackoverflow.com/questions/48948630/lua-ansi-escapes-pattern
   local lines =
-    vim.split(rendered_diagnostic:gsub('[\27\155][][()#;?%d]*[A-PRZcf-ntqry=><~]', ''), '\n', { trimempty = true })
+      vim.split(rendered_diagnostic:gsub('[\27\155][][()#;?%d]*[A-PRZcf-ntqry=><~]', ''), '\n', { trimempty = true })
   local float_preview_lines = vim.deepcopy(lines)
   table.insert(float_preview_lines, 1, '---')
   table.insert(float_preview_lines, 1, '1. Open in split')
@@ -298,12 +299,12 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
       vim.api.nvim_feedkeys(
         vim.api.nvim_replace_termcodes(
           '<cmd>lua vim.api.nvim_set_current_win('
-            .. winnr
-            .. ')<CR>'
-            .. [[<c-\><c-n>]]
-            .. '<cmd>lua vim.api.nvim_win_set_cursor('
-            .. winnr
-            .. ',{1,0})<CR>',
+          .. winnr
+          .. ')<CR>'
+          .. [[<c-\><c-n>]]
+          .. '<cmd>lua vim.api.nvim_win_set_cursor('
+          .. winnr
+          .. ',{1,0})<CR>',
           true,
           false,
           true
@@ -318,12 +319,13 @@ end
 ---@param cycle_diagnostic (fun(opts?: vim.diagnostic.JumpOpts): vim.Diagnostic?)
 function M.render_diagnostic(cycle_diagnostic)
   local diagnostics = vim
-    .iter(vim.diagnostic.get(0, {}))
-    ---@param diagnostic vim.Diagnostic
-    :filter(function(diagnostic)
-      return get_rendered_diagnostic(diagnostic) ~= nil
-    end)
-    :totable()
+      .iter(vim.diagnostic.get(0, {}))
+      :filter(
+      ---@param diagnostic vim.Diagnostic
+        function(diagnostic)
+          return get_rendered_diagnostic(diagnostic) ~= nil
+        end)
+      :totable()
   if #diagnostics == 0 then
     vim.notify('No renderable diagnostics found.', vim.log.levels.INFO)
     return
@@ -401,12 +403,13 @@ function M.render_diagnostic_current_line()
   -- get rendered diagnostics from current line
   ---@type string[]
   local rendered_diagnostics = vim
-    .iter(get_diagnostics_current_line())
-    ---@param diagnostic vim.Diagnostic
-    :map(function(diagnostic)
-      return get_rendered_diagnostic(diagnostic)
-    end)
-    :totable()
+      .iter(get_diagnostics_current_line())
+      :map(
+      ---@param diagnostic vim.Diagnostic
+        function(diagnostic)
+          return get_rendered_diagnostic(diagnostic)
+        end)
+      :totable()
 
   -- if no renderable diagnostics on current line
   if #rendered_diagnostics == 0 then
@@ -430,17 +433,18 @@ function M.related_diagnostics()
   end
   ---@type lsp.Location[]
   local locations = vim
-    .iter(get_diagnostics_at_cursor())
-    ---@param diagnostic vim.Diagnostic
-    :map(function(diagnostic)
-      return vim.tbl_get(diagnostic, 'user_data', 'lsp', 'relatedInformation')
-    end)
-    :flatten()
-    ---@param related_info rustaceanvim.diagnostic.RelatedInfo
-    :map(function(related_info)
-      return related_info.location
-    end)
-    :totable()
+      .iter(get_diagnostics_at_cursor())
+      :map(
+      ---@param diagnostic vim.Diagnostic
+        function(diagnostic)
+          return vim.tbl_get(diagnostic, 'user_data', 'lsp', 'relatedInformation')
+        end)
+      :flatten()
+      ---@param related_info rustaceanvim.diagnostic.RelatedInfo
+      :map(function(related_info)
+        return related_info.location
+      end)
+      :totable()
   if #locations == 0 then
     vim.notify('No related diagnostics found.', vim.log.levels.INFO)
     return

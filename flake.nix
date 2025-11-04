@@ -148,7 +148,8 @@
             pkgs.statix
             pkgs.nixd
             alejandra
-            lua-language-server
+            pkgs.emmylua-ls
+            # lua-language-server
             stylua
             editorconfig-checker
             markdownlint-cli
