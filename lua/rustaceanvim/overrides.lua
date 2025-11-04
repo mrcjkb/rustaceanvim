@@ -94,7 +94,7 @@ function M.maybe_nextest_transform(args)
   }
   local indexes_to_remove_reverse_order = {}
   for i, arg in ipairs(executable_args) do
-    if nextest_unsupported_flags[arg] then
+    if nextest_unsupported_flags[arg] ~= nil then
       table.insert(indexes_to_remove_reverse_order, 1, i)
     end
   end

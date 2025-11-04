@@ -5,13 +5,14 @@ local M = {}
 M.DEFAULT_RUSTC_TARGET = 'OS'
 
 ---Local rustc targets cache
+---@type string[] | nil
 local rustc_targets_cache = nil
 
 ---Handles retrieving rustc target architectures and running the passed in callback
 ---to perform certain actions using the retrieved targets.
 ---@param callback fun(targets: string[])
 M.with_rustc_target_architectures = function(callback)
-  if rustc_targets_cache then
+  if rustc_targets_cache ~= nil then
     return callback(rustc_targets_cache)
   end
   vim.system(
@@ -22,7 +23,8 @@ M.with_rustc_target_architectures = function(callback)
       if result.code ~= 0 then
         error('Failed to retrieve rustc targets: ' .. result.stderr)
       end
-      rustc_targets_cache = vim.iter(result.stdout:gmatch('[^\r\n]+')):fold(
+      local stdout = result.stdout or ''
+      rustc_targets_cache = vim.iter(stdout:gmatch('[^\r\n]+')):fold(
         {},
         ---@param acc table<string, boolean>
         ---@param target string

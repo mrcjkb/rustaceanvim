@@ -7,9 +7,8 @@ local function get_test_path(runnable)
   return #executableArgs > 0 and executableArgs[1] or nil
 end
 
----@overload fun(file_path: string, test_path: string | nil)
----@overload fun(file_path: string, runnable: rustaceanvim.RARunnable)
----@return string
+---@overload fun(file_path: string, test_path: string | nil):string
+---@overload fun(file_path: string, runnable: rustaceanvim.RARunnable):string
 function M.get_position_id(file_path, runnable)
   local test_path = runnable
   if type(runnable) == 'table' then

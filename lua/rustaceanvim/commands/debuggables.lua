@@ -104,11 +104,12 @@ local function ui_select_debuggable(debuggables, executableArgsOverride)
   if #options == 0 then
     return
   end
-  vim.ui.select(options, { prompt = 'Debuggables', kind = 'rust-tools/debuggables' }, function(_, choice)
-    if choice == nil then
+  vim.ui.select(options, { prompt = 'Debuggables', kind = 'rust-tools/debuggables' }, function(_, choice_idx)
+    if choice_idx == nil then
       return
     end
-    local args = debuggables[choice].args
+    local choice = debuggables[choice_idx]
+    local args = choice and choice.args
     dap_run(args)
   end)
 end
@@ -120,6 +121,7 @@ local function add_debuggables_to_nvim_dap(debuggables)
     return
   end
   local rt_dap = require('rustaceanvim.dap')
+  dap.configurations = dap.configurations or {}
   dap.configurations.rust = dap.configurations.rust or {}
   -- To prevent parallel 'cargo build" processes, we
   -- iterate over the debuggables using a recursive function.
@@ -153,12 +155,13 @@ local function debug_at_cursor_position(debuggables, executableArgsOverride)
     return
   end
   debuggables = ra_runnables.apply_exec_args_override(executableArgsOverride, debuggables)
-  local choice = ra_runnables.get_runnable_at_cursor_position(debuggables)
-  if not choice then
+  local choice_idx = ra_runnables.get_runnable_at_cursor_position(debuggables)
+  if not choice_idx then
     vim.notify('No debuggable targets found for the current position.', vim.log.levels.ERROR)
     return
   end
-  local args = debuggables[choice].args
+  local choice = debuggables[choice_idx]
+  local args = choice and choice.args
   dap_run(args)
 end
 

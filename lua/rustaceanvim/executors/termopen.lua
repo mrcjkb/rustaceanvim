@@ -4,6 +4,7 @@ local latest_buf_id = nil
 ---@type rustaceanvim.Executor
 local M = {
   execute_command = function(command, args, cwd, opts)
+    opts = opts or {}
     local shell = require('rustaceanvim.shell')
     local ui = require('rustaceanvim.ui')
     local commands = {}

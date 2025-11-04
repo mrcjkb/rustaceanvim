@@ -5,6 +5,9 @@
       "annotation-usage-error"
     ]
   },
+  "runtime": {
+    "version": "Lua 5.1"
+  },
   "workspace": {
     "library": [
       "$VIMRUNTIME",
@@ -14,6 +17,7 @@
       ".lux/5.1/test_dependencies/5.1/36c63cd0c043eb0fbc7d5ecd75907926b7136414cef7703dcd5784a61e6a728e-nvim-dap@0.10.0-1/src",
       ".lux/5.1/test_dependencies/5.1/455cd98d50c6191a9685cffcda4ce783efbb957934625e134c39f43bd5df6818-luassert@1.9.0-1/src",
       ".lux/5.1/test_dependencies/5.1/47b12edcdc032232157ace97bddf34bddd17f6f458095885e62bbd602ad9e9ec-luasystem@0.6.3-1/src",
+      ".lux/5.1/test_dependencies/5.1/4beffe8f19bd92ebd061cfcf0f6fc22aff5a983169781cfc857b21365b619553-nvim-nio@1.10.1-1/src",
       ".lux/5.1/test_dependencies/5.1/4e9592a499c9ced4f8ce366db9db7d9c0dd1424ea8d4c8c16c1550ea3a61a696-say@1.4.1-3/src",
       ".lux/5.1/test_dependencies/5.1/56b98be57b1a97b869fd8ded0d2c0b9ce0b6b052e2d5abf84d060748617b2c90-busted@2.2.0-1/src",
       ".lux/5.1/test_dependencies/5.1/6ce29c2c535c40246c386c056f24689344cddb56ec397473931431e6b67694d2-say@1.4.1-3/src",

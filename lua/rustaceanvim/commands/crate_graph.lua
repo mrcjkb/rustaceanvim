@@ -12,7 +12,7 @@ end
 ---@param backend string | nil
 ---@param output string | nil
 ---@param pipe string | nil
----@return fun(err: string, graph: string)
+---@return lsp.Handler
 local function handler_factory(backend, output, pipe)
   backend = backend or config.tools.crate_graph.backend
   output = output or config.tools.crate_graph.output

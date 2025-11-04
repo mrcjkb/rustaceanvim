@@ -26,12 +26,13 @@ end
 ---@param query? string
 ---@param make_range_params fun(bufnr: integer, offset_encoding: string):{ range: table }
 local function ssr(query, make_range_params)
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = ra.find_active_rustaceanvim_client()
+  if not client then
     return
   end
-  local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8')
-  local range = make_range_params(0, clients[1].offset_encoding or 'utf-8').range
+  local offset_encoding = client.offset_encoding or 'utf-8'
+  local params = vim.lsp.util.make_position_params(0, offset_encoding)
+  local range = make_range_params(0, offset_encoding).range
   if not query then
     vim.ui.input({ prompt = 'Enter query: ' }, function(input)
       query = input

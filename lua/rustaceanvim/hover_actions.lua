@@ -5,7 +5,7 @@ local M = {}
 
 ---@class rustaceanvim.hover_actions.State
 local _state = {
-  ---@type integer
+  ---@type integer | nil
   winnr = nil,
   ---@type unknown
   commands = nil,
@@ -18,7 +18,7 @@ end
 
 local function execute_rust_analyzer_command(action, ctx)
   local fn = vim.lsp.commands[action.command]
-  if fn then
+  if type(fn) == 'function' then
     fn(action, ctx)
   end
 end
@@ -126,7 +126,7 @@ function M.handler(_, result, ctx)
 
   -- run the command under the cursor
   vim.keymap.set('n', '<CR>', function()
-    local line = vim.api.nvim_win_get_cursor(winnr)[1]
+    local line = vim.api.nvim_win_get_cursor(winnr)[1] ---@as integer
     run_command(ctx, line)
   end, { buffer = bufnr, noremap = true, silent = true })
   vim.keymap.set('n', '<Plug>RustHoverAction', function()
@@ -138,11 +138,11 @@ end
 --- Sends the request to rust-analyzer to get hover actions and handle it
 function M.hover_actions()
   local ra = require('rustaceanvim.rust_analyzer')
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = ra.find_active_rustaceanvim_client()
+  if not client then
     return
   end
-  local params = lsp_util.make_position_params(0, clients[1].offset_encoding or 'utf-8')
+  local params = lsp_util.make_position_params(0, client.offset_encoding or 'utf-8')
   ra.buf_request(0, 'textDocument/hover', params, M.handler)
 end
 

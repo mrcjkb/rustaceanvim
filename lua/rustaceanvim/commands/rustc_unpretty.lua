@@ -42,20 +42,20 @@ local latest_buf_id = nil
 ---@param buf integer|nil
 ---@return integer, integer, integer, integer
 local function get_vim_range(range, buf)
-  ---@type integer, integer, integer, integer
+  ---@type integer?, integer?, integer?, integer?
   local srow, scol, erow, ecol = unpack(range)
-  srow = srow + 1
-  scol = scol + 1
-  erow = erow + 1
+  srow = srow or 0 + 1
+  scol = scol or 0 + 1
+  erow = erow or 0 + 1
 
-  if ecol == 0 then
+  if not ecol or ecol == 0 then
     -- Use the value of the last col of the previous row instead.
     erow = erow - 1
     if not buf or buf == 0 then
       ---@diagnostic disable-next-line: assign-type-mismatch
       ecol = vim.fn.col { erow, '$' } - 1
     else
-      ecol = #vim.api.nvim_buf_get_lines(buf, erow - 1, erow, false)[1]
+      ecol = #api.nvim_buf_get_lines(buf, erow - 1, erow, false)[1]
     end
     ecol = math.max(ecol, 1)
   end
@@ -66,7 +66,7 @@ end
 ---@param node TSNode
 local function get_rows(node)
   local start_row, _, end_row, _ = get_vim_range({ ts.get_node_range(node) }, 0)
-  return vim.api.nvim_buf_get_lines(0, start_row - 1, end_row, true)
+  return api.nvim_buf_get_lines(0, start_row - 1, end_row, true)
 end
 
 ---@param sc vim.SystemCompleted
@@ -81,17 +81,17 @@ local function handler(sc)
   ui.delete_buf(latest_buf_id)
 
   -- create a new buffer
-  latest_buf_id = vim.api.nvim_create_buf(false, true) -- not listed and scratch
+  latest_buf_id = api.nvim_create_buf(false, true) -- not listed and scratch
 
   -- split the window to create a new buffer and set it to our window
   ui.split(true, latest_buf_id)
 
-  local lines = vim.split(sc.stdout, '\n')
+  local lines = vim.split(sc.stdout or '', '\n')
 
   -- set filetype to rust for syntax highlighting
   vim.bo[latest_buf_id].filetype = 'rust'
   -- write the expansion content to the buffer
-  vim.api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, lines)
+  api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, lines)
 end
 
 ---@param level rustaceanvim.rustcir.level
@@ -108,15 +108,18 @@ function M.rustc_unpretty(level)
   local text
 
   local cursor = api.nvim_win_get_cursor(0)
-  local pos = { math.max(cursor[1] - 1, 0), cursor[2] }
+  local pos = { math.max(cursor[1] or 1 - 1, 0), cursor[2] }
 
   local cline = api.nvim_get_current_line()
   if not string.find(cline, 'fn%s+') then
+    ---@type integer[]
     local temp = vim.fn.searchpos('fn ', 'bcn', vim.fn.line('w0'))
-    pos = { math.max(temp[1] - 1, 0), temp[2] }
+    pos = { math.max(temp[1] or 0 - 1, 0), temp[2] or 0 }
   end
 
-  local node = ts.get_node { pos = pos }
+  ---@type vim.treesitter.get_node.Opts
+  local opts = { pos = pos }
+  local node = ts.get_node(opts)
 
   if node == nil or node:type() ~= 'function_item' then
     vim.notify('no function found or function is incomplete', vim.log.levels.ERROR)

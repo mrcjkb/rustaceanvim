@@ -41,12 +41,11 @@ end
 
 ---@param level rustaceanvim.ir.level
 function M.viewIR(level)
-  local ra = require('rustaceanvim.rust_analyzer')
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = rl.find_active_rustaceanvim_client()
+  if not client then
     return
   end
-  local position_params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8')
+  local position_params = vim.lsp.util.make_position_params(0, client.offset_encoding or 'utf-8')
   rl.buf_request(0, 'rust-analyzer/view' .. level, position_params, function(...)
     return handler(level, ...)
   end)

@@ -8,6 +8,7 @@ local M = {}
 M.execute_command = function(_, _, _, opts)
   ---@type rustaceanvim.TestExecutor.Opts
   opts = vim.tbl_deep_extend('force', { bufnr = 0 }, opts or {})
+  ---@cast opts.bufnr integer
   if type(opts.runnable) ~= 'table' then
     vim.notify('rustaceanvim neotest executor called without a runnable. This is a bug!', vim.log.levels.ERROR)
   end
