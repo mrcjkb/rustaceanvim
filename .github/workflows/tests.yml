@@ -43,5 +43,5 @@ jobs:
         run: |
           lx --nvim check --warnings-as-errors
         env:
-          VIMRUNTIME: /home/runner/nvim-stable/share/nvim/runtime
+          VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim-version }}/share/nvim/runtime
 

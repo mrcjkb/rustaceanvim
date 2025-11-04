@@ -117,6 +117,24 @@
           "source": "sha256-8d2835/EcyDJX9yTn6MTfaZryjY1wkSP+IIIKGPDXMk="
         }
       },
+      "4beffe8f19bd92ebd061cfcf0f6fc22aff5a983169781cfc857b21365b619553": {
+        "name": "nvim-nio",
+        "version": "1.10.1-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [],
+        "constraint": "==1.10.1",
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "url",
+          "url": "https://github.com/nvim-neotest/nvim-nio/archive/21f5324bfac14e22ba26553caf69ec76ae8a7662.zip"
+        },
+        "hashes": {
+          "rockspec": "sha256-QL5OCZFBGixecdEoriGck4iG83tjM09ewYbWVSbcfa4=",
+          "source": "sha256-5x+iHduNdyVjS6+OrqfDh17g9o2tP2YFFqKEsK6Z5zw="
+        }
+      },
       "4e9592a499c9ced4f8ce366db9db7d9c0dd1424ea8d4c8c16c1550ea3a61a696": {
         "name": "say",
         "version": "1.4.1-3",
@@ -352,6 +370,7 @@
     },
     "entrypoints": [
       "36c63cd0c043eb0fbc7d5ecd75907926b7136414cef7703dcd5784a61e6a728e",
+      "4beffe8f19bd92ebd061cfcf0f6fc22aff5a983169781cfc857b21365b619553",
       "56b98be57b1a97b869fd8ded0d2c0b9ce0b6b052e2d5abf84d060748617b2c90",
       "b54df892b93931d9062f7bb8887a2ae7e6ce116e50d9aca0cf690256d7ac05b6",
       "d85464dc58c62460a1ecb14e6ac773ae615a66a8224b26ceb25d954c6b05ca74"

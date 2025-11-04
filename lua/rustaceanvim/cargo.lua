@@ -28,7 +28,7 @@ local function get_cargo_metadata(path, callback)
       return callback and callback(cargo_crate_dir) or cargo_crate_dir
     end
     local ok, cargo_metadata_json = pcall(vim.fn.json_decode, sc.stdout)
-    if ok and cargo_metadata_json then
+    if ok and type(cargo_metadata_json) == 'table' then
       return callback and callback(cargo_crate_dir, cargo_metadata_json) or cargo_crate_dir, cargo_metadata_json
     else
       vim.notify(
@@ -47,10 +47,10 @@ local function get_cargo_metadata(path, callback)
     end)
   else
     local sc = vim
-        .system(cmd, {
-          cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
-        })
-        :wait()
+      .system(cmd, {
+        cwd = vim.uv.fs_stat(path) and path or cargo_crate_dir or vim.fn.getcwd(),
+      })
+      :wait()
     return on_exit(sc)
   end
 end
@@ -74,11 +74,11 @@ local function default_get_root_dir(file_name, callback)
   ---@return string | nil root_dir
   local function root_dir(cargo_crate_dir, cargo_metadata)
     return cargo_metadata and cargo_metadata.workspace_root
-        or cargo_crate_dir
-        or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
-          upward = true,
-          path = path,
-        })[1])
+      or cargo_crate_dir
+      or vim.fs.dirname(vim.fs.find({ 'rust-project.json' }, {
+        upward = true,
+        path = path,
+      })[1])
   end
   if callback then
     get_cargo_metadata(path, function(cargo_crate_dir, cargo_metadata)
