@@ -29,10 +29,10 @@ source = {
 	url = "git+https://github.com/mrcjkb/rustaceanvim.git",
 }
 
-test = {
-	type = "busted-nlua",
-}
-
 build = {
 	type = "builtin",
+	copy_directories = {
+		"doc",
+		"ftplugin",
+	},
 }
