@@ -13,6 +13,10 @@ license = "GPL-2.0-only"
 
 [build]
 type = "builtin"
+copy_directories = [
+  "doc",
+  "ftplugin"
+]
 
 [test]
 type = "busted-nlua"
