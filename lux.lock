@@ -59,6 +59,24 @@
           "source": "sha256-4zAt0GgQEkg9toaUaDn3ST3RvjLUDsuOzrKi9lhq0fQ="
         }
       },
+      "36c63cd0c043eb0fbc7d5ecd75907926b7136414cef7703dcd5784a61e6a728e": {
+        "name": "nvim-dap",
+        "version": "0.10.0-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [],
+        "constraint": "==0.10.0",
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "url",
+          "url": "https://github.com/mfussenegger/nvim-dap/archive/0.10.0.zip"
+        },
+        "hashes": {
+          "rockspec": "sha256-1I+b1kcgY/5G4EogluprGiVJ27xG8tHDykJSH4IDDj4=",
+          "source": "sha256-S3Q810Zph3f3a/qIRe9j0L0DWHZWi4oxPLD5ZsWo1XE="
+        }
+      },
       "455cd98d50c6191a9685cffcda4ce783efbb957934625e134c39f43bd5df6818": {
         "name": "luassert",
         "version": "1.9.0-1",
@@ -97,6 +115,24 @@
         "hashes": {
           "rockspec": "sha256-TAprv90NktNCgtoH3wHuRZS+FHvUCNZ2XcDvu23OFX8=",
           "source": "sha256-8d2835/EcyDJX9yTn6MTfaZryjY1wkSP+IIIKGPDXMk="
+        }
+      },
+      "4beffe8f19bd92ebd061cfcf0f6fc22aff5a983169781cfc857b21365b619553": {
+        "name": "nvim-nio",
+        "version": "1.10.1-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [],
+        "constraint": "==1.10.1",
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "url",
+          "url": "https://github.com/nvim-neotest/nvim-nio/archive/21f5324bfac14e22ba26553caf69ec76ae8a7662.zip"
+        },
+        "hashes": {
+          "rockspec": "sha256-QL5OCZFBGixecdEoriGck4iG83tjM09ewYbWVSbcfa4=",
+          "source": "sha256-5x+iHduNdyVjS6+OrqfDh17g9o2tP2YFFqKEsK6Z5zw="
         }
       },
       "4e9592a499c9ced4f8ce366db9db7d9c0dd1424ea8d4c8c16c1550ea3a61a696": {
@@ -212,6 +248,48 @@
           "source": "sha256-wL3qBQ8Lu3q8DK2Kaeo1dgzIHd8evaxFYJg47CcQiSg="
         }
       },
+      "acdfde00d122aac481c18c906d483478bb536741beb025becc11782a075d125b": {
+        "name": "luassert",
+        "version": "1.9.0-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [
+          "4e9592a499c9ced4f8ce366db9db7d9c0dd1424ea8d4c8c16c1550ea3a61a696"
+        ],
+        "constraint": null,
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "git",
+          "url": "https://github.com/lunarmodules/luassert.git",
+          "ref": "v1.9.0"
+        },
+        "hashes": {
+          "rockspec": "sha256-rTPvF/GK/jMnH/q4wbwTCGBFELWh+JcvHeOCFAbIf64=",
+          "source": "sha256-jjdB95Vr5iVsh5T7E84WwZMW6/5H2k2R/ny2VBs2l3I="
+        }
+      },
+      "b54df892b93931d9062f7bb8887a2ae7e6ce116e50d9aca0cf690256d7ac05b6": {
+        "name": "neotest",
+        "version": "5.13.1-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [
+          "e6419c49ea30f1be0576a4def3982181470d4f3961a28360a17aa9396db68ff2",
+          "de206edd51dbfc1bbe56869d6729cf4a6e6e70e7b2e107093c0f6520c142d79b"
+        ],
+        "constraint": "==5.13.1",
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "url",
+          "url": "https://github.com/nvim-neotest/neotest/archive/366175e1e74ff112787f9adbfb072eeaedd2a88e.zip"
+        },
+        "hashes": {
+          "rockspec": "sha256-Njk2ADfp0OEfiALnpgQTjctQQZzjRiGjcmpN1XaKwLA=",
+          "source": "sha256-aQeUSK31oatiuotbmKJ7nyLTlm7eAMf1zrZVDUYicAY="
+        }
+      },
       "d85464dc58c62460a1ecb14e6ac773ae615a66a8224b26ceb25d954c6b05ca74": {
         "name": "nlua",
         "version": "0.3.2-1",
@@ -232,6 +310,24 @@
           "source": "sha256-Gep+0WGkNPJ/7acaIVfHpi+/wHoUevlly3JRc0G+hBU="
         }
       },
+      "de206edd51dbfc1bbe56869d6729cf4a6e6e70e7b2e107093c0f6520c142d79b": {
+        "name": "nvim-nio",
+        "version": "1.10.1-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [],
+        "constraint": null,
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "url",
+          "url": "https://github.com/nvim-neotest/nvim-nio/archive/21f5324bfac14e22ba26553caf69ec76ae8a7662.zip"
+        },
+        "hashes": {
+          "rockspec": "sha256-QL5OCZFBGixecdEoriGck4iG83tjM09ewYbWVSbcfa4=",
+          "source": "sha256-5x+iHduNdyVjS6+OrqfDh17g9o2tP2YFFqKEsK6Z5zw="
+        }
+      },
       "e4f17b9e67313bbd5e90f425672fc8998dd0bfa43335f7c57ed2de7a799e07a6": {
         "name": "dkjson",
         "version": "2.8-1",
@@ -249,10 +345,34 @@
           "rockspec": "sha256-arasJeX7yQ2Rg70RyepiGNvLdiyQz8Wn4HXrdTEIBBg=",
           "source": "sha256-JOjNO+uRwchh63uz+8m9QYu/+a1KpdBHGBYlgjajFTI="
         }
+      },
+      "e6419c49ea30f1be0576a4def3982181470d4f3961a28360a17aa9396db68ff2": {
+        "name": "plenary.nvim",
+        "version": "scm-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [
+          "acdfde00d122aac481c18c906d483478bb536741beb025becc11782a075d125b"
+        ],
+        "constraint": null,
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "git",
+          "url": "https://github.com/nvim-lua/plenary.nvim",
+          "ref": "b9fd5226c2f76c951fc8ed5923d85e4de065e509"
+        },
+        "hashes": {
+          "rockspec": "sha256-r0jP0L52Bjijhhwn/6j9FhToew/BGCKTVtDoCCw25ik=",
+          "source": "sha256-9Un7ekhBxcnmFE1xjCCFTZ7eqIbmXvQexpnhduAg4M0="
+        }
       }
     },
     "entrypoints": [
+      "36c63cd0c043eb0fbc7d5ecd75907926b7136414cef7703dcd5784a61e6a728e",
+      "4beffe8f19bd92ebd061cfcf0f6fc22aff5a983169781cfc857b21365b619553",
       "56b98be57b1a97b869fd8ded0d2c0b9ce0b6b052e2d5abf84d060748617b2c90",
+      "b54df892b93931d9062f7bb8887a2ae7e6ce116e50d9aca0cf690256d7ac05b6",
       "d85464dc58c62460a1ecb14e6ac773ae615a66a8224b26ceb25d954c6b05ca74"
     ]
   }
