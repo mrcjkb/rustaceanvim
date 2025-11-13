@@ -4,13 +4,6 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [6.9.7](https://github.com/mrcjkb/rustaceanvim/compare/v6.9.6...v6.9.7) (2025-11-08)
-
-
-### Performance Improvements
-
-* **dap:** cache rustc results ([#881](https://github.com/mrcjkb/rustaceanvim/issues/881)) ([f87d41c](https://github.com/mrcjkb/rustaceanvim/commit/f87d41c4dce48cff3fea0db7ba1cf300b28762e6))
-
 ## [6.9.7](https://github.com/mrcjkb/rustaceanvim/compare/v6.9.6...v6.9.7) (2025-11-03)
 
 
