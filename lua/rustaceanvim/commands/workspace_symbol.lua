@@ -34,7 +34,7 @@ local function query_from_input()
 end
 
 ---@param searchScope WorkspaceSymbolSearchScope
----@param args? unknown[]
+---@param args? string[]
 function M.workspace_symbol(searchScope, args)
   local searchKind = default_search_kind
   local query
@@ -45,17 +45,19 @@ function M.workspace_symbol(searchScope, args)
     end
     args = {}
   end
-  if #args > 0 and M.WorkspaceSymbolSearchKind[args[1]] then
-    searchKind = args[1]
+  local arg = args[1]
+  if arg and M.WorkspaceSymbolSearchKind[arg] then
+    searchKind = M.WorkspaceSymbolSearchKind[arg]
     table.remove(args, 1)
   end
-  if #args == 0 then
-    query = query_from_input()
-    if not query then
-      return
-    end
-  else
+  arg = args[1]
+  if arg then
     query = args[1]
+  else
+    query = query_from_input()
+  end
+  if not query or not searchKind then
+    return
   end
   rl.any_buf_request('workspace/symbol', get_params(searchScope, searchKind, query))
 end

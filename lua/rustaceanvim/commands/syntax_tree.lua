@@ -33,11 +33,11 @@ end
 
 function M.syntax_tree()
   local ra = require('rustaceanvim.rust_analyzer')
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = ra.find_active_rustaceanvim_client()
+  if not client then
     return
   end
-  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
+  local params = vim.lsp.util.make_range_params(0, client.offset_encoding or 'utf-8')
   ra.buf_request(0, 'rust-analyzer/viewSyntaxTree', params, handler)
 end
 
