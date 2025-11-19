@@ -20,4 +20,3 @@ jobs:
         with:
           release-type: simple
           token: ${{ secrets.PAT }}
-          manifest-file: .release-please-manifest.json
