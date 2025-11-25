@@ -48,8 +48,9 @@ see ':h rustaceanvim.lsp.ClientOpts'.
   -- [https://github.com/neovim/neovim/issues/26511]
   -- This workaround forces Neovim to redraw inlay hints if they are enabled,
   -- as soon as rust-analyzer has fully initialized.
-  if type(vim.lsp.inlay_hint) == 'table' then
-    for _, bufnr in ipairs(vim.lsp.get_buffers_by_client_id(ctx.client_id)) do
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  if client and type(vim.lsp.inlay_hint) == 'table' then
+    for bufnr, _ in pairs(client.attached_buffers) do
       if vim.lsp.inlay_hint.is_enabled { bufnr = bufnr } then
         vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
         vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
