@@ -1,5 +1,0 @@
-{
-  "cargo.targetDir": true,
-  "rustfmt.overrideCommand": ["leptosfmt", "--stdin", "--rustfmt"],
-  "checkOnSave": true
-}

@@ -22,7 +22,7 @@
     </strong>
   </p>
   <p>🦀</p>
-	
+
 [![Neovim][neovim-shield]][neovim-url]
 [![Lua][lua-shield]][lua-url]
 [![Rust][rust-shield]][rust-url]
@@ -149,8 +149,8 @@ Example:
 ```lua
 local bufnr = vim.api.nvim_get_current_buf()
 vim.keymap.set(
-  "n", 
-  "<leader>a", 
+  "n",
+  "<leader>a",
   function()
     vim.cmd.RustLsp('codeAction') -- supports rust-analyzer's grouping
     -- or vim.lsp.buf.codeAction() if you don't want grouping.
@@ -158,7 +158,7 @@ vim.keymap.set(
   { silent = true, buffer = bufnr }
 )
 vim.keymap.set(
-  "n", 
+  "n",
   "K",  -- Override Neovim's built-in hover keymap with rustaceanvim's hover actions
   function()
     vim.cmd.RustLsp({'hover', 'actions'})
@@ -189,13 +189,13 @@ vim.keymap.set(
 <!-- markdownlint-disable -->
 <details>
   <summary>
-	<b>Debugging</b>
+  <b>Debugging</b>
   </summary>
 
   - `debuggables` opens a prompt to select from available targets.
   - `debug` searches for a target at the current cursor position.
-  
-  
+
+
   ```vim
   :RustLsp[!] debuggables {args[]}?
   :RustLsp[!] debug {args[]}?
@@ -240,18 +240,18 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Runnables</b>
+  <b>Runnables</b>
   </summary>
 
   - `runnables` opens a prompt to select from available targets.
   - `run` searches for a target at the current cursor position.
-  
+
   ```vim
   :RustLsp[!] runnables {args[]}?
   :RustLsp[!] run {args[]}?
   ```
   ```lua
-  vim.cmd.RustLsp('run') 
+  vim.cmd.RustLsp('run')
   vim.cmd.RustLsp('runnables')
   -- or, to run the previous runnable:
   vim.cmd.RustLsp { 'runnables', bang = true }
@@ -268,7 +268,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Testables and failed test diagnostics</b>
+  <b>Testables and failed test diagnostics</b>
   </summary>
 
   If you set the `vim.g.rustaceanvim.tools.test_executor` option to `'background'`,
@@ -294,12 +294,12 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Neotest integration</b>
+  <b>Neotest integration</b>
   </summary>
 
   This plugin provides a [neotest](https://github.com/nvim-neotest/neotest) adapter,
   which you can add to neotest as follows:
-  
+
   ```lua
   require('neotest').setup {
       -- ...,
@@ -331,9 +331,9 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Expand macros recursively</b>
+  <b>Expand macros recursively</b>
   </summary>
-  
+
   ```vim
   :RustLsp expandMacro
   ```
@@ -345,9 +345,9 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Rebuild proc macros</b>
+  <b>Rebuild proc macros</b>
   </summary>
-  
+
   ```vim
   :RustLsp rebuildProcMacros
   ```
@@ -359,9 +359,9 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Move item up/down</b>
+  <b>Move item up/down</b>
   </summary>
-  
+
   ```vim
   :RustLsp moveItem {up|down}
   ```
@@ -373,9 +373,9 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Grouped code actions</b>
+  <b>Grouped code actions</b>
   </summary>
-  
+
  Sometimes, rust-analyzer groups code actions by category,
  which is not supported by Neovim's built-in `vim.lsp.buf.codeAction`.
  This plugin provides a command with a UI that does:
@@ -397,12 +397,12 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Hover actions</b>
+  <b>Hover actions</b>
   </summary>
-  
+
  Note: To activate hover actions, run the command twice.
  This will move you into the window, then press enter on the selection you want.
- Alternatively, you can set `auto_focus` to `true` in your config and you will 
+ Alternatively, you can set `auto_focus` to `true` in your config and you will
  automatically enter the hover actions window.
 
  ```vim
@@ -415,13 +415,13 @@ vim.keymap.set(
  You can invoke a hover action by switching to the hover window and entering `<CR>`
  on the respective line, or with a keymap for the `<Plug>RustHoverAction` mapping,
  which accepts a `<count>` prefix as the (1-based) index of the hover action to invoke.
- 
+
  For example, if you set the following keymap:
- 
+
  ```lua
  vim.keymap.set('n', '<space>a', '<Plug>RustHoverAction')
  ```
- 
+
  you can invoke the third hover action with `3<space>a`.
 
 ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/c7b6c730-4439-47b0-9a75-7ea4e6831f7a)
@@ -430,7 +430,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Hover range</b>
+  <b>Hover range</b>
   </summary>
 
   ```vim
@@ -443,12 +443,12 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Explain errors</b>
+  <b>Explain errors</b>
   </summary>
 
   Display a hover window with explanations from the [rust error codes index](https://doc.rust-lang.org/error_codes/error-index.html)
   over error diagnostics (if they have an error code).
-  
+
   ```vim
   :RustLsp explainError {cycle?|cycle_prev?|current?}
   ```
@@ -468,7 +468,7 @@ vim.keymap.set(
   - If called with `cycle_prev`:
     Like `vim.diagnostic.goto_prev`,
     searches backwards for a diagnostic with an error code.
-    
+
   - If called with `current`:
     Searches for diagnostics only in the
     current cursor line.
@@ -479,7 +479,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Render diagnostics</b>
+  <b>Render diagnostics</b>
   </summary>
 
   Display a hover window with the rendered diagnostic, as displayed
@@ -487,7 +487,7 @@ vim.keymap.set(
   Useful for solving bugs around borrowing and generics,
   as it consolidates the important bits (sometimes across files)
   together.
-  
+
   ```vim
   :RustLsp renderDiagnostic {cycle?|cycle_prev?|current?}
   ```
@@ -507,7 +507,7 @@ vim.keymap.set(
   - If called with `cycle_prev`:
     Like `vim.diagnostic.goto_prev`,
     searches backwards for a diagnostic with rendered data.
-    
+
   - If called with `current`:
     Searches for diagnostics only in the
     current cursor line.
@@ -518,7 +518,7 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Jump to related diagnostics</b>
+  <b>Jump to related diagnostics</b>
   </summary>
 
   Sometimes, rust-analyzer provides related diagnostics in multiple locations.
@@ -538,9 +538,9 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Open Cargo.toml</b>
+  <b>Open Cargo.toml</b>
   </summary>
-  
+
   ```vim
   :RustLsp openCargo
   ```
@@ -551,11 +551,11 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Open docs.rs documentation</b>
+  <b>Open docs.rs documentation</b>
   </summary>
 
   Open docs.rs documentation for the symbol under the cursor.
-  
+
   ```vim
   :RustLsp openDocs
   ```
@@ -566,9 +566,9 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Parent Module</b>
+  <b>Parent Module</b>
   </summary>
-  
+
   ```vim
   :RustLsp parentModule
   ```
@@ -579,21 +579,21 @@ vim.keymap.set(
 
 <details>
   <summary>
-	<b>Filtered workspace symbol searches</b>
+  <b>Filtered workspace symbol searches</b>
   </summary>
 
   rust-analyzer supports filtering workspace symbol searches.
-  
+
   ```vim
   :RustLsp[!] workspaceSymbol {onlyTypes?|allSymbols?} {query?}
   ```
   ```lua
   vim.cmd.RustLsp('workspaceSymbol')
   -- or
-  vim.cmd.RustLsp { 
-    'workspaceSymbol', 
-    '<onlyTypes|allSymbols>' --[[ optional ]], 
-    '<query>' --[[ optional ]], 
+  vim.cmd.RustLsp {
+    'workspaceSymbol',
+    '<onlyTypes|allSymbols>' --[[ optional ]],
+    '<query>' --[[ optional ]],
     bang = true --[[ optional ]]
   }
   ```
@@ -607,12 +607,12 @@ by setting the rust-analyzer
 
 <details>
   <summary>
-	<b>Join lines</b>
+  <b>Join lines</b>
   </summary>
 
   Join selected lines into one, smartly fixing up whitespace, trailing commas, and braces.
   Works with individual lines in normal mode and multiple lines in visual mode.
-  
+
   ```vim
   :RustLsp joinLines
   ```
@@ -621,17 +621,17 @@ by setting the rust-analyzer
   ```
 
   ![](https://user-images.githubusercontent.com/1711539/124515923-4504e800-dde9-11eb-8d58-d97945a1a785.gif)
-  
+
 </details>
 
 <details>
   <summary>
-	<b>Structural search replace</b>
+  <b>Structural search replace</b>
   </summary>
 
   - Searches the entire buffer in normal mode.
   - Searches the selection in visual mode.
-  
+
   ```vim
   :RustLsp ssr {query}
   ```
@@ -645,9 +645,9 @@ by setting the rust-analyzer
 
 <details>
   <summary>
-	<b>View crate graph</b>
+  <b>View crate graph</b>
   </summary>
-  
+
   ```vim
   :RustLsp crateGraph {backend {output}}
   ```
@@ -658,16 +658,16 @@ by setting the rust-analyzer
   Requires:
 
   - [`dot` from `graphviz`](https://graphviz.org/doc/info/lang.html)
-    
+
 </details>
 
 <details>
   <summary>
-	<b>View syntax tree</b>
+  <b>View syntax tree</b>
   </summary>
 
   Requires rust-analyzer >= 2025-01-20.
-  
+
   ```vim
   :RustLsp syntaxTree
   ```
@@ -681,16 +681,16 @@ by setting the rust-analyzer
 
 <details>
   <summary>
-	<b>Fly check</b>
+  <b>Fly check</b>
   </summary>
 
-  Run `cargo check` or another compatible command (f.x. `clippy`) 
-  in a background thread and provide LSP diagnostics based on 
+  Run `cargo check` or another compatible command (f.x. `clippy`)
+  in a background thread and provide LSP diagnostics based on
   the output of the command.
 
   Useful in large projects where running `cargo check` on each save
   can be costly.
-  
+
   ```vim
   :RustLsp flyCheck {run?|clear?|cancel?}
   ```
@@ -710,13 +710,13 @@ by setting the rust-analyzer
 
 <details>
   <summary>
-	<b>View HIR / MIR</b>
+  <b>View HIR / MIR</b>
   </summary>
 
   Opens a buffer with a textual representation of the HIR or MIR
   of the function containing the cursor.
   Useful for debugging or when working on rust-analyzer itself.
-  
+
   ```vim
   :RustLsp view {hir|mir}
   ```
@@ -728,7 +728,7 @@ by setting the rust-analyzer
 
 <details>
   <summary>
-	<b>Rustc unpretty</b>
+  <b>Rustc unpretty</b>
   </summary>
 
   Opens a buffer with a textual representation of the MIR or others things,
@@ -756,12 +756,12 @@ by setting the rust-analyzer
 
 <details>
   <summary>
-	<b>ra-multiplex</b>
+  <b>ra-multiplex</b>
   </summary>
 
   On Linux and MacOS, rustaceanvim can auto-detect and connect to a
   running [ra-multiplex](https://github.com/pr2502/ra-multiplex) server.
-  By default, it will try to do so automatically if the `vim.g.rustaceanvim.server.cmd` 
+  By default, it will try to do so automatically if the `vim.g.rustaceanvim.server.cmd`
   option is unset.
   See also `:h rustaceanvim.ra_multiplex`.
 
@@ -769,14 +769,14 @@ by setting the rust-analyzer
 
 <details>
   <summary>
-	<b>Configure rust-analyzer on the fly</b>
+  <b>Configure rust-analyzer on the fly</b>
   </summary>
 
   You can configure rust-analyzer on the fly using the `:RustAnalyzer config` subcommand.
   The command takes a Lua table as an argument (it does not validate it!).
 
   For example:
-  
+
   ```vim
   :RustAnalyzer config { checkOnSave = false }
   ```

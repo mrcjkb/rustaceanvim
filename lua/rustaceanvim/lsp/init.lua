@@ -316,13 +316,14 @@ end
 M.stop = function(bufnr, filter)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, filter)
-  vim.lsp.stop_client(clients)
   if type(clients) == 'table' then
     ---@cast clients vim.lsp.Client[]
     for _, client in ipairs(clients) do
+      client:stop()
       server_status.reset_client_state(client.id)
     end
   else
+    clients:stop()
     ---@cast clients vim.lsp.Client
     server_status.reset_client_state(clients.id)
   end
