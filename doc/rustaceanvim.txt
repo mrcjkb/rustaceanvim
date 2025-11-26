@@ -313,28 +313,28 @@ rustaceanvim.rustc.Opts                                *rustaceanvim.rustc.Opts*
 rustaceanvim.lsp.ClientOpts                        *rustaceanvim.lsp.ClientOpts*
 
     Fields: ~
-        {auto_attach?}   (boolean|fun(bufnr:integer):boolean)
-                                                                                                                      Whether to automatically attach the LSP client.
-                                                                                                                      Defaults to `true` if the `rust-analyzer` executable is found.
-        {cmd?}           (string[]|fun():string[]|fun(dispatchers:vim.lsp.rpc.Dispatchers):vim.lsp.rpc.PublicClient)
-                                                                                                                      Command and arguments for starting rust-analyzer
-                                                                                                                      Can be a list of arguments, a function that returns a list of arguments,
-                                                                                                                      or a function that returns an LSP RPC client factory (see |vim.lsp.rpc.connect|).
-        {root_dir?}      (string|fun(filename:string,default:fun(filename:string):string|nil):string|nil)
-                                                                                                                      The directory to use for the attached LSP.
-                                                                                                                      Can be a function, which may return nil if no server should attach.
-                                                                                                                      The second argument contains the default implementation, which can be used for fallback behavior.
-        {ra_multiplex?}  (rustaceanvim.ra_multiplex.Opts)
-                                                                                                                      Options for connecting to ra-multiplex.
+        {auto_attach?}  (boolean|fun(bufnr:integer):boolean)
+                                                                                                                     Whether to automatically attach the LSP client.
+                                                                                                                     Defaults to `true` if the `rust-analyzer` executable is found.
+        {cmd?}          (string[]|fun():string[]|fun(dispatchers:vim.lsp.rpc.Dispatchers):vim.lsp.rpc.PublicClient)
+                                                                                                                     Command and arguments for starting rust-analyzer
+                                                                                                                     Can be a list of arguments, a function that returns a list of arguments,
+                                                                                                                     or a function that returns an LSP RPC client factory (see |vim.lsp.rpc.connect|).
+        {root_dir?}     (string|fun(filename:string,default:fun(filename:string):string|nil):string|nil)
+                                                                                                                     The directory to use for the attached LSP.
+                                                                                                                     Can be a function, which may return nil if no server should attach.
+                                                                                                                     The second argument contains the default implementation, which can be used for fallback behavior.
+        {lspmux?}       (rustaceanvim.lspmux.Opts)
+                                                                                                                     Options for connecting to lspmux.
 
 
-rustaceanvim.ra_multiplex.Opts                  *rustaceanvim.ra_multiplex.Opts*
+rustaceanvim.lspmux.Opts                              *rustaceanvim.lspmux.Opts*
 
     Fields: ~
         {enable?}  (boolean)
-                              Whether to enable ra-multiplex auto-discovery.
+                              Whether to enable lspmux auto-discovery.
                               Default: `true` if `server.cmd` is not set, otherwise `false`.
-                              If enabled, rustaceanvim will try to detect if an ra-multiplex server is running
+                              If enabled, rustaceanvim will try to detect if an lspmux server is running
                               and connect to it (Linux and MacOS only).
                               If auto-discovery does not work, you can set `server.cmd` to a function that
                               returns an LSP RPC client factory (see |vim.lsp.rpc.connect|).

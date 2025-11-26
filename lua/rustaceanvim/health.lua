@@ -236,9 +236,9 @@ function health.check()
       end,
     },
     {
-      name = 'ra-multiplex',
+      name = 'lspmux',
       get_binaries = function()
-        return { 'ra-multiplex' }
+        return { 'lspmux' }
       end,
       is_installed = function(bin)
         local success = pcall(function()
@@ -249,7 +249,7 @@ function health.check()
       is_optional = function()
         return true
       end,
-      url = '[ra-multiplex](https://github.com/pr2502/ra-multiplex)',
+      url = '[lspmux](https://codeberg.org/p2502/lspmux)',
       info = 'Multiplex server for rust-analyzer.',
     },
     {

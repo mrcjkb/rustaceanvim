@@ -197,8 +197,8 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---The second argument contains the default implementation, which can be used for fallback behavior.
 ---@field root_dir? string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
 ---
----Options for connecting to ra-multiplex.
----@field ra_multiplex? rustaceanvim.ra_multiplex.Opts
+---Options for connecting to lspmux.
+---@field lspmux? rustaceanvim.lspmux.Opts
 ---
 ---Setting passed to rust-analyzer.
 ---By default, this is a function that configures rust-analyzer
@@ -230,11 +230,11 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---
 ---@see vim.lsp.ClientConfig
 
----@class rustaceanvim.ra_multiplex.Opts
+---@class rustaceanvim.lspmux.Opts
 ---
----Whether to enable ra-multiplex auto-discovery.
+---Whether to enable lspmux auto-discovery.
 ---Default: `true` if `server.cmd` is not set, otherwise `false`.
----If enabled, rustaceanvim will try to detect if an ra-multiplex server is running
+---If enabled, rustaceanvim will try to detect if an lspmux server is running
 ---and connect to it (Linux and MacOS only).
 ---If auto-discovery does not work, you can set `server.cmd` to a function that
 ---returns an LSP RPC client factory (see |vim.lsp.rpc.connect|).

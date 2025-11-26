@@ -288,7 +288,7 @@ local RustaceanDefaultConfig = {
     ---@type nil | string | fun(filename: string, default: fun(filename: string):string|nil):string|nil
     root_dir = nil,
 
-    ra_multiplex = {
+    lspmux = {
       ---@type boolean
       enable = vim.tbl_get(rustaceanvim_opts, 'server', 'cmd') == nil,
       ---@type string
