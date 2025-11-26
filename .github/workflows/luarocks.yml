@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-tags: true
 
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
