@@ -209,14 +209,14 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
 
     local rust_analyzer_cmd = types.evaluate(client_config.cmd)
 
-    local ra_multiplex = lsp_start_config.ra_multiplex
-    if ra_multiplex.enable then
-      local ok, running_ra_multiplex = pcall(function()
-        local result = vim.system({ 'pgrep', 'ra-multiplex' }):wait().code
+    local lspmux = lsp_start_config.lspmux
+    if lspmux.enable then
+      local ok, running_lspmux = pcall(function()
+        local result = vim.system({ 'pgrep', 'lspmux' }):wait().code
         return result == 0
       end)
-      if ok and running_ra_multiplex then
-        rust_analyzer_cmd = vim.lsp.rpc.connect(ra_multiplex.host, ra_multiplex.port)
+      if ok and running_lspmux then
+        rust_analyzer_cmd = vim.lsp.rpc.connect(lspmux.host, lspmux.port)
         local ra_settings = lsp_start_config.settings['rust-analyzer'] or {}
         ra_settings.lspMux = ra_settings.lspMux
           or {

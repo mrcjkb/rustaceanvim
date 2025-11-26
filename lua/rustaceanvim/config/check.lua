@@ -19,7 +19,7 @@ local M = {}
 ---@return string|nil error_message
 local function validate(name, value, validator, optional, message)
   local ok, err = pcall(vim.validate, name, value, validator, optional, message)
-  return ok or false, 'Rocks: Invalid config' .. (err and ': ' .. err or '')
+  return ok or false, 'rustaceanvim: Invalid config' .. (err and ': ' .. err or '')
 end
 
 ---Validates the config.
