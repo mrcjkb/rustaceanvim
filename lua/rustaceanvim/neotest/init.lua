@@ -119,15 +119,15 @@ NeotestAdapter.discover_positions = function(file_path)
   for runnable in
     vim
       .iter(runnables)
-      ---@param runnable rustaceanvim.RARunnable
-      :filter(function(runnable)
+      ---@param r rustaceanvim.RARunnable
+      :filter(function(r)
         -- Exclude snapshot tests that overwrite snapshots
-        return runnable.label:match('Update%sTests') == nil
+        return r.label:match('Update%sTests') == nil
       end)
   do
     local pos = trans.runnable_to_position(file_path, runnable)
     if pos then
-      max_end_row = math.max(max_end_row, pos.range[3])
+      max_end_row = math.max(max_end_row, pos.range[3] or 0)
       if pos.type ~= 'dir' then
         table.insert(positions, pos)
       end
@@ -136,29 +136,29 @@ NeotestAdapter.discover_positions = function(file_path)
   ---@diagnostic disable-next-line: cast-type-mismatch
   ---@cast runnables rustaceanvim.RARunnable[]
 
-  ---@type { [string]: neotest.Position }
+  ---@type table<string, neotest.Position>
   local tests_by_name = {}
   ---@type table<string, rustaceanvim.neotest.Position>
-  local namespaces = {}
+  local namespaces_tbl = {}
   for _, pos in pairs(positions) do
     if pos.type == 'test' then
       tests_by_name[pos.name] = pos
     elseif pos.type == 'namespace' then
-      namespaces[pos.id] = pos
+      namespaces_tbl[pos.id] = pos
     end
   end
-  namespaces = vim.tbl_values(namespaces)
-  ---@cast namespaces rustaceanvim.neotest.Position[]
+  ---@type rustaceanvim.neotest.Position[]
+  local namespaces_list = vim.tbl_values(namespaces_tbl)
 
   -- sort namespaces by name from longest to shortest
-  table.sort(namespaces, function(a, b)
+  table.sort(namespaces_list, function(a, b)
     return #a.name > #b.name
   end)
 
   ---@type { [string]: rustaceanvim.neotest.Position[] }
   local positions_by_namespace = {}
   -- group tests by their longest matching namespace
-  for _, namespace in ipairs(namespaces) do
+  for _, namespace in ipairs(namespaces_list) do
     if namespace.name ~= '' then
       ---@type string[]
       local child_keys = vim.tbl_filter(function(name)
@@ -177,11 +177,11 @@ NeotestAdapter.discover_positions = function(file_path)
   end
 
   -- nest child namespaces in their parent namespace
-  for i, namespace in ipairs(namespaces) do
+  for i, namespace in ipairs(namespaces_list) do
     ---@type rustaceanvim.neotest.Position?
     local parent = nil
     -- search remaning namespaces for the longest matching parent namespace
-    for _, other_namespace in ipairs { unpack(namespaces, i + 1) } do
+    for _, other_namespace in ipairs { unpack(namespaces_list, i + 1) } do
       if vim.startswith(namespace.name, other_namespace.name .. '::') then
         parent = other_namespace
         break
@@ -191,6 +191,7 @@ NeotestAdapter.discover_positions = function(file_path)
       local namespace_name = namespace.name
       local children = positions_by_namespace[namespace_name]
       -- strip parent namespace + "::"
+      children[1] = children[1] or {}
       children[1].name = children[1].name:sub(#parent.name + 3, #namespace_name)
       table.insert(positions_by_namespace[parent.name], children)
       positions_by_namespace[namespace_name] = nil
@@ -234,7 +235,7 @@ NeotestAdapter.discover_positions = function(file_path)
     path = file_path,
     range = { 0, 0, max_end_row, 0 },
     -- use the shortest namespace for the file runnable
-    runnable = #namespaces > 0 and namespaces[#namespaces].runnable or nil,
+    runnable = namespaces_list[#namespaces_list] and namespaces_list[#namespaces_list].runnable or nil,
   }
   table.insert(sorted_positions, 1, file_pos)
 
@@ -260,6 +261,7 @@ end
 ---@param run_args neotest.RunArgs
 ---@return neotest.RunSpec|nil
 ---@private
+---@async
 function NeotestAdapter.build_spec(run_args)
   local supported_types = { 'test', 'namespace', 'file', 'dir' }
   local tree = run_args and run_args.tree
@@ -295,11 +297,13 @@ function NeotestAdapter.build_spec(run_args)
       future.set_error(err)
     end)
     local ok, strategy = pcall(future.wait)
+    ---@type neotest.RunSpec?
     local run_spec
     if not ok then
       ---@cast strategy string
       lib.notify(strategy, vim.log.levels.ERROR)
       run_spec = {
+        command = {},
         cwd = cwd,
         context = context,
       }
@@ -351,8 +355,8 @@ end
 function NeotestAdapter.results(spec, strategy_result)
   ---@type table<string, neotest.Result>
   local results = {}
-  ---@type rustaceanvim.neotest.RunContext
   local context = spec.context
+  ---@cast context rustaceanvim.neotest.RunContext
   local ctx_pos_id = context.pos_id
   ---@type string
   if strategy_result.code == 0 then
@@ -365,14 +369,17 @@ function NeotestAdapter.results(spec, strategy_result)
 
   ---@type rustaceanvim.Diagnostic[]
   local diagnostics
+  ---@type string | nil
   local output_content = ''
+  ---@type string | nil
   local junit_xml = ''
   if context.is_cargo_test then
     local success
     success, output_content = pcall(function()
       return lib.files.read(strategy_result.output)
     end)
-    if not success then
+    ---@cast output_content string | nil
+    if not success or not output_content then
       vim.notify('Failed to read output file', vim.log.levels.ERROR)
       return results
     end
@@ -384,12 +391,16 @@ function NeotestAdapter.results(spec, strategy_result)
         vim.fs.joinpath(context.workspace_root or vim.fn.getcwd(), 'target', 'nextest', 'rustaceanvim', 'junit.xml')
       )
     end)
-    if not success then
+    ---@cast junit_xml string | nil
+    if not success or not junit_xml then
       vim.notify('Failed to read junit.xml file', vim.log.levels.ERROR)
       return results
     end
     diagnostics = require('rustaceanvim.test').parse_nextest_diagnostics(junit_xml, 0)
   end
+
+  ---@cast output_content string
+  ---@cast junit_xml string
 
   if not vim.tbl_contains({ 'file', 'test', 'namespace' }, context.type) then
     return results
