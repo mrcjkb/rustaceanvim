@@ -16,6 +16,12 @@ jobs:
           ref: ${{ github.ref }}
           fetch-tags: true
 
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
