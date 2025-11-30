@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.4](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.3...v7.0.4) (2025-11-30)
+
+
+### Bug Fixes
+
+* **neotest:** handle consecutive passed tests for cargo test ([#918](https://github.com/mrcjkb/rustaceanvim/issues/918)) ([ef86070](https://github.com/mrcjkb/rustaceanvim/commit/ef86070cd23de0cfe16fd51209bde104a044ad05))
+* **test:** handle thread id after name in panic ([#916](https://github.com/mrcjkb/rustaceanvim/issues/916)) ([06364ec](https://github.com/mrcjkb/rustaceanvim/commit/06364ecf751d1c4846639a7d16ba971417802282))
+
 ## [7.0.3](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.2...v7.0.3) (2025-11-26)
 
 
