@@ -75,6 +75,52 @@ error: test failed, to rerun pass `--test repro`
 ]]
       run_golden_test_cargo(fixture)
     end)
+    it('passing tests in cargo output (alternate output)', function()
+      --
+      local fixture = [[
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running unittests src/lib.rs (target/debug/deps/rustaceanvim_460_repro-9a70619d0810014e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/repro.rs (target/debug/deps/repro-0338237287f12da7)
+
+running 4 tests
+test test_external_fail2 ... FAILED
+test test_external_fail ... FAILED
+test test_ok2 ... ok
+test test_ok ... ok
+
+failures:
+
+---- test_external_fail2 stdout ----
+
+thread 'test_external_fail2' panicked at src/lib.rs:2:5:
+assertion `left == right` failed
+  left: 1
+ right: 2
+
+---- test_external_fail stdout ----
+
+thread 'test_external_fail' panicked at src/lib.rs:2:5:
+assertion `left == right` failed
+  left: 1
+ right: 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    test_external_fail
+    test_external_fail2
+
+test result: FAILED. 2 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test repro`
+]]
+      run_golden_test_cargo(fixture)
+    end)
     it('passing tests in cargo-nextest junit output', function()
       local fixture = [[
 <?xml version="1.0" encoding="UTF-8"?>
