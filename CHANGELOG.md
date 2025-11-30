@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.5](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.4...v7.0.5) (2025-11-30)
+
+
+### Bug Fixes
+
+* **ci:** fetch tags to properly trigger luarocks upload ([f04f9f1](https://github.com/mrcjkb/rustaceanvim/commit/f04f9f117794cb41247997be0993e530c2107061))
+
 ## [7.0.4](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.3...v7.0.4) (2025-11-30)
 
 
