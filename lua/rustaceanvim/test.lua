@@ -29,7 +29,7 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
   local diagnostics = {}
 
   for failure_content, test_id, lnum, col in
-    output:gmatch("(thread '([^']+)' panicked at [^:]+:(%d+):(%d+):%s-\n.-\n)\n")
+    output:gmatch("(thread '([^']+)'.-panicked at [^:]+:(%d+):(%d+):%s-\n.-\n)\n")
   do
     local diagnostic_lnum = tonumber(lnum) - 1
     local diagnostic_col = tonumber(col) or 0
@@ -78,7 +78,7 @@ function M.parse_nextest_diagnostics(junit_xml, bufnr)
   local diagnostics = {}
   for test_id, _, lnum, col, failure_content in
     junit_xml:gmatch(
-      '<failure.-message="thread &apos;([^;]+)&apos; panicked at ([^:]+):(%d+):(%d+)".-<system%-err>(.-)</system%-err>'
+      '<failure.-message="thread &apos;([^;]+)&apos;.-panicked at ([^:]+):(%d+):(%d+)".-<system%-err>(.-)</system%-err>'
     )
   do
     table.insert(diagnostics, {
