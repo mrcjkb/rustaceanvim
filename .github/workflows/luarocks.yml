@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          ref: ${{ github.ref }}
-          fetch-tags: true
+
+      - name: Fetch tags # actions/checkout doesn't fetch tags properly
+        run: git fetch --tags
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
