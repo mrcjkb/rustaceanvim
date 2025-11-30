@@ -13,9 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Fetch tags # actions/checkout doesn't fetch tags properly
-        run: git fetch --tags
-
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
@@ -25,7 +22,7 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          version: 0.20.2
+          version: 0.20.3
 
       - name: Upload
         run: |
