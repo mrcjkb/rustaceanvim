@@ -1,6 +1,7 @@
 ---@type rustaceanvim.Executor
 local M = {
   execute_command = function(command, args, cwd, opts)
+    opts = opts or {}
     local ok, term = pcall(require, 'toggleterm.terminal')
     if not ok then
       vim.schedule(function()
@@ -10,6 +11,7 @@ local M = {
     end
 
     local shell = require('rustaceanvim.shell')
+    ---@diagnostic disable-next-line: need-check-nil
     term.Terminal
       :new({
         dir = cwd,
