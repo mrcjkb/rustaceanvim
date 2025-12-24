@@ -986,6 +986,14 @@ rust-analyzer has limited support for standalone files.
 Many diagnostics come from Cargo. If you're not in a Cargo project,
 you won't see any Cargo diagnostics.
 
+#### Debuggable targets aren't being added to nvim-dap
+
+Because rustaceanvim adds targets automatically when an
+LSP client attaches, it fails silently
+to avoid spamming you with notifications.
+To troubleshoot your debuggable targets,
+use `:RustLsp debuggables`.
+
 ## :link: Related Projects
 
 - [`cordx56/rustowl`](https://github.com/cordx56/rustowl)
