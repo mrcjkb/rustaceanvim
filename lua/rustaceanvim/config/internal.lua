@@ -57,7 +57,7 @@ local function load_dap_configuration(type)
   }
   if type == 'lldb' then
     ---@diagnostic disable-next-line: inject-field
-    dap_config.runInTerminal = true
+    dap_config.console = 'integratedTerminal'
   end
   ---@diagnostic disable-next-line: different-requires
   local dap = require('dap')
