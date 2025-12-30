@@ -81,13 +81,15 @@ function M.parse_nextest_diagnostics(junit_xml, bufnr)
       '<failure.-message="thread &apos;([^;]+)&apos;.-panicked at ([^:]+):(%d+):(%d+)".-<system%-err>(.-)</system%-err>'
     )
   do
+    local diagnostic_lnum = tonumber(lnum) - 1
+    local diagnostic_col = tonumber(col) or 0
     table.insert(diagnostics, {
       bufnr = bufnr,
       test_id = test_id,
-      lnum = tonumber(lnum),
-      end_lnum = tonumber(lnum),
-      col = tonumber(col),
-      end_col = tonumber(col),
+      lnum = diagnostic_lnum,
+      end_lnum = diagnostic_lnum,
+      col = diagnostic_col,
+      end_col = diagnostic_col,
       message = remove_ansi_codes(unescape_html(failure_content)),
       source = 'rustaceanvim',
       severity = vim.diagnostic.severity.ERROR,

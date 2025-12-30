@@ -47,8 +47,8 @@ local function run_golden_test_nextest(fixture)
   assert.same({
     {
       bufnr = 0,
-      lnum = 2,
-      end_lnum = 2,
+      lnum = 1,
+      end_lnum = 1,
       col = 5,
       end_col = 5,
       message = [[
@@ -65,8 +65,8 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
     },
     {
       bufnr = 0,
-      lnum = 2,
-      end_lnum = 2,
+      lnum = 1,
+      end_lnum = 1,
       col = 5,
       end_col = 5,
       message = [[

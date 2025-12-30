@@ -89,21 +89,13 @@ function M.maybe_nextest_transform(args)
   ---@type table<string, true>
   local nextest_unsupported_flags = {
     ['--show-output'] = true,
-  }
-  -- cargo test passes these flags to the test executable,
-  -- while cargo-nextest expects them to be passed to the test runner executable.
-  ---@type table<string, true>
-  local move_to_nextest_args_flags = {
+    -- nocapture is supported, but disables junit capturing in recent nextest versions
     ['--nocapture'] = true,
   }
   local indexes_to_remove_reverse_order = {}
   for i, arg in ipairs(executable_args) do
     if nextest_unsupported_flags[arg] then
       table.insert(indexes_to_remove_reverse_order, 1, i)
-    end
-    if move_to_nextest_args_flags[arg] then
-      table.insert(indexes_to_remove_reverse_order, 1, i)
-      table.insert(nextest_args, arg)
     end
   end
   for _, i in pairs(indexes_to_remove_reverse_order) do
