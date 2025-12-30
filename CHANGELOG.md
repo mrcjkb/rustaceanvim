@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.7](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.6...v7.0.7) (2025-12-30)
+
+
+### Bug Fixes
+
+* **lldb-dap:** use `console` instead of `runInTerminal` ([#932](https://github.com/mrcjkb/rustaceanvim/issues/932)) ([8e79e03](https://github.com/mrcjkb/rustaceanvim/commit/8e79e03b3c914cd8ef665dd0d0be2b4bc57d989b))
+
 ## [7.0.6](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.5...v7.0.6) (2025-11-30)
 
 
