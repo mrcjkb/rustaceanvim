@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.8](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.7...v7.0.8) (2025-12-30)
+
+
+### Bug Fixes
+
+* **test:** no diagnostics when using cargo-nextest ([#934](https://github.com/mrcjkb/rustaceanvim/issues/934)) ([a7a1556](https://github.com/mrcjkb/rustaceanvim/commit/a7a15564189dcd46a46802ec7d24d37b62e2c484))
+
 ## [7.0.7](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.6...v7.0.7) (2025-12-30)
 
 
