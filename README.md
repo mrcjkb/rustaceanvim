@@ -888,14 +888,13 @@ end
 
 ### How to dynamically load different `rust-analyzer` settings per project
 
-By default, this plugin will look for a `.vscode/settings.json`[^2]
-file and attempt to load it.
-If the file does not exist, or it can't be decoded,
-the `server.default_settings` will be used.
+You can use the [codesettings.nvim](https://github.com/mrjones2014/codesettings.nvim),
+which supports loading project-local LSP from `.vscode/settings.json`[^2],
+among others.
+If it is installed, rustaceanvim will try to invoke it automatically.
 
 [^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
       and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/book/configuration).
-      Note that JSON5 is currently not supported by Neovim.
 
 Another option is to use `:h exrc`.
 

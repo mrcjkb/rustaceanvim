@@ -168,8 +168,8 @@ vim.g.rustaceanvim = {
 Notes:
 
  - `vim.g.rustaceanvim` can also be a function that returns a |rustaceanvim.Opts| table.
- - You can also configure the rust-analyzer LSP client using a `.vscode/settings.json` file
-   or via |vim.lsp.config()| (using the `'rust-analyzer'` key).
+ - You can also configure the rust-analyzer LSP client via |vim.lsp.config()|
+   (using the `'*'` or `'rust-analyzer'` key).
 
 
 rustaceanvim.Opts                                            *rustaceanvim.Opts*
