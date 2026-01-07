@@ -163,6 +163,10 @@ end
 M.start = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
+  -- Force resolution of `vim.lsp.config['*']` for `ra_client_name`,
+  -- in case it has not been set
+  -- (This does not over
+  vim.lsp.config(ra_client_name, {})
   local ra_config = vim.lsp.config[ra_client_name] or {}
   -- NOTE: We deep copy to prevent shared state between rust-analyzer clients
   local client_config = vim.tbl_deep_extend('force', vim.deepcopy(config.server), ra_config)
