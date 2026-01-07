@@ -39,8 +39,8 @@
 ---Notes:
 ---
 --- - `vim.g.rustaceanvim` can also be a function that returns a |rustaceanvim.Opts| table.
---- - You can also configure the rust-analyzer LSP client using a `.vscode/settings.json` file
----   or via |vim.lsp.config()| (using the `'rust-analyzer'` key).
+--- - You can also configure the rust-analyzer LSP client via |vim.lsp.config()|
+---   (using the `'*'` or `'rust-analyzer'` key).
 ---
 ---@brief ]]
 
@@ -218,11 +218,6 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---
 ---The path to the rust-analyzer log file.
 ---@field logfile? string
----
----Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json.
----If found, loaded settings will override configured options.
----Default: `true`
----@field load_vscode_settings? boolean
 ---
 ---Server status warning level to notify at.
 ---Default: 'error'

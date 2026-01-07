@@ -317,8 +317,6 @@ local RustaceanDefaultConfig = {
       --- @type table
       ['rust-analyzer'] = {},
     },
-    ---@type boolean Whether to search (upward from the buffer) for rust-analyzer settings in .vscode/settings json.
-    load_vscode_settings = true,
     ---@type rustaceanvim.server.status_notify_level
     status_notify_level = 'error',
   },
