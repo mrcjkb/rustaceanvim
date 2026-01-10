@@ -538,6 +538,24 @@ vim.keymap.set(
 
 <details>
   <summary>
+  <b>Related tests</b>
+  </summary>
+
+Query rust-analyzer for tests associated with the symbol under
+the cursor (or its enclosing function) and quickly jump to one.
+
+```vim
+:RustLsp relatedTests
+```
+
+```lua
+vim.cmd.RustLsp('relatedTests')
+```
+
+</details>
+
+<details>
+  <summary>
   <b>Open Cargo.toml</b>
   </summary>
 

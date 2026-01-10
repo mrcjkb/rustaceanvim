@@ -89,6 +89,11 @@ local rustlsp_command_tbl = {
       require('rustaceanvim.commands.diagnostic').related_diagnostics()
     end,
   },
+  relatedTests = {
+    impl = function()
+      require('rustaceanvim.commands.related_tests').related_tests()
+    end,
+  },
   renderDiagnostic = {
     impl = function(args)
       local subcmd = args[1] or 'cycle'
