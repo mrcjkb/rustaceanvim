@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.0](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.9...v7.1.0) (2026-01-11)
+
+
+### Features
+
+* `RustLsp relatedTests` command ([#779](https://github.com/mrcjkb/rustaceanvim/issues/779)) ([#942](https://github.com/mrcjkb/rustaceanvim/issues/942)) ([cda05cb](https://github.com/mrcjkb/rustaceanvim/commit/cda05cb2a73dfcc8722504ec9df40c87a49ec029))
+
 ## [7.0.9](https://github.com/mrcjkb/rustaceanvim/compare/v7.0.8...v7.0.9) (2026-01-07)
 
 
