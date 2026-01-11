@@ -2,6 +2,7 @@ local M = {}
 
 local cargo = require('rustaceanvim.cargo')
 local ui = require('rustaceanvim.ui')
+local rts = require('rustaceanvim.treesitter')
 local api = vim.api
 local ts = vim.treesitter
 
@@ -93,15 +94,9 @@ local function handler(sc)
   vim.api.nvim_buf_set_lines(latest_buf_id, 0, 0, false, lines)
 end
 
----@return boolean
-local function has_tree_sitter_rust()
-  return #api.nvim_get_runtime_file('parser/rust.so', true) > 0
-    or require('rustaceanvim.shell').is_windows() and #api.nvim_get_runtime_file('parser/rust.dll', true) > 0
-end
-
 ---@param level rustaceanvim.rustcir.level
 function M.rustc_unpretty(level)
-  if not has_tree_sitter_rust() then
+  if not rts.has_tree_sitter_rust() then
     vim.notify("a treesitter parser for Rust is required for 'rustc unpretty'", vim.log.levels.ERROR)
     return
   end

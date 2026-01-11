@@ -42,6 +42,7 @@
 --- 'testables {args[]}?' - Run tests
 ---                         ':RustLsp!' means run the last testable (ignores any args).
 ---                         `args[]` allows you to override the executable's arguments.
+--- 'relatedTests'        - Open the tests rust-analyzer associates with the symbol under the cursor.
 --- 'expandMacro' - Expand macros recursively.
 --- 'moveItem {up|down}' - Move items up or down.
 --- 'codeAction' - Sometimes, rust-analyzer groups code actions by category,
