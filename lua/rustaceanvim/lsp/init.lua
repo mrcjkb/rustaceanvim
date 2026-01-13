@@ -37,40 +37,15 @@ local function is_in_workspace(client, root_dir)
   return false
 end
 
----Searches upward for a .vscode/settings.json that contains rust-analyzer
----settings and returns them.
----@param bufname string
----@return table server_settings or an empty table if no settings were found
-local function find_vscode_settings(bufname)
-  local settings = {}
-  local found_dirs = vim.fs.find({ '.vscode' }, { upward = true, path = vim.fs.dirname(bufname), type = 'directory' })
-  if vim.tbl_isempty(found_dirs) then
-    return settings
-  end
-  local vscode_dir = found_dirs[1]
-  local results = vim.fn.glob(vim.fs.joinpath(vscode_dir, 'settings.json'), true, true)
-  if vim.tbl_isempty(results) then
-    return settings
-  end
-  local content = os.read_file(results[1])
-  return content and require('rustaceanvim.config.json').silent_decode(content) or {}
-end
-
 ---Generate the settings from config and vscode settings if found.
 ---settings and returns them.
----@param bufname string
 ---@param root_dir string | nil
 ---@param client_config table
 ---@return table server_settings or an empty table if no settings were found
-local function get_start_settings(bufname, root_dir, client_config)
+local function get_start_settings(root_dir, client_config)
   local settings = client_config.settings
   local evaluated_settings = type(settings) == 'function' and settings(root_dir, client_config.default_settings)
     or settings
-
-  if config.server.load_vscode_settings then
-    local json_settings = find_vscode_settings(bufname)
-    require('rustaceanvim.config.json').override_with_rust_analyzer_json_keys(evaluated_settings, json_settings)
-  end
 
   return evaluated_settings
 end
@@ -188,7 +163,7 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     root_dir = os.normalize_path_on_windows(root_dir)
     lsp_start_config.root_dir = root_dir
 
-    lsp_start_config.settings = get_start_settings(bufname, root_dir, client_config)
+    lsp_start_config.settings = get_start_settings(root_dir, client_config)
     configure_file_watcher(lsp_start_config)
 
     -- Check if a client is already running and add the workspace folder if necessary.
@@ -233,7 +208,7 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     end
 
     -- special case: rust-analyzer has a `rust-analyzer.server.path` config option
-    -- that allows you to override the path via .vscode/settings.json
+    -- that allows you to override the path.
     local server_path = vim.tbl_get(lsp_start_config.settings, 'rust-analyzer', 'server', 'path')
     if type(server_path) == 'string' then
       if type(rust_analyzer_cmd) == 'table' then
@@ -349,7 +324,7 @@ M.reload_settings = function(bufnr)
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   ---@cast clients vim.lsp.Client[]
   for _, client in ipairs(clients) do
-    local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.config.root_dir, config.server)
+    local settings = get_start_settings(client.config.root_dir, config.server)
     ---@diagnostic disable-next-line: inject-field
     client.settings = settings
     client:notify('workspace/didChangeConfiguration', {
@@ -390,7 +365,7 @@ function M.set_config(ra_settings)
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   ---@cast clients vim.lsp.Client[]
   for _, client in ipairs(clients) do
-    local settings = get_start_settings(vim.api.nvim_buf_get_name(bufnr), client.config.root_dir, config.server)
+    local settings = get_start_settings(client.config.root_dir, config.server)
     ---@diagnostic disable-next-line: inject-field
     settings['rust-analyzer'] = vim.tbl_deep_extend('force', settings['rust-analyzer'], ra_settings)
     client.settings = settings
