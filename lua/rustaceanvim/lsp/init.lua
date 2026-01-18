@@ -13,10 +13,10 @@ local ra_client_name = 'rust-analyzer'
 local function override_apply_text_edits()
   local old_func = vim.lsp.util.apply_text_edits
   ---@diagnostic disable-next-line
-  vim.lsp.util.apply_text_edits = function(edits, bufnr, offset_encoding)
+  vim.lsp.util.apply_text_edits = function(edits, bufnr, offset_encoding, change_annotations)
     local overrides = require('rustaceanvim.overrides')
     overrides.snippet_text_edits_to_text_edits(edits)
-    old_func(edits, bufnr, offset_encoding or 'utf-8')
+    old_func(edits, bufnr, offset_encoding or 'utf-8', change_annotations)
   end
 end
 
