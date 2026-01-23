@@ -287,10 +287,6 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     local old_on_exit = lsp_start_config.on_exit
     lsp_start_config.on_exit = function(...)
       override_apply_text_edits()
-      -- on_exit runs in_fast_event
-      vim.schedule(function()
-        commands.delete_rust_lsp_command()
-      end)
       if type(old_on_exit) == 'function' then
         old_on_exit(...)
       end

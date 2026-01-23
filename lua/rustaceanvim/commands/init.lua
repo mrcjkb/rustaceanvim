@@ -377,8 +377,13 @@ local function tbl_keys_by_value_filter(predicate, tbl)
   return vim.tbl_keys(ret)
 end
 
+local rust_lsp_command_created = false
+
 ---Create the `:RustLsp` command
 function M.create_rust_lsp_command()
+  if rust_lsp_command_created then
+    return
+  end
   vim.api.nvim_create_user_command(rust_lsp_cmd_name, rust_lsp, {
     nargs = '+',
     range = true,
@@ -402,13 +407,7 @@ function M.create_rust_lsp_command()
       end
     end,
   })
-end
-
---- Delete the `:RustLsp` command
-function M.delete_rust_lsp_command()
-  if vim.cmd[rust_lsp_cmd_name] then
-    pcall(vim.api.nvim_del_user_command, rust_lsp_cmd_name)
-  end
+  rust_lsp_command_created = false
 end
 
 ---Create the `:Rustc` command
