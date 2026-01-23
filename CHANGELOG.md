@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.2](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.1...v7.1.2) (2026-01-23)
+
+
+### Bug Fixes
+
+* **lsp:** don't delete `:RustLsp` command on client restart ([#950](https://github.com/mrcjkb/rustaceanvim/issues/950)) ([a5cbc85](https://github.com/mrcjkb/rustaceanvim/commit/a5cbc8565a2030f43069314695bc438d4a42de2c))
+
 ## [7.1.1](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.0...v7.1.1) (2026-01-18)
 
 
