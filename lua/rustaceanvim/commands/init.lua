@@ -407,7 +407,7 @@ function M.create_rust_lsp_command()
       end
     end,
   })
-  rust_lsp_command_created = false
+  rust_lsp_command_created = true
 end
 
 ---Create the `:Rustc` command
