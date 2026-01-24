@@ -267,7 +267,7 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     local old_on_init = lsp_start_config.on_init
     lsp_start_config.on_init = function(...)
       override_apply_text_edits()
-      commands.create_rust_lsp_command()
+      commands.create_rust_lsp_command(bufnr)
       if type(old_on_init) == 'function' then
         old_on_init(...)
       end
