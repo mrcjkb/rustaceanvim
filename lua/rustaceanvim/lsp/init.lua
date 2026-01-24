@@ -267,7 +267,6 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     local old_on_init = lsp_start_config.on_init
     lsp_start_config.on_init = function(...)
       override_apply_text_edits()
-      commands.create_rust_lsp_command(bufnr)
       if type(old_on_init) == 'function' then
         old_on_init(...)
       end
@@ -278,6 +277,10 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
       if type(old_on_attach) == 'function' then
         old_on_attach(...)
       end
+
+      local _, attach_bufnr = ...
+      commands.create_rust_lsp_command(attach_bufnr)
+
       if config.dap.autoload_configurations then
         -- When switching projects, there might be new debuggables (#466)
         require('rustaceanvim.commands.debuggables').add_dap_debuggables()
