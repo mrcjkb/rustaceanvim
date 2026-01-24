@@ -274,12 +274,13 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
 
     local old_on_attach = lsp_start_config.on_attach
     lsp_start_config.on_attach = function(...)
+      ---@type number
+      local _, attach_bufnr = ...
+      commands.create_rust_lsp_command(attach_bufnr)
+
       if type(old_on_attach) == 'function' then
         old_on_attach(...)
       end
-
-      local _, attach_bufnr = ...
-      commands.create_rust_lsp_command(attach_bufnr)
 
       if config.dap.autoload_configurations then
         -- When switching projects, there might be new debuggables (#466)
