@@ -377,14 +377,10 @@ local function tbl_keys_by_value_filter(predicate, tbl)
   return vim.tbl_keys(ret)
 end
 
-local rust_lsp_command_created = false
-
 ---Create the `:RustLsp` command
-function M.create_rust_lsp_command()
-  if rust_lsp_command_created then
-    return
-  end
-  vim.api.nvim_create_user_command(rust_lsp_cmd_name, rust_lsp, {
+---@param bufnr number buffer ID
+function M.create_rust_lsp_command(bufnr)
+  vim.api.nvim_buf_create_user_command(bufnr, rust_lsp_cmd_name, rust_lsp, {
     nargs = '+',
     range = true,
     bang = true,
@@ -407,7 +403,6 @@ function M.create_rust_lsp_command()
       end
     end,
   })
-  rust_lsp_command_created = true
 end
 
 ---Create the `:Rustc` command
