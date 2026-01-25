@@ -131,7 +131,7 @@
             doctags = {
               enable = true;
               name = "doctags";
-              entry = "${pkgs.neovim-unwrapped}/bin/nvim -c 'helptags doc' +q";
+              entry = "${pkgs.neovim-unwrapped}/bin/nvim -u NONE -c 'helptags doc' +q";
               files = "\\.(txt)$";
               pass_filenames = false;
             };

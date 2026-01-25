@@ -27,10 +27,10 @@ end
 ---@param filter? rustaceanvim.lsp.get_clients.Filter
 ---@return vim.lsp.Client[]
 M.get_active_rustaceanvim_clients = function(bufnr, filter)
-  ---@type vim.lsp.get_clients.Filter
   local client_filter = vim.tbl_deep_extend('force', filter or {}, {
     name = 'rust-analyzer',
   })
+  ---@cast client_filter rustaceanvim.lsp.get_clients.Filter
   if bufnr then
     client_filter.bufnr = bufnr
   end

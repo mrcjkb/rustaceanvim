@@ -375,11 +375,11 @@ function M.start(args, verbose, callback, on_error)
       local _, dap_config = next(dap.configurations.rust or {})
 
       local local_config = types.evaluate(config.dap.configuration)
-      --- @cast local_config rustaceanvim.dap.client.Config | boolean
+      ---@cast local_config rustaceanvim.dap.client.Config | boolean
 
       ---@diagnostic disable-next-line: param-type-mismatch
       local final_config = local_config ~= false and vim.deepcopy(local_config) or vim.deepcopy(dap_config)
-      --- @cast final_config rustaceanvim.dap.client.Config
+      ---@cast final_config rustaceanvim.dap.client.Config
 
       local err
       ok, err = pcall(vim.validate, {
@@ -416,6 +416,7 @@ If you have specified a custom configuration, see ":h rustaceanvim.dap.client.Co
             and next(init_commands or {}) ~= nil
             and vim.tbl_deep_extend('force', final_config, { initCommands = init_commands[args.workspaceRoot] })
           or final_config
+        ---@cast final_config rustaceanvim.dap.client.Config
 
         local source_map = args.workspaceRoot and source_maps[args.workspaceRoot]
         final_config = source_map
