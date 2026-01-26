@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.6](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.5...v7.1.6) (2026-01-26)
+
+
+### Bug Fixes
+
+* **lsp:** `RustLsp` command not found when reloadimg workspace from `Cargo.toml` ([#958](https://github.com/mrcjkb/rustaceanvim/issues/958)) ([2027760](https://github.com/mrcjkb/rustaceanvim/commit/2027760b7c478ea28a2bce830402901fe1c09197))
+
 ## [7.1.5](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.4...v7.1.5) (2026-01-24)
 
 
