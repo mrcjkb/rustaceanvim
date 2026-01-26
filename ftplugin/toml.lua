@@ -11,6 +11,7 @@ end
 local config = require('rustaceanvim.config.internal')
 local ra = require('rustaceanvim.rust_analyzer')
 if config.tools.reload_workspace_from_cargo_toml then
+  local reload_workspace = require('rustaceanvim.commands.workspace_refresh')
   local group = vim.api.nvim_create_augroup('RustaceanCargoReloadWorkspace', { clear = false })
   local bufnr = vim.api.nvim_get_current_buf()
   vim.api.nvim_clear_autocmds {
@@ -22,7 +23,7 @@ if config.tools.reload_workspace_from_cargo_toml then
     group = group,
     callback = function()
       if #ra.get_active_rustaceanvim_clients(nil) > 0 then
-        vim.cmd.RustLsp { 'reloadWorkspace', mods = { silent = true } }
+        reload_workspace { silent = true }
       end
     end,
   })
