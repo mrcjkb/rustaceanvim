@@ -174,6 +174,17 @@ M.start = function(bufnr)
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
   cargo.get_config_root_dir(client_config, bufname, function(root_dir)
     if not root_dir then
+      if not client_config.standalone then
+        vim.notify(
+          [[
+rustaceanvim:
+No project root found.
+Not starting rust-analyzer client because detached/standalone mode is disabled.
+]],
+          vim.log.levels.ERROR
+        )
+        return
+      end
       vim.notify(
         [[
 rustaceanvim:
