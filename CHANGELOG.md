@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.7](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.6...v7.1.7) (2026-01-27)
+
+
+### Bug Fixes
+
+* **lsp:** don't start client without workspace root if `standalone` is disabled ([#960](https://github.com/mrcjkb/rustaceanvim/issues/960)) ([f64689b](https://github.com/mrcjkb/rustaceanvim/commit/f64689bb4707c5d53c6ba3e89afc00c20ef2d9b7))
+
 ## [7.1.6](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.5...v7.1.6) (2026-01-26)
 
 
