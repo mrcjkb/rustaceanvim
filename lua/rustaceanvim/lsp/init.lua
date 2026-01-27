@@ -175,6 +175,14 @@ M.start = function(bufnr)
   cargo.get_config_root_dir(client_config, bufname, function(root_dir)
     if not root_dir then
       if not client_config.standalone then
+        vim.notify(
+          [[
+rustaceanvim:
+No project root found.
+Not starting rust-analyzer client because detached/standalone mode is disabled.
+]],
+          vim.log.levels.ERROR
+        )
         return
       end
       vim.notify(
