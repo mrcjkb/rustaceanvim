@@ -254,12 +254,20 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
         focus_id = 'ra-render-diagnostic',
       })
     )
-    -- Clear content of preview buffer
-    vim.bo[bufnr].modifiable = true
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
-    vim.bo[bufnr].modifiable = false
-    -- Send content with ansi color codes to preview buffer
-    local chanid = vim.api.nvim_open_term(bufnr, {})
+
+    -- Send content with ANSI color codes to preview buffer
+    if vim.b[bufnr].chanid == nil then
+      -- Clear content of preview buffer
+      vim.bo[bufnr].modifiable = true
+      vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
+      vim.bo[bufnr].modifiable = false
+
+      vim.b[bufnr].chanid = vim.api.nvim_open_term(bufnr, {})
+    end
+
+    local chanid = vim.b[bufnr].chanid
+    -- reset the terminal to remove previous text
+    vim.api.nvim_chan_send(chanid, '\27c')
     vim.api.nvim_chan_send(chanid, vim.trim('1. Open in split\r\n' .. '---\r\n' .. rendered_diagnostic))
 
     vim.api.nvim_create_autocmd('WinEnter', {
