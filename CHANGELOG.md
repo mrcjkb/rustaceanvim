@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.8](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.7...v7.1.8) (2026-02-01)
+
+
+### Bug Fixes
+
+* **ui/renderDiagnostics:** terminal already connected to buffer ([#963](https://github.com/mrcjkb/rustaceanvim/issues/963)) ([0b86ea1](https://github.com/mrcjkb/rustaceanvim/commit/0b86ea133844ec37666571459946a07a0f58155e))
+
 ## [7.1.7](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.6...v7.1.7) (2026-01-27)
 
 
