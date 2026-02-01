@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.9](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.8...v7.1.9) (2026-02-01)
+
+
+### Bug Fixes
+
+* **ui/renderDiagnostics:** close hover when opening a split ([#965](https://github.com/mrcjkb/rustaceanvim/issues/965)) ([882634c](https://github.com/mrcjkb/rustaceanvim/commit/882634c1ee4a3c87980387772479edee0028140f))
+
 ## [7.1.8](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.7...v7.1.8) (2026-02-01)
 
 
