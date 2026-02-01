@@ -13,10 +13,41 @@ local _window_state = {
   latest_scratch_buf_id = nil,
 }
 
----@param bufnr integer
----@param winnr integer
----@param render_fn function
-local function set_split_open_keymap(bufnr, winnr, render_fn)
+---Closes the floating hover window.
+---
+---@return nil
+local function close_hover()
+  local winnr = _window_state.float_winnr
+  if winnr ~= nil and vim.api.nvim_win_is_valid(winnr) then
+    vim.api.nvim_win_close(winnr, true)
+    _window_state.float_winnr = nil
+  end
+end
+
+--- Render a floating hover window.
+---
+--- When <CR> is pressed on the first line
+--- of the rendered hover window, the `render_split_fn` is called with a `bufnr`
+--- to render content in a vertical split window, and the hover window is closed.
+---
+---@param contents table of lines to show in window
+---@param syntax string of syntax to set for opened buffer
+---@param focus_id string If a popup with this id is opened,
+---@param render_split_fn fun(bufnr: integer) Function called to render the split.
+---                           `bufnr` is the buffer in the split into which the content should be rendered
+---
+---@return integer bufnr Buffer number of the newly created floating window
+---@return integer winid Window ID of the newly created floating window
+local function open_hover(contents, syntax, focus_id, render_split_fn)
+  local bufnr, winnr = vim.lsp.util.open_floating_preview(
+    contents,
+    syntax,
+    vim.tbl_extend('keep', config.tools.float_win_config, {
+      focus_id = focus_id,
+    })
+  )
+  _window_state.float_winnr = winnr
+
   local function open_split()
     -- check if a buffer with the latest id is already open, if it is then
     -- delete it and continue
@@ -28,30 +59,22 @@ local function set_split_open_keymap(bufnr, winnr, render_fn)
     -- split the window to create a new buffer and set it to our window
     local vsplit = config.tools.float_win_config.open_split == 'vertical'
     ui.split(vsplit, _window_state.latest_scratch_buf_id)
-    render_fn()
+    render_split_fn(_window_state.latest_scratch_buf_id)
   end
+
+  vim.keymap.set('n', 'q', close_hover, { buffer = bufnr, noremap = true, silent = true })
+  vim.keymap.set('n', '<Esc>', close_hover, { buffer = bufnr, noremap = true, silent = true })
+
   vim.keymap.set('n', '<CR>', function()
     local line = vim.api.nvim_win_get_cursor(winnr)[1]
     if line > 1 then
       return
     end
+    close_hover()
     open_split()
   end, { buffer = bufnr, noremap = true, silent = true })
-end
 
----@return nil
-local function close_hover()
-  local winnr = _window_state.float_winnr
-  if winnr ~= nil and vim.api.nvim_win_is_valid(winnr) then
-    vim.api.nvim_win_close(winnr, true)
-    _window_state.float_winnr = nil
-  end
-end
-
----@param bufnr integer
-local function set_close_keymaps(bufnr)
-  vim.keymap.set('n', 'q', close_hover, { buffer = bufnr, noremap = true, silent = true })
-  vim.keymap.set('n', '<Esc>', close_hover, { buffer = bufnr, noremap = true, silent = true })
+  return bufnr, winnr
 end
 
 ---@param cycle_diagnostic (fun(opts?: vim.diagnostic.JumpOpts): vim.Diagnostic?)
@@ -130,20 +153,11 @@ function M.explain_error(cycle_diagnostic)
     table.insert(float_preview_lines, 1, '---')
     table.insert(float_preview_lines, 1, '1. Open in split')
     vim.schedule(function()
-      local bufnr, winnr = vim.lsp.util.open_floating_preview(
-        float_preview_lines,
-        'markdown',
-        vim.tbl_extend('keep', config.tools.float_win_config, {
-          focus_id = 'rustc-explain-error',
-        })
-      )
-      _window_state.float_winnr = winnr
-      set_close_keymaps(bufnr)
-      set_split_open_keymap(bufnr, winnr, function()
+      local _, winnr = open_hover(float_preview_lines, 'markdown', 'rustc-explain-error', function(bufnr)
         -- set filetype to rust for syntax highlighting
-        vim.bo[_window_state.latest_scratch_buf_id].filetype = 'rust'
+        vim.bo[bufnr].filetype = 'rust'
         -- write the expansion content to the buffer
-        vim.api.nvim_buf_set_lines(_window_state.latest_scratch_buf_id, 0, 0, false, markdown_lines)
+        vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, markdown_lines)
       end)
 
       if config.tools.float_win_config.auto_focus then
@@ -201,20 +215,11 @@ function M.explain_error_current_line()
     table.insert(float_preview_lines, 1, '---')
     table.insert(float_preview_lines, 1, '1. Open in split')
     vim.schedule(function()
-      local bufnr, winnr = vim.lsp.util.open_floating_preview(
-        float_preview_lines,
-        'markdown',
-        vim.tbl_extend('keep', config.tools.float_win_config, {
-          focus_id = 'rustc-explain-error',
-        })
-      )
-      _window_state.float_winnr = winnr
-      set_close_keymaps(bufnr)
-      set_split_open_keymap(bufnr, winnr, function()
+      local _, winnr = open_hover(float_preview_lines, 'markdown', 'rustc-explain-error', function(bufnr)
         -- set filetype to rust for syntax highlighting
-        vim.bo[_window_state.latest_scratch_buf_id].filetype = 'rust'
+        vim.bo[bufnr].filetype = 'rust'
         -- write the expansion content to the buffer
-        vim.api.nvim_buf_set_lines(_window_state.latest_scratch_buf_id, 0, 0, false, markdown_lines)
+        vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, markdown_lines)
       end)
 
       if config.tools.float_win_config.auto_focus then
@@ -245,15 +250,13 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
   local float_preview_lines = vim.deepcopy(lines)
   table.insert(float_preview_lines, 1, '---')
   table.insert(float_preview_lines, 1, '1. Open in split')
+
   vim.schedule(function()
     -- Create preview buffer with plain text content for setting the right dimensions
-    local bufnr, winnr = vim.lsp.util.open_floating_preview(
-      float_preview_lines,
-      'plaintext',
-      vim.tbl_extend('keep', config.tools.float_win_config, {
-        focus_id = 'ra-render-diagnostic',
-      })
-    )
+    local bufnr, winnr = open_hover(float_preview_lines, 'plaintext', 'ra-render-diagnostic', function(bufnr)
+      local chan_id = vim.api.nvim_open_term(bufnr, {})
+      vim.api.nvim_chan_send(chan_id, vim.trim(rendered_diagnostic))
+    end)
 
     -- Send content with ANSI color codes to preview buffer
     if vim.b[bufnr].chanid == nil then
@@ -270,27 +273,26 @@ local function render_ansi_code_diagnostic(rendered_diagnostic)
     vim.api.nvim_chan_send(chanid, '\27c')
     vim.api.nvim_chan_send(chanid, vim.trim('1. Open in split\r\n' .. '---\r\n' .. rendered_diagnostic))
 
+    local group = vim.api.nvim_create_augroup('RustaceanRenderDiagnostics', { clear = true })
     vim.api.nvim_create_autocmd('WinEnter', {
+      group = group,
       callback = function()
-        vim.api.nvim_feedkeys(
-          vim.api.nvim_replace_termcodes(
-            [[<c-\><c-n>]] .. '<cmd>lua vim.api.nvim_win_set_cursor(' .. winnr .. ',{1,0})<CR>',
-            true,
-            false,
+        if vim.api.nvim_win_is_valid(winnr) then
+          vim.api.nvim_feedkeys(
+            vim.api.nvim_replace_termcodes(
+              [[<c-\><c-n>]] .. '<cmd>lua vim.api.nvim_win_set_cursor(' .. winnr .. ',{1,0})<CR>',
+              true,
+              false,
+              true
+            ),
+            'n',
             true
-          ),
-          'n',
-          true
-        )
+          )
+        end
       end,
       buffer = bufnr,
     })
-    _window_state.float_winnr = winnr
-    set_close_keymaps(bufnr)
-    set_split_open_keymap(bufnr, winnr, function()
-      local chan_id = vim.api.nvim_open_term(_window_state.latest_scratch_buf_id, {})
-      vim.api.nvim_chan_send(chan_id, vim.trim(rendered_diagnostic))
-    end)
+
     if config.tools.float_win_config.auto_focus then
       vim.api.nvim_set_current_win(winnr)
       vim.api.nvim_feedkeys(
