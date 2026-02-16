@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.0.0](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.9...v8.0.0) (2026-02-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **lsp:** remove .vscode/settings.json support in favour of codesettings.nvim ([#938](https://github.com/mrcjkb/rustaceanvim/issues/938))
+
+### Features
+
+* **lsp:** remove .vscode/settings.json support in favour of codesettings.nvim ([#938](https://github.com/mrcjkb/rustaceanvim/issues/938)) ([a522e53](https://github.com/mrcjkb/rustaceanvim/commit/a522e53f6c58f9579831b615fb4a4b6f7770c2b9))
+
+
+### Bug Fixes
+
+* **lsp:** create `RustAnalyzer` command if `auto_attach` is disabled ([6637583](https://github.com/mrcjkb/rustaceanvim/commit/6637583c91c873743b339d659fca6427a82d8215))
+
 ## [7.1.9](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.8...v7.1.9) (2026-02-01)
 
 
