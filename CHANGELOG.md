@@ -18,7 +18,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Bug Fixes
 
-* **lsp:** create `RustAnalyzer` command ie `auto_attach` is disabled ([6637583](https://github.com/mrcjkb/rustaceanvim/commit/6637583c91c873743b339d659fca6427a82d8215))
+* **lsp:** create `RustAnalyzer` command if `auto_attach` is disabled ([6637583](https://github.com/mrcjkb/rustaceanvim/commit/6637583c91c873743b339d659fca6427a82d8215))
 
 ## [7.1.9](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.8...v7.1.9) (2026-02-01)
 
