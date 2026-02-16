@@ -33,7 +33,7 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          version: 0.20.3
+          version: 0.25.2
 
       - name: Run tests
         run: |
