@@ -347,9 +347,10 @@ end
 
 ---Restart the LSP client.
 ---Fails silently if the buffer's filetype is not one of the filetypes specified in the config.
+---@param bufnr? number The buffer number, defaults to the current buffer
 ---@return number|nil client_id The LSP client ID after restart
-M.restart = function()
-  return restart()
+M.restart = function(bufnr)
+  return restart(bufnr)
 end
 
 ---Reload settings for the LSP client.
@@ -395,9 +396,10 @@ M.set_target_arch = function(bufnr, target)
   end)
 end
 
+---@param bufnr? number The buffer number, defaults to the current buffer
 ---@param ra_settings table
-function M.set_config(ra_settings)
-  local bufnr = vim.api.nvim_get_current_buf()
+function M.set_config(bufnr, ra_settings)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
   local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
   ---@cast clients vim.lsp.Client[]
   for _, client in ipairs(clients) do
@@ -410,58 +412,5 @@ function M.set_config(ra_settings)
     })
   end
 end
-
----@enum RustAnalyzerCmd
-local RustAnalyzerCmd = {
-  start = 'start',
-  stop = 'stop',
-  restart = 'restart',
-  reload_settings = 'reloadSettings',
-  target = 'target',
-  config = 'config',
-}
-
-local function rust_analyzer_user_cmd(opts)
-  local fargs = opts.fargs
-  local cmd = table.remove(fargs, 1)
-  ---@cast cmd RustAnalyzerCmd
-  if cmd == RustAnalyzerCmd.start then
-    M.start()
-  elseif cmd == RustAnalyzerCmd.stop then
-    M.stop()
-  elseif cmd == RustAnalyzerCmd.restart then
-    M.restart()
-  elseif cmd == RustAnalyzerCmd.reload_settings then
-    M.reload_settings()
-  elseif cmd == RustAnalyzerCmd.target then
-    local target_arch = fargs[1]
-    M.set_target_arch(nil, target_arch)
-  elseif cmd == RustAnalyzerCmd.config then
-    local ra_settings_str = vim.iter(fargs):join(' ')
-    ---@diagnostic disable-next-line: param-type-mismatch
-    local f = load('return ' .. ra_settings_str)
-    ---@diagnostic disable-next-line: param-type-mismatch
-    local ok, ra_settings = pcall(f)
-    if not ok or type(ra_settings) ~= 'table' then
-      return vim.notify('RustAnalyzer config: invalid Lua table.\n' .. ra_settings_str, vim.log.levels.ERROR)
-    end
-    M.set_config(ra_settings)
-  end
-end
-
-vim.api.nvim_create_user_command('RustAnalyzer', rust_analyzer_user_cmd, {
-  nargs = '+',
-  desc = 'Starts, stops the rust-analyzer LSP client or changes the target',
-  complete = function(arg_lead, cmdline, _)
-    local clients = rust_analyzer.get_active_rustaceanvim_clients()
-    ---@type RustAnalyzerCmd[]
-    local commands = #clients == 0 and { 'start' } or { 'stop', 'restart', 'reloadSettings', 'target', 'config' }
-    if cmdline:match('^RustAnalyzer%s+%w*$') then
-      return vim.tbl_filter(function(command)
-        return command:find(arg_lead) ~= nil
-      end, commands)
-    end
-  end,
-})
 
 return M

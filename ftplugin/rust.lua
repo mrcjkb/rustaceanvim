@@ -54,12 +54,68 @@ end
 
 vim.g.loaded_rustaceanvim = true
 
+local bufnr = vim.api.nvim_get_current_buf()
+
+---@enum RustAnalyzerCmd
+local RustAnalyzerCmd = {
+  start = 'start',
+  stop = 'stop',
+  restart = 'restart',
+  reload_settings = 'reloadSettings',
+  target = 'target',
+  config = 'config',
+}
+
+local function rust_analyzer_user_cmd(opts)
+  local fargs = opts.fargs
+  local cmd = table.remove(fargs, 1)
+  local lsp = require('rustaceanvim.lsp')
+  ---@cast cmd RustAnalyzerCmd
+  if cmd == RustAnalyzerCmd.start then
+    lsp.start(bufnr)
+  elseif cmd == RustAnalyzerCmd.stop then
+    lsp.stop(bufnr)
+  elseif cmd == RustAnalyzerCmd.restart then
+    lsp.restart(bufnr)
+  elseif cmd == RustAnalyzerCmd.reload_settings then
+    lsp.reload_settings(bufnr)
+  elseif cmd == RustAnalyzerCmd.target then
+    local target_arch = fargs[1]
+    lsp.set_target_arch(bufnr, target_arch)
+  elseif cmd == RustAnalyzerCmd.config then
+    local ra_settings_str = vim.iter(fargs):join(' ')
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local f = load('return ' .. ra_settings_str)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local ok, ra_settings = pcall(f)
+    if not ok or type(ra_settings) ~= 'table' then
+      return vim.notify('RustAnalyzer config: invalid Lua table.\n' .. ra_settings_str, vim.log.levels.ERROR)
+    end
+    lsp.set_config(bufnr, ra_settings)
+  end
+end
+
+vim.api.nvim_buf_create_user_command(bufnr, 'RustAnalyzer', rust_analyzer_user_cmd, {
+  nargs = '+',
+  desc = 'Starts, stops the rust-analyzer LSP client or changes the target',
+  complete = function(arg_lead, cmdline, _)
+    local rust_analyzer = require('rustaceanvim.rust_analyzer')
+    local clients = rust_analyzer.get_active_rustaceanvim_clients()
+    ---@type RustAnalyzerCmd[]
+    local commands = #clients == 0 and { 'start' } or { 'stop', 'restart', 'reloadSettings', 'target', 'config' }
+    if cmdline:match('^RustAnalyzer%s+%w*$') then
+      return vim.tbl_filter(function(command)
+        return command:find(arg_lead) ~= nil
+      end, commands)
+    end
+  end,
+})
+
 local auto_attach = config.server.auto_attach
 if type(auto_attach) == 'function' then
-  local bufnr = vim.api.nvim_get_current_buf()
   auto_attach = auto_attach(bufnr)
 end
 
 if auto_attach then
-  require('rustaceanvim.lsp').start()
+  require('rustaceanvim.lsp').start(bufnr)
 end
