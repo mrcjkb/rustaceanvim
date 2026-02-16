@@ -103,7 +103,7 @@ that are specific to rust-analyzer.
 ```lua
 {
   'mrcjkb/rustaceanvim',
-  version = '^7', -- Recommended
+  version = '^8', -- Recommended
   lazy = false, -- This plugin is already lazy
 }
 ```
