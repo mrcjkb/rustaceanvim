@@ -9,9 +9,12 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: DeterminateSystems/nix-installer-action@v10
-    - uses: cachix/cachix-action@v12
+    - name: Checkout repository
+      uses: actions/checkout@v6
+    - name: Install nix
+      uses: cachix/install-nix-action@v31
+    - name: Setup cachix
+      uses: cachix/cachix-action@v12
       with:
         name: mrcjkb
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -20,9 +23,12 @@ jobs:
   shell:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: DeterminateSystems/nix-installer-action@v10
-    - uses: cachix/cachix-action@v12
+    - name: Checkout repository
+      uses: actions/checkout@v6
+    - name: Install nix
+      uses: cachix/install-nix-action@v31
+    - name: Setup cachix
+      uses: cachix/cachix-action@v12
       with:
         name: mrcjkb
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
