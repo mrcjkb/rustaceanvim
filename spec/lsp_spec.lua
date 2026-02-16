@@ -9,8 +9,7 @@ describe('LSP client API', function()
   local notify_once = stub(vim, 'notify_once')
   local notify = stub(vim, 'notify')
   local deprecate = stub(vim, 'deprecate')
-  -- load RustAnalyzer command
-  require('rustaceanvim.lsp')
+  local lsp = require('rustaceanvim.lsp')
   local RustaceanConfig = require('rustaceanvim.config.internal')
   local Types = require('rustaceanvim.types.internal')
   local ra_bin = Types.evaluate(RustaceanConfig.server.cmd)[1]
@@ -21,7 +20,7 @@ describe('LSP client API', function()
       vim.api.nvim_buf_set_name(bufnr, 'test.rs')
       vim.bo[bufnr].filetype = 'rust'
       vim.api.nvim_set_current_buf(bufnr)
-      vim.cmd.RustAnalyzer('start')
+      lsp.start()
       assert.stub(lsp_start).called(1)
       -- FIXME: This might not work in a sandboxed nix build
       -- local ra = require('rustaceanvim.rust_analyzer')
