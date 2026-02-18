@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.0.1](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.0...v8.0.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **health:** remove JSON config check ([#969](https://github.com/mrcjkb/rustaceanvim/issues/969)) ([99e16fc](https://github.com/mrcjkb/rustaceanvim/commit/99e16fc51e4440932b78b8930027ee877de39c98))
+
 ## [8.0.0](https://github.com/mrcjkb/rustaceanvim/compare/v7.1.9...v8.0.0) (2026-02-16)
 
 
