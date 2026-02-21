@@ -58,7 +58,7 @@
 ---
 ---               For example, if you set the keymap: `vim.keymap.set('n', '<space>a', '<Plug>RustHoverAction')`,
 ---               you can invoke the third hover action with `3<space>a`.
---- 'explainError {cycle?|cycle_prev?|current?}' - Display a hover window with explanations form the Rust error index.
+--- 'explainError {cycle?|cycle_prev?|current?}' - Display a hover window with explanations from the Rust error index.
 ---            - If called with |cycle| or no args:
 ---              Like |vim.diagnostic.goto_next|,
 ---              |explainError| will cycle diagnostics,
