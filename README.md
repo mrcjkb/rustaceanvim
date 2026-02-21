@@ -722,7 +722,7 @@ by setting the rust-analyzer
   > [!NOTE]
   >
   > This is only useful if you set the option,
-  > `['rust-analzyer'].checkOnSave = false`.
+  > `['rust-analyzer'].checkOnSave = false`.
 
 </details>
 
@@ -937,7 +937,7 @@ nvim -u minimal.lua
 
 > [!IMPORTANT]
 >
-> I strongly recommend against using rust-analyzer managed my mason.nvim,
+> I strongly recommend against using rust-analyzer managed by mason.nvim,
 > as version mismatches between rust-analyzer and your project toolchain
 > can and most likely will lead to subtle issues.
 
@@ -989,7 +989,7 @@ or you may use [`blink.cmp`](https://github.com/saghen/blink.cmp).
 #### I'm having issues with (auto)completion
 
 rustaceanvim doesn't implement (auto)completion.
-Issues with (auto)completion either come from another plugin or rust-analzyer.
+Issues with (auto)completion either come from another plugin or rust-analyzer.
 
 #### mason.nvim and nvim-lspconfig
 
