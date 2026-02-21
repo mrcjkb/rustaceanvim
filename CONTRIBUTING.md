@@ -3,7 +3,7 @@
 Contributions are more than welcome!
 
 This document assumes that you already know how to use GitHub and Git.
-If that's not the case, we recommend learning about it first [here](https://docs.github.com/en/get-started/quickstart/hello-world).
+If that's not the case, we recommend [learning about it first here](https://docs.github.com/en/get-started/quickstart/hello-world).
 
 ## Strict No LLM / No AI Policy
 
@@ -11,7 +11,10 @@ No LLMs for issues.
 
 No LLMs for pull requests.
 
-No LLMs for comments on issues/PRs, including translation. English is encouraged, but not required. You are welcome to post in your native language and rely on others to have their own translation tools of choice to interpret your words.
+No LLMs for comments on issues/PRs, including translation.
+English is encouraged, but not required.
+You are welcome to post in your native language and rely
+on others to have their own translation tools of choice to interpret your words.
 
 ## First-time contributors
 
