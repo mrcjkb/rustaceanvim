@@ -8,7 +8,7 @@ will most likely have been built with a different toolchain than your project,
 leading to inconsistencies and possibly subtle bugs.
 
 If you want to use a mason.nvim installation anyway, you can do so by specifying
-the `server.cmd` setting (see |rustaceanvim.config| and |RustaceanLspClientOpts|):
+the `server.cmd` setting (see |rustaceanvim.config| and |rustaceanvim.lsp.ClientOpts|):
 >lua
   vim.g.rustaceanvim = {
     server = {
