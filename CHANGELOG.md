@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.0.2](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.1...v8.0.2) (2026-02-24)
+
+
+### Bug Fixes
+
+* **executors/background:** notify, don't error, on junit xml file read failure ([81c4c7b](https://github.com/mrcjkb/rustaceanvim/commit/81c4c7be99375b2eb97386c24cbe35d9669efdad))
+* **vimdoc:** update helptag reference ([175b06e](https://github.com/mrcjkb/rustaceanvim/commit/175b06edc745621e11141aa076aa9b8eda601471))
+
 ## [8.0.1](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.0...v8.0.1) (2026-02-18)
 
 
