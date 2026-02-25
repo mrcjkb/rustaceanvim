@@ -21,11 +21,11 @@ end
 --- Sends the request to rust-analyzer to get the parent modules location and open it
 function M.parent_module()
   local ra = require('rustaceanvim.rust_analyzer')
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = ra.find_active_rustaceanvim_client()
+  if not client then
     return
   end
-  local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8')
+  local params = vim.lsp.util.make_position_params(0, client.offset_encoding or 'utf-8')
   ra.buf_request(0, 'experimental/parentModule', params, handler)
 end
 

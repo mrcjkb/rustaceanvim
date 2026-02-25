@@ -1,9 +1,9 @@
 local M = {}
 
----@param err string | nil
+---@param err lsp.ResponseError?
 local function handler(err, _, _)
   if err then
-    vim.notify('Error rebuilding proc macros: ' .. err)
+    vim.notify('Error rebuilding proc macros: ' .. vim.inspect(err))
     return
   end
 end

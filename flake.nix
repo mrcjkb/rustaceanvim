@@ -13,15 +13,6 @@
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
-    gen-luarc = {
-      url = "github:mrcjkb/nix-gen-luarc-json";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
-        git-hooks.follows = "git-hooks";
-      };
-    };
-
     vimcats = {
       url = "github:mrcjkb/vimcats";
       inputs = {
@@ -37,7 +28,6 @@
     nixpkgs,
     flake-parts,
     git-hooks,
-    gen-luarc,
     vimcats,
     ...
   }: let
@@ -64,53 +54,6 @@
         neovim-nightly = inputs.neovim-nightly-overlay.packages.${system}.default;
 
         ci-overlay = import ./nix/ci-overlay.nix {inherit neovim-nightly;};
-
-        luarc-plugins = with pkgs.lua51Packages;
-          [
-            nvim-nio
-          ]
-          ++ (with pkgs.vimPlugins; [
-            neotest
-            nvim-dap
-          ]);
-
-        luarc-nightly = pkgs.mk-luarc {
-          nvim = neovim-nightly;
-          plugins = luarc-plugins;
-        };
-
-        luarc-stable = pkgs.mk-luarc {
-          nvim = pkgs.neovim-unwrapped;
-          plugins = luarc-plugins;
-          disabled-diagnostics = [
-            "undefined-doc-name"
-            "undefined-doc-class"
-            "redundant-parameter"
-            "invisible"
-          ];
-        };
-
-        type-check-nightly = git-hooks.lib.${system}.run {
-          src = self;
-          hooks = {
-            lua-ls = {
-              enable = true;
-              settings.configuration = luarc-nightly;
-            };
-          };
-        };
-
-        type-check-stable = git-hooks.lib.${system}.run {
-          src = self;
-          hooks = {
-            lua-ls = {
-              enable = true;
-              settings = {
-                configuration = luarc-stable;
-              };
-            };
-          };
-        };
 
         pre-commit-check = git-hooks.lib.${system}.run {
           src = self;
@@ -143,12 +86,15 @@
           shellHook = ''
             ${pre-commit-check.shellHook}
           '';
+          env = {
+            EMMYLUALS_CONFIG = ".luarc.json";
+          };
           buildInputs = with git-hooks.packages.${system}; [
             pkgs.lux-cli
             pkgs.statix
             pkgs.nixd
+            pkgs.emmylua-ls
             alejandra
-            lua-language-server
             stylua
             editorconfig-checker
             markdownlint-cli
@@ -162,7 +108,6 @@
           inherit system;
           overlays = [
             ci-overlay
-            gen-luarc.overlays.default
             plugin-overlay
           ];
         };
@@ -185,10 +130,6 @@
 
         checks = {
           formatting = pre-commit-check;
-          inherit
-            type-check-stable
-            type-check-nightly
-            ;
         };
       };
       flake = {

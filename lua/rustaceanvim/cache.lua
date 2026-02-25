@@ -11,8 +11,9 @@ store-success-output = true
 
 ---@return string path to nextest.toml file
 function M.nextest_config_path()
-  local cache_dir = vim.fs.joinpath(vim.fn.stdpath('cache'), 'rustaceanvim')
-  local config_path = vim.fs.joinpath(cache_dir, 'nextest_1.toml')
+  local nvim_cache_dir = vim.fn.stdpath('cache') ---@as string
+  local rustaceanvim_cache_dir = vim.fs.joinpath(nvim_cache_dir, 'rustaceanvim')
+  local config_path = vim.fs.joinpath(rustaceanvim_cache_dir, 'nextest_1.toml')
 
   -- Check if file already exists
   local stat = vim.uv.fs_stat(config_path)
@@ -21,7 +22,7 @@ function M.nextest_config_path()
   end
 
   -- Create cache directory if it doesn't exist
-  vim.fn.mkdir(cache_dir, 'p')
+  vim.fn.mkdir(rustaceanvim_cache_dir, 'p')
 
   -- Write the config file
   local file = io.open(config_path, 'w')

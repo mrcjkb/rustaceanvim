@@ -21,6 +21,8 @@ end
 ---@type rustaceanvim.Executor
 local M = {
   execute_command = function(command, args, cwd, opts)
+    opts = opts or {}
+
     -- open quickfix
     copen()
     -- go back to the previous window

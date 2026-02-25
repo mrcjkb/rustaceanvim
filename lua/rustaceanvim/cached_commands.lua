@@ -6,9 +6,9 @@ local M = {}
 local cache = {
   ---@type rustaceanvim.RARunnableArgs | nil
   last_debuggable = nil,
-  ---@type rustaceanvim.RARunnablesChoice
+  ---@type rustaceanvim.RARunnablesChoice | nil
   last_runnable = nil,
-  ---@type rustaceanvim.RARunnablesChoice
+  ---@type rustaceanvim.RARunnablesChoice | nil
   last_testable = nil,
 }
 
@@ -54,8 +54,9 @@ end
 ---@param choice rustaceanvim.RARunnablesChoice
 ---@param executableArgsOverride? string[]
 local function override_executable_args_if_set(choice, executableArgsOverride)
-  if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
-    choice.runnables[choice.choice].args.executableArgs = executableArgsOverride
+  local runnable = choice.runnables[choice.choice]
+  if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 and runnable then
+    runnable.args.executableArgs = executableArgsOverride
   end
 end
 

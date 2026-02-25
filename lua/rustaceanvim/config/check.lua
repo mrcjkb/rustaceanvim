@@ -7,10 +7,10 @@ local M = {}
 ---@param name string Argument name
 ---@param value unknown Argument value
 ---@param validator vim.validate.Validator
----   - (`string|string[]`): Any value that can be returned from |lua-type()| in addition to
+---   * (`string|string[]`): Any value that can be returned from |lua-type()| in addition to
 ---     `'callable'`: `'boolean'`, `'callable'`, `'function'`, `'nil'`, `'number'`, `'string'`, `'table'`,
 ---     `'thread'`, `'userdata'`.
----   - (`fun(val:any): boolean, string?`) A function that returns a boolean and an optional
+---   * (`fun(val:any): boolean, string?`) A function that returns a boolean and an optional
 ---     string message.
 ---@param optional? boolean Argument is optional (may be omitted)
 ---@param message? string message when validation fails

@@ -3,6 +3,7 @@ local shell = require('rustaceanvim.shell')
 ---@type rustaceanvim.Executor
 local M = {
   execute_command = function(command, args, cwd, opts)
+    opts = opts or {}
     local envs = ''
     for k, v in pairs(opts.env) do
       envs = envs .. k .. "='" .. v .. "' "

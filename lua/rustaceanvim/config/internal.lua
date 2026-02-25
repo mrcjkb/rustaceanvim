@@ -4,10 +4,13 @@ local executors = require('rustaceanvim.executors')
 local os = require('rustaceanvim.os')
 local server_config = require('rustaceanvim.config.server')
 
+---@type rustaceanvim.Config
 local RustaceanConfig
 
 local rustaceanvim = vim.g.rustaceanvim or {}
 local rustaceanvim_opts = type(rustaceanvim) == 'function' and rustaceanvim() or rustaceanvim
+
+---@alias rustaceanvim.rust-analyzer.StartCmd string[] | fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.PublicClient
 
 ---Wrapper around |vim.fn.exepath()| that returns the binary if no path is found.
 ---@param binary string
@@ -23,7 +26,7 @@ end
 ---@field quiescent boolean inactive?
 ---@field message string | nil
 ---
----@param dap_adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
+---@param dap_adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable | fun():(rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable)
 ---@return boolean
 local function should_enable_dap_config_value(dap_adapter)
   local adapter = types.evaluate(dap_adapter)
@@ -277,10 +280,11 @@ local RustaceanDefaultConfig = {
       end
       ---@cast cmd string[]
       local rs_bin = cmd[1]
-      return vim.fn.executable(rs_bin) == 1
+      return rs_bin ~= nil and vim.fn.executable(rs_bin) == 1
     end,
-    ---@type string[] | fun():(string[]|fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.PublicClient)
+    ---@type string[] | fun():rustaceanvim.rust-analyzer.StartCmd
     cmd = function()
+      ---@diagnostic disable-next-line: return-type-mismatch
       return { exepath_or_binary('rust-analyzer'), '--log-file', RustaceanConfig.server.logfile }
     end,
 
@@ -344,7 +348,9 @@ local RustaceanDefaultConfig = {
       else
         local has_mason, mason_registry = pcall(require, 'mason-registry')
         local ok, err = pcall(function()
+          ---@diagnostic disable-next-line: need-check-nil, unnecessary-if
           if has_mason and mason_registry.is_installed('codelldb') then
+            ---@diagnostic disable-next-line: need-check-nil
             local codelldb_package = mason_registry.get_package('codelldb')
             local mason_codelldb_path
             if require('mason.version').MAJOR_VERSION > 1 then
@@ -409,6 +415,7 @@ mason.nvim threw an error while trying to detect codelldb:
         return false
       end
       local adapter = types.evaluate(RustaceanConfig.dap.adapter)
+      ---@diagnostic disable-next-line: cast-type-mismatch
       ---@cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
       return adapter ~= false and is_lldb_adapter(adapter)
     end,
@@ -419,6 +426,7 @@ mason.nvim threw an error while trying to detect codelldb:
         return false
       end
       local adapter = types.evaluate(RustaceanConfig.dap.adapter)
+      ---@diagnostic disable-next-line: cast-type-mismatch
       ---@cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
       if adapter == false then
         return false
@@ -437,12 +445,14 @@ for _, executor in pairs { 'executor', 'test_executor', 'crate_test_executor' } 
     and rustaceanvim_opts.tools[executor]
     and type(rustaceanvim_opts.tools[executor]) == 'string'
   then
+    local executor_key = rustaceanvim_opts.tools[executor]
     rustaceanvim_opts.tools[executor] =
-      assert(executors[rustaceanvim_opts.tools[executor]], 'Unknown RustaceanExecutor')
+      ---@diagnostic disable-next-line: undefined-field
+      assert(executors[executor_key], 'Unknown rustaceanvim.executor_alias')
   end
 end
 
----@type rustaceanvim.Config
+---@type rustaceanvim.Config ---@diagnostic disable-next-line: assign-type-mismatch
 RustaceanConfig = vim.tbl_deep_extend('force', {}, RustaceanDefaultConfig, rustaceanvim_opts)
 
 -- Override user dap.adapter config in a backward compatible way

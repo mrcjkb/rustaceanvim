@@ -39,9 +39,9 @@ jobs:
         run: |
           lx --nvim test
 
-      # TODO: Not stable in Lux yet.
-      # For now, we use Nix for type checking
-      # - name: Type checks
-      #   run: |
-      #     lx --nvim check
+      - name: Type checks
+        run: |
+          lx --nvim check --warnings-as-errors
+        env:
+          VIMRUNTIME: /home/runner/nvim-${{ matrix.nvim-version }}/share/nvim/runtime
 
