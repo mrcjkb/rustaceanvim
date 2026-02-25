@@ -914,7 +914,46 @@ If it is installed, rustaceanvim will try to invoke it automatically.
 [^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
       and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/book/configuration).
 
-Another option is to use `:h exrc`.
+Another option is to use `:h exrc` with a `.nvim.lua` file at your project root.
+This requires no extra plugins and lets you set per-project `rust-analyzer` options
+directly in Lua:
+
+```lua
+-- /path/to/project/.nvim.lua
+vim.g.rustaceanvim = {
+  server = {
+    default_settings = {
+      ['rust-analyzer'] = {
+        -- your project-specific rust-analyzer settings here
+      },
+    },
+  },
+}
+```
+
+> [!NOTE]
+>
+> If you also set `vim.g.rustaceanvim` in your global config (e.g. for DAP),
+> make sure to merge the per-project settings rather than overwriting them.
+> For example, capture the existing value before overwriting:
+>
+> ```lua
+> -- ~/.config/nvim/after/ftplugin/rust.lua
+> local existing = vim.g.rustaceanvim
+> vim.g.rustaceanvim = function()
+>   local base = type(existing) == 'table' and existing or {}
+>   return vim.tbl_deep_extend('force', base, {
+>     -- your global config (e.g. DAP adapter)
+>   })
+> end
+> ```
+
+> [!TIP]
+>
+> This is especially useful as a workaround while
+> [`rust-analyzer.toml` loading is broken](https://github.com/rust-lang/rust-analyzer/issues/18943).
+> You can mirror your `rust-analyzer.toml` settings in `.nvim.lua` to ensure
+> they are applied via the LSP client.
 
 ## :stethoscope: Troubleshooting
 
