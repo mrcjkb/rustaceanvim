@@ -914,7 +914,7 @@ If it is installed, rustaceanvim will try to invoke it automatically.
 [^2]: See [this example](https://github.com/rust-analyzer/rust-project.json-example/blob/master/.vscode/settings.json)
       and the rust-analyzer [configuration manual](https://rust-analyzer.github.io/book/configuration).
 
-Another option is to use `:h exrc`.
+Another option is to use [`:h exrc`](https://neovim.io/doc/user/options/#'exrc').
 
 ## :stethoscope: Troubleshooting
 
