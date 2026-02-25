@@ -143,6 +143,11 @@ M.start = function(bufnr)
   -- (This does not overwrite any existing configs).
   vim.lsp.config(ra_client_name, {})
   local ra_config = vim.lsp.config[ra_client_name] or {}
+  if ra_config.settings then
+    -- Ensure vim.lsp.config settings get merged with server.default_settings.
+    ra_config.default_settings = ra_config.settings
+    ra_config.settings = nil
+  end
   -- NOTE: We deep copy to prevent shared state between rust-analyzer clients
   local client_config = vim.tbl_deep_extend('force', vim.deepcopy(config.server), ra_config)
   ---@type rustaceanvim.lsp.StartConfig
