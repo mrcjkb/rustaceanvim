@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.0.4](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.3...v8.0.4) (2026-03-04)
+
+
+### Bug Fixes
+
+* **vimdoc:** regression causing missing config fields ([#983](https://github.com/mrcjkb/rustaceanvim/issues/983)) ([ccea64f](https://github.com/mrcjkb/rustaceanvim/commit/ccea64f2ed7545cfbb908046be15658e35c515a9))
+
 ## [8.0.3](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.2...v8.0.3) (2026-02-25)
 
 
