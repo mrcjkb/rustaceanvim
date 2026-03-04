@@ -176,8 +176,19 @@ Notes:
 rustaceanvim.Opts                                            *rustaceanvim.Opts*
 
     Fields: ~
-        {tools?}  (rustaceanvim.tools.Opts)
-                                             Plugin options.
+        {tools?}   (rustaceanvim.tools.Opts)
+                                                  Plugin options.
+        {server?}  (rustaceanvim.lsp.ClientOpts)
+                                                  Language server client options.
+                                                  Some fields can also be set using |vim.lsp.config()| for "rust-analyzer" or "*".
+                                                  If both the `server` table and a `vim.lsp.config["rust-analyzer"]` are defined,
+                                                  rustaceanvim merges |vim.lsp.config()| settings into the `server` table,
+                                                  giving them precedence over existing settings.
+                                                  Note that |vim.lsp.config()| expects a |vim.lsp.ClientConfig|.
+                                                  Although you can also pass in |rustaceanvim.lsp.ClientOpts|, doing so is not
+                                                  officially supported and may not be possible in the future.
+        {dap?}     (rustaceanvim.dap.Opts)
+                                                  Debug adapter options
 
 
 rustaceanvim.tools.Opts                                *rustaceanvim.tools.Opts*

@@ -61,7 +61,7 @@ vim.g.rustaceanvim = vim.g.rustaceanvim
 ---giving them precedence over existing settings.
 ---Note that |vim.lsp.config()| expects a |vim.lsp.ClientConfig|.
 ---Although you can also pass in |rustaceanvim.lsp.ClientOpts|, doing so is not
--- officially supported and may not be possible in the future.
+---officially supported and may not be possible in the future.
 ---@field server? rustaceanvim.lsp.ClientOpts
 ---
 ---Debug adapter options
