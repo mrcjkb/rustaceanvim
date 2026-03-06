@@ -8,12 +8,14 @@ local M = {}
 local rust_lsp_cmd_name = 'RustLsp'
 local rustc_cmd_name = 'Rustc'
 
----@class rustaceanvim.command_tbl
+---@class rustaceanvim.command_tbl_entry
 ---@field impl fun(args: string[], opts: vim.api.keyset.user_command) The command implementation
 ---@field complete? fun(subcmd_arg_lead: string): string[] Command completions callback, taking the lead of the subcommand's arguments
 ---@field bang? boolean Whether this command supports a bang!
 
----@type rustaceanvim.command_tbl[]
+---@alias rustaceanvim.command_tbl table<string, rustaceanvim.command_tbl_entry>
+
+---@type rustaceanvim.command_tbl
 local rustlsp_command_tbl = {
   codeAction = {
     impl = function(_, opts)
@@ -264,6 +266,7 @@ local rustlsp_command_tbl = {
     end,
   },
   flyCheck = {
+    ---@param args rustaceanvim.flyCheckCommand[]
     impl = function(args)
       local cmd = args[1] or 'run'
       require('rustaceanvim.commands.fly_check')(cmd)
@@ -276,7 +279,7 @@ local rustlsp_command_tbl = {
   },
   view = {
     impl = function(args)
-      if not args or #args == 0 then
+      if not args or not args[1] then
         vim.notify("Expected argument: 'mir' or 'hir'", vim.log.levels.ERROR)
         return
       end
@@ -305,16 +308,18 @@ local rustlsp_command_tbl = {
   },
 }
 
----@type rustaceanvim.command_tbl[]
+---@type rustaceanvim.command_tbl
 local rustc_command_tbl = {
   unpretty = {
+    ---@param args rustaceanvim.rustcir.level[]
     impl = function(args)
       local err_msg = table.concat(require('rustaceanvim.commands.rustc_unpretty').available_unpretty, ' | ')
-      if not args or #args == 0 then
+      if not args or not args[1] then
         vim.notify('Expected argument list: ' .. err_msg, vim.log.levels.ERROR)
         return
       end
       local arg = args[1]:lower()
+      ---@cast arg rustaceanvim.rustcir.level
       local available = false
       for _, value in ipairs(require('rustaceanvim.commands.rustc_unpretty').available_unpretty) do
         if value == arg then
@@ -378,7 +383,7 @@ local function tbl_keys_by_value_filter(predicate, tbl)
 end
 
 ---Create the `:RustLsp` command
----@param bufnr number buffer ID
+---@param bufnr integer buffer ID
 function M.create_rust_lsp_command(bufnr)
   vim.api.nvim_buf_create_user_command(bufnr, rust_lsp_cmd_name, rust_lsp, {
     nargs = '+',

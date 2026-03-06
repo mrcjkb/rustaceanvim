@@ -9,7 +9,8 @@ local M = {}
 M.load_os_rustc_target = function()
   vim.system({ 'rustc', '-Vv' }, { text = true }, function(result)
     if result.code == 0 then
-      for line in result.stdout:gmatch('[^\r\n]+') do
+      local stdout = result.stdout or ''
+      for line in stdout:gmatch('[^\r\n]+') do
         local host = line:match('^host:%s*(.+)$')
         if host then
           M.os_rustc_target = host
@@ -22,8 +23,11 @@ end
 
 ---@class rustaceanvim.lsp.get_clients.Filter: vim.lsp.get_clients.Filter
 ---@field exclude_rustc_target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to filter rust-analyzer clients
+---
+--- Only return clients supporting the given method
+--- @field method? string
 
----@param bufnr number | nil 0 for the current buffer, `nil` for no buffer filter
+---@param bufnr integer | nil 0 for the current buffer, `nil` for no buffer filter
 ---@param filter? rustaceanvim.lsp.get_clients.Filter
 ---@return vim.lsp.Client[]
 M.get_active_rustaceanvim_clients = function(bufnr, filter)
@@ -48,6 +52,13 @@ M.get_active_rustaceanvim_clients = function(bufnr, filter)
   return clients
 end
 
+---@param bufnr integer | nil 0 for the current buffer, `nil` for no buffer filter
+---@param filter? rustaceanvim.lsp.get_clients.Filter
+---@return vim.lsp.Client | nil
+M.find_active_rustaceanvim_client = function(bufnr, filter)
+  return M.get_active_rustaceanvim_clients(bufnr, filter)[1]
+end
+
 ---@param method string LSP method name
 ---@param params table|nil Parameters to send to the server
 ---@param handler? lsp.Handler See |lsp-handler|
@@ -59,7 +70,10 @@ M.any_buf_request = function(method, params, handler)
     return
   end
   -- No buffer found. Try any client.
-  for _, client in ipairs(M.get_active_rustaceanvim_clients(nil, { method = method })) do
+  ---@type rustaceanvim.lsp.get_clients.Filter
+  local filter = { method = method }
+  for _, client in ipairs(M.get_active_rustaceanvim_clients(nil, filter)) do
+    ---@diagnostic disable-next-line: param-type-mismatch
     client:request(method, params, handler, 0)
   end
 end
@@ -75,7 +89,10 @@ M.buf_request = function(bufnr, method, params, handler)
     bufnr = vim.api.nvim_get_current_buf()
   end
   local client_found = false
-  for _, client in ipairs(M.get_active_rustaceanvim_clients(bufnr, { method = method })) do
+  ---@type rustaceanvim.lsp.get_clients.Filter
+  local filter = { method = method }
+  for _, client in ipairs(M.get_active_rustaceanvim_clients(bufnr, filter)) do
+    ---@diagnostic disable-next-line: param-type-mismatch
     client:request(method, params, handler, 0)
     client_found = true
   end
@@ -86,7 +103,9 @@ end
 ---@param method string LSP method name
 ---@return vim.lsp.Client|nil
 M.get_client_for_file = function(file_path, method)
-  for _, client in ipairs(M.get_active_rustaceanvim_clients(nil, { method = method })) do
+  ---@type rustaceanvim.lsp.get_clients.Filter
+  local filter = { method = method }
+  for _, client in ipairs(M.get_active_rustaceanvim_clients(nil, filter)) do
     local root_dir = client.config.root_dir
     if root_dir and vim.startswith(os.normalize_path_on_windows(file_path), root_dir) then
       return client
@@ -98,7 +117,10 @@ end
 ---@param params table|nil Parameters to send to the server
 M.notify = function(method, params)
   local client_found = false
-  for _, client in ipairs(M.get_active_rustaceanvim_clients(0, { method = method })) do
+  ---@type rustaceanvim.lsp.get_clients.Filter
+  local filter = { method = method }
+  for _, client in ipairs(M.get_active_rustaceanvim_clients(0, filter)) do
+    ---@diagnostic disable-next-line: param-type-mismatch
     client:notify(method, params)
     client_found = true
   end

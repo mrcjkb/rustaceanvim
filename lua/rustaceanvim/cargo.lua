@@ -28,7 +28,7 @@ local function get_cargo_metadata(path, callback)
       return callback and callback(cargo_crate_dir) or cargo_crate_dir
     end
     local ok, cargo_metadata_json = pcall(vim.fn.json_decode, sc.stdout)
-    if ok and cargo_metadata_json then
+    if ok and type(cargo_metadata_json) == 'table' then
       return callback and callback(cargo_crate_dir, cargo_metadata_json) or cargo_crate_dir, cargo_metadata_json
     else
       vim.notify(
@@ -107,7 +107,8 @@ local function get_mb_active_client_root(file_name)
     item = os.normalize_path_on_windows(item)
     if file_name:sub(1, #item) == item then
       local clients = rust_analyzer.get_active_rustaceanvim_clients()
-      return clients and #clients > 0 and clients[#clients].config.root_dir or nil
+      local client = clients[#clients]
+      return client and client.config.root_dir or nil
     end
   end
 end

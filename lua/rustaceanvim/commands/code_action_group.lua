@@ -33,7 +33,7 @@ function _M.apply_action(action, client, ctx)
   if action.command then
     local command = type(action.command) == 'table' and action.command or action
     local fn = vim.lsp.commands[command.command]
-    if fn then
+    if type(fn) == 'function' then
       fn(command, ctx)
     end
   end
@@ -50,11 +50,12 @@ function _M.on_user_choice(action_item)
   end
   local ctx = action_item.ctx
   local client = vim.lsp.get_client_by_id(ctx.client_id)
-  local action = action_item.action
-  local code_action_provider = client and client.server_capabilities.codeActionProvider
   if not client then
     return
   end
+  local action = action_item.action
+  local server_capabilities = client.server_capabilities
+  local code_action_provider = server_capabilities and server_capabilities.codeActionProvider
   if not action.edit and type(code_action_provider) == 'table' and code_action_provider.resolveProvider then
     client:request('codeAction/resolve', action, function(err, resolved_action)
       ---@cast resolved_action rustaceanvim.RACodeAction|rustaceanvim.RACommand
@@ -80,7 +81,7 @@ local function compute_width(action_items, is_group)
 
   for _, value in pairs(action_items) do
     local action = value.action
-    local text = action.title
+    local text = action.title or ''
 
     if is_group and action.group then
       text = action.group .. config.tools.code_actions.group_icon
@@ -118,7 +119,7 @@ end
 ---@class rustaceanvim.RACodeActionResult
 ---@field result? rustaceanvim.RACodeAction[] | rustaceanvim.RACommand[]
 
----@param results { [number]: rustaceanvim.RACodeActionResult }
+---@param results table<integer, rustaceanvim.RACodeActionResult>
 ---@param ctx lsp.HandlerContext
 local function on_code_action_results(results, ctx)
   local cur_win = vim.api.nvim_get_current_win()
@@ -148,7 +149,7 @@ local function on_code_action_results(results, ctx)
   for _, value in ipairs(action_items) do
     local action = value.action
     -- Some clippy lints may have newlines in them
-    action.title = string.gsub(action.title, '[\n\r]+', ' ')
+    action.title = action.title and string.gsub(action.title, '[\n\r]+', ' ')
     if action.group then
       if not _M.state.actions.grouped[action.group] then
         _M.state.actions.grouped[action.group] = { actions = {}, idx = nil }
@@ -162,8 +163,8 @@ local function on_code_action_results(results, ctx)
   if vim.tbl_count(_M.state.actions.grouped) == 0 and config.tools.code_actions.ui_select_fallback then
     ---@param item rustaceanvim.CodeActionItem
     local function format_item(item)
-      local title = item.action.title:gsub('\r\n', '\\r\\n')
-      return title:gsub('\n', '\\n')
+      local title = item.action.title and item.action.title:gsub('\r\n', '\\r\\n')
+      return title and title:gsub('\n', '\\n')
     end
     local select_opts = {
       prompt = 'Code actions:',
@@ -243,7 +244,8 @@ function _M.codeactionify_window_buffer(winnr, bufnr)
 end
 
 local function on_secondary_enter_press()
-  local line = vim.api.nvim_win_get_cursor(_M.state.secondary.winnr)[1]
+  local winnr = _M.state.secondary.winnr
+  local line = winnr and vim.api.nvim_win_get_cursor(winnr)[1]
   ---@type grouped_actions_tbl | nil
   local active_group = nil
 
@@ -293,29 +295,32 @@ function _M.cleanup()
 end
 
 function _M.on_cursor_move()
-  local line = vim.api.nvim_win_get_cursor(_M.state.primary.winnr)[1]
+  local primary_winnr = _M.state.primary.winnr
+  local line = primary_winnr and vim.api.nvim_win_get_cursor(primary_winnr)[1]
 
   for _, value in pairs(_M.state.actions.grouped) do
     if value.idx == line then
       _M.state.active_group_index = line
 
-      if _M.state.secondary.winnr then
-        ui.close_win(_M.state.secondary.winnr)
+      local secondary_winnr = _M.state.secondary.winnr
+      if secondary_winnr then
+        ui.close_win(secondary_winnr)
         _M.state.secondary.clear()
       end
 
       _M.state.secondary.geometry = compute_width(value.actions, false)
 
       _M.state.secondary.bufnr = vim.api.nvim_create_buf(false, true)
-      local secondary_winnr = vim.api.nvim_open_win(_M.state.secondary.bufnr, false, {
+      local primary_width = _M.state.primary.geometry and _M.state.primary.geometry.width
+      secondary_winnr = vim.api.nvim_open_win(_M.state.secondary.bufnr, false, {
         relative = 'win',
-        win = _M.state.primary.winnr,
+        win = primary_winnr,
         width = _M.state.secondary.geometry.width,
         height = #value.actions,
         focusable = true,
         border = config.tools.float_win_config.border,
-        row = line - 2,
-        col = _M.state.primary.geometry.width + 1,
+        row = line and line - 2 or 0,
+        col = primary_width and primary_width + 1 or 0,
       })
       _M.state.secondary.winnr = secondary_winnr
       vim.wo[secondary_winnr].signcolumn = 'no'
@@ -389,19 +394,22 @@ _M.state = {
   },
 }
 
----@param make_range_params fun(bufnr: integer, offset_encoding: string):{ range: table }
+---@param make_range_params fun(bufnr: integer, offset_encoding: string?):{ range: table }
 _M.code_action_group = function(make_range_params)
-  local context = {
-    diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(0, {
-      lnum = vim.api.nvim_win_get_cursor(0)[1] - 1,
-    })),
+  local cursor_line = vim.api.nvim_win_get_cursor(0)[1]
+  ---@type vim.diagnostic.GetOpts
+  local get_opts = {
+    lnum = cursor_line and cursor_line - 1 or 0,
   }
-  local clients = vim.lsp.get_clients { bufnr = 0 }
-  if #clients == 0 then
+  local context = {
+    diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(0, get_opts)),
+  }
+  local client = (vim.lsp.get_clients { bufnr = 0 })[1]
+  if not client then
     return
   end
 
-  local params = make_range_params(0, clients[1].offset_encoding)
+  local params = make_range_params(0, client.offset_encoding)
 
   ---@diagnostic disable-next-line: inject-field
   params.context = context
