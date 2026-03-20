@@ -277,7 +277,11 @@ local RustaceanDefaultConfig = {
       end
       ---@cast cmd string[]
       local rs_bin = cmd[1]
-      return vim.fn.executable(rs_bin) == 1
+      if vim.fn.executable(rs_bin) ~= 1 then
+        vim.notify('Rust Analyzer not found: ' .. rs_bin, vim.log.levels.WARN)
+        return false
+      end
+      return true
     end,
     ---@type string[] | fun():(string[]|fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.PublicClient)
     cmd = function()
