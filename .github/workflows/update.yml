@@ -18,7 +18,7 @@ jobs:
           name: mrcjkb
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v20
+        uses: DeterminateSystems/update-flake-lock@v28
         with:
           token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
           pr-title: "chore: update flake.lock" # Title of PR to be created
