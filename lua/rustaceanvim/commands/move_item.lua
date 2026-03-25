@@ -10,12 +10,17 @@ local function text_edit_line_range_diff(prev_text_edit, text_edit)
 end
 
 ---@param text_edits rustaceanvim.lsp.TextEdit[]
+---@return uinteger[]
 local function extract_cursor_position(text_edits)
+  if not text_edits[1] then
+    return {}
+  end
+  ---@type uinteger[]
   local cursor = { text_edits[1].range.start.line }
   local prev_text_edit
   for _, text_edit in ipairs(text_edits) do
     if text_edit.newText and text_edit.insertTextFormat == 2 and not cursor[2] then
-      cursor[1] = cursor[1] + (prev_text_edit and text_edit_line_range_diff(prev_text_edit, text_edit) or 0)
+      cursor[1] = cursor[1] or 0 + (prev_text_edit and text_edit_line_range_diff(prev_text_edit, text_edit) or 0)
       local snippet_pos_start = string.find(text_edit.newText, '%$0')
       local lines = vim.split(string.sub(text_edit.newText, 1, snippet_pos_start), '\n')
       local line_count = #lines
@@ -31,6 +36,13 @@ local function extract_cursor_position(text_edits)
   return cursor
 end
 
+---@param client_id integer
+---@return string
+local function offset_encoding(client_id)
+  local client = vim.lsp.get_client_by_id(client_id)
+  return client and client.offset_encoding or 'utf-8'
+end
+
 -- move it baby
 ---@param text_edits? rustaceanvim.lsp.TextEdit[]
 ---@param ctx lsp.HandlerContext
@@ -41,11 +53,7 @@ local function handler(_, text_edits, ctx)
   local cursor = extract_cursor_position(text_edits)
   local overrides = require('rustaceanvim.overrides')
   overrides.snippet_text_edits_to_text_edits(text_edits)
-  vim.lsp.util.apply_text_edits(
-    text_edits,
-    ctx.bufnr,
-    vim.lsp.get_client_by_id(ctx.client_id).offset_encoding or 'utf-8'
-  )
+  vim.lsp.util.apply_text_edits(text_edits, ctx.bufnr, offset_encoding(ctx.client_id))
   vim.api.nvim_win_set_cursor(0, cursor)
 end
 
@@ -53,11 +61,11 @@ end
 ---@param direction 'Up' | 'Down'
 function M.move_item(direction)
   local ra = require('rustaceanvim.rust_analyzer')
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = ra.find_active_rustaceanvim_client()
+  if not client then
     return
   end
-  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
+  local params = vim.lsp.util.make_range_params(0, client.offset_encoding or 'utf-8')
   ---@diagnostic disable-next-line: inject-field
   params.direction = direction
   ra.buf_request(0, 'experimental/moveItem', params, handler)

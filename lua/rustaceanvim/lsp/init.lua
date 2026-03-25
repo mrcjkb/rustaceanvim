@@ -40,13 +40,13 @@ end
 ---Generate the settings from config and vscode settings if found.
 ---settings and returns them.
 ---@param root_dir string | nil
----@param client_config table
+---@param client_config rustaceanvim.lsp.ClientConfig
 ---@return table server_settings or an empty table if no settings were found
 local function get_start_settings(root_dir, client_config)
   local settings = client_config.settings
   local evaluated_settings = type(settings) == 'function' and settings(root_dir, client_config.default_settings)
     or settings
-
+  ---@cast evaluated_settings table
   return evaluated_settings
 end
 
@@ -61,6 +61,7 @@ local function configure_file_watcher(server_cfg)
     vim.tbl_get(server_cfg.capabilities, 'workspace', 'didChangeWatchedFiles', 'dynamicRegistration')
   local file_watcher_setting = vim.tbl_get(server_cfg.settings, 'rust-analyzer', 'files', 'watcher')
   if is_client_file_watcher_enabled and not file_watcher_setting then
+    ---@diagnostic disable-next-line: assign-type-mismatch
     server_cfg.settings = vim.tbl_deep_extend('force', server_cfg.settings, {
       ['rust-analyzer'] = {
         files = {
@@ -127,7 +128,7 @@ end
 ---@field name string
 ---@field filetypes string[]
 ---@field capabilities table
----@field handlers lsp.Handler[]
+---@field handlers table<string, lsp.Handler>
 ---@field on_init function
 ---@field on_attach function
 ---@field on_exit function
@@ -141,17 +142,23 @@ M.start = function(bufnr)
   -- Force resolution of `vim.lsp.config['*']` for `ra_client_name`,
   -- in case it has not been set
   -- (This does not overwrite any existing configs).
+  ---@diagnostic disable-next-line: param-type-mismatch
   vim.lsp.config(ra_client_name, {})
+  ---@type vim.lsp.ClientConfig
+  ---@diagnostic disable-next-line: undefined-field
   local ra_config = vim.lsp.config[ra_client_name] or {}
+  ---@cast ra_config table
   if ra_config.settings then
     -- Ensure vim.lsp.config settings get merged with server.default_settings.
     ra_config.default_settings = ra_config.settings
     ra_config.settings = nil
   end
   -- NOTE: We deep copy to prevent shared state between rust-analyzer clients
-  local client_config = vim.tbl_deep_extend('force', vim.deepcopy(config.server), ra_config)
-  ---@type rustaceanvim.lsp.StartConfig
+  local client_config = vim.tbl_deep_extend('force', vim.deepcopy(config.server), ra_config or {})
+  ---@cast client_config rustaceanvim.lsp.ClientConfig
+  ---@diagnostic disable-next-line: param-type-mismatch
   local lsp_start_config = vim.tbl_deep_extend('force', {}, client_config)
+  ---@cast lsp_start_config rustaceanvim.lsp.StartConfig
   cargo.get_config_root_dir(client_config, bufname, function(root_dir)
     if not root_dir then
       if not client_config.standalone then
@@ -235,12 +242,13 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
       --
     end
     if type(rust_analyzer_cmd) == 'table' then
-      if #rust_analyzer_cmd == 0 then
+      local rust_analyzer_bin = rust_analyzer_cmd[1]
+      if not rust_analyzer_bin then
         vim.notify('rust-analyzer command is not set!', vim.log.levels.ERROR)
         return
       end
-      if vim.fn.executable(rust_analyzer_cmd[1]) ~= 1 then
-        vim.notify(('%s is not executable'):format(rust_analyzer_cmd[1]), vim.log.levels.ERROR)
+      if vim.fn.executable(rust_analyzer_bin) ~= 1 then
+        vim.notify(('%s is not executable'):format(rust_analyzer_bin), vim.log.levels.ERROR)
         return
       end
     end
@@ -252,7 +260,9 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     local custom_handlers = {}
     custom_handlers['experimental/serverStatus'] = server_status.handler
 
-    lsp_start_config.handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_config.handlers or {})
+    local handlers = vim.tbl_deep_extend('force', custom_handlers, lsp_start_config.handlers or {})
+    ---@cast handlers table<string, lsp.Handler>
+    lsp_start_config.handlers = handlers
 
     local commands = require('rustaceanvim.commands')
     local old_on_init = lsp_start_config.on_init
@@ -317,12 +327,13 @@ M.stop = function(bufnr, filter)
       client:stop()
       server_status.reset_client_state(client.id)
     end
+    return clients
   else
-    clients:stop()
     ---@cast clients vim.lsp.Client
+    clients:stop()
     server_status.reset_client_state(clients.id)
+    return { clients }
   end
-  return clients
 end
 
 ---Restart the LSP client.
@@ -360,11 +371,12 @@ M.set_target_arch = function(bufnr, target)
   restart(bufnr, { exclude_rustc_target = target }, function(client)
     rustc.with_rustc_target_architectures(function(rustc_targets)
       if rustc_targets[target] then
-        local ra = client.config.settings['rust-analyzer'] or {}
+        local settings = client.config.settings
+        local ra = settings and settings['rust-analyzer'] or {}
         ---@diagnostic disable-next-line: inject-field
         ra.cargo = ra.cargo or {}
         ra.cargo.target = target
-        client:notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+        client:notify('workspace/didChangeConfiguration', { settings = settings })
         return
       else
         vim.schedule(function()
