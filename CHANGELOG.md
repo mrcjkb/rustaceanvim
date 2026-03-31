@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.0.5](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.4...v8.0.5) (2026-03-31)
+
+
+### Bug Fixes
+
+* **lsp/external_docs:** coerce URI userdata to string ([#990](https://github.com/mrcjkb/rustaceanvim/issues/990)) ([78306d7](https://github.com/mrcjkb/rustaceanvim/commit/78306d7a35f05251c87c06be8a084526f3bf0126))
+
 ## [8.0.4](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.3...v8.0.4) (2026-03-04)
 
 
