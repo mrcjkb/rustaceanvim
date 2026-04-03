@@ -6,7 +6,7 @@ require('lazy.minit').repro {
   spec = {
     {
       'mrcjkb/rustaceanvim',
-      version = '^8',
+      version = '^9',
       init = function()
         -- Configure rustaceanvim here
         vim.g.rustaceanvim = {}

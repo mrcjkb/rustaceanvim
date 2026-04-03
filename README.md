@@ -66,7 +66,7 @@ that are specific to rust-analyzer.
 
 ### Required
 
-- `neovim >= 0.11`
+- `neovim >= 0.12`
 - [`rust-analyzer`](https://rust-analyzer.github.io/)
 
 > [!NOTE]
@@ -92,6 +92,17 @@ that are specific to rust-analyzer.
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/lua%3Arustaceanvim.svg?exclude_unsupported=1)](https://repology.org/project/lua%3Arustaceanvim/versions)
 
+### Using Neovim's built-in plugin manager
+
+```lua
+vim.pack.add {
+  src = 'https://github.com/mrcjkb/rustaceanvim',
+  -- To avoid being surprised by breaking changes,
+  -- I recommend you set a version range
+  version = vim.version.range('^9')
+}
+```
+
 ### [`rocks.nvim`](https://github.com/nvim-neorocks/rocks.nvim)
 
 ```vim
@@ -103,8 +114,12 @@ that are specific to rust-analyzer.
 ```lua
 {
   'mrcjkb/rustaceanvim',
-  version = '^8', -- Recommended
-  lazy = false, -- This plugin is already lazy
+  -- To avoid being surprised by breaking changes,
+  -- I recommend you set a version range
+  version = '^9',
+  -- This plugin implements proper lazy-loading (see :h lua-plugin-lazy).
+  -- No need for lazy.nvim to lazy-load it.
+  lazy = false,
 }
 ```
 
