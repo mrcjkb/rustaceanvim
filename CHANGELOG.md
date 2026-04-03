@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.0.0](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.5...v9.0.0) (2026-04-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop Neovim 0.11 support
+
+### Features
+
+* drop Neovim 0.11 support ([08ad08c](https://github.com/mrcjkb/rustaceanvim/commit/08ad08cf9c028090d61d8c03293c7d8037b33cb4))
+
 ## [8.0.5](https://github.com/mrcjkb/rustaceanvim/compare/v8.0.4...v8.0.5) (2026-03-31)
 
 
