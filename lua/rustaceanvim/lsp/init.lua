@@ -71,6 +71,27 @@ local function configure_file_watcher(server_cfg)
   end
 end
 
+---Stop the LSP client.
+---@param bufnr? number The buffer number, defaults to the current buffer
+---@param filter? rustaceanvim.lsp.get_clients.Filter
+---@return vim.lsp.Client[] clients A list of clients that will be stopped
+local function stop(bufnr, filter)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, filter)
+  if type(clients) == 'table' then
+    ---@cast clients vim.lsp.Client[]
+    for _, client in ipairs(clients) do
+      client:stop()
+      server_status.reset_client_state(client.id)
+    end
+  else
+    clients:stop()
+    ---@cast clients vim.lsp.Client
+    server_status.reset_client_state(clients.id)
+  end
+  return clients
+end
+
 ---LSP restart internal implementations
 ---@param bufnr? number The buffer number, defaults to the current buffer
 ---@param filter? rustaceanvim.lsp.get_clients.Filter
@@ -78,7 +99,7 @@ end
 ---@return number|nil client_id
 local function restart(bufnr, filter, callback)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = M.stop(bufnr, filter)
+  local clients = stop(bufnr, filter)
   local timer, _, _ = vim.uv.new_timer()
   if not timer then
     vim.schedule(function()
@@ -302,35 +323,6 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
       reuse_client = lsp_start_config.reuse_client,
     })
   end)
-end
-
----Stop the LSP client.
----@param bufnr? number The buffer number, defaults to the current buffer
----@param filter? rustaceanvim.lsp.get_clients.Filter
----@return vim.lsp.Client[] clients A list of clients that will be stopped
-M.stop = function(bufnr, filter)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, filter)
-  if type(clients) == 'table' then
-    ---@cast clients vim.lsp.Client[]
-    for _, client in ipairs(clients) do
-      client:stop()
-      server_status.reset_client_state(client.id)
-    end
-  else
-    clients:stop()
-    ---@cast clients vim.lsp.Client
-    server_status.reset_client_state(clients.id)
-  end
-  return clients
-end
-
----Restart the LSP client.
----Fails silently if the buffer's filetype is not one of the filetypes specified in the config.
----@param bufnr? number The buffer number, defaults to the current buffer
----@return number|nil client_id The LSP client ID after restart
-M.restart = function(bufnr)
-  return restart(bufnr)
 end
 
 ---Reload settings for the LSP client.

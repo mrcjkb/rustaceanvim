@@ -74,9 +74,17 @@ local function rust_analyzer_user_cmd(opts)
   if cmd == RustAnalyzerCmd.start then
     lsp.start(bufnr)
   elseif cmd == RustAnalyzerCmd.stop then
-    lsp.stop(bufnr)
+    local rust_analyzer = require('rustaceanvim.rust_analyzer')
+    local clients = rust_analyzer.get_active_rustaceanvim_clients()
+    for _, client in ipairs(clients) do
+      vim.cmd.lsp { 'stop', client.name }
+    end
   elseif cmd == RustAnalyzerCmd.restart then
-    lsp.restart(bufnr)
+    local rust_analyzer = require('rustaceanvim.rust_analyzer')
+    local clients = rust_analyzer.get_active_rustaceanvim_clients()
+    for _, client in ipairs(clients) do
+      vim.cmd.lsp { 'restart', client.name }
+    end
   elseif cmd == RustAnalyzerCmd.reload_settings then
     lsp.reload_settings(bufnr)
   elseif cmd == RustAnalyzerCmd.target then
