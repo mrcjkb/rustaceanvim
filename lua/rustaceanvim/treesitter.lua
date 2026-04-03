@@ -15,7 +15,7 @@ end
 -- function.
 ---@return lsp.Position|nil
 function M.find_fn_identifier_position()
-  local cursor = vim.api.nvim_win_get_cursor(0)
+  local cursor = api.nvim_win_get_cursor(0)
   local start_pos = { math.max(cursor[1] - 1, 0), cursor[2] }
 
   local node = vim.treesitter.get_node { pos = start_pos }

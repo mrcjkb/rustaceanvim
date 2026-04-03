@@ -39,7 +39,7 @@ end
 local ok, _ = pcall(require, 'dap')
 if not ok then
   return {
-    ---@param on_error fun(err:string)
+    ---@param on_error? fun(err:string)
     start = function(_, _, _, on_error)
       on_error = on_error or scheduled_error
       on_error('nvim-dap not found.')
@@ -67,12 +67,12 @@ local function get_cargo_args_from_runnables_args(runnable_args)
   return cargo_args
 end
 
----@type string
+---@type string | nil
 local rustc_commit_hash
 
 ---@param callback fun(rustc_commit_hash:string)
 local function get_rustc_commit_hash(callback)
-  if rustc_commit_hash then
+  if rustc_commit_hash ~= nil then
     return callback(rustc_commit_hash)
   end
   vim.system({ 'rustc', '--version', '--verbose' }, nil, function(sc)
@@ -88,12 +88,12 @@ local function get_rustc_commit_hash(callback)
   end)
 end
 
----@type string
+---@type string | nil
 local rustc_sysroot
 
 ---@param callback fun(rustc_sysroot:string)
 local function get_rustc_sysroot(callback)
-  if rustc_sysroot then
+  if rustc_sysroot ~= nil then
     return callback(rustc_sysroot)
   end
   vim.system({ 'rustc', '--print', 'sysroot' }, nil, function(sc)
@@ -141,7 +141,7 @@ local source_maps = {}
 ---See https://github.com/vadimcn/codelldb/issues/204
 ---@param workspace_root? string
 local function generate_source_map(workspace_root)
-  if not workspace_root or source_maps[workspace_root] then
+  if not workspace_root or source_maps[workspace_root] ~= nil then
     return
   end
   get_rustc_commit_hash(function(commit_hash)
@@ -170,7 +170,7 @@ local init_commands = {}
 
 ---@param workspace_root? string
 local function get_lldb_commands(workspace_root)
-  if not workspace_root or init_commands[workspace_root] then
+  if not workspace_root or init_commands[workspace_root] ~= nil then
     return
   end
   get_rustc_sysroot(function(sysroot)
@@ -179,7 +179,7 @@ local function get_lldb_commands(workspace_root)
       return
     end
     local script_import = 'command script import "' .. script .. '"'
-    local commands_file = vim.fs.joinpath(rustc_sysroot, 'lib', 'rustlib', 'etc', 'lldb_commands')
+    local commands_file = vim.fs.joinpath(sysroot, 'lib', 'rustlib', 'etc', 'lldb_commands')
     local file = io.open(commands_file, 'r')
     local workspace_root_cmds = {}
     if file then
@@ -198,7 +198,7 @@ end
 ---@param key string
 ---@param segments string[]
 ---@param sep string
----@return {[string]: string} | string[]
+---@return table<string, string[]>
 local function format_environment_variable(adapter, key, segments, sep)
   ---@diagnostic disable-next-line: missing-parameter
   local existing = vim.uv.os_getenv(key)
@@ -207,14 +207,14 @@ local function format_environment_variable(adapter, key, segments, sep)
   return adapter.type == 'server' and { [key] = value } or { key .. '=' .. value }
 end
 
----@type {[string]: rustaceanvim.EnvironmentMap}
+---@type table<string, rustaceanvim.EnvironmentMap>
 local environments = {}
 
 -- Most succinct description: https://github.com/bevyengine/bevy/issues/2589#issuecomment-1753413600
 ---@param adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config
 ---@param workspace_root string | nil
 local function add_dynamic_library_paths(adapter, workspace_root)
-  if not workspace_root or environments[workspace_root] then
+  if not workspace_root or environments[workspace_root] ~= nil then
     return
   end
   vim.system({ 'rustc', '--print', 'target-libdir' }, { cwd = workspace_root }, function(sc)
@@ -295,6 +295,7 @@ function M.start(args, verbose, callback, on_error)
     callback = dap.run
   end
   local adapter = types.evaluate(config.dap.adapter)
+  ---@diagnostic disable-next-line: cast-type-mismatch
   --- @cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
   if adapter == false then
     on_error('Debug adapter disabled or not found.')
@@ -375,18 +376,19 @@ function M.start(args, verbose, callback, on_error)
       local _, dap_config = next(dap.configurations.rust or {})
 
       local local_config = types.evaluate(config.dap.configuration)
-      ---@cast local_config rustaceanvim.dap.client.Config | boolean
-
-      ---@diagnostic disable-next-line: param-type-mismatch
-      local final_config = local_config ~= false and vim.deepcopy(local_config) or vim.deepcopy(dap_config)
+      local final_config = local_config ~= false
+          ---@cast local_config rustaceanvim.dap.client.Config
+          ---@diagnostic disable-next-line: generic-constraint-mismatch
+          and vim.deepcopy(local_config)
+        or vim.deepcopy(dap_config or {})
       ---@cast final_config rustaceanvim.dap.client.Config
 
       local err
-      ok, err = pcall(vim.validate, {
-        type = { final_config.type, 'string' },
-        name = { final_config.name, 'string' },
-        request = { final_config.request, 'string' },
-      })
+      ok, err = pcall(function()
+        vim.validate('rustaceanvim.dap.client.Config.type', final_config.type, 'string')
+        vim.validate('rustaceanvim.dap.client.Config.name', final_config.name, 'string')
+        vim.validate('rustaceanvim.dap.client.Config.request', final_config.request, 'string')
+      end)
       if not ok then
         on_error(([[
 DAP client config validation failed.
@@ -407,6 +409,7 @@ If you have specified a custom configuration, see ":h rustaceanvim.dap.client.Co
       final_config.args = args.executableArgs or {}
       local environment = args.workspaceRoot and environments[args.workspaceRoot]
       final_config = next(environment or {}) ~= nil
+          ---@diagnostic disable-next-line: param-type-mismatch
           and vim.tbl_deep_extend('force', final_config, { env = environment })
         or final_config
 
@@ -414,6 +417,7 @@ If you have specified a custom configuration, see ":h rustaceanvim.dap.client.Co
         -- lldb specific entries
         final_config = args.workspaceRoot
             and next(init_commands or {}) ~= nil
+            ---@diagnostic disable-next-line: param-type-mismatch
             and vim.tbl_deep_extend('force', final_config, { initCommands = init_commands[args.workspaceRoot] })
           or final_config
         ---@cast final_config rustaceanvim.dap.client.Config
@@ -421,10 +425,12 @@ If you have specified a custom configuration, see ":h rustaceanvim.dap.client.Co
         local source_map = args.workspaceRoot and source_maps[args.workspaceRoot]
         final_config = source_map
             and next(source_map or {}) ~= nil
+            ---@diagnostic disable-next-line: param-type-mismatch
             and vim.tbl_deep_extend('force', final_config, { sourceMap = format_source_map(adapter, source_map) })
           or final_config
       elseif string.find(final_config.type, 'probe%-rs') ~= nil then
         -- probe-rs specific entries
+        final_config.coreConfigs = final_config.coreConfigs or {}
         final_config.coreConfigs[1].programBinary = final_config.program
       end
 

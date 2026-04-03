@@ -72,7 +72,7 @@ local check_installed = function(dep)
     end
     if is_executable(binary) then
       local handle = io.popen(binary .. ' --version')
-      if handle then
+      if handle ~= nil then
         local binary_version, error_msg = handle:read('*a')
         handle:close()
         if error_msg then
@@ -90,7 +90,7 @@ local check_installed = function(dep)
       return false, binary, 'Unable to determine version.'
     end
   end
-  return false, binaries[1], 'Could not find an executable binary.'
+  return false, binaries[1] or 'undefined', 'Could not find an executable binary.'
 end
 
 ---@param dep rustaceanvim.ExternalDependency
@@ -176,6 +176,7 @@ function health.check()
   h.start('Checking external dependencies')
 
   local adapter = types.evaluate(config.dap.adapter)
+  ---@diagnostic disable-next-line: cast-type-mismatch
   ---@cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | boolean
 
   ---@return string
@@ -185,7 +186,7 @@ function health.check()
       return default
     end
     local cmd = types.evaluate(config.server.cmd)
-    if not cmd or #cmd == 0 then
+    if not cmd or not cmd[1] then
       return default
     end
     return cmd[1]

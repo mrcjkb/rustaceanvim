@@ -35,12 +35,7 @@ end
 M.execute_command = function(command, args, cwd, opts)
   ---@type rustaceanvim.ExecutorOpts
   opts = vim.tbl_deep_extend('force', { bufnr = 0 }, opts or {})
-  if vim.fn.has('nvim-0.10.0') ~= 1 then
-    vim.schedule(function()
-      vim.notify_once("the 'background' executor is not recommended for Neovim < 0.10.", vim.log.levels.WARN)
-    end)
-    return
-  end
+  ---@cast opts.bufnr integer
 
   vim.diagnostic.reset(diag_namespace, opts.bufnr)
   local is_single_test = args[1] == 'test'

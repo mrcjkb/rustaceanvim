@@ -31,39 +31,46 @@ function M.parse_cargo_test_diagnostics(output, bufnr)
   for failure_content, test_id, lnum, col in
     output:gmatch("(thread '([^']+)'.-panicked at [^:]+:(%d+):(%d+):%s-\n.-\n)\n")
   do
-    local diagnostic_lnum = tonumber(lnum) - 1
-    local diagnostic_col = tonumber(col) or 0
-    table.insert(diagnostics, {
-      bufnr = bufnr,
-      test_id = test_id,
-      lnum = diagnostic_lnum,
-      end_lnum = diagnostic_lnum,
-      col = diagnostic_col,
-      end_col = diagnostic_col,
-      message = remove_ansi_codes(unescape_html(failure_content)),
-      source = 'rustaceanvim',
-      severity = vim.diagnostic.severity.ERROR,
-    })
-  end
-
-  if #diagnostics == 0 then
-    --- Fall back to old format
-    for test_id, message, _, lnum, col in output:gmatch("thread '([^']+)' panicked at '([^']+)', ([^:]+):(%d+):(%d+)") do
-      local diagnostic_lnum = tonumber(lnum) - 1
+    local panic_lnum = tonumber(lnum) ---@as integer?
+    if panic_lnum then
+      local diagnostic_lnum = panic_lnum - 1
       local diagnostic_col = tonumber(col) or 0
-      ---@type rustaceanvim.Diagnostic
-      local diagnostic = {
+      table.insert(diagnostics, {
         bufnr = bufnr,
         test_id = test_id,
         lnum = diagnostic_lnum,
         end_lnum = diagnostic_lnum,
         col = diagnostic_col,
         end_col = diagnostic_col,
-        message = remove_ansi_codes(unescape_html(message)),
+        message = remove_ansi_codes(unescape_html(failure_content)),
         source = 'rustaceanvim',
         severity = vim.diagnostic.severity.ERROR,
-      }
-      table.insert(diagnostics, diagnostic)
+      })
+    end
+  end
+
+  if #diagnostics == 0 then
+    --- Fall back to old format
+    for test_id, message, _, lnum, col in output:gmatch("thread '([^']+)' panicked at '([^']+)', ([^:]+):(%d+):(%d+)") do
+      local panic_lnum = tonumber(lnum) ---@as integer?
+      if panic_lnum then
+        local diagnostic_lnum = panic_lnum - 1
+        local diagnostic_col = tonumber(col) or 0
+        ---@cast diagnostic_col integer
+        ---@type rustaceanvim.Diagnostic
+        local diagnostic = {
+          bufnr = bufnr,
+          test_id = test_id,
+          lnum = diagnostic_lnum,
+          end_lnum = diagnostic_lnum,
+          col = diagnostic_col,
+          end_col = diagnostic_col,
+          message = remove_ansi_codes(unescape_html(message)),
+          source = 'rustaceanvim',
+          severity = vim.diagnostic.severity.ERROR,
+        }
+        table.insert(diagnostics, diagnostic)
+      end
     end
   end
 
@@ -81,7 +88,8 @@ function M.parse_nextest_diagnostics(junit_xml, bufnr)
       '<failure.-message="thread &apos;([^;]+)&apos;.-panicked at ([^:]+):(%d+):(%d+)".-<system%-err>(.-)</system%-err>'
     )
   do
-    local diagnostic_lnum = tonumber(lnum) - 1
+    local l = tonumber(lnum)
+    local diagnostic_lnum = l and l - 1 or 0
     local diagnostic_col = tonumber(col) or 0
     table.insert(diagnostics, {
       bufnr = bufnr,

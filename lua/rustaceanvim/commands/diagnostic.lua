@@ -86,12 +86,14 @@ function M.explain_error(cycle_diagnostic)
 
   local diagnostics = vim
     .iter(vim.diagnostic.get(0, {}))
-    ---@param diagnostic vim.Diagnostic
-    :filter(function(diagnostic)
-      return diagnostic.code ~= nil
-        and diagnostic.source == 'rustc'
-        and diagnostic.severity == vim.diagnostic.severity.ERROR
-    end)
+    :filter(
+      ---@param diagnostic vim.Diagnostic
+      function(diagnostic)
+        return diagnostic.code ~= nil
+          and diagnostic.source == 'rustc'
+          and diagnostic.severity == vim.diagnostic.severity.ERROR
+      end
+    )
     :totable()
   if #diagnostics == 0 then
     vim.notify('No explainable errors found.', vim.log.levels.INFO)
@@ -186,7 +188,7 @@ function M.explain_error_current_line()
   -- get matching diagnostics from current line
   local diagnostics = vim
     .iter(vim.diagnostic.get(0, {
-      lnum = cursor_position[1] - 1,
+      lnum = cursor_position[1] or 1 - 1,
     }))
     :filter(function(diagnostic)
       return diagnostic.code ~= nil
@@ -319,10 +321,12 @@ end
 function M.render_diagnostic(cycle_diagnostic)
   local diagnostics = vim
     .iter(vim.diagnostic.get(0, {}))
-    ---@param diagnostic vim.Diagnostic
-    :filter(function(diagnostic)
-      return get_rendered_diagnostic(diagnostic) ~= nil
-    end)
+    :filter(
+      ---@param diagnostic vim.Diagnostic
+      function(diagnostic)
+        return get_rendered_diagnostic(diagnostic) ~= nil
+      end
+    )
     :totable()
   if #diagnostics == 0 then
     vim.notify('No renderable diagnostics found.', vim.log.levels.INFO)
@@ -384,7 +388,7 @@ local function get_diagnostics_current_line()
   local win_id = vim.api.nvim_get_current_win()
   local cursor_position = vim.api.nvim_win_get_cursor(win_id)
   return vim.diagnostic.get(0, {
-    lnum = cursor_position[1] - 1,
+    lnum = cursor_position[1] or 1 - 1,
   })
 end
 
@@ -402,19 +406,21 @@ function M.render_diagnostic_current_line()
   ---@type string[]
   local rendered_diagnostics = vim
     .iter(get_diagnostics_current_line())
-    ---@param diagnostic vim.Diagnostic
-    :map(function(diagnostic)
-      return get_rendered_diagnostic(diagnostic)
-    end)
+    :map(
+      ---@param diagnostic vim.Diagnostic
+      function(diagnostic)
+        return get_rendered_diagnostic(diagnostic)
+      end
+    )
     :totable()
 
   -- if no renderable diagnostics on current line
-  if #rendered_diagnostics == 0 then
+  local rendered_diagnostic = rendered_diagnostics[1]
+  if not rendered_diagnostic then
     vim.notify('No renderable diagnostics found.', vim.log.levels.INFO)
     return
   end
 
-  local rendered_diagnostic = rendered_diagnostics[1]
   render_ansi_code_diagnostic(rendered_diagnostic)
 end
 
@@ -424,17 +430,19 @@ end
 
 function M.related_diagnostics()
   local ra = require('rustaceanvim.rust_analyzer')
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = ra.find_active_rustaceanvim_client()
+  if not client then
     return
   end
   ---@type lsp.Location[]
   local locations = vim
     .iter(get_diagnostics_at_cursor())
-    ---@param diagnostic vim.Diagnostic
-    :map(function(diagnostic)
-      return vim.tbl_get(diagnostic, 'user_data', 'lsp', 'relatedInformation')
-    end)
+    :map(
+      ---@param diagnostic vim.Diagnostic
+      function(diagnostic)
+        return vim.tbl_get(diagnostic, 'user_data', 'lsp', 'relatedInformation')
+      end
+    )
     :flatten()
     ---@param related_info rustaceanvim.diagnostic.RelatedInfo
     :map(function(related_info)
@@ -445,25 +453,29 @@ function M.related_diagnostics()
     vim.notify('No related diagnostics found.', vim.log.levels.INFO)
     return
   end
-  local quickfix_entries = vim.lsp.util.locations_to_items(locations, clients[1].offset_encoding)
+  ---@type vim.quickfix.entry[]
+  local quickfix_entries = vim.lsp.util.locations_to_items(locations, client.offset_encoding)
   if #quickfix_entries == 1 then
     local item = quickfix_entries[1]
-    ---@diagnostic disable-next-line: undefined-field
-    local b = item.bufnr or vim.fn.bufadd(item.filename)
-    -- Save position in jumplist
-    vim.cmd.normal { "m'", bang = true }
-    -- Push a new item into tagstack
-    local tagstack = { { tagname = vim.fn.expand('<cword>'), from = vim.fn.getpos('.') } }
-    local current_window_id = vim.api.nvim_get_current_win()
-    vim.fn.settagstack(vim.fn.win_getid(current_window_id), { items = tagstack }, 't')
-    vim.bo[b].buflisted = true
-    local window_id = vim.fn.win_findbuf(b)[1] or current_window_id
-    vim.api.nvim_win_set_buf(window_id, b)
-    vim.api.nvim_win_set_cursor(window_id, { item.lnum, item.col - 1 })
-    vim._with({ win = window_id }, function()
-      -- Open folds under the cursor
-      vim.cmd.normal { 'zv', bang = true }
-    end)
+    local bufnr = item.bufnr or item.filename and vim.fn.bufadd(item.filename)
+    if bufnr then
+      -- Save position in jumplist
+      vim.cmd.normal { "m'", bang = true }
+      -- Push a new item into tagstack
+      local tagstack = { { tagname = vim.fn.expand('<cword>'), from = vim.fn.getpos('.') } }
+      local current_window_id = vim.api.nvim_get_current_win()
+      vim.fn.settagstack(vim.fn.win_getid(current_window_id), { items = tagstack }, 't')
+      vim.bo[bufnr].buflisted = true
+      local window_id = vim.fn.win_findbuf(bufnr)[1] or current_window_id
+      vim.api.nvim_win_set_buf(window_id, bufnr)
+      local lnum = item.lnum or 0
+      local col = item.col or 1
+      vim.api.nvim_win_set_cursor(window_id, { lnum, col - 1 })
+      vim._with({ win = window_id }, function()
+        -- Open folds under the cursor
+        vim.cmd.normal { 'zv', bang = true }
+      end)
+    end
   else
     vim.fn.setqflist({}, ' ', { title = 'related diagnostics', items = quickfix_entries })
     vim.cmd([[ botright copen ]])

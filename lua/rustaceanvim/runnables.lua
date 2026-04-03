@@ -77,7 +77,7 @@ function M.get_command(runnable)
   local dir = args.workspaceRoot
   local env = args.environment
 
-  local ret = vim.list_extend({}, args.cargoArgs or {})
+  local ret = vim.list_extend({}, args.cargoArgs or {}) ---@as string[]
   ret = vim.list_extend(ret, args.cargoExtraArgs or {})
   table.insert(ret, '--')
   ret = vim.list_extend(ret, args.executableArgs or {})
@@ -99,6 +99,8 @@ end
 ---@return string|nil dir
 ---@return table<string, string> | nil env
 local function getCommand(choice, runnables)
+  assert(runnables[choice], 'runnables[choice] is nil. This is a bug.')
+  ---@diagnostic disable-next-line: return-type-mismatch
   return M.get_command(runnables[choice])
 end
 
@@ -198,15 +200,15 @@ local function is_within_range(position, targetRange)
   return targetRange.start.line <= position.line and targetRange['end'].line >= position.line
 end
 
----@param runnables rustaceanvim.RARunnable
+---@param runnables rustaceanvim.RARunnable[]
 ---@return integer | nil choice
 function M.get_runnable_at_cursor_position(runnables)
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = ra.find_active_rustaceanvim_client()
+  if not client then
     return
   end
   ---@type lsp.Position
-  local position = vim.lsp.util.make_position_params(0, clients[1].offset_encoding or 'utf-8').position
+  local position = vim.lsp.util.make_position_params(0, client.offset_encoding or 'utf-8').position
   ---@type integer|nil, integer|nil
   local choice, fallback
   for idx, runnable in ipairs(runnables) do
@@ -239,7 +241,8 @@ local function mk_cursor_position_handler(executableArgsOverride)
     end
     M.run_command(choice, runnables)
     local cached_commands = require('rustaceanvim.cached_commands')
-    if is_testable(runnables[choice]) then
+    local selected = runnables[choice]
+    if selected and is_testable(selected) then
       cached_commands.set_last_testable(choice, runnables)
     end
     cached_commands.set_last_runnable(choice, runnables)

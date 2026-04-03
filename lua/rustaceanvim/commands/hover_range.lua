@@ -5,7 +5,7 @@ local M = {}
 
 ---@class rustaceanvim.hover_range.State
 local _state = {
-  ---@type integer
+  ---@type integer | nil
   winnr = nil,
 }
 
@@ -41,11 +41,11 @@ local function get_visual_selected_range()
   if not p1 then
     return nil
   end
-  local row1 = p1[2]
-  local col1 = p1[3]
+  local row1 = p1[2] or 0
+  local col1 = p1[3] or 0
   local p2 = vim.api.nvim_win_get_cursor(0)
-  local row2 = p2[1]
-  local col2 = p2[2]
+  local row2 = p2[1] or 0
+  local col2 = p2[2] or 0
 
   if row1 < row2 then
     return make_lsp_position(row1, col1, row2, col2)
@@ -56,8 +56,11 @@ local function get_visual_selected_range()
   return make_lsp_position(row1, math.min(col1, col2), row1, math.max(col1, col2))
 end
 
----@type lsp.Handler
-local function handler(_, result, _)
+---@param _err lsp.ResponseError?
+---@param result unknown
+---@param _context lsp.HandlerContext
+---@diagnostic disable-next-line: unused-local
+local function handler(_err, result, _context)
   if not (result and result.contents) then
     return
   end
@@ -118,11 +121,11 @@ end
 
 function M.hover_range()
   local ra = require('rustaceanvim.rust_analyzer')
-  local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  local client = ra.find_active_rustaceanvim_client()
+  if not client then
     return
   end
-  local params = vim.lsp.util.make_range_params(0, clients[1].offset_encoding or 'utf-8')
+  local params = lsp_util.make_range_params(0, client.offset_encoding or 'utf-8')
   ---@diagnostic disable-next-line: inject-field
   params.position = get_visual_selected_range()
   params.range = nil

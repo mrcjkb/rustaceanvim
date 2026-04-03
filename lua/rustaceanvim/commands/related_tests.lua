@@ -52,7 +52,7 @@ end
 ---@return nil
 function M.related_tests()
   local clients = ra.get_active_rustaceanvim_clients(0)
-  if #clients == 0 then
+  if not clients[1] then
     return
   end
 
