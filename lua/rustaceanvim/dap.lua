@@ -382,11 +382,13 @@ function M.start(args, verbose, callback, on_error)
       ---@cast final_config rustaceanvim.dap.client.Config
 
       local err
-      ok, err = pcall(vim.validate, {
-        type = { final_config.type, 'string' },
-        name = { final_config.name, 'string' },
-        request = { final_config.request, 'string' },
-      })
+      ok, err = pcall(vim.validate, 'type', final_config.type, 'string')
+      if ok then
+        ok, err = pcall(vim.validate, 'name', final_config.name, 'string')
+      end
+      if ok then
+        ok, err = pcall(vim.validate, 'request', final_config.request, 'string')
+      end
       if not ok then
         on_error(([[
 DAP client config validation failed.
