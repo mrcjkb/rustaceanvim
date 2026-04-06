@@ -279,7 +279,7 @@ local RustaceanDefaultConfig = {
       local rs_bin = cmd[1]
       return vim.fn.executable(rs_bin) == 1
     end,
-    ---@type string[] | fun():(string[]|fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.PublicClient)
+    ---@type string[] | fun():(string[]|fun(dispatchers: vim.lsp.rpc.Dispatchers): vim.lsp.rpc.Client)
     cmd = function()
       return { exepath_or_binary('rust-analyzer'), '--log-file', RustaceanConfig.server.logfile }
     end,
