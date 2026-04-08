@@ -291,9 +291,11 @@ function M.start(args, verbose, callback, on_error)
   else
     on_error = on_error or function() end
   end
+  ---@cast on_error fun(err: string)
   if type(callback) ~= 'function' then
-    callback = dap.run
+    callback = dap.run or function() end
   end
+  ---@cast callback fun(config: rustaceanvim.dap.client.Config)
   local adapter = types.evaluate(config.dap.adapter)
   --- @cast adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config | rustaceanvim.disable
   if adapter == false then
