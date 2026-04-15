@@ -31,10 +31,19 @@ local function mk_handler(offset_encoding)
       return
     end
 
-    local test_locations = {}
-    for _, test in ipairs(tests) do
-      table.insert(test_locations, test.runnable.location)
-    end
+    ---@type lsp.Location[]
+    local test_locations = vim
+      .iter(tests)
+      ---@param test rustaceanvim.RATestInfo
+      :map(function(test)
+        return test.runnable.location
+      end)
+      ---@param location rustaceanvim.RARunnableLocation
+      ---@return string hash
+      :unique(function(location)
+        return vim.inspect(location)
+      end)
+      :totable()
 
     if #test_locations == 0 then
       return

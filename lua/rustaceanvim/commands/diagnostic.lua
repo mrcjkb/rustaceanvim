@@ -440,6 +440,11 @@ function M.related_diagnostics()
     :map(function(related_info)
       return related_info.location
     end)
+    ---@param location lsp.Location
+    ---@return string hash
+    :unique(function(location)
+      return vim.inspect(location)
+    end)
     :totable()
   if #locations == 0 then
     vim.notify('No related diagnostics found.', vim.log.levels.INFO)
