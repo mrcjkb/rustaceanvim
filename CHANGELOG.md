@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.0.2](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.1...v9.0.2) (2026-04-15)
+
+
+### Bug Fixes
+
+* **lsp/commands:** don't send duplicate locations to quickfix list ([56d123f](https://github.com/mrcjkb/rustaceanvim/commit/56d123fbe3b01267f82001d8ed528b8ad572cbae))
+
 ## [9.0.1](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.0...v9.0.1) (2026-04-05)
 
 
