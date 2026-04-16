@@ -95,12 +95,12 @@ that are specific to rust-analyzer.
 ### Using Neovim's built-in plugin manager
 
 ```lua
-vim.pack.add {
+vim.pack.add {{
   src = 'https://github.com/mrcjkb/rustaceanvim',
   -- To avoid being surprised by breaking changes,
   -- I recommend you set a version range
   version = vim.version.range('^9')
-}
+}}
 ```
 
 ### [`rocks.nvim`](https://github.com/nvim-neorocks/rocks.nvim)
