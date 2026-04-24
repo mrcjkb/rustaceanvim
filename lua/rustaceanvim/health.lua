@@ -71,23 +71,26 @@ local check_installed = function(dep)
       return vim.fn.executable(bin) == 1
     end
     if is_executable(binary) then
-      local handle = io.popen(binary .. ' --version')
-      if handle then
-        local binary_version, error_msg = handle:read('*a')
-        handle:close()
-        if error_msg then
-          return false, binary, error_msg
-        end
-        if dep.required_version_spec then
-          local version_range = vim.version.range(dep.required_version_spec)
-          if version_range and not version_range:has(binary_version) then
-            local msg = 'Unsuported version. Required ' .. dep.required_version_spec .. ', but found ' .. binary_version
-            return false, binary, msg
-          end
-        end
-        return true, binary, binary_version
+      local success, result = pcall(vim.system, { binary, '--version' }, { text = true })
+      if not success then
+        return false, binary, binary .. ' --version could not be run: ' .. result
       end
-      return false, binary, 'Unable to determine version.'
+      local obj = result:wait(1000)
+      if obj.code == 124 then
+        return false, binary, binary .. ' --version timed out.'
+      elseif obj.code ~= 0 then
+        return false, binary, obj.stderr ~= '' and obj.stderr or binary .. ' --version had non-zero exit code.'
+      end
+      ---@type string
+      local binary_version = obj.stdout
+      if dep.required_version_spec then
+        local version_range = vim.version.range(dep.required_version_spec)
+        if version_range and not version_range:has(binary_version) then
+          local msg = 'Unsuported version. Required ' .. dep.required_version_spec .. ', but found ' .. binary_version
+          return false, binary, msg
+        end
+      end
+      return true, binary, binary_version
     end
   end
   return false, binaries[1], 'Could not find an executable binary.'
