@@ -81,8 +81,8 @@ local check_installed = function(dep)
       elseif obj.code ~= 0 then
         return false, binary, obj.stderr ~= '' and obj.stderr or binary .. ' --version had non-zero exit code.'
       end
-      ---@type string
       local binary_version = obj.stdout
+      ---@cast binary_version string (We do not disable stdout in the `vim.system` call)
       if dep.required_version_spec then
         local version_range = vim.version.range(dep.required_version_spec)
         if version_range and not version_range:has(binary_version) then
