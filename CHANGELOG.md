@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.0.3](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.2...v9.0.3) (2026-04-25)
+
+
+### Bug Fixes
+
+* **health:** use vim.system for binary version check ([#1023](https://github.com/mrcjkb/rustaceanvim/issues/1023)) ([67e3fe0](https://github.com/mrcjkb/rustaceanvim/commit/67e3fe0d285057c0cb6a4618bafbc1e624359bef))
+
 ## [9.0.2](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.1...v9.0.2) (2026-04-15)
 
 
