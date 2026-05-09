@@ -12,21 +12,86 @@ local function get_params()
   }
 end
 
+---This mirrors the [typescript definitions in rust-analyzer][ra]
+---
+---[ra]: https://github.com/rust-lang/rust-analyzer/blob/0dc46bfea9b17fed93ab57393971fb932e7a5dd4/editors/code/src/lsp_ext.ts#L232-L283
+---
+---Beware, Lua tooling does not do type narrowing well, and blindly merges all
+---fields in the types for `.args`. You must provide runtime checks of
+---runnable.kind. There are convenience functions `as_cargo_runnable` and
+---`as_shell_runnable` that perform these checks and casts for you.
+---
 ---@class rustaceanvim.RARunnable
----@field args rustaceanvim.RARunnableArgs
 ---@field label string
 ---@field location? rustaceanvim.RARunnableLocation
+---RA has had both cargo and shell runnables since 2024 (rust ~1.80). But it only
+---started providing `kind: "cargo" | "shell"` in 2026. Before then it used
+---serde(untagged) on the args enum. So it is safer not to rely on this field for
+---now and presume it might be missing. Prefer checking presence of cargoArgs.
+---@field kind? "cargo" | "shell"
+---@field args {}
+
+---@class rustaceanvim.RACargoRunnable
+---@field kind? '"cargo"'
+---@field label string
+---@field location? rustaceanvim.RARunnableLocation
+---@field args rustaceanvim.RACargoRunnableArgs
+
+---@class rustaceanvim.RAShellRunnable
+---@field kind? '"shell"'
+---@field label string
+---@field location? rustaceanvim.RARunnableLocation
+---@field args rustaceanvim.RAShellRunnableArgs
 
 ---@class rustaceanvim.RARunnableLocation
 ---@field targetRange lsp.Range
 ---@field targetSelectionRange lsp.Range
 
----@class rustaceanvim.RARunnableArgs
+---@class rustaceanvim.RACargoRunnableArgs
+---@field cwd string
+---@field environment? table<string, string>
 ---@field workspaceRoot string
 ---@field cargoArgs string[]
 ---@field cargoExtraArgs? string[]
 ---@field executableArgs string[]
+---@field overrideCargo? string
+
+---@class rustaceanvim.RAShellRunnableArgs
+---@field cwd string
 ---@field environment? table<string, string>
+---@field program string
+---@field args string[]
+
+---A union (read: merged fields) of the two runnable args types.
+---@alias rustaceanvim.RARunnableArgs rustaceanvim.RACargoRunnableArgs | rustaceanvim.RAShellRunnableArgs
+
+---@param runnable rustaceanvim.RARunnable
+---@return rustaceanvim.RACargoRunnable | nil
+function M.as_cargo_runnable(runnable)
+  ---@type rustaceanvim.RARunnableArgs
+  local args = runnable.args
+  if args and args.cargoArgs then
+    return runnable --[[@as rustaceanvim.RACargoRunnable]]
+  end
+end
+
+---@param runnable_args rustaceanvim.RARunnableArgs
+---@return rustaceanvim.RACargoRunnableArgs | nil
+function M.as_cargo_runnable_args(runnable_args)
+  if runnable_args and runnable_args.cargoArgs then
+    return runnable_args --[[@as rustaceanvim.RACargoRunnableArgs]]
+  end
+end
+
+---@param runnable rustaceanvim.RARunnable
+---@return rustaceanvim.RAShellRunnable | nil
+function M.as_shell_runnable(runnable)
+  ---@type rustaceanvim.RARunnableArgs
+  local args = runnable.args
+  if args and not args.cargoArgs then
+    return runnable --[[@as rustaceanvim.RAShellRunnable]]
+  end
+end
 
 ---@param option string
 ---@return string
