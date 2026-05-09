@@ -15,10 +15,13 @@ if not vim.g.loaded_rustaceanvim then
     local cached_commands = require('rustaceanvim.cached_commands')
     ---@type rustaceanvim.RARunnable[]
     local ra_runnables = command.arguments
-    local runnable = ra_runnables[1]
-    local cargo_args = runnable.args.cargoArgs
-    if #cargo_args > 0 and vim.startswith(cargo_args[1], 'test') then
-      cached_commands.set_last_testable(1, ra_runnables)
+    local runnable = runnables[1]
+    local cargoRunnable = runnables.as_cargo_runnable(runnable)
+    if cargoRunnable then
+      local cargo_args = cargoRunnable.args.cargoArgs
+      if #cargo_args > 0 and vim.startswith(cargo_args[1], 'test') then
+        cached_commands.set_last_testable(1, ra_runnables)
+      end
     end
     cached_commands.set_last_runnable(1, ra_runnables)
     runnables.run_command(1, ra_runnables)
@@ -38,8 +41,14 @@ if not vim.g.loaded_rustaceanvim then
 
   vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
     local overrides = require('rustaceanvim.overrides')
-    local args = command.arguments[1].args
-    ---@diagnostic disable-next-line: undefined-field
+    local runnables = require('rustaceanvim.runnables')
+    ---@type rustaceanvim.RARunnableArgs
+    local runnable_args = command.arguments[1].args
+    local args = runnables.as_cargo_runnable_args(runnable_args)
+    if not args then
+      vim.notify('Debugging non-cargo runnables is not supported.', vim.log.levels.ERROR)
+      return
+    end
     overrides.sanitize_command_for_debugging(args.cargoArgs)
     local cached_commands = require('rustaceanvim.cached_commands')
     cached_commands.set_last_debuggable(args)

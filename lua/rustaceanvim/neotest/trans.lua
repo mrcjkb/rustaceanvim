@@ -3,8 +3,17 @@ local M = {}
 ---@param runnable rustaceanvim.RARunnable
 ---@return string | nil
 local function get_test_path(runnable)
-  local executableArgs = runnable.args and runnable.args.executableArgs or {}
-  return #executableArgs > 0 and executableArgs[1] or nil
+  local runnables = require('rustaceanvim.runnables')
+  local shellRunnable = runnables.as_shell_runnable(runnable)
+  if shellRunnable then
+    local shellArgs = shellRunnable.args and shellRunnable.args.args or {}
+    return #shellArgs > 0 and shellArgs[#shellArgs] or nil
+  end
+  local cargoRunnable = runnables.as_cargo_runnable(runnable)
+  if cargoRunnable then
+    local executableArgs = cargoRunnable.args and cargoRunnable.args.executableArgs or {}
+    return #executableArgs > 0 and executableArgs[1] or nil
+  end
 end
 
 ---@overload fun(file_path: string, test_path: string | nil)
@@ -23,20 +32,25 @@ end
 ---@param runnable rustaceanvim.RARunnable
 ---@return rustaceanvim.neotest.Position | nil
 function M.runnable_to_position(file_path, runnable)
-  local cargoArgs = runnable.args and runnable.args.cargoArgs or {}
+  local runnables = require('rustaceanvim.runnables')
+  local cargoRunnable = runnables.as_cargo_runnable(runnable)
+  if not cargoRunnable then
+    return nil
+  end
+  local cargoArgs = cargoRunnable.args and cargoRunnable.args.cargoArgs or {}
   if #cargoArgs > 0 and vim.startswith(cargoArgs[1], 'test') then
     ---@type neotest.PositionType
     local type
-    if vim.startswith(runnable.label, 'cargo test -p') then
+    if vim.startswith(cargoRunnable.label, 'cargo test -p') then
       type = 'dir'
-    elseif vim.startswith(runnable.label, 'test-mod') then
+    elseif vim.startswith(cargoRunnable.label, 'test-mod') then
       type = 'namespace'
-    elseif vim.startswith(runnable.label, 'test') or vim.startswith(runnable.label, 'doctest') then
+    elseif vim.startswith(cargoRunnable.label, 'test') or vim.startswith(cargoRunnable.label, 'doctest') then
       type = 'test'
     else
       return
     end
-    local location = runnable.location
+    local location = cargoRunnable.location
     local start_row, start_col, end_row, end_col = 0, 0, 0, 0
     if location then
       start_row = location.targetRange.start.line + 1
@@ -55,7 +69,7 @@ function M.runnable_to_position(file_path, runnable)
     ---@type rustaceanvim.neotest.Position
     local pos = {
       id = M.get_position_id(file_path, runnable),
-      name = test_path or runnable.label,
+      name = test_path or cargoRunnable.label,
       type = type,
       path = file_path,
       range = { start_row, start_col, end_row, end_col },

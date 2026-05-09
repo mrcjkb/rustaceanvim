@@ -137,8 +137,21 @@ end
 ---@return string | nil dir
 ---@return table<string, string> | nil env
 function M.get_command(runnable)
-  local args = runnable.args
+  local shellRunnable = M.as_shell_runnable(runnable)
+  if shellRunnable then
+    local args = shellRunnable.args
+    return args.program, args.args or {}, args.cwd, args.environment
+  end
+  local cargoRunnable = M.as_cargo_runnable(runnable)
+  if not cargoRunnable then
+    error(
+      'Unsupported runnable type: '
+        .. (runnable.kind or '<unspecified>')
+        .. '. Only cargo and shell runnables are supported.'
+    )
+  end
 
+  local args = cargoRunnable.args
   local dir = args.workspaceRoot
   local env = args.environment
 
@@ -198,7 +211,11 @@ end
 ---@return boolean
 local function is_testable(runnable)
   ---@cast runnable rustaceanvim.RARunnable
-  local cargoArgs = runnable.args and runnable.args.cargoArgs or {}
+  local cargoRunnable = M.as_cargo_runnable(runnable)
+  if not cargoRunnable then
+    return false
+  end
+  local cargoArgs = cargoRunnable.args.cargoArgs
   return #cargoArgs > 0 and vim.startswith(cargoArgs[1], 'test')
 end
 
@@ -209,18 +226,23 @@ function M.apply_exec_args_override(executableArgsOverride, runnables)
   if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
     local unique_runnables = {}
     for _, runnable in pairs(runnables) do
-      local args = runnable.args.executableArgs
-      local override_args = {}
-      if #args > 0 and not vim.startswith(args[1], '--') then
-        -- This is a target arg. We want to keep it.
-        override_args = { args[1] }
-        if #args > 1 and args[2] == '--exact' then
-          -- We're matching the target exactly. We should keep this.
-          table.insert(override_args, args[2])
+      local cargoRunnable = M.as_cargo_runnable(runnable)
+      if not cargoRunnable then
+        unique_runnables[vim.inspect(runnable)] = runnable
+      else
+        local args = cargoRunnable.args.executableArgs
+        local override_args = {}
+        if #args > 0 and not vim.startswith(args[1], '--') then
+          -- This is a target arg. We want to keep it.
+          override_args = { args[1] }
+          if #args > 1 and args[2] == '--exact' then
+            -- We're matching the target exactly. We should keep this.
+            table.insert(override_args, args[2])
+          end
         end
+        cargoRunnable.args.executableArgs = vim.list_extend(override_args, executableArgsOverride)
+        unique_runnables[vim.inspect(cargoRunnable)] = cargoRunnable
       end
-      runnable.args.executableArgs = vim.list_extend(override_args, executableArgsOverride)
-      unique_runnables[vim.inspect(runnable)] = runnable
     end
     runnables = vim.tbl_values(unique_runnables)
   end

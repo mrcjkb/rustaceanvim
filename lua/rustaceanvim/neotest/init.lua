@@ -275,7 +275,9 @@ function NeotestAdapter.build_spec(run_args)
   if not runnable then
     return
   end
-  local exe, args, cwd, env = require('rustaceanvim.runnables').get_command(runnable)
+  local runnables = require('rustaceanvim.runnables')
+  local cargoRunnable = runnables.as_cargo_runnable(runnable)
+  local exe, args, cwd, env = runnables.get_command(runnable)
   local context = {
     file = pos.path,
     pos_id = pos.id,
@@ -285,11 +287,14 @@ function NeotestAdapter.build_spec(run_args)
     is_cargo_test = args[1] == 'test',
   }
   if run_args.strategy == 'dap' then
+    if not cargoRunnable then
+      return
+    end
     local dap = require('rustaceanvim.dap')
-    overrides.sanitize_command_for_debugging(runnable.args.cargoArgs)
+    overrides.sanitize_command_for_debugging(cargoRunnable.args.cargoArgs)
     local future = nio.control.future()
     ---@diagnostic disable-next-line: invisible
-    dap.start(runnable.args, false, function(strategy)
+    dap.start(cargoRunnable.args, false, function(strategy)
       future.set(strategy)
     end, function(err)
       future.set_error(err)
@@ -314,8 +319,8 @@ function NeotestAdapter.build_spec(run_args)
       }
     end
     return run_spec
-  else
-    overrides.undo_debug_sanitize(runnable.args.cargoArgs)
+  elseif cargoRunnable then
+    overrides.undo_debug_sanitize(cargoRunnable.args.cargoArgs)
   end
   local insert_pos = context.is_cargo_test and 2 or 3
   table.insert(args, insert_pos, '--no-fail-fast')

@@ -252,7 +252,7 @@ local function pall_with_warn(action, desc)
 end
 
 ---@param adapter rustaceanvim.dap.executable.Config | rustaceanvim.dap.server.Config
----@param args rustaceanvim.RARunnableArgs
+---@param args rustaceanvim.RACargoRunnableArgs
 ---@param verbose? boolean
 local function handle_configured_options(adapter, args, verbose)
   local is_generate_source_map_enabled = types.evaluate(config.dap.auto_generate_source_map)
@@ -281,7 +281,7 @@ local function handle_configured_options(adapter, args, verbose)
 end
 
 ---@package
----@param args rustaceanvim.RARunnableArgs
+---@param args rustaceanvim.RACargoRunnableArgs
 ---@param verbose? boolean
 ---@param callback? fun(config: rustaceanvim.dap.client.Config)
 ---@param on_error? fun(err: string)
