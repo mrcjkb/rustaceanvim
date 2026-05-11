@@ -14,7 +14,7 @@ end
 ---@type { [string]: boolean? } Used to prevent this plugin from adding the same configuration twice
 local _dap_configuration_added = {}
 
----@param args rustaceanvim.RARunnableArgs
+---@param args rustaceanvim.RACargoRunnableArgs
 ---@return string
 local function build_label(args)
   local ret = ''
@@ -35,7 +35,7 @@ local function build_label(args)
   return ret
 end
 
----@param result rustaceanvim.RARunnable[]
+---@param result rustaceanvim.RACargoRunnable[]
 ---@return string[] option_strings
 local function get_options(result)
   ---@type string[]
@@ -53,10 +53,10 @@ local function get_options(result)
   return option_strings
 end
 
----@param args rustaceanvim.RARunnableArgs
+---@param args rustaceanvim.RACargoRunnableArgs
 ---@return boolean
 local function is_valid_test(args)
-  local is_not_cargo_check = args.cargoArgs[1] ~= 'check'
+  local is_not_cargo_check = args.cargoArgs and args.cargoArgs[1] ~= 'check'
   return is_not_cargo_check
 end
 
@@ -67,11 +67,13 @@ end
 -- debugging friendly. For example, we move cargo run to cargo build, and cargo
 -- test to cargo test --no-run.
 ---@param result rustaceanvim.RARunnable[]
+---@return rustaceanvim.RACargoRunnable[]
 local function sanitize_results_for_debugging(result)
-  ---@type rustaceanvim.RARunnable[]
-  local ret = vim.tbl_filter(function(value)
-    ---@cast value rustaceanvim.RARunnable
-    return is_valid_test(value.args)
+  ---@type rustaceanvim.RACargoRunnable[]
+  local ret = vim.tbl_filter(function(runnable)
+    ---@cast runnable rustaceanvim.RARunnable
+    local cargoRunnable = ra_runnables.as_cargo_runnable(runnable)
+    return cargoRunnable ~= nil and is_valid_test(cargoRunnable.args)
   end, result or {})
 
   local overrides = require('rustaceanvim.overrides')
@@ -82,6 +84,7 @@ local function sanitize_results_for_debugging(result)
   return ret
 end
 
+---@param args rustaceanvim.RACargoRunnableArgs
 local function dap_run(args)
   local rt_dap = require('rustaceanvim.dap')
   local ok, dap = pcall(require, 'dap')
@@ -96,7 +99,7 @@ local function dap_run(args)
   end
 end
 
----@param debuggables rustaceanvim.RARunnable[]
+---@param debuggables rustaceanvim.RACargoRunnable[]
 ---@param executableArgsOverride? string[]
 local function ui_select_debuggable(debuggables, executableArgsOverride)
   debuggables = ra_runnables.apply_exec_args_override(executableArgsOverride, debuggables)
@@ -113,7 +116,7 @@ local function ui_select_debuggable(debuggables, executableArgsOverride)
   end)
 end
 
----@param debuggables rustaceanvim.RARunnable[]
+---@param debuggables rustaceanvim.RACargoRunnable[]
 local function add_debuggables_to_nvim_dap(debuggables)
   local ok, dap = pcall(require, 'dap')
   if not ok then
@@ -146,12 +149,13 @@ local function add_debuggables_to_nvim_dap(debuggables)
   pcall(go) -- Ignore stack overflow errors
 end
 
----@param debuggables rustaceanvim.RARunnable[]
+---@param debuggables rustaceanvim.RACargoRunnable[]
 ---@param executableArgsOverride? string[]
 local function debug_at_cursor_position(debuggables, executableArgsOverride)
   if debuggables == nil then
     return
   end
+  ---@type rustaceanvim.RACargoRunnable[]
   debuggables = ra_runnables.apply_exec_args_override(executableArgsOverride, debuggables)
   local choice = ra_runnables.get_runnable_at_cursor_position(debuggables)
   if not choice then
@@ -162,7 +166,7 @@ local function debug_at_cursor_position(debuggables, executableArgsOverride)
   dap_run(args)
 end
 
----@param callback fun(result:rustaceanvim.RARunnable[])
+---@param callback fun(result:rustaceanvim.RACargoRunnable[])
 local function mk_handler(callback)
   return function(_, result, _, _)
     ---@cast result rustaceanvim.RARunnable[]

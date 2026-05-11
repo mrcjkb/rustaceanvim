@@ -4,7 +4,7 @@ local M = {}
 
 ---@class rustaceanvim.CommandCache
 local cache = {
-  ---@type rustaceanvim.RARunnableArgs | nil
+  ---@type rustaceanvim.RACargoRunnableArgs | nil
   last_debuggable = nil,
   ---@type rustaceanvim.RARunnablesChoice
   last_runnable = nil,
@@ -30,7 +30,7 @@ M.set_last_testable = function(choice, runnables)
   }
 end
 
----@param args rustaceanvim.RARunnableArgs
+---@param args rustaceanvim.RACargoRunnableArgs
 M.set_last_debuggable = function(args)
   cache.last_debuggable = args
 end
@@ -54,8 +54,13 @@ end
 ---@param choice rustaceanvim.RARunnablesChoice
 ---@param executableArgsOverride? string[]
 local function override_executable_args_if_set(choice, executableArgsOverride)
+  local runnables = require('rustaceanvim.runnables')
   if type(executableArgsOverride) == 'table' and #executableArgsOverride > 0 then
-    choice.runnables[choice.choice].args.executableArgs = executableArgsOverride
+    local runnable = choice.runnables[choice.choice]
+    local cargoRunnable = runnables.as_cargo_runnable(runnable)
+    if cargoRunnable then
+      cargoRunnable.args.executableArgs = executableArgsOverride
+    end
   end
 end
 
