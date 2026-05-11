@@ -30,7 +30,7 @@ end
 
 ---@return string | nil
 local function query_from_input()
-  return vim.F.npcall(vim.fn.input, 'Query: ')
+  return vim.npcall(vim.fn.input, 'Query: ')
 end
 
 ---@param searchScope WorkspaceSymbolSearchScope
