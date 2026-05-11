@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.0.4](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.3...v9.0.4) (2026-05-11)
+
+
+### Bug Fixes
+
+* **lsp/runnables:** support non-cargo targets ([#1038](https://github.com/mrcjkb/rustaceanvim/issues/1038)) ([4c3588e](https://github.com/mrcjkb/rustaceanvim/commit/4c3588e5e842d7fe488cecd86fa248f2dc652b7a))
+
 ## [9.0.3](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.2...v9.0.3) (2026-04-25)
 
 
