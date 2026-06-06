@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.0.5](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.4...v9.0.5) (2026-06-06)
+
+
+### Bug Fixes
+
+* **lsp/commands:** `attempt to index local 'runnable'` error ([#1067](https://github.com/mrcjkb/rustaceanvim/issues/1067)) ([66d3d0f](https://github.com/mrcjkb/rustaceanvim/commit/66d3d0ffd05e012fca53cde0136ec647e994314f))
+
 ## [9.0.4](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.3...v9.0.4) (2026-05-11)
 
 
