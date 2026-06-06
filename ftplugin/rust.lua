@@ -15,7 +15,7 @@ if not vim.g.loaded_rustaceanvim then
     local cached_commands = require('rustaceanvim.cached_commands')
     ---@type rustaceanvim.RARunnable[]
     local ra_runnables = command.arguments
-    local runnable = runnables[1]
+    local runnable = ra_runnables[1]
     local cargoRunnable = runnables.as_cargo_runnable(runnable)
     if cargoRunnable then
       local cargo_args = cargoRunnable.args.cargoArgs
