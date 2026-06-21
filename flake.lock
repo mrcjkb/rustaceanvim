@@ -233,11 +233,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781397177,
-        "narHash": "sha256-KpWzaGDWENRVVdXFQGD5G58VBMevvwrX6hSD299jfE8=",
+        "lastModified": 1782001953,
+        "narHash": "sha256-UGZXOg1HLvlJUTIo/g8n6DJHkmmYt5/K96iSFP29rBE=",
         "owner": "mrcjkb",
         "repo": "vimcats",
-        "rev": "1ca0c4d14d6f76389feebc4b31f28ba3606c0820",
+        "rev": "9eb1138308e165995409831906598c48dddbc0b7",
         "type": "github"
       },
       "original": {
