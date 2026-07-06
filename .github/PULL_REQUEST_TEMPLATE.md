@@ -1,6 +1,7 @@
 
 <!--
-^ Please summarise the changes you have done and explain why they are necessary here ^
+^ Please summarise the changes you have done
+and explain why they are necessary here ^
 -->
 
 <!-- Please check what applies. -->
