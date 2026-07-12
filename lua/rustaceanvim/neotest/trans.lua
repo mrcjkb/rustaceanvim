@@ -73,7 +73,6 @@ function M.runnable_to_position(file_path, runnable)
       type = type,
       path = file_path,
       range = { start_row, start_col, end_row, end_col },
-      total_range = { start_row, start_col, end_row, end_col },
       runnable = runnable,
     }
     return pos
