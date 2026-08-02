@@ -350,11 +350,13 @@ vim.keymap.set(
   </summary>
 
   ```vim
-  :RustLsp expandMacro
+  :RustLsp expandMacro {float?|horizontal?|vertical?}
   ```
   ```lua
   vim.cmd.RustLsp('expandMacro')
+  vim.cmd.RustLsp({ 'expandMacro', 'float' })
   ```
+  The default is `vertical` when no argument is provided.
   ![](https://github.com/mrcjkb/rustaceanvim/assets/12857160/477d9e58-74b0-42ff-87ca-2fef34d06db3)
 </details>
 
