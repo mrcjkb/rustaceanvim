@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.1.0](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.5...v9.1.0) (2026-08-02)
+
+
+### Features
+
+* **ui/expandMacro:** support window layout argument ([#1111](https://github.com/mrcjkb/rustaceanvim/issues/1111)) ([14c2448](https://github.com/mrcjkb/rustaceanvim/commit/14c24485402fc16d26c8e4031a0789d90470ffb2))
+
 ## [9.0.5](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.4...v9.0.5) (2026-06-06)
 
 
