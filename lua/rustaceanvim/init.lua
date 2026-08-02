@@ -43,7 +43,7 @@
 ---                         ':RustLsp!' means run the last testable (ignores any args).
 ---                         `args[]` allows you to override the executable's arguments.
 --- 'relatedTests'        - Open the tests rust-analyzer associates with the symbol under the cursor.
---- 'expandMacro' - Expand macros recursively.
+--- 'expandMacro {float?|horizontal?|vertical?}' - Expand macros recursively.
 --- 'moveItem {up|down}' - Move items up or down.
 --- 'codeAction' - Sometimes, rust-analyzer groups code actions by category,
 ---                which is not supported by Neovim's built-in |vim.lsp.buf.codeAction|.

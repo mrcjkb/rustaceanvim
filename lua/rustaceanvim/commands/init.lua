@@ -60,8 +60,19 @@ local rustlsp_command_tbl = {
     bang = true,
   },
   expandMacro = {
-    impl = function(_)
-      require('rustaceanvim.commands.expand_macro')()
+    impl = function(args)
+      local open = args[1] or 'vertical'
+      if vim.tbl_contains({ 'float', 'horizontal', 'vertical' }, open) then
+        require('rustaceanvim.commands.expand_macro')(open)
+      else
+        vim.notify(
+          'expandMacro: unexpected argument: ' .. vim.inspect(args) .. " expected 'float', 'horizontal', or 'vertical'",
+          vim.log.levels.ERROR
+        )
+      end
+    end,
+    complete = function()
+      return { 'float', 'horizontal', 'vertical' }
     end,
   },
   explainError = {
