@@ -30,14 +30,16 @@ function M.handler(_, result, ctx, _)
   end
   -- notify of LSP errors/warnings
   if is_notify_enabled_for(result.health) then
+    -- only shows client if its not the default one (id 1)
+    local client_str = ctx.client_id == 1 and '' or ' (client ' .. ctx.client_id .. ')'
     local message = ([[
-rust-analyzer health status is [%s]:
+rust-analyzer%s health status is [%s]:
 %s
 Run ':RustLsp logFile' for details.
 To configure or disable rust-analyzer server status notifications,
 see ':h rustaceanvim.lsp.ClientOpts'.
-]]):format(result.health, result.message or '[unknown error]')
-    vim.notify(message, vim.log.levels.WARN)
+]]):format(client_str, result.health, result.message or '[unknown error]')
+    vim.notify_once(message, vim.log.levels.WARN)
   end
   -- deduplicate messages.
   if _ran_once[ctx.client_id] then
