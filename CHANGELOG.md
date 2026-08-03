@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.2.0](https://github.com/mrcjkb/rustaceanvim/compare/v9.1.0...v9.2.0) (2026-08-03)
+
+
+### Features
+
+* **lsp:** only notify once per client on bad server health ([#1115](https://github.com/mrcjkb/rustaceanvim/issues/1115)) ([e639cad](https://github.com/mrcjkb/rustaceanvim/commit/e639cad28412c94a32e2f517514fd4c4220c6b5c))
+
 ## [9.1.0](https://github.com/mrcjkb/rustaceanvim/compare/v9.0.5...v9.1.0) (2026-08-02)
 
 
