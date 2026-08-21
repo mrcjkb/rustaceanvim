@@ -71,75 +71,6 @@ local function configure_file_watcher(server_cfg)
   end
 end
 
----Stop the LSP client.
----@param bufnr? number The buffer number, defaults to the current buffer
----@param filter? rustaceanvim.lsp.get_clients.Filter
----@return vim.lsp.Client[] clients A list of clients that will be stopped
-local function stop(bufnr, filter)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr, filter)
-  if type(clients) == 'table' then
-    ---@cast clients vim.lsp.Client[]
-    for _, client in ipairs(clients) do
-      client:stop()
-      server_status.reset_client_state(client.id)
-    end
-  else
-    clients:stop()
-    ---@cast clients vim.lsp.Client
-    server_status.reset_client_state(clients.id)
-  end
-  return clients
-end
-
----LSP restart internal implementations
----@param bufnr? number The buffer number, defaults to the current buffer
----@param filter? rustaceanvim.lsp.get_clients.Filter
----@param callback? fun(client: vim.lsp.Client) Optional callback to run for each client before restarting.
----@return number|nil client_id
-local function restart(bufnr, filter, callback)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local clients = stop(bufnr, filter)
-  local timer, _, _ = vim.uv.new_timer()
-  if not timer then
-    vim.schedule(function()
-      vim.notify('rustaceanvim.lsp: Failed to initialise timer for LSP client restart.', vim.log.levels.ERROR)
-    end)
-    return
-  end
-  local max_attempts = 50
-  local attempts_to_live = max_attempts
-  local stopped_client_count = 0
-  timer:start(200, 100, function()
-    for _, client in ipairs(clients) do
-      if client:is_stopped() then
-        stopped_client_count = stopped_client_count + 1
-        vim.schedule(function()
-          -- Execute the callback, if provided, for additional actions before restarting
-          if callback then
-            callback(client)
-          end
-          M.start(bufnr)
-        end)
-      end
-    end
-    if stopped_client_count >= #clients then
-      timer:stop()
-      attempts_to_live = 0
-    elseif attempts_to_live <= 0 then
-      vim.schedule(function()
-        vim.notify(
-          ('rustaceanvim.lsp: Could not restart all LSP clients after %d attempts.'):format(max_attempts),
-          vim.log.levels.ERROR
-        )
-      end)
-      timer:stop()
-      attempts_to_live = 0
-    end
-    attempts_to_live = attempts_to_live - 1
-  end)
-end
-
 ---@class rustaceanvim.lsp.StartConfig: rustaceanvim.lsp.ClientConfig
 ---@field root_dir string | nil
 ---@field init_options? table
@@ -348,23 +279,40 @@ end
 ---@param target? string Cargo target triple (e.g., 'x86_64-unknown-linux-gnu') to set
 M.set_target_arch = function(bufnr, target)
   target = target or rustc.DEFAULT_RUSTC_TARGET
-  ---@param client vim.lsp.Client
-  restart(bufnr, { exclude_rustc_target = target }, function(client)
-    rustc.with_rustc_target_architectures(function(rustc_targets)
-      if rustc_targets[target] then
-        local ra = client.config.settings['rust-analyzer'] or {}
-        ---@diagnostic disable-next-line: inject-field
-        ra.cargo = ra.cargo or {}
-        ra.cargo.target = target
-        client:notify('workspace/didChangeConfiguration', { settings = client.config.settings })
-        return
-      else
-        vim.schedule(function()
-          vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
-        end)
-        return
-      end
+  local clients = rust_analyzer.get_active_rustaceanvim_clients(bufnr)
+  if #clients == 0 then
+    vim.schedule(function()
+      vim.notify(
+        'Attempted to set the rust-analyzer target to '
+          .. tostring(target)
+          .. ', but no clients are active for buffer '
+          .. tostring(bufnr)
+          .. '.',
+        vim.log.levels.ERROR
+      )
     end)
+    return
+  end
+  local client = clients[1]
+  rustc.with_rustc_target_architectures(function(rustc_targets)
+    if rustc_targets[target] then
+      local ra = client.config.settings['rust-analyzer'] or {}
+      ---@diagnostic disable-next-line: inject-field
+      ra.cargo = ra.cargo or {}
+      ra.cargo.target = target
+      client:notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+      vim.schedule(function()
+        -- NOTE: This restarts all rustaceanvim LSP clients.
+        -- Neovim doesn't provide a public API for restarting a single client.
+        vim.cmd.lsp { 'restart', ra_client_name }
+      end)
+      return
+    else
+      vim.schedule(function()
+        vim.notify('Invalid target architecture provided: ' .. tostring(target), vim.log.levels.ERROR)
+      end)
+      return
+    end
   end)
 end
 
