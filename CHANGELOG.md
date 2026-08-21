@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.2.1](https://github.com/mrcjkb/rustaceanvim/compare/v9.2.0...v9.2.1) (2026-08-21)
+
+
+### Bug Fixes
+
+* **lsp:** use nvim's lsp restart mechanism when switching targets ([#1134](https://github.com/mrcjkb/rustaceanvim/issues/1134)) ([cb8c405](https://github.com/mrcjkb/rustaceanvim/commit/cb8c4056fb435a13be6605d43cdbd06537431407))
+
 ## [9.2.0](https://github.com/mrcjkb/rustaceanvim/compare/v9.1.0...v9.2.0) (2026-08-03)
 
 
