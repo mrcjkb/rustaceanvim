@@ -34,11 +34,19 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          version: 0.25.2
+          version: 0.43.5
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Setup cachix
+        uses: cachix/cachix-action@v17
+        with:
+          name: mrcjkb
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Run tests
-        run: |
-          lx --nvim test
+        run: nix shell .#rust-analyzer .#cargo .#rustc -c lx --nvim test
 
       # TODO: Not stable in Lux yet.
       # For now, we use Nix for type checking

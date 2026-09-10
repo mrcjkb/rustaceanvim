@@ -157,6 +157,9 @@
             editorconfig-checker
             markdownlint-cli
             docgen
+            pkgs.rust-analyzer
+            pkgs.cargo
+            pkgs.rustc
           ];
         };
 
@@ -172,8 +175,22 @@
         };
         devShells = {
           default = devShell;
+          ci = pkgs.mkShell {
+            name = "rustaceanvim devShell";
+            shellHook = ''
+              ${pre-commit-check.shellHook}
+            '';
+            buildInputs = with pkgs; [
+              rust-analyzer
+              cargo
+              rustc
+              glibc
+            ];
+          };
           inherit devShell;
         };
+
+        legacyPackages = pkgs;
 
         packages = rec {
           default = rustaceanvim;
