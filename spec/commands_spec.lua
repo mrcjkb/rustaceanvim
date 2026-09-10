@@ -35,6 +35,7 @@ describe('RustLsp commands', function()
 
   local initialized = false
   local captured
+  local captured_test
   vim.g.rustaceanvim = {
     server = {
       root_dir = root_dir,
@@ -43,9 +44,15 @@ describe('RustLsp commands', function()
       on_initialized = function()
         initialized = true
       end,
+      enable_nextest = false,
       executor = {
         execute_command = function(command, args, cwd, opts)
           captured = { command = command, args = args, cwd = cwd, opts = opts }
+        end,
+      },
+      test_executor = {
+        execute_command = function(command, args, cwd, opts)
+          captured_test = { command = command, args = args, cwd = cwd, opts = opts }
         end,
       },
     },
@@ -144,5 +151,29 @@ describe('RustLsp commands', function()
     )
     assert.are.same('cargo', captured.command)
     assert.are.same('run', captured.args[1])
+  end)
+
+  it('testables lists and runs test targets', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    captured_test = nil
+    local select = stub(vim.ui, 'select')
+    vim.cmd.RustLsp('testables')
+    local options, on_choice
+    local called = vim.wait(30000, function()
+      if #select.calls > 0 then
+        options = select.calls[1].vals[1]
+        on_choice = select.calls[1].vals[3]
+        return true
+      end
+      return false
+    end)
+    select:revert()
+    assert.is_true(called, 'vim.ui.select was not called')
+    assert.is_true(has_label(options, 'test'), 'expected a test target in: ' .. vim.inspect(options))
+    assert.is_false(has_label(options, 'run'), 'expected no run target in: ' .. vim.inspect(options))
+    on_choice(nil, 1)
+    assert.is_not_nil(captured_test, 'test executor was not called')
+    assert.are.same('cargo', captured_test.command)
+    assert.are.same('test', captured_test.args[1])
   end)
 end)
