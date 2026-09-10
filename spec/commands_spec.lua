@@ -16,6 +16,10 @@ describe('RustLsp commands', function()
     '    println!("hello world");',
     '}',
     '',
+    'fn second() {',
+    '    println!("second");',
+    '}',
+    '',
     '#[cfg(test)]',
     'mod tests {',
     '    #[test]',
@@ -196,5 +200,16 @@ describe('RustLsp commands', function()
     resize:revert()
     assert.is_true(rendered, 'expected the macro to expand')
     assert.matches('hello world', expansion, 1, true)
+  end)
+
+  it('moveItem moves the item up', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 5, 0 })
+    vim.cmd.RustLsp { 'moveItem', 'up' }
+    local moved = vim.wait(30000, function()
+      local first_line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1]
+      return first_line:find('fn second', 1, true) ~= nil
+    end)
+    assert.is_true(moved, 'expected the item to move up')
   end)
 end)
