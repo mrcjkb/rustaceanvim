@@ -130,4 +130,19 @@ describe('RustLsp commands', function()
     assert.are.same('cargo', captured.command)
     assert.are.same('run', captured.args[1])
   end)
+
+  it('run executes the target at the cursor position', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    captured = nil
+    vim.cmd.RustLsp('run')
+    assert(
+      vim.wait(30000, function()
+        return captured ~= nil
+      end),
+      'executor was not called'
+    )
+    assert.are.same('cargo', captured.command)
+    assert.are.same('run', captured.args[1])
+  end)
 end)
