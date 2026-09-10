@@ -176,4 +176,25 @@ describe('RustLsp commands', function()
     assert.are.same('cargo', captured_test.command)
     assert.are.same('test', captured_test.args[1])
   end)
+
+  it('expandMacro expands the macro at the cursor position', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 2, 4 })
+    local ui = require('rustaceanvim.ui')
+    local split = stub(ui, 'split')
+    local resize = stub(ui, 'resize')
+    vim.cmd.RustLsp('expandMacro')
+    local expansion
+    local rendered = vim.wait(30000, function()
+      if #split.calls > 0 then
+        expansion = table.concat(vim.api.nvim_buf_get_lines(split.calls[1].vals[2], 0, -1, false), '\n')
+        return true
+      end
+      return false
+    end)
+    split:revert()
+    resize:revert()
+    assert.is_true(rendered, 'expected the macro to expand')
+    assert.matches('hello world', expansion, 1, true)
+  end)
 end)
