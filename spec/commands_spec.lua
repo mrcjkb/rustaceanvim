@@ -17,6 +17,7 @@ describe('RustLsp commands', function()
     '}',
     '',
     'fn second() {',
+    '    let unused = 42;',
     '    println!("second");',
     '}',
     '',
@@ -49,6 +50,9 @@ describe('RustLsp commands', function()
         initialized = true
       end,
       enable_nextest = false,
+      code_actions = {
+        ui_select_fallback = true,
+      },
       executor = {
         execute_command = function(command, args, cwd, opts)
           captured = { command = command, args = args, cwd = cwd, opts = opts }
@@ -211,5 +215,54 @@ describe('RustLsp commands', function()
       return first_line:find('fn second', 1, true) ~= nil
     end)
     assert.is_true(moved, 'expected the item to move up')
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
+  end)
+
+  it('codeAction applies the selected code action', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    local diag
+    local published = vim.wait(30000, function()
+      for _, d in ipairs(vim.diagnostic.get(bufnr)) do
+        if d.code == 'unused_variables' then
+          diag = d
+          return true
+        end
+      end
+      return false
+    end)
+    assert.is_true(published, 'expected an unused_variables diagnostic')
+    vim.api.nvim_win_set_cursor(0, { diag.lnum + 1, diag.col })
+    local select = stub(vim.ui, 'select')
+    vim.cmd.RustLsp('codeAction')
+    local options, on_choice
+    local called = vim.wait(30000, function()
+      if #select.calls > 0 then
+        options = select.calls[1].vals[1]
+        on_choice = select.calls[1].vals[3]
+        return true
+      end
+      return false
+    end)
+    select:revert()
+    assert.is_true(called, 'vim.ui.select was not called')
+    assert.is_true(#options > 0, 'no code actions returned')
+    local rename_index
+    for i, item in ipairs(options) do
+      if item.action.title:lower():find('rename') then
+        rename_index = i
+        break
+      end
+    end
+    local titles = vim.tbl_map(function(item)
+      return item.action.title
+    end, options)
+    assert.is_not_nil(rename_index, 'no rename action in: ' .. vim.inspect(titles))
+    on_choice(options[rename_index], rename_index)
+    local applied = vim.wait(30000, function()
+      local content = table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n')
+      return content:find('_unused', 1, true) ~= nil
+    end)
+    assert.is_true(applied, 'expected the code action to rename the variable')
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
   end)
 end)
