@@ -52,6 +52,13 @@ describe('RustLsp commands', function()
     '    let p = Point { x: 1, y: 2 };',
     '    let _ = p;',
     '}',
+    '',
+    'mod foo;',
+  }
+  local foo_rs = {
+    'pub fn foo() -> i32 {',
+    '    42',
+    '}',
   }
   vim.fn.mkdir(vim.fs.joinpath(root_dir, 'src'), 'p')
   vim.fn.writefile({
@@ -61,6 +68,7 @@ describe('RustLsp commands', function()
     'edition = "2021"',
   }, vim.fs.joinpath(root_dir, 'Cargo.toml'))
   vim.fn.writefile(main_rs, vim.fs.joinpath(root_dir, 'src', 'main.rs'))
+  vim.fn.writefile(foo_rs, vim.fs.joinpath(root_dir, 'src', 'foo.rs'))
 
   local initialized = false
   local captured = nil
@@ -517,5 +525,24 @@ describe('RustLsp commands', function()
     assert.is_true(opened)
     ---@cast captured_url string
     assert.matches('https://', captured_url, 1, true)
+  end)
+
+  it('parentModule jumps to the parent module', function()
+    local foo_buf = vim.api.nvim_create_buf(true, false)
+    vim.api.nvim_buf_set_name(foo_buf, vim.fs.joinpath(root_dir, 'src', 'foo.rs'))
+    vim.api.nvim_buf_set_lines(foo_buf, 0, -1, false, foo_rs)
+    vim.bo[foo_buf].filetype = 'rust'
+    vim.api.nvim_set_current_buf(foo_buf)
+    lsp.start(foo_buf)
+    local attached = vim.wait(timeout_ms, function()
+      return #ra.get_active_rustaceanvim_clients(foo_buf) > 0
+    end)
+    assert.is_true(attached)
+    vim.cmd.RustLsp('parentModule')
+    local jumped = vim.wait(timeout_ms, function()
+      return vim.api.nvim_buf_get_name(0):find('main.rs', 1, true) ~= nil
+    end)
+    assert.is_true(jumped)
+    vim.api.nvim_buf_delete(foo_buf, { force = true })
   end)
 end)
