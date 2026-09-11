@@ -673,4 +673,12 @@ describe('RustLsp commands', function()
     assert.is_true(rendered)
     assert.matches('fn main', mir, 1, true)
   end)
+
+  it('logFile opens the rust-analyzer log file', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    local config = require('rustaceanvim.config.internal')
+    local logfile = config.server.logfile
+    vim.cmd.RustLsp('logFile')
+    assert.equals(vim.api.nvim_buf_get_name(0), logfile)
+  end)
 end)
