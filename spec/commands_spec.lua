@@ -58,6 +58,10 @@ describe('RustLsp commands', function()
     '        + 2;',
     '}',
     '',
+    'fn call_second() {',
+    '    second();',
+    '}',
+    '',
     'mod foo;',
   }
   local foo_rs = {
@@ -582,6 +586,46 @@ describe('RustLsp commands', function()
       return content:find('let sum = 1 + 2', 1, true) ~= nil
     end)
     assert.is_true(joined)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
+  end)
+
+  it('ssr performs a structural search replace', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.lsp.util.buf_versions[bufnr] = 0
+    vim.cmd.RustLsp { 'ssr', 'second() ==>> add(1, 2)' }
+    local replaced = vim.wait(timeout_ms, function()
+      local content = table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n')
+      return content:find('add(1, 2);', 1, true) ~= nil
+    end)
+    assert.is_true(replaced)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
+  end)
+
+  it('ssr replaces within the visual selection', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    local selected_line, unselected_line
+    for i, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
+      if line:find('second();', 1, true) then
+        if selected_line == nil then
+          selected_line = i
+        else
+          unselected_line = i
+          break
+        end
+      end
+    end
+    assert(selected_line, 'expected to find "second();" in the buffer')
+    assert(unselected_line, 'expected a second "second();" in the buffer')
+    vim.api.nvim_buf_set_mark(bufnr, '<', selected_line, 4, {})
+    vim.api.nvim_buf_set_mark(bufnr, '>', selected_line, 12, {})
+    vim.lsp.util.buf_versions[bufnr] = 0
+    vim.cmd("'<,'>RustLsp ssr second() ==>> add(1, 2)")
+    local replaced = vim.wait(timeout_ms, function()
+      local selected = vim.api.nvim_buf_get_lines(bufnr, selected_line - 1, selected_line, false)[1]
+      local unselected = vim.api.nvim_buf_get_lines(bufnr, unselected_line - 1, unselected_line, false)[1]
+      return selected:find('add(1, 2)', 1, true) ~= nil and unselected:find('second();', 1, true) ~= nil
+    end)
+    assert.is_true(replaced)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
   end)
 end)
