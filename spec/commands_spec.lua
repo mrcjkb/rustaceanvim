@@ -65,6 +65,8 @@ describe('RustLsp commands', function()
   local initialized = false
   local captured = nil
   local captured_test
+  ---@type string | nil
+  local captured_url
   vim.g.rustaceanvim = {
     server = {
       root_dir = root_dir,
@@ -74,6 +76,9 @@ describe('RustLsp commands', function()
         initialized = true
       end,
       enable_nextest = false,
+      open_url = function(url)
+        captured_url = url
+      end,
       code_actions = {
         ui_select_fallback = true,
       },
@@ -499,5 +504,18 @@ describe('RustLsp commands', function()
       return vim.api.nvim_buf_get_name(0):find('Cargo.toml', 1, true) ~= nil
     end)
     assert.is_true(opened)
+  end)
+
+  it('openDocs opens the docs.rs documentation', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 2, 4 })
+    captured_url = nil
+    vim.cmd.RustLsp('openDocs')
+    local opened = vim.wait(timeout_ms, function()
+      return captured_url ~= nil
+    end)
+    assert.is_true(opened)
+    ---@cast captured_url string
+    assert.matches('https://', captured_url, 1, true)
   end)
 end)
