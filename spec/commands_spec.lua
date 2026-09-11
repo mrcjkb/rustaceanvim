@@ -18,6 +18,7 @@ describe('RustLsp commands', function()
   local main_rs = {
     'fn main() {',
     '    println!("hello world");',
+    '    second();',
     '}',
     '',
     'fn second() {',
@@ -31,6 +32,16 @@ describe('RustLsp commands', function()
     '    fn test_main() {',
     '        assert_eq!(1 + 1, 2);',
     '    }',
+    '}',
+    '',
+    'struct Point {',
+    '    x: i32,',
+    '    y: i32,',
+    '}',
+    '',
+    'fn make_point() {',
+    '    let p = Point { x: 1, y: 2 };',
+    '    let _ = p;',
     '}',
   }
   vim.fn.mkdir(vim.fs.joinpath(root_dir, 'src'), 'p')
@@ -80,6 +91,7 @@ describe('RustLsp commands', function()
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
     vim.bo[bufnr].filetype = 'rust'
     vim.api.nvim_set_current_buf(bufnr)
+    vim.cmd.runtime('ftplugin/rust.lua')
     lsp.start(bufnr)
     assert(
       vim.wait(timeout_ms, function()
@@ -215,7 +227,7 @@ describe('RustLsp commands', function()
 
   it('moveItem moves the item up', function()
     vim.api.nvim_set_current_buf(bufnr)
-    vim.api.nvim_win_set_cursor(0, { 5, 0 })
+    vim.api.nvim_win_set_cursor(0, { 6, 0 })
     vim.cmd.RustLsp { 'moveItem', 'up' }
     local moved = vim.wait(timeout_ms, function()
       local first_line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1]
@@ -266,5 +278,50 @@ describe('RustLsp commands', function()
     end)
     assert.is_true(applied)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
+  end)
+
+  it('hover actions executes a hover action', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    local target
+    for i, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
+      local let_pos = line:find('let p =', 1, true)
+      if let_pos then
+        target = { i, let_pos + 3 }
+        break
+      end
+    end
+    assert(target, 'expected to find "let p =" in the buffer')
+    vim.api.nvim_win_set_cursor(0, target)
+    local before_wins = vim.api.nvim_list_wins()
+    vim.cmd.RustLsp { 'hover', 'actions' }
+    local preview_winnr
+    local opened = vim.wait(timeout_ms, function()
+      for _, w in ipairs(vim.api.nvim_list_wins()) do
+        if not vim.tbl_contains(before_wins, w) then
+          preview_winnr = w
+          return true
+        end
+      end
+      return false
+    end)
+    assert.is_true(opened)
+    local preview_buf = vim.api.nvim_win_get_buf(preview_winnr)
+    local goto_line
+    for i, line in ipairs(vim.api.nvim_buf_get_lines(preview_buf, 0, -1, false)) do
+      if line:find('Go to', 1, true) then
+        goto_line = i
+        break
+      end
+    end
+    assert.is_not_nil(goto_line)
+    vim.api.nvim_set_current_win(preview_winnr)
+    vim.api.nvim_win_set_cursor(preview_winnr, { goto_line, 0 })
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<CR>', true, false, true), 'x', false)
+    local jumped = vim.wait(timeout_ms, function()
+      local cur = vim.api.nvim_win_get_cursor(0)
+      local line = vim.api.nvim_buf_get_lines(bufnr, cur[1] - 1, cur[1], false)[1]
+      return line ~= nil and line:find('struct Point', 1, true) ~= nil
+    end)
+    assert.is_true(jumped)
   end)
 end)
