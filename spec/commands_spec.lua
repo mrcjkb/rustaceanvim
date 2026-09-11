@@ -545,4 +545,18 @@ describe('RustLsp commands', function()
     assert.is_true(jumped)
     vim.api.nvim_buf_delete(foo_buf, { force = true })
   end)
+
+  it('workspaceSymbol searches for symbols', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.cmd.RustLsp { 'workspaceSymbol', 'add' }
+    local searched = vim.wait(timeout_ms, function()
+      for _, item in ipairs(vim.fn.getqflist()) do
+        if type(item.text) == 'string' and item.text:find('add', 1, true) then
+          return true
+        end
+      end
+      return false
+    end)
+    assert.is_true(searched)
+  end)
 end)
