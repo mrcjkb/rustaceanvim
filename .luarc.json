@@ -14,6 +14,7 @@
       ".lux/5.1/test_dependencies/5.1/fe607fc3a725b032acf5722632cf6993702c56ffa7c9f65e28f9d0324c17be34-luasystem@0.7.1-1/src",
       ".lux/5.1/test_dependencies/5.1/site/pack/lux/start/busted/lua",
       ".lux/5.1/test_dependencies/5.1/site/pack/lux/start/nlua/lua",
+      ".lux/5.1/test_dependencies/5.1/site/pack/lux/start/nvim-dap/lua",
       ".lux/5.1/test_dependencies/5.1/site/pack/lux/start/nvim-nio/lua"
     ]
   }

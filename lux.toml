@@ -23,3 +23,4 @@ type = "busted-nlua"
 
 [test_dependencies]
 nvim-nio = "1.10.1-1"
+nvim-dap = "0.10.0-1"

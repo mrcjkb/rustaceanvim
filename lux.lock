@@ -76,6 +76,24 @@
           "source": "sha256-uhOLi7yRb0Kttbh2xI0lQRT0FuiGeQL4w0/qJ4gUCXM="
         }
       },
+      "36c63cd0c043eb0fbc7d5ecd75907926b7136414cef7703dcd5784a61e6a728e": {
+        "name": "nvim-dap",
+        "version": "0.10.0-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [],
+        "constraint": "==0.10.0",
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "url",
+          "url": "https://github.com/mfussenegger/nvim-dap/archive/0.10.0.zip"
+        },
+        "hashes": {
+          "rockspec": "sha256-1I+b1kcgY/5G4EogluprGiVJ27xG8tHDykJSH4IDDj4=",
+          "source": "sha256-S3Q810Zph3f3a/qIRe9j0L0DWHZWi4oxPLD5ZsWo1XE="
+        }
+      },
       "455cd98d50c6191a9685cffcda4ce783efbb957934625e134c39f43bd5df6818": {
         "name": "luassert",
         "version": "1.9.0-1",
@@ -269,6 +287,7 @@
       }
     },
     "entrypoints": [
+      "36c63cd0c043eb0fbc7d5ecd75907926b7136414cef7703dcd5784a61e6a728e",
       "4beffe8f19bd92ebd061cfcf0f6fc22aff5a983169781cfc857b21365b619553",
       "aa700d6a934caa749d578927c97e22211ffabf97234705d63e95dc6403f6aafe",
       "d85464dc58c62460a1ecb14e6ac773ae615a66a8224b26ceb25d954c6b05ca74"
