@@ -424,4 +424,42 @@ describe('RustLsp commands', function()
     assert.is_true(called)
     assert.matches('unused variable', table.concat(contents, '\n'), 1, true)
   end)
+
+  it('relatedDiagnostics jumps to the related diagnostic', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    vim.diagnostic.set(vim.api.nvim_create_namespace('rustaceanvim-test'), bufnr, {
+      {
+        lnum = 0,
+        col = 0,
+        severity = vim.diagnostic.severity.WARN,
+        source = 'rustc',
+        code = 'unused_variables',
+        message = 'unused variable',
+        user_data = {
+          lsp = {
+            relatedInformation = {
+              {
+                location = {
+                  uri = vim.uri_from_bufnr(bufnr),
+                  range = {
+                    start = { line = 5, character = 0 },
+                    ['end'] = { line = 5, character = 0 },
+                  },
+                },
+                message = 'related location',
+              },
+            },
+          },
+        },
+      },
+    })
+    vim.cmd.RustLsp('relatedDiagnostics')
+    local jumped = vim.wait(timeout_ms, function()
+      local cur = vim.api.nvim_win_get_cursor(0)
+      local line = vim.api.nvim_buf_get_lines(bufnr, cur[1] - 1, cur[1], false)[1]
+      return line ~= nil and line:find('fn second', 1, true) ~= nil
+    end)
+    assert.is_true(jumped)
+  end)
 end)
