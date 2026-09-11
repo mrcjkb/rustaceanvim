@@ -652,4 +652,25 @@ describe('RustLsp commands', function()
     local content = table.concat(vim.api.nvim_buf_get_lines(syntax_buf, 0, -1, false), '\n')
     assert.matches('SOURCE_FILE', content, 1, true)
   end)
+
+  it('view mir shows the MIR', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 2, 4 })
+    local ui = require('rustaceanvim.ui')
+    local split = stub(ui, 'split')
+    local resize = stub(ui, 'resize')
+    vim.cmd.RustLsp { 'view', 'mir' }
+    local mir
+    local rendered = vim.wait(timeout_ms, function()
+      if #split.calls > 0 then
+        mir = table.concat(vim.api.nvim_buf_get_lines(split.calls[1].vals[2], 0, -1, false), '\n')
+        return true
+      end
+      return false
+    end)
+    split:revert()
+    resize:revert()
+    assert.is_true(rendered)
+    assert.matches('fn main', mir, 1, true)
+  end)
 end)
