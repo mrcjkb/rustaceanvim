@@ -628,4 +628,28 @@ describe('RustLsp commands', function()
     assert.is_true(replaced)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
   end)
+
+  it('syntaxTree shows the syntax tree', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    local ui = require('rustaceanvim.ui')
+    local split = stub(ui, 'split')
+    local resize = stub(ui, 'resize')
+    vim.cmd.RustLsp('syntaxTree')
+    local syntax_buf
+    local opened = vim.wait(timeout_ms, function()
+      for _, b in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_get_name(b):find('syntax.rust', 1, true) then
+          syntax_buf = b
+          return true
+        end
+      end
+      return false
+    end)
+    split:revert()
+    resize:revert()
+    assert.is_true(opened)
+    local content = table.concat(vim.api.nvim_buf_get_lines(syntax_buf, 0, -1, false), '\n')
+    assert.matches('SOURCE_FILE', content, 1, true)
+  end)
 end)
