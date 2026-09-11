@@ -26,11 +26,20 @@ describe('RustLsp commands', function()
     '    println!("second");',
     '}',
     '',
+    'fn add(a: i32, b: i32) -> i32 {',
+    '    a + b',
+    '}',
+    '',
     '#[cfg(test)]',
     'mod tests {',
     '    #[test]',
     '    fn test_main() {',
     '        assert_eq!(1 + 1, 2);',
+    '    }',
+    '',
+    '    #[test]',
+    '    fn test_add() {',
+    '        assert_eq!(super::add(1, 2), 3);',
     '    }',
     '}',
     '',
@@ -459,6 +468,26 @@ describe('RustLsp commands', function()
       local cur = vim.api.nvim_win_get_cursor(0)
       local line = vim.api.nvim_buf_get_lines(bufnr, cur[1] - 1, cur[1], false)[1]
       return line ~= nil and line:find('fn second', 1, true) ~= nil
+    end)
+    assert.is_true(jumped)
+  end)
+
+  it('relatedTests jumps to the related test', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    local add_line
+    for i, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
+      if line:find('fn add', 1, true) then
+        add_line = i
+        break
+      end
+    end
+    assert(add_line, 'expected to find "fn add" in the buffer')
+    vim.api.nvim_win_set_cursor(0, { add_line, 3 })
+    vim.cmd.RustLsp('relatedTests')
+    local jumped = vim.wait(timeout_ms, function()
+      local cur = vim.api.nvim_win_get_cursor(0)
+      local line = vim.api.nvim_buf_get_lines(bufnr, cur[1] - 1, cur[1], false)[1]
+      return line ~= nil and line:find('fn test_add', 1, true) ~= nil
     end)
     assert.is_true(jumped)
   end)
