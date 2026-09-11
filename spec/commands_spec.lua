@@ -324,4 +324,36 @@ describe('RustLsp commands', function()
     end)
     assert.is_true(jumped)
   end)
+
+  it('hover range evaluates the selected expression', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    local expr_line, expr_col
+    for i, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
+      local pos = line:find('Point { x: 1', 1, true)
+      if pos then
+        expr_line = i
+        expr_col = pos
+        break
+      end
+    end
+    assert(expr_line, 'expected to find "Point { x: 1" in the buffer')
+    vim.fn.setpos("'v", { 0, expr_line, expr_col - 1, 0 })
+    vim.api.nvim_win_set_cursor(0, { expr_line, expr_col + 18 })
+    local before_wins = vim.api.nvim_list_wins()
+    vim.cmd.RustLsp { 'hover', 'range' }
+    local preview_winnr
+    local opened = vim.wait(timeout_ms, function()
+      for _, w in ipairs(vim.api.nvim_list_wins()) do
+        if not vim.tbl_contains(before_wins, w) then
+          preview_winnr = w
+          return true
+        end
+      end
+      return false
+    end)
+    assert.is_true(opened)
+    local content =
+      table.concat(vim.api.nvim_buf_get_lines(vim.api.nvim_win_get_buf(preview_winnr), 0, -1, false), '\n')
+    assert.matches('Point', content, 1, true)
+  end)
 end)
