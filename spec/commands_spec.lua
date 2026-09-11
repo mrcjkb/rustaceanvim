@@ -53,6 +53,11 @@ describe('RustLsp commands', function()
     '    let _ = p;',
     '}',
     '',
+    'fn join_lines_fixture() {',
+    '    let sum = 1',
+    '        + 2;',
+    '}',
+    '',
     'mod foo;',
   }
   local foo_rs = {
@@ -558,5 +563,25 @@ describe('RustLsp commands', function()
       return false
     end)
     assert.is_true(searched)
+  end)
+
+  it('joinLines joins the lines', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    local join_line
+    for i, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
+      if line:find('let sum', 1, true) then
+        join_line = i
+        break
+      end
+    end
+    assert(join_line, 'expected to find "let sum" in the buffer')
+    vim.api.nvim_win_set_cursor(0, { join_line, 0 })
+    vim.cmd.RustLsp('joinLines')
+    local joined = vim.wait(timeout_ms, function()
+      local content = table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n')
+      return content:find('let sum = 1 + 2', 1, true) ~= nil
+    end)
+    assert.is_true(joined)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, main_rs)
   end)
 end)
