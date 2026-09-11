@@ -119,22 +119,17 @@ describe('RustLsp commands', function()
   local ra = require('rustaceanvim.rust_analyzer')
   local bufnr
 
-  --- Flush pending didChange notifications and wait for rust-analyzer to process
-  --- them, so subsequent requests operate on the latest buffer content.
-  local function sync_buf(bufnr)
-    local clients = vim.lsp.get_clients({ bufnr = bufnr })
+  ---Make sure subsequent LSP client requests operate on `bufnr`.
+  ---@param buf integer
+  local function lsp_sync_buf(buf)
+    local clients = vim.lsp.get_clients { bufnr = buf }
     if #clients == 0 then
       return
     end
     local done = false
-    clients[1].request(
-      'textDocument/documentSymbol',
-      { textDocument = { uri = vim.uri_from_bufnr(bufnr) } },
-      function()
-        done = true
-      end,
-      bufnr
-    )
+    clients[1]:request('textDocument/documentSymbol', { textDocument = { uri = vim.uri_from_bufnr(buf) } }, function()
+      done = true
+    end, buf)
     vim.wait(timeout_ms, function()
       return done
     end)
@@ -337,6 +332,7 @@ describe('RustLsp commands', function()
 
   it('hover actions executes a hover action', function()
     vim.api.nvim_set_current_buf(bufnr)
+    local goto_location = stub(vim.lsp.commands, 'rust-analyzer.gotoLocation')
     local target
     for i, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
       local let_pos = line:find('let p =', 1, true)
@@ -371,13 +367,22 @@ describe('RustLsp commands', function()
     assert.is_not_nil(goto_line)
     vim.api.nvim_set_current_win(preview_winnr)
     vim.api.nvim_win_set_cursor(preview_winnr, { goto_line, 0 })
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<CR>', true, false, true), 'x', false)
-    local jumped = vim.wait(timeout_ms, function()
-      local cur = vim.api.nvim_win_get_cursor(0)
-      local line = vim.api.nvim_buf_get_lines(bufnr, cur[1] - 1, cur[1], false)[1]
-      return line ~= nil and line:find('struct Point', 1, true) ~= nil
+    local enter_mapped = vim.wait(timeout_ms, function()
+      return not vim.tbl_isempty(vim.fn.maparg('<CR>', 'n', false, true))
     end)
-    assert.is_true(jumped)
+    assert.is_true(enter_mapped)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<CR>', true, false, true), 'x', false)
+    local action
+    local triggered = vim.wait(timeout_ms, function()
+      if #goto_location.calls > 0 then
+        action = goto_location.calls[1].vals[1]
+        return true
+      end
+      return false
+    end)
+    goto_location:revert()
+    assert.is_true(triggered)
+    assert.matches('Point', action.title, 1, true)
   end)
 
   it('hover range evaluates the selected expression', function()
@@ -615,7 +620,7 @@ describe('RustLsp commands', function()
 
   it('ssr performs a structural search replace', function()
     vim.api.nvim_set_current_buf(bufnr)
-    sync_buf(bufnr)
+    lsp_sync_buf(bufnr)
     vim.cmd.RustLsp { 'ssr', 'second() ==>> add(1, 2)' }
     local replaced = vim.wait(timeout_ms, function()
       local content = table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n')
@@ -642,7 +647,7 @@ describe('RustLsp commands', function()
     assert(unselected_line, 'expected a second "second();" in the buffer')
     vim.api.nvim_buf_set_mark(bufnr, '<', selected_line, 4, {})
     vim.api.nvim_buf_set_mark(bufnr, '>', selected_line, 12, {})
-    sync_buf(bufnr)
+    lsp_sync_buf(bufnr)
     vim.cmd("'<,'>RustLsp ssr second() ==>> add(1, 2)")
     local replaced = vim.wait(timeout_ms, function()
       local selected = vim.api.nvim_buf_get_lines(bufnr, selected_line - 1, selected_line, false)[1]
@@ -656,6 +661,7 @@ describe('RustLsp commands', function()
   it('syntaxTree shows the syntax tree', function()
     vim.api.nvim_set_current_buf(bufnr)
     vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    lsp_sync_buf(bufnr)
     local ui = require('rustaceanvim.ui')
     local split = stub(ui, 'split')
     local resize = stub(ui, 'resize')
