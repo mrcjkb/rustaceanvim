@@ -160,6 +160,7 @@
             pkgs.rust-analyzer
             pkgs.cargo
             pkgs.rustc
+            pkgs.codelldb
           ];
         };
 
@@ -184,7 +185,7 @@
               rust-analyzer
               cargo
               rustc
-              glibc
+              codelldb
             ];
           };
           inherit devShell;

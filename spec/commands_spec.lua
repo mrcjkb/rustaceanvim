@@ -88,6 +88,9 @@ describe('RustLsp commands', function()
     server = {
       root_dir = root_dir,
     },
+    dap = {
+      autoload_configurations = false,
+    },
     tools = {
       on_initialized = function()
         initialized = true
@@ -115,6 +118,27 @@ describe('RustLsp commands', function()
   local lsp = require('rustaceanvim.lsp')
   local ra = require('rustaceanvim.rust_analyzer')
   local bufnr
+
+  --- Flush pending didChange notifications and wait for rust-analyzer to process
+  --- them, so subsequent requests operate on the latest buffer content.
+  local function sync_buf(bufnr)
+    local clients = vim.lsp.get_clients({ bufnr = bufnr })
+    if #clients == 0 then
+      return
+    end
+    local done = false
+    clients[1].request(
+      'textDocument/documentSymbol',
+      { textDocument = { uri = vim.uri_from_bufnr(bufnr) } },
+      function()
+        done = true
+      end,
+      bufnr
+    )
+    vim.wait(timeout_ms, function()
+      return done
+    end)
+  end
 
   setup(function()
     bufnr = vim.api.nvim_create_buf(true, false)
@@ -591,7 +615,7 @@ describe('RustLsp commands', function()
 
   it('ssr performs a structural search replace', function()
     vim.api.nvim_set_current_buf(bufnr)
-    vim.lsp.util.buf_versions[bufnr] = 0
+    sync_buf(bufnr)
     vim.cmd.RustLsp { 'ssr', 'second() ==>> add(1, 2)' }
     local replaced = vim.wait(timeout_ms, function()
       local content = table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n')
@@ -618,7 +642,7 @@ describe('RustLsp commands', function()
     assert(unselected_line, 'expected a second "second();" in the buffer')
     vim.api.nvim_buf_set_mark(bufnr, '<', selected_line, 4, {})
     vim.api.nvim_buf_set_mark(bufnr, '>', selected_line, 12, {})
-    vim.lsp.util.buf_versions[bufnr] = 0
+    sync_buf(bufnr)
     vim.cmd("'<,'>RustLsp ssr second() ==>> add(1, 2)")
     local replaced = vim.wait(timeout_ms, function()
       local selected = vim.api.nvim_buf_get_lines(bufnr, selected_line - 1, selected_line, false)[1]
@@ -680,5 +704,43 @@ describe('RustLsp commands', function()
     local logfile = config.server.logfile
     vim.cmd.RustLsp('logFile')
     assert.equals(vim.api.nvim_buf_get_name(0), logfile)
+  end)
+
+  it('debuggables selects a target and runs nvim-dap', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    local select = stub(vim.ui, 'select')
+    local dap = require('dap')
+    local dap_run = stub(dap, 'run')
+    vim.cmd.RustLsp('debuggables')
+    local options
+    local on_choice
+    local prompted = vim.wait(timeout_ms, function()
+      if #select.calls > 0 then
+        options = select.calls[1].vals[1]
+        on_choice = select.calls[1].vals[3]
+        return true
+      end
+      return false
+    end)
+    assert.is_true(prompted)
+    assert.is_not_nil(options)
+    local choice
+    for i, opt in ipairs(options) do
+      if opt:find('build', 1, true) then
+        choice = i
+        break
+      end
+    end
+    assert(choice, 'expected a "build" debuggable target')
+    on_choice(nil, choice)
+    local configured = vim.wait(timeout_ms, function()
+      return #dap_run.calls > 0
+    end)
+    select:revert()
+    dap_run:revert()
+    assert.is_true(configured)
+    local configuration = dap_run.calls[1].vals[1]
+    assert.equals('codelldb', configuration.type)
+    assert.matches('rustaceanvim-test', configuration.program, 1, true)
   end)
 end)
