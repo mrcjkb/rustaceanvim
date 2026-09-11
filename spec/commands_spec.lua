@@ -356,4 +356,35 @@ describe('RustLsp commands', function()
       table.concat(vim.api.nvim_buf_get_lines(vim.api.nvim_win_get_buf(preview_winnr), 0, -1, false), '\n')
     assert.matches('Point', content, 1, true)
   end)
+
+  it('explainError explains the error at the cursor', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    vim.diagnostic.set(vim.api.nvim_create_namespace('rustaceanvim-test'), bufnr, {
+      {
+        lnum = 0,
+        col = 0,
+        severity = vim.diagnostic.severity.ERROR,
+        source = 'rustc',
+        code = 'E0308',
+        message = 'mismatched types',
+      },
+    })
+    local before_wins = vim.api.nvim_list_wins()
+    vim.cmd.RustLsp { 'explainError', 'current' }
+    local preview_winnr
+    local opened = vim.wait(timeout_ms, function()
+      for _, w in ipairs(vim.api.nvim_list_wins()) do
+        if not vim.tbl_contains(before_wins, w) then
+          preview_winnr = w
+          return true
+        end
+      end
+      return false
+    end)
+    assert.is_true(opened)
+    local content =
+      table.concat(vim.api.nvim_buf_get_lines(vim.api.nvim_win_get_buf(preview_winnr), 0, -1, false), '\n')
+    assert.matches('did not match', content, 1, true)
+  end)
 end)
