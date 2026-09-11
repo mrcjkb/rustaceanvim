@@ -387,4 +387,41 @@ describe('RustLsp commands', function()
       table.concat(vim.api.nvim_buf_get_lines(vim.api.nvim_win_get_buf(preview_winnr), 0, -1, false), '\n')
     assert.matches('did not match', content, 1, true)
   end)
+
+  it('renderDiagnostic renders the diagnostic at the cursor', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    vim.diagnostic.set(vim.api.nvim_create_namespace('rustaceanvim-test'), bufnr, {
+      {
+        lnum = 0,
+        col = 0,
+        severity = vim.diagnostic.severity.WARN,
+        source = 'rustc',
+        code = 'unused_variables',
+        message = 'unused variable',
+        user_data = {
+          lsp = {
+            data = {
+              rendered = 'warning: unused variable: `x`',
+            },
+          },
+        },
+      },
+    })
+    local contents
+    local preview_buf = vim.api.nvim_create_buf(false, true)
+    local preview = stub(vim.lsp.util, 'open_floating_preview')
+    preview.invokes(function(lines)
+      contents = lines
+      return preview_buf, 0
+    end)
+    vim.cmd.RustLsp { 'renderDiagnostic', 'current' }
+    local called = vim.wait(timeout_ms, function()
+      return contents ~= nil
+    end)
+    preview:revert()
+    vim.api.nvim_buf_delete(preview_buf, { force = true })
+    assert.is_true(called)
+    assert.matches('unused variable', table.concat(contents, '\n'), 1, true)
+  end)
 end)
