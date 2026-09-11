@@ -491,4 +491,13 @@ describe('RustLsp commands', function()
     end)
     assert.is_true(jumped)
   end)
+
+  it('openCargo opens the Cargo.toml', function()
+    vim.api.nvim_set_current_buf(bufnr)
+    vim.cmd.RustLsp('openCargo')
+    local opened = vim.wait(timeout_ms, function()
+      return vim.api.nvim_buf_get_name(0):find('Cargo.toml', 1, true) ~= nil
+    end)
+    assert.is_true(opened)
+  end)
 end)
