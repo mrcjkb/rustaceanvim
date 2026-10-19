@@ -188,6 +188,7 @@ function M.explain_error_current_line()
     .iter(vim.diagnostic.get(0, {
       lnum = cursor_position[1] - 1,
     }))
+    ---@param diagnostic vim.Diagnostic
     :filter(function(diagnostic)
       return diagnostic.code ~= nil
         and diagnostic.source == 'rustc'
@@ -404,6 +405,7 @@ function M.render_diagnostic_current_line()
     .iter(get_diagnostics_current_line())
     ---@param diagnostic vim.Diagnostic
     :map(function(diagnostic)
+      ---@diagnostic disable-next-line: missing-return-value
       return get_rendered_diagnostic(diagnostic)
     end)
     :totable()
@@ -433,11 +435,13 @@ function M.related_diagnostics()
     .iter(get_diagnostics_at_cursor())
     ---@param diagnostic vim.Diagnostic
     :map(function(diagnostic)
+      ---@diagnostic disable-next-line: missing-return-value
       return vim.tbl_get(diagnostic, 'user_data', 'lsp', 'relatedInformation')
     end)
     :flatten()
     ---@param related_info rustaceanvim.diagnostic.RelatedInfo
     :map(function(related_info)
+      ---@diagnostic disable-next-line: missing-return-value
       return related_info.location
     end)
     ---@param location lsp.Location
@@ -468,6 +472,7 @@ function M.related_diagnostics()
     vim._with({ win = window_id }, function()
       -- Open folds under the cursor
       vim.cmd.normal { 'zv', bang = true }
+      return nil
     end)
   else
     vim.fn.setqflist({}, ' ', { title = 'related diagnostics', items = quickfix_entries })

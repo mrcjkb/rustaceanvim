@@ -334,6 +334,7 @@ function M.start(args, verbose, callback, on_error)
           return is_json, artifact
         end)
         ---@param is_json boolean
+        ---@param artifact unknown
         :filter(function(is_json, artifact)
           -- only process artifact if it's valid json object and it is a compiler artifact
           return is_json and type(artifact) == 'table' and artifact.reason == 'compiler-artifact'

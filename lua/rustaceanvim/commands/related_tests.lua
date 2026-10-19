@@ -36,6 +36,7 @@ local function mk_handler(offset_encoding)
       .iter(tests)
       ---@param test rustaceanvim.RATestInfo
       :map(function(test)
+        ---@diagnostic disable-next-line: missing-return-value
         return test.runnable.location
       end)
       ---@param location rustaceanvim.RARunnableLocation
