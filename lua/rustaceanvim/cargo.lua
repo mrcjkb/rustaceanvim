@@ -145,9 +145,12 @@ function cargo.get_rustc_edition(callback)
     if not cargo_metadata then
       return callback(default_edition)
     end
-    local pkg = vim.iter(cargo_metadata.packages or {}):find(function(p)
-      return type(p.edition) == 'string'
-    end)
+    local pkg = vim
+      .iter(cargo_metadata.packages or {})
+      ---@param p unknown
+      :find(function(p)
+        return type(p.edition) == 'string'
+      end)
     return callback(pkg and pkg.edition or default_edition)
   end)
 end

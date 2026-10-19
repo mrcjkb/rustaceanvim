@@ -410,9 +410,12 @@ function NeotestAdapter.results(spec, strategy_result)
 
   for _, node in get_file_root(context.tree):iter_nodes() do
     local data = node:data()
-    local failure_diagnostic = vim.iter(diagnostics):find(function(diag)
-      return vim.endswith(data.id, diag.test_id)
-    end)
+    local failure_diagnostic = vim
+      .iter(diagnostics)
+      ---@param diag rustaceanvim.Diagnostic
+      :find(function(diag)
+        return vim.endswith(data.id, diag.test_id)
+      end)
     if failure_diagnostic then
       results[data.id] = {
         status = 'failed',
