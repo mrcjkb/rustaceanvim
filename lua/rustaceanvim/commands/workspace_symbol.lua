@@ -30,6 +30,9 @@ end
 
 ---@return string | nil
 local function query_from_input()
+  -- TODO: Delete when dropping 0.12 support
+  ---@diagnostic disable-next-line: deprecated
+  vim.npcall = vim.npcall or vim.F.npcall
   return vim.npcall(vim.fn.input, 'Query: ')
 end
 
