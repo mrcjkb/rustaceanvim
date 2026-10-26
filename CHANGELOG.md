@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.2.2](https://github.com/mrcjkb/rustaceanvim/compare/v9.2.1...v9.2.2) (2026-10-26)
+
+
+### Bug Fixes
+
+* **lsp:** fall back to deprecated `npcall` on 0.12 ([#1175](https://github.com/mrcjkb/rustaceanvim/issues/1175)) ([5b845b7](https://github.com/mrcjkb/rustaceanvim/commit/5b845b7630f186b95eb9efe2ff4db91229dfe480))
+
 ## [9.2.1](https://github.com/mrcjkb/rustaceanvim/compare/v9.2.0...v9.2.1) (2026-08-21)
 
 
