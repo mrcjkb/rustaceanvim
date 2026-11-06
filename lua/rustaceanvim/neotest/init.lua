@@ -28,6 +28,7 @@
 ---@diagnostic disable: duplicate-set-field
 
 local cargo = require('rustaceanvim.cargo')
+local compat = require('rustaceanvim.compat')
 local config = require('rustaceanvim.config.internal')
 local lib = require('neotest.lib')
 local nio = require('nio')
@@ -102,7 +103,7 @@ NeotestAdapter.discover_positions = function(file_path)
   local bufnr = find_buffer_by_name(file_path)
   local params = {
     textDocument = {
-      uri = vim.uri_from_fname(file_path),
+      uri = compat.uri_from_fname(file_path),
     },
     position = nil,
   }
