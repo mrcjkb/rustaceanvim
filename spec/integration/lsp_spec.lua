@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-field
 
 local stub = require('luassert.stub')
+local compat = require('rustaceanvim.compat')
 
 local timeout_ms = 10000
 
@@ -132,7 +133,7 @@ local function sync_buf(bufnr)
     return
   end
   local done = false
-  clients[1]:request('textDocument/documentSymbol', { textDocument = { uri = vim.uri_from_bufnr(bufnr) } }, function()
+  clients[1]:request('textDocument/documentSymbol', { textDocument = { uri = compat.uri_from_buf(bufnr) } }, function()
     done = true
   end, bufnr)
   vim.wait(timeout_ms, function()
@@ -223,7 +224,7 @@ describe('LSP client API', function()
     end
     local done = false
     ra.get_active_rustaceanvim_clients(bufnr)[1]:request('textDocument/documentSymbol', {
-      textDocument = { uri = vim.uri_from_bufnr(bufnr) },
+      textDocument = { uri = compat.uri_from_buf(bufnr) },
     }, function()
       done = true
     end, bufnr)
@@ -588,7 +589,7 @@ describe('RustLsp commands', function()
             relatedInformation = {
               {
                 location = {
-                  uri = vim.uri_from_bufnr(bufnr),
+                  uri = compat.uri_from_buf(bufnr),
                   range = {
                     start = { line = 5, character = 0 },
                     ['end'] = { line = 5, character = 0 },
@@ -888,7 +889,7 @@ describe('RustAnalyzer commands', function()
       end
       local result
       clients[1]:request('textDocument/hover', {
-        textDocument = { uri = vim.uri_from_bufnr(bufnr) },
+        textDocument = { uri = compat.uri_from_buf(bufnr) },
         position = { line = row, character = col },
       }, function(_, res)
         result = res

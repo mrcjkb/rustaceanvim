@@ -7,6 +7,7 @@ local server_status = require('rustaceanvim.server_status')
 local cargo = require('rustaceanvim.cargo')
 local os = require('rustaceanvim.os')
 local rustc = require('rustaceanvim.rustc')
+local compat = require('rustaceanvim.compat')
 
 local ra_client_name = 'rust-analyzer'
 
@@ -137,7 +138,7 @@ Starting rust-analyzer client in detached/standalone mode (with reduced function
     -- Check if a client is already running and add the workspace folder if necessary.
     for _, client in pairs(rust_analyzer.get_active_rustaceanvim_clients()) do
       if root_dir and not is_in_workspace(client, root_dir) then
-        local workspace_folder = { uri = vim.uri_from_fname(root_dir), name = root_dir }
+        local workspace_folder = { uri = compat.uri_from_fname(root_dir), name = root_dir }
         local params = {
           event = {
             added = { workspace_folder },

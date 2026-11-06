@@ -2,6 +2,7 @@ local M = {}
 
 function M.open_external_docs()
   local ra = require('rustaceanvim.rust_analyzer')
+  local compat = require('rustaceanvim.compat')
   local clients = ra.get_active_rustaceanvim_clients(0)
   if #clients == 0 then
     return
@@ -13,7 +14,7 @@ function M.open_external_docs()
     function(_, response)
       local url
       local local_uri = response['local'] and tostring(response['local'])
-      if local_uri and vim.uv.fs_stat(vim.uri_to_fname(local_uri)) then
+      if local_uri and vim.uv.fs_stat(compat.uri_to_fname(local_uri)) then
         url = local_uri
       else
         url = response.web and tostring(response.web)
