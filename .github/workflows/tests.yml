@@ -7,13 +7,14 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.job.target }} - Neovim ${{ matrix.nvim-version }}
+    name: ${{ matrix.job.os }} - Neovim ${{ matrix.nvim-version }}
     runs-on: ${{ matrix.job.os }}
     strategy:
       fail-fast: false
       matrix:
         job:
-          - { os: ubuntu-24.04, target: x86_64-linux }
+          - { os: ubuntu-24.04 }
+          - { os: macos-15 }
         nvim-version:
           - stable
           - nightly
@@ -21,15 +22,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Install MSVC Compiler Toolchain
-        uses: ilammy/msvc-dev-cmd@v1
-        if: endsWith(matrix.job.target, '-msvc')
-
       - name: Setup Neovim
         uses: rhysd/action-setup-vim@v1
         with:
           neovim: true
           version: ${{ matrix.nvim-version }}
+
+      - name: Install LuaJIT (macOS)
+        if: runner.os == 'macOS'
+        run: brew install luajit
 
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1

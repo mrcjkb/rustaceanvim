@@ -66,6 +66,7 @@ local initialized = false
 local function setup_project()
   local root_dir = vim.fn.tempname()
   vim.fn.mkdir(vim.fs.joinpath(root_dir, 'src'), 'p')
+  root_dir = vim.uv.fs_realpath(root_dir) or root_dir
   vim.fn.writefile({
     '[package]',
     'name = "rustaceanvim-test"',
@@ -343,6 +344,10 @@ describe('RustLsp commands', function()
   end)
 
   it('expandMacro expands the macro at the cursor position', function()
+    if require('rustaceanvim.shell').is_macos() then
+      ---@diagnostic disable-next-line: missing-parameter
+      pending('rust-analyzer does not respond to rust-analyzer/expandMacro on macOS')
+    end
     vim.api.nvim_set_current_buf(bufnr)
     vim.api.nvim_win_set_cursor(0, { 2, 4 })
     local ui = require('rustaceanvim.ui')
@@ -797,7 +802,7 @@ describe('RustLsp commands', function()
     local config = require('rustaceanvim.config.internal')
     local logfile = config.server.logfile
     vim.cmd.RustLsp('logFile')
-    assert.equals(vim.api.nvim_buf_get_name(0), logfile)
+    assert.equals(vim.fn.resolve(vim.api.nvim_buf_get_name(0)), vim.fn.resolve(logfile))
   end)
 
   it('debuggables selects a target and runs nvim-dap', function()
@@ -853,7 +858,7 @@ describe('RustAnalyzer commands', function()
   it('switches the target and changes the resolved type', function()
     vim.api.nvim_set_current_buf(bufnr)
     local target_rs = {
-      '#[cfg(target_os = "linux")]',
+      '#[cfg(any(target_os = "linux", target_os = "macos"))]',
       'fn target_dependent() -> i32 {',
       '    42',
       '}',
